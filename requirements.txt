@@ -1,0 +1,12 @@
+numpy>=1.26
+pandas>=2.1
+openpyxl>=3.1
+scikit-learn>=1.4
+xgboost>=2.0
+scipy>=1.11
+statsmodels>=0.14
+factor_analyzer>=0.5
+scikit-optimize>=0.9
+hyperopt>=0.2
+tqdm>=4.66
+python-dotenv>=1.0

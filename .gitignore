@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Envs
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Outputs
+experiments/
+runs/
+*.log
+
+# Data (keep folder structure)
+data/source/*
+data/design/*
+!data/source/.gitkeep
+!data/design/.gitkeep
+
+# macOS files
+**/.DS_Store
+
