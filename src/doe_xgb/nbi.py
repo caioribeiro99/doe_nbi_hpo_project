@@ -132,9 +132,12 @@ def run_nbi_weighted_sum(
     # bounds list in PARAM_NAMES order
     bounds_list = [bounds[p] for p in PARAM_NAMES]
 
-    # build beta grid
+    # build beta grid (20 candidates when beta_step=0.05)
     betas_grid = []
-    b_values = np.arange(0, 1.0 + 1e-9, beta_step)
+    # Generate exactly 20 beta pairs when beta_step=0.05 (0.05..1.00).
+    # This matches the original workflow where 20 candidates are produced.
+    # We intentionally exclude 0.00 to avoid the extreme beta=(1.00, 0.00).
+    b_values = np.arange(beta_step, 1.0 + 1e-9, beta_step)
     for b in b_values:
         b1 = round(1 - float(b), 2)
         b2 = round(float(b), 2)
@@ -172,7 +175,6 @@ def run_nbi_weighted_sum(
             def objective(x_vec: np.ndarray) -> float:
                 # Maximize -> minimize negative
                 if observed_utopia is None or observed_nadir is None:
-                    # if we don't have nadir/utopia, use raw preds
                     params = dict(zip(PARAM_NAMES, x_vec.tolist()))
                     p1 = predict_from_coeffs(params, t1, c1)
                     p2 = predict_from_coeffs(params, t2, c2)
@@ -190,7 +192,6 @@ def run_nbi_weighted_sum(
 
                 def ineq_pred(x_vec: np.ndarray) -> np.ndarray:
                     preds, _ = preds_and_norm(x_vec, nadir, utopia)
-                    # return array of constraints >= 0
                     return np.array([
                         preds[0] - nadir[0],
                         utopia[0] - preds[0],
@@ -198,34 +199,34 @@ def run_nbi_weighted_sum(
                         utopia[1] - preds[1],
                     ], dtype=float)
 
-                constraints = [{"type": "ineq", "fun": ineq_pred}]
+                constraints.append({"type": "ineq", "fun": ineq_pred})
 
             res = minimize(
-                objective,
+                fun=objective,
                 x0=x0,
                 method="SLSQP",
                 bounds=bounds_list,
                 constraints=constraints,
-                options={"disp": False, "maxiter": maxiter},
+                options={"maxiter": maxiter, "disp": False},
             )
 
-            score = -float(res.fun)
+            score = -float(res.fun) if res.success else -np.inf
             if score > best_score:
                 best_score = score
                 best_res = res
 
         assert best_res is not None
-        x_best = best_res.x
-        params_best = dict(zip(PARAM_NAMES, x_best.tolist()))
-        pred1 = predict_from_coeffs(params_best, t1, c1)
-        pred2 = predict_from_coeffs(params_best, t2, c2)
+        params_vec = best_res.x
+        params_dict = dict(zip(PARAM_NAMES, params_vec.tolist()))
+        pred1 = predict_from_coeffs(params_dict, t1, c1)
+        pred2 = predict_from_coeffs(params_dict, t2, c2)
 
         candidates.append(
             NBICandidate(
                 betas=betas,
-                score=best_score,
+                score=float(best_score),
                 predicted=(float(pred1), float(pred2)),
-                params=_cast_int_params(params_best),
+                params=_cast_int_params(params_dict),
                 success=bool(best_res.success),
                 message=str(best_res.message),
             )
@@ -237,15 +238,17 @@ def run_nbi_weighted_sum(
 def save_nbi_candidates(candidates: List[NBICandidate], path: str) -> None:
     rows = []
     for c in candidates:
-        rows.append({
-            "beta_quality": c.betas[0],
-            "beta_cost": c.betas[1],
-            "score": c.score,
-            "pred_quality": c.predicted[0],
-            "pred_cost": c.predicted[1],
-            "hyperparameters": c.params,
-            "success": c.success,
-            "message": c.message,
-        })
+        rows.append(
+            {
+                "beta_1": c.betas[0],
+                "beta_2": c.betas[1],
+                "score": c.score,
+                "pred_1": c.predicted[0],
+                "pred_2": c.predicted[1],
+                "hyperparameters": c.params,
+                "success": c.success,
+                "message": c.message,
+            }
+        )
     df = pd.DataFrame(rows)
     save_csv_ptbr(df, path)
