@@ -1,27 +1,38 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Iterable
 
 import pandas as pd
 
 
-def load_dataset(path: str | Path, target_col: str = "y", target_map: Optional[Dict] = None) -> Tuple[pd.DataFrame, pd.Series]:
-    """Load a dataset from xlsx/csv/parquet.
+def _resolve_target_column(
+    df: pd.DataFrame,
+    target_col: Optional[str] = None,
+    *,
+    fallback_candidates: Iterable[str] = ("y", "target", "label", "class"),
+) -> str:
+    """Resolve the target column name.
 
-    Parameters
-    ----------
-    path:
-        File path.
-    target_col:
-        Name of the target column.
-    target_map:
-        Optional mapping applied to target values, e.g. {'g': 0, 'h': 1}.
-
-    Returns
-    -------
-    X, y
+    Priority:
+      1) Explicit `target_col` (if present)
+      2) Common names: y, target, label, class
+      3) Last column in the dataframe
     """
+    if target_col and target_col in df.columns:
+        return str(target_col)
+    for cand in fallback_candidates:
+        if cand in df.columns:
+            return str(cand)
+    return str(df.columns[-1])
+
+
+def load_dataset(
+    path: str | Path,
+    target_col: Optional[str] = "y",
+    target_map: Optional[Dict] = None,
+) -> Tuple[pd.DataFrame, pd.Series]:
+    """Load a dataset from xlsx/csv/parquet."""
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Dataset not found: {path}")
@@ -29,7 +40,6 @@ def load_dataset(path: str | Path, target_col: str = "y", target_map: Optional[D
     if path.suffix.lower() in {".xlsx", ".xls"}:
         df = pd.read_excel(path)
     elif path.suffix.lower() in {".csv"}:
-        # try common CSV formats
         try:
             df = pd.read_csv(path)
         except Exception:
@@ -39,23 +49,24 @@ def load_dataset(path: str | Path, target_col: str = "y", target_map: Optional[D
     else:
         raise ValueError(f"Unsupported dataset format: {path.suffix}")
 
-    if target_col not in df.columns:
-        raise KeyError(f"Target column '{target_col}' not found. Columns: {list(df.columns)}")
+    resolved_target = _resolve_target_column(df, target_col)
 
-    y = df[target_col].copy()
+    y = df[resolved_target].copy()
     if target_map is not None:
-        y = y.map(target_map)
-    X = df.drop(columns=[target_col])
+        mapped = y.map(target_map)
+        # If mapping fails (all NaN), keep original labels.
+        if mapped.notna().any():
+            y = mapped
+
+    X = df.drop(columns=[resolved_target])
     return X, y
 
 
 def _read_csv_flexible(path: Path) -> pd.DataFrame:
     """Read CSV trying to be compatible with pt-BR exports (sep=';' decimal=',')."""
-    # Heuristic: if header contains ';' assume semicolon
     first_line = path.read_text(encoding="utf-8", errors="ignore").splitlines()[0]
     if first_line.count(";") > first_line.count(","):
         return pd.read_csv(path, sep=";", decimal=",")
-    # else try comma
     try:
         return pd.read_csv(path)
     except Exception:
@@ -63,10 +74,7 @@ def _read_csv_flexible(path: Path) -> pd.DataFrame:
 
 
 def load_design(path: str | Path) -> pd.DataFrame:
-    """Load DOE design exported from Minitab (or any CSV).
-
-    Expected columns include the hyperparameter names plus optional fields (StdOrder, RunOrder, PtType, Blocks).
-    """
+    """Load DOE design exported from Minitab (or any CSV)."""
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Design file not found: {path}")
@@ -74,8 +82,6 @@ def load_design(path: str | Path) -> pd.DataFrame:
         raise ValueError("Design file must be .csv (exported from Minitab or similar).")
 
     df = _read_csv_flexible(path)
-
-    # Standardize column names (strip whitespace)
     df.columns = [c.strip() for c in df.columns]
     return df
 
