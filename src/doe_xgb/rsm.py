@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -22,15 +22,23 @@ class RSMModel:
 
 
 def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[str]]:
-    """Full quadratic RSM design matrix in **uncoded (actual) units**.
+    """
+    Full quadratic RSM design matrix in **uncoded (actual) units**.
 
-    Columns:
-      - const (Intercept)
+    Includes:
+      - Intercept (const)
       - linear: p
       - squares: p*p
       - 2-way interactions: a*b
+
+    Returns
+    -------
+    X : pd.DataFrame
+        Design matrix with an explicit 'const' column.
+    terms : List[str]
+        Terms aligned with coefficients export.
     """
-    cols: Dict[str, np.ndarray] = {}
+    cols: Dict[str, Any] = {}
 
     # linear
     for p in PARAM_NAMES:
@@ -47,9 +55,32 @@ def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[
             cols[f"{a}*{b}"] = (df[a].astype(float) * df[b].astype(float)).to_numpy()
 
     X = pd.DataFrame(cols, index=df.index)
-    X = sm.add_constant(X, has_constant="add")  # adds 'const'
-    terms = ["Intercept"] + list(X.columns[1:])
-    return X, terms
+
+    # Add constant. statsmodels may return ndarray depending on input;
+    # enforce DataFrame to keep .columns stable and satisfy type checkers.
+    X_const = sm.add_constant(X, has_constant="add")
+    if not isinstance(X_const, pd.DataFrame):
+        X_const = pd.DataFrame(X_const, index=df.index, columns=["const"] + list(X.columns))
+
+    terms = ["Intercept"] + [c for c in X.columns]
+    return X_const, terms
+
+
+def _as_dataframe(df_factors: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
+    """
+    Pylance sometimes infers df[col_list] as Series[Any] in callers.
+    To make the API resilient, accept Series and convert to DataFrame.
+
+    - If Series name exists -> use it as single column.
+    - If Series has no name -> use 'x' as column name.
+    """
+    if isinstance(df_factors, pd.DataFrame):
+        return df_factors
+
+    # Series -> DataFrame
+    s = cast(pd.Series, df_factors)
+    col_name = str(s.name) if s.name is not None else "x"
+    return s.to_frame(name=col_name)
 
 
 def _is_intercept(term: str) -> bool:
@@ -69,10 +100,12 @@ def _term_vars(term: str) -> List[str]:
 
 
 def _is_removable(term: str, active_terms: List[str]) -> bool:
-    """Hierarchy rule:
-    - Intercept never removable
-    - Main effect p is NOT removable if any remaining term involves p in an interaction or square.
-    - Interaction/square terms are removable.
+    """
+    Hierarchy rule:
+      - Intercept never removable
+      - Main effect p is NOT removable if any remaining term involves p
+        in an interaction or square (e.g. p*q or p*p).
+      - Interaction/square terms are removable.
     """
     if _is_intercept(term):
         return False
@@ -80,7 +113,7 @@ def _is_removable(term: str, active_terms: List[str]) -> bool:
     if _is_main_effect(term):
         p = term
         for t in active_terms:
-            if t == "Intercept" or t == p:
+            if t in {"Intercept", p}:
                 continue
             if "*" in t:
                 if p in _term_vars(t):
@@ -91,70 +124,81 @@ def _is_removable(term: str, active_terms: List[str]) -> bool:
 
 
 def fit_rsm_backward(
-    df_factors: pd.DataFrame,
+    df_factors: Union[pd.DataFrame, pd.Series],
     y: pd.Series,
     *,
     response_name: str,
     alpha: float = 0.05,
 ) -> RSMModel:
-    """Fit quadratic RSM using backward elimination (α) with hierarchy."""
-    # Validate columns
-    missing = [p for p in PARAM_NAMES if p not in df_factors.columns]
+    """
+    Fit quadratic RSM using backward elimination (α) with hierarchy.
+
+    Notes:
+    - Uses OLS on the full quadratic matrix, then removes the highest p-value term
+      above alpha that is removable under hierarchy.
+    - Stops when no removable term has p-value > alpha (or only intercept remains).
+
+    Robustness:
+    - Accepts DataFrame or Series for df_factors. Series will be converted to DataFrame.
+      This prevents noisy Pylance warnings in callers.
+    """
+    df_factors_df = _as_dataframe(df_factors)
+
+    # Validate columns: must contain all PARAM_NAMES (for full quadratic)
+    missing = [p for p in PARAM_NAMES if p not in df_factors_df.columns]
     if missing:
         raise KeyError(f"Missing factor columns for RSM: {missing}")
 
-    X_full, terms_full = build_quadratic_design_matrix(df_factors)
+    X_full, _terms_full = build_quadratic_design_matrix(df_factors_df)
 
-    active_cols = list(X_full.columns)  # includes 'const'
-    active_terms = terms_full.copy()
+    active_cols: List[str] = list(X_full.columns)
+
+    def cols_to_terms(cols: List[str]) -> List[str]:
+        return ["Intercept" if c == "const" else c for c in cols]
 
     while True:
-        X = X_full[active_cols]
+        X = X_full.loc[:, active_cols]
         model = sm.OLS(y.astype(float).to_numpy(), X).fit()
 
-        # pvalues for each column
         pvals = model.pvalues.to_dict()
+        active_terms = cols_to_terms(active_cols)
 
-        candidates = []
+        candidates: List[Tuple[float, str, str]] = []
         for col in active_cols:
             term = "Intercept" if col == "const" else col
             if term == "Intercept":
                 continue
-            pval = float(pvals.get(col, np.nan))
-            if np.isnan(pval):
-                pval = 1.0
-            if pval > alpha and _is_removable(term, ["Intercept"] + ["Intercept" if c == "const" else c for c in active_cols if c != "const"]):
-                candidates.append((pval, col, term))
+
+            pval = pvals.get(col, np.nan)
+            pval_f = float(pval) if pval is not None and not np.isnan(pval) else 1.0
+
+            if pval_f > alpha and _is_removable(term, active_terms):
+                candidates.append((pval_f, col, term))
 
         if not candidates:
             break
 
-        # Remove the highest p-value removable term
         candidates.sort(reverse=True, key=lambda x: x[0])
-        _, drop_col, _drop_term = candidates[0]
+        _, drop_col, _ = candidates[0]
         active_cols.remove(drop_col)
 
         if len(active_cols) <= 1:
             break
 
-    # Final fit
-    X_final = X_full[active_cols]
+    X_final = X_full.loc[:, active_cols]
     final = sm.OLS(y.astype(float).to_numpy(), X_final).fit()
 
-    terms = []
-    coefs = []
+    terms: List[str] = []
+    coefs: List[float] = []
     for col in X_final.columns:
-        if col == "const":
-            terms.append("Intercept")
-        else:
-            terms.append(col)
+        terms.append("Intercept" if col == "const" else col)
         coefs.append(float(final.params[col]))
 
     return RSMModel(
         response_name=response_name,
         terms=terms,
         coefs=coefs,
-        alpha=alpha,
+        alpha=float(alpha),
         r2=float(final.rsquared),
         r2_adj=float(final.rsquared_adj),
     )

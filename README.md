@@ -1,6 +1,7 @@
 # DOE + RSM + NBI Pipeline (XGBoost)
 
 This repository is a **reproducible pipeline** to run:
+
 1. **DOE execution** (e.g., CCD face-centered) to evaluate XGBoost hyperparameters with CV
 2. **Factor Analysis (ML + Varimax)** to obtain rotated factor scores (Quality vs Cost)
 3. **RSM (quadratic) + backward elimination** (α = 0.05, hierarchical)
@@ -46,7 +47,6 @@ Optional flags:
 
 > If your PowerShell blocks script execution, you may need to run:
 > `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
-
 > If you prefer not to use scripts, follow the **manual setup** below (or use WSL).
 
 ---
@@ -92,7 +92,7 @@ python scripts/run_replica.py \
 
 Outputs will be saved under:
 
-```
+```bash
 experiments/<dataset_name>/<design_name>/replica_01/
 ```
 

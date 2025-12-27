@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Sequence, Optional
+from typing import Dict, List, Tuple, Sequence, Optional, Any, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -11,46 +11,34 @@ from .config import DEFAULT_BOUNDS, PARAM_NAMES, INT_PARAMS
 from .io_utils import save_csv_ptbr
 
 
-def evaluate_term(x: Dict[str, float], term: str, eps: float = 1e-12) -> float:
-    """Evaluate a polynomial term for a given hyperparameter dict.
+Number = Union[int, float]
 
-    Supports:
-    - Intercept / constant terms: "Intercept", "1"
-    - Products: "a*b*c"
-    - Squares (as products): "a*a"
-    - Power notation: "a^2"
-    - Reciprocal: "1/a"
 
-    Extra (legacy Minitab mixture patterns are ignored safely if not present).
-    """
+def evaluate_term(x: Dict[str, Number], term: str, eps: float = 1e-12) -> float:
     t = term.strip().replace(" ", "").replace("(", "").replace(")", "")
-    if t in {"Intercept", "const", "1", "CONST"}:
+
+    if t in {"Intercept", "const", "CONST", "1"}:
         return 1.0
 
     def safe_inv(v: float) -> float:
         return (1.0 / v) if abs(v) > eps else 0.0
 
-    # Reciprocal
     if t.startswith("1/"):
         var = t[2:]
-        return safe_inv(float(x.get(var, 0.0)))
+        v = float(x.get(var, 0.0))
+        return safe_inv(v)
 
-    # Power notation
     if "^" in t and "*" not in t:
-        base, pow_s = t.split("^")
+        base, pow_s = t.split("^", 1)
         if base in x:
             return float(x[base]) ** float(pow_s)
         return 0.0
 
-    # Generic product form
-    parts = t.split("*")
+    parts = [p for p in t.split("*") if p]
     val = 1.0
     for p in parts:
-        if not p:
-            continue
-        # power inside product (rare)
         if "^" in p:
-            base, pow_s = p.split("^")
+            base, pow_s = p.split("^", 1)
             if base in x:
                 val *= float(x[base]) ** float(pow_s)
             else:
@@ -59,26 +47,59 @@ def evaluate_term(x: Dict[str, float], term: str, eps: float = 1e-12) -> float:
             if p in x:
                 val *= float(x[p])
             else:
-                # unknown token -> neutral
                 val *= 1.0
     return float(val)
 
 
-def predict_from_coeffs(x: Dict[str, float], terms: Sequence[str], coefs: Sequence[float]) -> float:
-    return float(sum(c * evaluate_term(x, t) for t, c in zip(terms, coefs)))
+def predict_from_coeffs(x: Dict[str, Number], terms: Sequence[str], coefs: Sequence[float]) -> float:
+    return float(sum(float(c) * evaluate_term(x, str(t)) for t, c in zip(terms, coefs)))
+
+
+def _find_column(df: pd.DataFrame, candidates: Sequence[str]) -> str:
+    """Find a column in df by trying candidates (case-insensitive exact, then contains match)."""
+    cols: List[str] = [str(c) for c in df.columns]
+    cols_lower = [c.strip().lower() for c in cols]
+
+    # exact match
+    for cand in candidates:
+        cand_l = cand.lower()
+        for i, c_l in enumerate(cols_lower):
+            if cand_l == c_l:
+                return cols[i]
+
+    # contains match
+    for cand in candidates:
+        cand_l = cand.lower()
+        for i, c_l in enumerate(cols_lower):
+            if cand_l in c_l:
+                return cols[i]
+
+    raise KeyError(f"Could not find any of columns {list(candidates)} in dataframe columns: {cols}")
 
 
 def load_coefficients_csv(path: str) -> Tuple[List[str], List[float]]:
-    df = pd.read_csv(path, sep=';', decimal=',')
-    term_col = [c for c in df.columns if 'term' in c.lower()][0]
-    coef_col = [c for c in df.columns if 'coef' in c.lower()][0]
-    terms = df[term_col].astype(str).tolist()
-    coefs = df[coef_col].astype(float).tolist()
+    """
+    Load coefficients exported by our RSM module (CSV pt-BR friendly).
+
+    Expected columns: something like ["Term", "Coef"] (case-insensitive).
+    """
+    df = pd.read_csv(path, sep=";", decimal=",")
+
+    term_col = _find_column(df, ["term", "terms"])
+    coef_col = _find_column(df, ["coef", "coefs", "coefficient", "estimate"])
+
+    # Force types explicitly to satisfy type checkers (Pylance)
+    term_series = cast(pd.Series, df[term_col]).astype("string")
+    coef_series = cast(pd.Series, df[coef_col]).astype(float)
+
+    terms: List[str] = [str(v) for v in term_series.tolist()]
+    coefs: List[float] = [float(v) for v in coef_series.tolist()]
+
     return terms, coefs
 
 
-def _cast_int_params(params: Dict[str, float]) -> Dict[str, float | int]:
-    out: Dict[str, float | int] = {}
+def _cast_int_params(params: Dict[str, Number]) -> Dict[str, Union[int, float]]:
+    out: Dict[str, Union[int, float]] = {}
     for k, v in params.items():
         if k in INT_PARAMS:
             out[k] = int(round(float(v)))
@@ -92,7 +113,7 @@ class NBICandidate:
     betas: Tuple[float, float]
     score: float
     predicted: Tuple[float, float]
-    params: Dict[str, float | int]
+    params: Dict[str, Union[int, float]]
     success: bool
     message: str
 
@@ -110,50 +131,22 @@ def run_nbi_weighted_sum(
     constrain_pred_range: bool = True,
     maxiter: int = 2000,
 ) -> List[NBICandidate]:
-    """Generate a set of candidates along a beta grid.
-
-    This follows the same logic used in the original notebook:
-    maximize sum_i beta_i * normalized(pred_i), solved via SLSQP.
-
-    Parameters
-    ----------
-    model1, model2:
-        Tuples (terms, coefs) for objective 1 and 2.
-    observed_utopia / observed_nadir:
-        If None, prediction-range constraints are disabled (or you can pass them).
-    constrain_pred_range:
-        If True and utopia/nadir are provided, enforce nadir <= pred <= utopia for each objective.
-    """
     (t1, c1) = model1
     (t2, c2) = model2
 
     rng = np.random.default_rng(seed)
-
-    # bounds list in PARAM_NAMES order
     bounds_list = [bounds[p] for p in PARAM_NAMES]
-
-    # build beta grid (20 candidates when beta_step=0.05)
-    betas_grid = []
-    # Generate exactly 20 beta pairs when beta_step=0.05 (0.05..1.00).
-    # This matches the original workflow where 20 candidates are produced.
-    # We intentionally exclude 0.00 to avoid the extreme beta=(1.00, 0.00).
-    b_values = np.arange(beta_step, 1.0 + 1e-9, beta_step)
-    for b in b_values:
-        b1 = round(1 - float(b), 2)
-        b2 = round(float(b), 2)
-        betas_grid.append((b1, b2))
-
-    # starting points: center + random
     centers = [(lo + hi) / 2.0 for (lo, hi) in bounds_list]
 
-    x0_list = [centers]
+    # 20 betas: 0.05..1.00
+    b_values = np.arange(beta_step, 1.0 + 1e-9, beta_step)
+    betas_grid = [(round(1.0 - float(b), 2), round(float(b), 2)) for b in b_values]
+
+    x0_list: List[np.ndarray] = [np.array(centers, dtype=float)]
     for _ in range(max(0, n_starts - 1)):
-        x0 = [rng.uniform(lo, hi) for (lo, hi) in bounds_list]
+        x0 = np.array([rng.uniform(lo, hi) for (lo, hi) in bounds_list], dtype=float)
         x0_list.append(x0)
 
-    candidates: List[NBICandidate] = []
-
-    # helper to compute preds and normalized objective values
     def preds_and_norm(x_vec: np.ndarray, nadir: np.ndarray, utopia: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         params = dict(zip(PARAM_NAMES, x_vec.tolist()))
         p1 = predict_from_coeffs(params, t1, c1)
@@ -163,6 +156,8 @@ def run_nbi_weighted_sum(
         norm = (preds - nadir) / denom
         return preds, norm
 
+    candidates: List[NBICandidate] = []
+
     for betas in betas_grid:
         betas_arr = np.array(betas, dtype=float)
 
@@ -170,10 +165,8 @@ def run_nbi_weighted_sum(
         best_score = -np.inf
 
         for x0 in x0_list:
-            x0 = np.array(x0, dtype=float)
 
             def objective(x_vec: np.ndarray) -> float:
-                # Maximize -> minimize negative
                 if observed_utopia is None or observed_nadir is None:
                     params = dict(zip(PARAM_NAMES, x_vec.tolist()))
                     p1 = predict_from_coeffs(params, t1, c1)
@@ -192,12 +185,15 @@ def run_nbi_weighted_sum(
 
                 def ineq_pred(x_vec: np.ndarray) -> np.ndarray:
                     preds, _ = preds_and_norm(x_vec, nadir, utopia)
-                    return np.array([
-                        preds[0] - nadir[0],
-                        utopia[0] - preds[0],
-                        preds[1] - nadir[1],
-                        utopia[1] - preds[1],
-                    ], dtype=float)
+                    return np.array(
+                        [
+                            preds[0] - nadir[0],
+                            utopia[0] - preds[0],
+                            preds[1] - nadir[1],
+                            utopia[1] - preds[1],
+                        ],
+                        dtype=float,
+                    )
 
                 constraints.append({"type": "ineq", "fun": ineq_pred})
 
@@ -216,6 +212,7 @@ def run_nbi_weighted_sum(
                 best_res = res
 
         assert best_res is not None
+
         params_vec = best_res.x
         params_dict = dict(zip(PARAM_NAMES, params_vec.tolist()))
         pred1 = predict_from_coeffs(params_dict, t1, c1)
@@ -226,7 +223,7 @@ def run_nbi_weighted_sum(
                 betas=betas,
                 score=float(best_score),
                 predicted=(float(pred1), float(pred2)),
-                params=_cast_int_params(params_dict),
+                params=_cast_int_params(cast(Dict[str, Number], params_dict)),
                 success=bool(best_res.success),
                 message=str(best_res.message),
             )
@@ -236,7 +233,7 @@ def run_nbi_weighted_sum(
 
 
 def save_nbi_candidates(candidates: List[NBICandidate], path: str) -> None:
-    rows = []
+    rows: List[Dict[str, Any]] = []
     for c in candidates:
         rows.append(
             {
