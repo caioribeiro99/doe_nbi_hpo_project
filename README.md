@@ -94,7 +94,50 @@ Outputs will be saved under:
 
 ```bash
 experiments/<dataset_name>/<design_name>/replica_01/
+
 ```
+
+---
+
+### 4) Run the full experiment (N replicas)
+
+If you want to run the whole study (e.g., **30 replicas**), the recommended
+way is to create a `.env` file (optional but convenient) and use the experiment
+runner.
+
+#### Option A: using `.env` (recommended)
+
+```bash
+# macOS/Linux
+cp .env.example .env
+
+# Windows PowerShell
+# copy .env.example .env
+```
+
+Then run:
+
+```bash
+python scripts/run_experiment.py
+```
+
+#### Option B: all arguments via CLI
+
+```bash
+python scripts/run_experiment.py \
+  --dataset data/source/telescope2.xlsx \
+  --design  data/design/hyperparameter_design.csv \
+  --n 30 \
+  --seed-base 42 \
+  --budget 40
+```
+
+The experiment runner will:
+
+- Generate a deterministic seed list
+- Run `run_replica.py` for each replica
+- Write logs per replica
+- Aggregate all `confirmation_summary.csv` files into a single `experiment_summary.csv`
 
 ---
 
@@ -119,6 +162,22 @@ experiments/<dataset_name>/<design_name>/replica_01/
 - `scripts/run_nbi.py` – generate NBI candidates from RSM coefficients
 - `scripts/run_confirmation.py` – evaluate NBI candidates + benchmark methods
 - `scripts/run_replica.py` – run all steps in sequence for one replica
+- `scripts/run_seeds.py` – generate the deterministic seed list (CLI > .env > defaults)
+- `scripts/run_experiment.py` – run **all replicas** and aggregate results
+
+---
+
+## Reproducibility outputs
+
+For each replica:
+
+- `manifest.json` — includes `replica`, `seed`, and SHA-256 hashes of the dataset/design inputs
+- `run_replica.log` — full stdout/stderr log captured by the experiment runner
+
+For the full experiment (dataset + design):
+
+- `experiment_manifest.json` — seed list + per-replica status
+- `experiment_summary.csv` — concatenation of each replica's `confirmation_summary.csv`
 
 ---
 

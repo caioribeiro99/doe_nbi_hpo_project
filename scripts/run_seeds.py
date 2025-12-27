@@ -8,10 +8,15 @@ import os
 
 sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
+from dotenv import load_dotenv
+
 from doe_xgb.seeds import generate_seeds
 
 
 def main() -> None:
+    # Load .env if present (python-dotenv)
+    load_dotenv()
+
     p = argparse.ArgumentParser(description="Generate replica seeds")
 
     p.add_argument(
