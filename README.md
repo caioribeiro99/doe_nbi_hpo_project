@@ -31,7 +31,23 @@ Optional flags:
 ./setup.sh --no-libomp          # skip libomp installation on macOS
 ```
 
-> Windows users: please follow the **manual setup** below (or use WSL).
+### Recommended: run the setup script (Windows PowerShell)
+
+```powershell
+.\setup.ps1
+```
+
+Optional flags:
+
+```powershell
+.\setup.ps1 -NoVenv
+.\setup.ps1 -Python python
+```
+
+> If your PowerShell blocks script execution, you may need to run:
+> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+> If you prefer not to use scripts, follow the **manual setup** below (or use WSL).
 
 ---
 
