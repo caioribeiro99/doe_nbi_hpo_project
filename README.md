@@ -9,9 +9,39 @@ This repository is a **reproducible pipeline** to run:
 
 The code was modularized from the original Jupyter workflow (replicas differed only by seed).
 
+---
+
 ## Quickstart
 
-### 1) Create environment
+### Recommended: run the setup script (macOS / Linux)
+
+This is the **recommended way** to set up the environment, as it encapsulates all required steps
+(virtual environment creation, dependency installation, and macOS-specific requirements).
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+Optional flags:
+
+```bash
+./setup.sh --no-venv            # install into current Python environment
+./setup.sh --python python3.11  # choose a specific Python executable
+./setup.sh --no-libomp          # skip libomp installation on macOS
+```
+
+> Windows users: please follow the **manual setup** below (or use WSL).
+
+---
+
+### Manual setup (alternative)
+
+If you prefer to run each command individually, follow the steps below
+(equivalent to the setup script).
+
+#### 1) Create environment
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate   # macOS/Linux
@@ -21,15 +51,22 @@ pip install -r requirements.txt
 ```
 
 > macOS note (Apple Silicon): XGBoost may require OpenMP:
+
 ```bash
 brew install libomp
 ```
 
+---
+
 ### 2) Put your inputs
-- Dataset (xlsx/csv/parquet): `data/source/`
+
+- Dataset (xlsx / csv / parquet): `data/source/`
 - DOE design CSV exported from Minitab: `data/design/`
 
+---
+
 ### 3) Run one replica end-to-end (example)
+
 ```bash
 python scripts/run_replica.py \
   --dataset data/source/telescope2.xlsx \
@@ -38,7 +75,12 @@ python scripts/run_replica.py \
 ```
 
 Outputs will be saved under:
-`experiments/<dataset_name>/<design_name>/replica_01/`
+
+```
+experiments/<dataset_name>/<design_name>/replica_01/
+```
+
+---
 
 ## Key experimental decisions (frozen)
 
@@ -52,6 +94,8 @@ Outputs will be saved under:
 - RSM: quadratic + **backward elimination** with α = 0.05, keeping hierarchy
 - Benchmark fairness: same budget `BUDGET = 40` evaluations (default)
 
+---
+
 ## Scripts
 
 - `scripts/run_doe.py` – run DOE evaluation and save `doe_results.csv`
@@ -60,6 +104,9 @@ Outputs will be saved under:
 - `scripts/run_confirmation.py` – evaluate NBI candidates + benchmark methods
 - `scripts/run_replica.py` – run all steps in sequence for one replica
 
+---
+
 ## Notes
-- CSV outputs use `sep=';'` and `decimal=','` (Minitab/Excel friendly in pt-BR locale).
+
+- CSV outputs use `sep=';'` and `decimal=','` (Minitab / Excel friendly in pt-BR locale).
 - All file names are in English by design; content may contain Portuguese field names for compatibility.
