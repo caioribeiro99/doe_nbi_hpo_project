@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional, Union
+
+
+PathLike = Union[str, Path]
 
 
 def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
@@ -46,30 +48,50 @@ def build_replica_dir(
 
 
 def write_manifest(
-    out_dir: Path,
+    path: PathLike,
     *,
-    replica: int,
-    seed: int,
-    dataset_path: Path,
-    design_path: Path,
-    extra: Optional[Dict[str, Any]] = None,
+    replica: Optional[int] = None,
+    seed: Optional[int] = None,
+    dataset_path: Optional[Path] = None,
+    design_path: Optional[Path] = None,
+    extra: Optional[Mapping[str, Any]] = None,
 ) -> Path:
+    """
+    Flexible manifest writer.
+
+    Supports:
+      1) Experiment-level manifest (only `path` + `extra`)
+      2) Replica-level manifest (with replica/seed/dataset/design metadata)
+    """
+
+    p = Path(path)
+
     manifest: Dict[str, Any] = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
-        "replica": replica,
-        "seed": seed,
-        "dataset": {
+    }
+
+    # Replica-level metadata (optional)
+    if replica is not None:
+        manifest["replica"] = int(replica)
+    if seed is not None:
+        manifest["seed"] = int(seed)
+
+    if dataset_path is not None:
+        manifest["dataset"] = {
             "path": str(dataset_path),
             "sha256": sha256_file(dataset_path) if dataset_path.exists() else None,
-        },
-        "design": {
+        }
+
+    if design_path is not None:
+        manifest["design"] = {
             "path": str(design_path),
             "sha256": sha256_file(design_path) if design_path.exists() else None,
-        },
-    }
-    if extra:
-        manifest.update(extra)
+        }
 
-    path = out_dir / "manifest.json"
-    path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    return path
+    # Extra free-form metadata
+    if extra:
+        manifest.update(dict(extra))
+
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    return p

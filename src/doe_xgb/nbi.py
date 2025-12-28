@@ -232,20 +232,41 @@ def run_nbi_weighted_sum(
     return candidates
 
 
-def save_nbi_candidates(candidates: List[NBICandidate], path: str) -> None:
+def nbi_candidates_to_df(candidates: List[NBICandidate]) -> pd.DataFrame:
+    """Convert a list of :class:`NBICandidate` to a flat pandas DataFrame.
+
+    The returned schema is used by the pipeline and by `load_nbi_candidates`:
+
+    - beta_1, beta_2: the (beta1, beta2) weights
+    - score: the scalarized objective used during optimization
+    - Pred_Score_Quality, Pred_Score_Cost: predicted objective scores
+    - hyperparameters: dict with param values (ints already coerced)
+    - success, message: optimizer status
+    """
+
     rows: List[Dict[str, Any]] = []
     for c in candidates:
         rows.append(
             {
-                "beta_1": c.betas[0],
-                "beta_2": c.betas[1],
-                "score": c.score,
-                "pred_1": c.predicted[0],
-                "pred_2": c.predicted[1],
-                "hyperparameters": c.params,
-                "success": c.success,
-                "message": c.message,
+                "beta_1": float(c.betas[0]),
+                "beta_2": float(c.betas[1]),
+                "score": float(c.score),
+                # Keep backwards compatible names expected by run_replica
+                "Pred_Score_Quality": float(c.predicted[0]),
+                "Pred_Score_Cost": float(c.predicted[1]),
+                "hyperparameters": dict(c.params),
+                "success": bool(c.success),
+                "message": str(c.message),
             }
         )
-    df = pd.DataFrame(rows)
+    return pd.DataFrame(rows)
+
+
+def save_nbi_candidates(candidates: List[NBICandidate], path: str) -> None:
+    """Persist candidates to CSV (pt-BR friendly).
+
+    We intentionally store both a flat view (predicted scores, betas) and the
+    `hyperparameters` dict to keep compatibility with older consumers.
+    """
+    df = nbi_candidates_to_df(candidates)
     save_csv_ptbr(df, path)

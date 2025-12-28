@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import ast
-import time
 import itertools
+import time
+from math import ceil
 from typing import Any, Dict, List, Tuple, cast
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold, ParameterSampler
+from sklearn.model_selection import ParameterSampler, StratifiedKFold
 from tqdm import tqdm
 
 from .config import DEFAULT_BOUNDS, INT_PARAMS, PARAM_NAMES
@@ -15,18 +16,19 @@ from .evaluation import evaluate_xgb_cv
 from .io_utils import save_csv_ptbr
 
 
-def _cast_ints(params: Dict[str, Any]) -> Dict[str, Any]:
-    out: Dict[str, Any] = dict(params)
-    for k in list(out.keys()):
+def _cast_ints(params: Dict[str, Any]) -> Dict[str, float | int]:
+    """Cast integer hyperparameters to int (keeps others as float)."""
+    out: Dict[str, float | int] = {}
+    for k, v in params.items():
         if k in INT_PARAMS:
-            out[k] = int(round(float(out[k])))
+            out[k] = int(round(float(v)))
         else:
-            out[k] = float(out[k])
+            out[k] = float(v)
     return out
 
 
 def _eval_params(
-    params: Dict[str, Any],
+    params: Dict[str, float | int],
     X_np: np.ndarray,
     y_np: np.ndarray,
     kfold: StratifiedKFold,
@@ -34,6 +36,7 @@ def _eval_params(
     n_jobs: int,
     tree_method: str,
 ) -> Dict[str, Any]:
+    # evaluate_xgb_cv expects (params, X, y, kfold, ...)
     ev = evaluate_xgb_cv(
         params,
         X_np,
@@ -43,15 +46,13 @@ def _eval_params(
         n_jobs=n_jobs,
         tree_method=tree_method,
     )
-
-    out: Dict[str, Any] = dict(ev.metrics)
-    out["Time_MeanFold"] = float(ev.time_mean_fold)
-    out["hyperparameters"] = _cast_ints(ev.params)
+    out = cast(Dict[str, Any], ev.as_dict())
+    out["hyperparameters"] = dict(params)
     return out
 
 
 def evaluate_candidate_list(
-    candidates: List[Dict[str, Any]],
+    candidates: List[Dict[str, float]],
     X: pd.DataFrame,
     y: pd.Series,
     *,
@@ -59,80 +60,88 @@ def evaluate_candidate_list(
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
+    desc: str = "Evaluating candidates",
 ) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
-    """Evaluate a list of hyperparameter dicts and return the best by Accuracy_Mean."""
-    X_np, y_np = X.to_numpy(), y.to_numpy()
+    """Evaluate a list of hyperparameter candidates.
+
+    Returns:
+      - best_row: chosen by highest Accuracy_Mean
+      - all_rows: one row per candidate (includes CV metrics + timing)
+    """
+    if len(candidates) < 1:
+        raise ValueError("candidates list is empty")
+
+    X_np = X.to_numpy()
+    y_np = y.to_numpy()
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-    evals: List[Dict[str, Any]] = []
-    best: Dict[str, Any] | None = None
+    all_rows: List[Dict[str, Any]] = []
+    best_row: Dict[str, Any] | None = None
     best_acc = -np.inf
 
-    for p in tqdm(candidates, desc="Evaluating candidates"):
-        res = _eval_params(p, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
-        evals.append(res)
-        if float(res["Accuracy_Mean"]) > best_acc:
-            best_acc = float(res["Accuracy_Mean"])
-            best = res
+    for params in tqdm(candidates, desc=desc, dynamic_ncols=True):
+        casted = _cast_ints(params)
+        row = _eval_params(casted, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
+        all_rows.append(row)
 
-    assert best is not None
-    return best, evals
+        acc = float(row.get("Accuracy_Mean", float("-inf")))
+        if acc > best_acc:
+            best_acc = acc
+            best_row = row
+
+    if best_row is None:
+        raise RuntimeError("No best row found (unexpected)")
+    return best_row, all_rows
 
 
-def load_nbi_candidates(path: str) -> List[Dict[str, Any]]:
-    """Load candidates saved by `save_nbi_candidates` (dict stored as string)."""
+def load_nbi_candidates(path: str) -> List[Dict[str, float]]:
+    """Load NBI candidates from CSV.
+
+    Supports:
+      1) Explicit param columns (PARAM_NAMES)
+      2) Single 'hyperparameters' column containing a dict (or stringified dict)
+    """
     df = pd.read_csv(path, sep=";", decimal=",")
-    if "hyperparameters" not in df.columns:
-        raise KeyError(f"Expected column 'hyperparameters' in {path}")
 
-    cands: List[Dict[str, Any]] = []
-    for s in df["hyperparameters"].tolist():
-        if isinstance(s, str):
-            cands.append(ast.literal_eval(s))
-        elif isinstance(s, dict):
-            cands.append(s)
-        else:
-            raise TypeError(f"Unsupported hyperparameters type: {type(s)}")
-    return cands
+    # Format 1
+    if all(p in df.columns for p in PARAM_NAMES):
+        out: List[Dict[str, float]] = []
+        for _, row in df.iterrows():
+            out.append({p: float(row[p]) for p in PARAM_NAMES})
+        return out
 
+    # Format 2
+    if "hyperparameters" in df.columns:
+        out2: List[Dict[str, float]] = []
+        for _, row in df.iterrows():
+            cell = row["hyperparameters"]
+            hp: Dict[str, Any] = {}
+            if isinstance(cell, dict):
+                hp = cell
+            elif isinstance(cell, str) and cell.strip():
+                try:
+                    parsed = ast.literal_eval(cell)
+                    if isinstance(parsed, dict):
+                        hp = parsed
+                except Exception:
+                    hp = {}
 
-# -----------------------------
-# Benchmarks (fixed budgets)
-# -----------------------------
+            ok = True
+            cand: Dict[str, float] = {}
+            for p in PARAM_NAMES:
+                if p not in hp:
+                    ok = False
+                    break
+                try:
+                    cand[p] = float(hp[p])
+                except Exception:
+                    ok = False
+                    break
+            if ok:
+                out2.append(cand)
+        return out2
 
-def random_search(
-    X: pd.DataFrame,
-    y: pd.Series,
-    *,
-    seed: int,
-    budget: int = 40,
-    bounds: Dict[str, Tuple[float, float]] = DEFAULT_BOUNDS,
-    n_splits: int = 5,
-    n_jobs: int = -1,
-    tree_method: str = "hist",
-) -> Dict[str, Any]:
-    """Random Search baseline with fixed budget."""
-    param_dist = {
-        "subsample": np.linspace(bounds["subsample"][0], bounds["subsample"][1], 10),
-        "colsample_bytree": np.linspace(bounds["colsample_bytree"][0], bounds["colsample_bytree"][1], 10),
-        "colsample_bylevel": np.linspace(bounds["colsample_bylevel"][0], bounds["colsample_bylevel"][1], 10),
-        "learning_rate": np.linspace(bounds["learning_rate"][0], bounds["learning_rate"][1], 10),
-        "max_depth": np.arange(int(bounds["max_depth"][0]), int(bounds["max_depth"][1]) + 1),
-        "gamma": np.linspace(bounds["gamma"][0], bounds["gamma"][1], 10),
-        "n_estimators": np.linspace(bounds["n_estimators"][0], bounds["n_estimators"][1], 10, dtype=int),
-    }
-
-    samples = list(ParameterSampler(param_dist, n_iter=budget, random_state=seed))
-
-    t0 = time.perf_counter()
-    best, _ = evaluate_candidate_list(samples, X, y, seed=seed, n_splits=n_splits, n_jobs=n_jobs, tree_method=tree_method)
-    opt_time = time.perf_counter() - t0
-
-    best["method"] = "random_search"
-    best["budget"] = int(budget)
-    best["Optimization_Time_Seconds"] = float(opt_time)
-    best["Total_Time_Seconds"] = float(opt_time + float(best.get("Time_MeanFold", 0.0)))
-    return best
+    raise KeyError(f"Invalid NBI candidates file format: {path}")
 
 
 def coarse_grid_search(
@@ -140,95 +149,153 @@ def coarse_grid_search(
     y: pd.Series,
     *,
     seed: int,
-    budget: int = 40,
-    bounds: Dict[str, Tuple[float, float]] = DEFAULT_BOUNDS,
+    budget: int,
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
 ) -> Dict[str, Any]:
-    """Coarse Grid Search baseline bounded by budget.
+    """Coarse grid search over DEFAULT_BOUNDS.
 
-    We build a **3-level grid** for *all* hyperparameters: {center, low, high},
-    and evaluate at most `budget` points (deterministic order, center-first).
-    This keeps the method "grid-like" while supporting budgets > 27.
+    Chooses k levels per parameter so that k^d >= budget, then samples `budget` points.
     """
     if budget < 1:
         raise ValueError("budget must be >= 1")
 
-    # Build 3 levels per parameter: center-first ordering
-    levels: Dict[str, List[float]] = {}
-    for p, (lo, hi) in bounds.items():
-        mid = (float(lo) + float(hi)) / 2.0
-        # center-first improves typical performance vs starting at all-lows
-        if p in INT_PARAMS:
-            vals = [int(round(mid)), int(round(lo)), int(round(hi))]
-        else:
-            vals = [float(mid), float(lo), float(hi)]
-        # Remove duplicates if bounds collapse
-        uniq: List[float] = []
-        for v in vals:
-            if v not in uniq:
-                uniq.append(v)
-        levels[p] = uniq
+    d = len(PARAM_NAMES)
+    k = max(3, int(ceil(budget ** (1.0 / d))))
 
-    # Deterministic cartesian product in PARAM_NAMES order
-    candidates: List[Dict[str, Any]] = []
-    for combo in itertools.product(*[levels[p] for p in PARAM_NAMES]):
-        cand: Dict[str, Any] = {p: v for p, v in zip(PARAM_NAMES, combo)}
-        candidates.append(cand)
-        if len(candidates) >= budget:
-            break
+    levels: Dict[str, List[float]] = {}
+    for p in PARAM_NAMES:
+        lo, hi = DEFAULT_BOUNDS[p]
+        if p in INT_PARAMS:
+            raw = np.linspace(lo, hi, num=k)
+            ints = [int(round(v)) for v in raw]
+            uniq: List[int] = []
+            for iv in ints:
+                iv = int(min(max(iv, int(round(lo))), int(round(hi))))
+                if iv not in uniq:
+                    uniq.append(iv)
+            if len(uniq) < 2:
+                uniq = [int(round(lo)), int(round(hi))]
+            levels[p] = [float(v) for v in uniq]
+        else:
+            levels[p] = [float(v) for v in np.linspace(lo, hi, num=k)]
+
+    grid = list(itertools.product(*[levels[p] for p in PARAM_NAMES]))
+    candidates_all: List[Dict[str, float]] = [{p: float(v) for p, v in zip(PARAM_NAMES, combo)} for combo in grid]
+
+    if len(candidates_all) <= budget:
+        candidates = candidates_all
+    else:
+        rng = np.random.default_rng(seed)
+        idx = rng.choice(len(candidates_all), size=budget, replace=False)
+        candidates = [candidates_all[int(i)] for i in idx]
 
     t0 = time.perf_counter()
-    best, _ = evaluate_candidate_list(
-        candidates, X, y, seed=seed, n_splits=n_splits, n_jobs=n_jobs, tree_method=tree_method
+    best_eval, _ = evaluate_candidate_list(
+        candidates,
+        X,
+        y,
+        seed=seed,
+        n_splits=n_splits,
+        n_jobs=n_jobs,
+        tree_method=tree_method,
+        desc=f"coarse_grid_search ({len(candidates)})",
     )
     opt_time = time.perf_counter() - t0
 
-    best["method"] = "coarse_grid_search"
-    best["budget"] = int(len(candidates))
-    best["Optimization_Time_Seconds"] = float(opt_time)
-    best["Total_Time_Seconds"] = float(opt_time + float(best.get("Time_MeanFold", 0.0)))
-    return best
+    best_eval["method"] = "coarse_grid_search"
+    best_eval["budget"] = int(len(candidates))
+    best_eval["Optimization_Time_Seconds"] = float(opt_time)
+    best_eval["Total_Time_Seconds"] = float(opt_time + float(best_eval.get("Time_MeanFold", 0.0)))
+    return best_eval
+
+
+def random_search(
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
+    seed: int,
+    budget: int,
+    n_splits: int = 5,
+    n_jobs: int = -1,
+    tree_method: str = "hist",
+) -> Dict[str, Any]:
+    """Random search within DEFAULT_BOUNDS."""
+    if budget < 1:
+        raise ValueError("budget must be >= 1")
+
+    rng = np.random.default_rng(seed)
+    param_grid: Dict[str, List[float]] = {}
+    for p in PARAM_NAMES:
+        lo, hi = DEFAULT_BOUNDS[p]
+        if p in INT_PARAMS:
+            vals = rng.integers(int(lo), int(hi) + 1, size=max(10, budget), dtype=np.int64)
+            param_grid[p] = [float(v) for v in vals]
+        else:
+            vals = rng.uniform(lo, hi, size=max(10, budget)).astype(float)
+            param_grid[p] = [float(v) for v in vals]
+
+    sampler = list(ParameterSampler(param_grid, n_iter=budget, random_state=seed))
+    candidates: List[Dict[str, float]] = [{p: float(s[p]) for p in PARAM_NAMES} for s in sampler]
+
+    t0 = time.perf_counter()
+    best_eval, _ = evaluate_candidate_list(
+        candidates,
+        X,
+        y,
+        seed=seed,
+        n_splits=n_splits,
+        n_jobs=n_jobs,
+        tree_method=tree_method,
+        desc=f"random_search ({len(candidates)})",
+    )
+    opt_time = time.perf_counter() - t0
+
+    best_eval["method"] = "random_search"
+    best_eval["budget"] = int(len(candidates))
+    best_eval["Optimization_Time_Seconds"] = float(opt_time)
+    best_eval["Total_Time_Seconds"] = float(opt_time + float(best_eval.get("Time_MeanFold", 0.0)))
+    return best_eval
+
 
 def bayes_search(
     X: pd.DataFrame,
     y: pd.Series,
     *,
     seed: int,
-    budget: int = 40,
+    budget: int,
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
 ) -> Dict[str, Any]:
-    """Bayesian Optimization baseline (scikit-optimize BayesSearchCV) with fixed budget."""
-    try:
-        from skopt import BayesSearchCV
-    except ImportError as e:
-        raise ImportError("scikit-optimize is required for bayes_search. Install scikit-optimize.") from e
+    """Bayesian optimization via scikit-optimize BayesSearchCV."""
+    if budget < 1:
+        raise ValueError("budget must be >= 1")
 
+    from skopt import BayesSearchCV
+    from skopt.space import Integer, Real
     from xgboost import XGBClassifier
 
-    X_np, y_np = X.to_numpy(), y.to_numpy()
-    kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
-
-    search_spaces = {
-        "subsample": (DEFAULT_BOUNDS["subsample"][0], DEFAULT_BOUNDS["subsample"][1]),
-        "colsample_bytree": (DEFAULT_BOUNDS["colsample_bytree"][0], DEFAULT_BOUNDS["colsample_bytree"][1]),
-        "colsample_bylevel": (DEFAULT_BOUNDS["colsample_bylevel"][0], DEFAULT_BOUNDS["colsample_bylevel"][1]),
-        "learning_rate": (DEFAULT_BOUNDS["learning_rate"][0], DEFAULT_BOUNDS["learning_rate"][1]),
-        "max_depth": (int(DEFAULT_BOUNDS["max_depth"][0]), int(DEFAULT_BOUNDS["max_depth"][1])),
-        "gamma": (DEFAULT_BOUNDS["gamma"][0], DEFAULT_BOUNDS["gamma"][1]),
-        "n_estimators": (int(DEFAULT_BOUNDS["n_estimators"][0]), int(DEFAULT_BOUNDS["n_estimators"][1])),
-    }
+    # ✅ FIX: BayesSearchCV expects a dict mapping param_name -> Dimension
+    search_spaces: Dict[str, Any] = {}
+    for p in PARAM_NAMES:
+        lo, hi = DEFAULT_BOUNDS[p]
+        if p in INT_PARAMS:
+            search_spaces[p] = Integer(int(lo), int(hi))
+        else:
+            search_spaces[p] = Real(float(lo), float(hi))
 
     estimator = XGBClassifier(
+        n_estimators=100,
         random_state=seed,
         n_jobs=n_jobs,
         tree_method=tree_method,
         eval_metric="logloss",
         verbosity=0,
     )
+
+    kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
     opt = BayesSearchCV(
         estimator=estimator,
@@ -238,18 +305,17 @@ def bayes_search(
         scoring="accuracy",
         n_jobs=1,  # avoid nested parallelism; XGBoost uses n_jobs
         random_state=seed,
+        verbose=0,
     )
 
+    X_np = X.to_numpy()
+    y_np = y.to_numpy()
     t0 = time.perf_counter()
     opt.fit(X_np, y_np)
     opt_time = time.perf_counter() - t0
 
-    # ---- Pylance-safe access to best_params_ ----
-    best_params_raw = cast(Any, getattr(opt, "best_params_", None))
-    if best_params_raw is None:
-        raise RuntimeError("BayesSearchCV did not expose best_params_ after fit().")
+    best_params_raw = cast(Dict[str, Any], getattr(opt, "best_params_"))
     best_params = _cast_ints(best_params_raw)
-
     best_eval = _eval_params(best_params, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
 
     best_eval["method"] = "bayes_search"
@@ -264,51 +330,52 @@ def hyperopt_tpe(
     y: pd.Series,
     *,
     seed: int,
-    budget: int = 40,
+    budget: int,
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
 ) -> Dict[str, Any]:
-    """Hyperopt TPE baseline with fixed budget."""
-    try:
-        from hyperopt import fmin, tpe, hp, Trials, STATUS_OK
-    except ImportError as e:
-        raise ImportError("hyperopt is required for hyperopt_tpe. Install hyperopt.") from e
+    """Hyperopt TPE search."""
+    if budget < 1:
+        raise ValueError("budget must be >= 1")
 
-    X_np, y_np = X.to_numpy(), y.to_numpy()
+    from hyperopt import STATUS_OK, Trials, fmin, hp, tpe
+
+    space: Dict[str, Any] = {}
+    for p in PARAM_NAMES:
+        lo, hi = DEFAULT_BOUNDS[p]
+        if p in INT_PARAMS:
+            space[p] = hp.quniform(p, int(lo), int(hi), q=1)
+        else:
+            space[p] = hp.uniform(p, float(lo), float(hi))
+
+    X_np = X.to_numpy()
+    y_np = y.to_numpy()
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
     def objective(params: Dict[str, Any]) -> Dict[str, Any]:
-        params = _cast_ints(params)
-        ev = _eval_params(params, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
-        return {"loss": -float(ev["Accuracy_Mean"]), "status": STATUS_OK, "eval": ev}
-
-    space = {
-        "subsample": hp.uniform("subsample", DEFAULT_BOUNDS["subsample"][0], DEFAULT_BOUNDS["subsample"][1]),
-        "colsample_bytree": hp.uniform("colsample_bytree", DEFAULT_BOUNDS["colsample_bytree"][0], DEFAULT_BOUNDS["colsample_bytree"][1]),
-        "colsample_bylevel": hp.uniform("colsample_bylevel", DEFAULT_BOUNDS["colsample_bylevel"][0], DEFAULT_BOUNDS["colsample_bylevel"][1]),
-        "learning_rate": hp.uniform("learning_rate", DEFAULT_BOUNDS["learning_rate"][0], DEFAULT_BOUNDS["learning_rate"][1]),
-        "max_depth": hp.quniform("max_depth", DEFAULT_BOUNDS["max_depth"][0], DEFAULT_BOUNDS["max_depth"][1], 1),
-        "gamma": hp.uniform("gamma", DEFAULT_BOUNDS["gamma"][0], DEFAULT_BOUNDS["gamma"][1]),
-        "n_estimators": hp.quniform("n_estimators", DEFAULT_BOUNDS["n_estimators"][0], DEFAULT_BOUNDS["n_estimators"][1], 1),
-    }
+        casted = _cast_ints(params)
+        ev = evaluate_xgb_cv(casted, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
+        acc = ev.metrics.get("Accuracy_Mean")
+        if acc is None:
+            raise KeyError("Accuracy_Mean not found in EvalResult.metrics")
+        return {"loss": -float(acc), "status": STATUS_OK}
 
     trials = Trials()
-
     t0 = time.perf_counter()
-    fmin(
+    best = fmin(
         fn=objective,
         space=space,
         algo=tpe.suggest,
-        max_evals=budget,
+        max_evals=int(budget),
         trials=trials,
         rstate=np.random.default_rng(seed),
-        show_progressbar=False,
+        show_progressbar=True,
     )
     opt_time = time.perf_counter() - t0
 
-    best_trial = min(trials.results, key=lambda r: r["loss"])
-    best_eval = cast(Dict[str, Any], best_trial["eval"])
+    best_params = _cast_ints(cast(Dict[str, Any], best))
+    best_eval = _eval_params(best_params, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
 
     best_eval["method"] = "hyperopt_tpe"
     best_eval["budget"] = int(budget)
@@ -318,5 +385,8 @@ def hyperopt_tpe(
 
 
 def save_benchmark_summary(rows: List[Dict[str, Any]], path: str) -> None:
+    """Save a one-row-per-method benchmark summary as pt-BR friendly CSV."""
+    if not rows:
+        raise ValueError("rows is empty")
     df = pd.DataFrame(rows)
     save_csv_ptbr(df, path)

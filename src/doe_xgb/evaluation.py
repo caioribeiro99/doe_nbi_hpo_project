@@ -29,6 +29,16 @@ class EvalResult:
     time_mean_fold: float
     params: Dict
 
+    def as_dict(self) -> Dict[str, float | Dict]:
+        """Flatten evaluation outputs to a single dict.
+
+        This helper exists so downstream modules (benchmarks, scripts) can
+        treat CV outputs uniformly.
+        """
+        out: Dict[str, float | Dict] = dict(self.metrics)
+        out["Time_MeanFold"] = float(self.time_mean_fold)
+        return out
+
 
 def evaluate_xgb_cv(
     params: Dict,

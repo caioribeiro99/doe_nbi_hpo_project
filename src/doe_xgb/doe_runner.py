@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import List
+from threading import RLock
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from tqdm import tqdm
+
+# Use a thread-based lock instead of multiprocessing lock
+# This keeps the progress bar and avoids SemLock / resource_tracker on macOS.
+tqdm.set_lock(RLock())
 
 from .config import PARAM_NAMES
 from .evaluation import evaluate_xgb_cv
@@ -24,6 +29,7 @@ def run_doe(
     tree_method: str = "hist",
 ) -> pd.DataFrame:
     """Run DOE evaluation for every row in the design matrix."""
+
     X_np = X.to_numpy()
     y_np = y.to_numpy()
 
@@ -31,9 +37,17 @@ def run_doe(
 
     results: List[dict] = []
 
-    # Keep all original design columns + computed metrics
-    for _, row in tqdm(design_df.iterrows(), total=len(design_df), desc="DOE runs"):
+    iterator = tqdm(
+        design_df.iterrows(),
+        total=len(design_df),
+        desc="DOE runs",
+        dynamic_ncols=True,
+        miniters=1,
+    )
+
+    for _, row in iterator:
         params = {k: row[k] for k in PARAM_NAMES if k in design_df.columns}
+
         ev = evaluate_xgb_cv(
             params,
             X_np,
@@ -44,6 +58,7 @@ def run_doe(
             tree_method=tree_method,
             measure="fit_predict",
         )
+
         out = {c: row[c] for c in design_df.columns}
         out.update(ev.metrics)
         out["Time_MeanFold"] = ev.time_mean_fold
