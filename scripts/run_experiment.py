@@ -9,7 +9,8 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+import pandas as pd
 
 from dotenv import load_dotenv
 
@@ -51,6 +52,24 @@ def _env_bool(name: str, default: bool) -> bool:
     if v is None or v.strip() == "":
         return default
     return v.strip().lower() in {"1", "true", "t", "yes", "y", "on"}
+
+
+def _maybe_read_confirmation_summary(csv_path: Path, replica: int, seed: int) -> Optional["pd.DataFrame"]:
+    """
+    Read one replica's confirmation_summary.csv and add replica/seed columns.
+    Returns None if the file does not exist.
+    """
+    if not csv_path.exists():
+        return None
+    try:
+        import pandas as pd  # local import to keep runner usable even if pandas isn't installed
+    except Exception:
+        return None
+
+    df = pd.read_csv(csv_path, sep=";", decimal=",")
+    df.insert(0, "replica", int(replica))
+    df.insert(1, "seed", int(seed))
+    return df
 
 
 def main() -> None:
@@ -135,6 +154,13 @@ def main() -> None:
         default=_env_bool("CONTINUE_ON_ERROR", True),
         help="If true, keeps running even if a replica fails (default from env CONTINUE_ON_ERROR)",
     )
+    
+    p.add_argument(
+        "--export-union",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="If true, writes a union CSV of all confirmation_summary.csv with replica+seed columns (default: true).",
+    )
 
     args = p.parse_args()
 
@@ -185,8 +211,10 @@ def main() -> None:
     print(f"- beta step: {args.beta_step}")
     print(f"- nbi eval k: {args.nbi_eval_k} (<=0 means all)")
     print(f"- benchmark budget: {args.budget} (<=0 means auto-fairness)")
+    print(f"- export union: {bool(args.export_union)}")
 
     results: List[Dict[str, Any]] = []
+    union_frames: List["pd.DataFrame"] = []
     start_all = time.perf_counter()
 
     for i, seed in enumerate(seeds, start=1):
@@ -203,7 +231,7 @@ def main() -> None:
             str(i),
             "--seed",
             str(seed),
-            "--out-root",
+            "--out_root",
             str(out_root),
             "--target",
             str(args.target),
@@ -221,11 +249,11 @@ def main() -> None:
         else:
             cmd.append("--no-nbi-constrain-pred-range")
 
+        out_dir = build_replica_dir(out_root, dataset_path, design_path, replica=i)
+
         try:
-            # Let run_replica stream output to the terminal; it will also write its own run_replica.log
             subprocess.run(cmd, cwd=str(REPO_ROOT), check=True)
 
-            out_dir = build_replica_dir(out_root, dataset_path, design_path, replica=i)
             results.append(
                 {
                     "replica": i,
@@ -237,7 +265,6 @@ def main() -> None:
             )
 
         except subprocess.CalledProcessError as e:
-            out_dir = build_replica_dir(out_root, dataset_path, design_path, replica=i)
             print(f"✗ Replica {i:02d} failed: run_replica.py exited with code {e.returncode}")
             print(f"  - Logs: {out_dir / 'run_replica.log'}")
             results.append(
@@ -253,10 +280,31 @@ def main() -> None:
             if not args.continue_on_error:
                 break
 
+        # Collect union (after each replica, whether ok or failed)
+        if args.export_union:
+            df = _maybe_read_confirmation_summary(out_dir / "confirmation_summary.csv", replica=i, seed=seed)
+            if df is not None:
+                union_frames.append(df)
+
     elapsed = time.perf_counter() - start_all
 
     # Save replica list
     (exp_dir / "replica_runs.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+
+    # Save union CSV (no aggregation) if requested and possible
+    union_path = exp_dir / "confirmation_summary_all_replicas.csv"
+    if args.export_union:
+        try:
+            import pandas as pd
+
+            if union_frames:
+                union_df = pd.concat(union_frames, ignore_index=True)
+                union_df.to_csv(union_path, sep=";", decimal=",", index=False, encoding="utf-8")
+                print(f"- Union:    {union_path}")
+            else:
+                print("- Union:    (no confirmation_summary.csv files found yet)")
+        except Exception as e:
+            print(f"- Union:    (skipped; could not write union CSV: {e})")
 
     print("\n✅ Experiment runner finished")
     print(f"- Manifest: {exp_manifest_path}")
