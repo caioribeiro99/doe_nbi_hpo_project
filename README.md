@@ -1,40 +1,34 @@
-# DOE + RSM + NBI Pipeline (XGBoost)
+# DOE + FA/PCA + RSM + NBI for Multi-Objective HPO (XGBoost)
 
-This repository provides a **reproducible, end-to-end pipeline** to run:
+This repository provides a **reproducible end-to-end pipeline** for **multi-objective hyperparameter tuning** of XGBoost (binary classification) using:
 
-1. **DOE execution** (e.g., CCD face-centered exported from Minitab) to evaluate XGBoost hyperparameters with CV  
-2. **Factor Analysis** (z-score + PCA/Factor extraction + Varimax rotation) to obtain **orthogonal factor scores**
-3. **RSM (quadratic) + backward elimination** (α = 0.05, hierarchical)
-4. **NBI-like multiobjective optimization** (beta weight grid) to generate candidate hyperparameter sets
-5. **Confirmation run** + benchmark optimizers (**Grid / Random / Bayesian / Hyperopt (TPE)**)
+1. **DOE execution** (design matrix CSV) to evaluate hyperparameter configurations with stratified CV  
+2. **Factor Analysis via PCA + Varimax rotation** to build two orthogonal objective scores:
+   - **Score_Quality** (maximize)
+   - **Score_Cost** (minimize; derived from `Time_MeanFold`)
+3. **RSM (quadratic) + backward elimination** to fit surrogate response surfaces
+4. **NBI-like candidate generation** using a **β grid** (e.g., step = 0.02)
+5. **Confirmation run** + benchmark optimizers (**coarse grid / random / bayes / hyperopt (TPE)**) under a **fairness-by-evaluations** budget
 
-The code was modularized from the original Jupyter workflow (replicas differed only by seed).
+Outputs are written under:
+
+`experiments/<dataset_stem>/<design_stem>/replica_XX/`
 
 ---
 
 ## Quickstart
 
-### Option A — Recommended: run the setup script
-
-**macOS / Linux (bash or zsh):**
-
-```bash
-./setup.sh
-```
-
-**Windows PowerShell:**
-
-```powershell
-./setup.ps1
-```
-
-### Option B — Manual setup
+### 1) Create and activate a virtual environment
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # macOS/Linux (bash or zsh)
-# .venv\Scripts\activate  # Windows (PowerShell)
+source .venv/bin/activate   # macOS/Linux
+# .venv\Scripts\activate  # Windows PowerShell
+```
 
+### 2) Install dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
@@ -44,19 +38,21 @@ pip install -r requirements.txt
 brew install libomp
 ```
 
+### 3) Optional: configure defaults via `.env`
+
+Copy `.env.example` to `.env` and edit paths/parameters as needed.
+
 ---
 
 ## Inputs
 
-Put your files here:
-
-- Dataset (xlsx/csv/parquet): `data/source/`
-- DOE design CSV exported from Minitab: `data/design/`
+- Dataset: put under `data/source/` (xlsx/csv/parquet)
+- DOE design CSV: put under `data/design/`
 
 Dataset requirement:
 
-- A target column named `y` by default (override with `--target` or `TARGET_COL` in `.env`).
-- For the MAGIC Gamma Telescope example, the code maps `{g,h}` to `{0,1}`.
+- A target column named `y` by default (override with `--target` or `TARGET_COL`).
+- For the MAGIC Gamma Telescope example, the pipeline maps `{g,h}` → `{0,1}` inside `scripts/run_replica.py`.
 
 ---
 
@@ -72,70 +68,103 @@ python scripts/run_replica.py \
   --seed 42
 ```
 
-### Run the full experiment (N replicas)
+Key useful flags:
+
+- `--n-splits` (default 5)
+- `--n-jobs` (default -1)
+- `--beta-step` (default 0.02)
+- `--nbi-eval-k` (0 = evaluate all unique NBI candidates; otherwise evaluate top-k)
+- `--nbi-n-starts` (multi-starts for the NBI optimizer)
+- `--budget` (benchmark budget; `0` means auto-match fairness)
+
+---
+
+### Run 30 replicas (automatic experiment runner)
+
+**Recommended (explicit args):**
 
 ```bash
-python scripts/run_experiment.py
+python scripts/run_experiment.py \
+  --dataset data/source/telescope2.xlsx \
+  --design  data/design/hyperparameter_design.csv \
+  --n-replicas 30 \
+  --seed-base 42
 ```
 
-By default it reads `.env` (optional) and runs `N_REPLICAS` replicas.
+This will:
 
-Outputs will be saved under:
-`experiments/<dataset_name>/<design_name>/replica_XX/`
+- generate 30 seeds from `seed-base`
+- run `scripts/run_replica.py` for replicas `01..30`
+- write a global manifest + a run list JSON under:
+
+`experiments/<dataset_stem>/<design_stem>/experiment_manifest.json`  
+`experiments/<dataset_stem>/<design_stem>/replica_runs.json`
+
+**If you already set `DATASET_PATH` and `DESIGN_PATH` in `.env`, you can run:**
+
+```bash
+python scripts/run_experiment.py --n-replicas 30 --seed-base 42
+```
 
 ---
 
 ## Budget and fairness
 
-**Key point:** every "evaluation" is one hyperparameter configuration evaluated with **5-fold CV**.
+**Key point:** each “evaluation” is one hyperparameter configuration evaluated with **k-fold stratified CV**.
 
-- DOE stage already consumes `DOE_RUNS` evaluations (e.g., 88 for the CCD you generated).
-- Confirmation stage evaluates at most `NBI_EVAL_K` NBI candidates.
+- DOE stage consumes `DOE_RUNS` evaluations (e.g., 88)
+- NBI confirmation consumes `NBI_EVAL_K` evaluations (e.g., 50)
 
-So the total evaluations used by DOE+NBI is approximately:
+So the fairness-matched budget is:
+
+`TOTAL_EVALS_DOE_NBI = DOE_RUNS + NBI_EVAL_K`
+
+Benchmarks are run with the **same evaluation budget**.
+
+### How fairness is implemented
+
+If `BENCHMARK_BUDGET <= 0` (or `--budget 0`), the experiment runner passes `--budget 0` to each replica, and the replica auto-matches budgets to `DOE_RUNS + NBI_EVAL_K`.
+
+If you want to force a budget:
 
 ```bash
-TOTAL_EVALS_DOE_NBI = DOE_RUNS + NBI_EVAL_K
+python scripts/run_experiment.py --budget 200
 ```
-
-Benchmarks must be compared with the same evaluation budget to be fair.
-
-### How fairness is implemented (default)
-
-If `BUDGET=0` (or `--budget 0`), the pipeline **auto-matches** benchmark budgets to:
-`DOE_RUNS + NBI_EVAL_K`.
-
-You can force a specific budget with `--budget <int>` (or `.env:BUDGET`).
 
 ---
 
 ## Key experimental decisions (frozen)
 
-- Replica seed affects **both**:
+- Replica seed affects both:
   - CV split: `StratifiedKFold(shuffle=True, random_state=seed)`
   - XGBoost: `random_state=seed`
 - Time metric: **mean time per fold** (fit + predict), measured with `time.perf_counter()`
-- Parallelism: XGBoost `n_jobs = -1` (applied to all methods)
-- Integers: `max_depth = int(round(...))`, `n_estimators = int(round(...))`
-- FA: z-score standardization + PCA/Factor extraction + **Varimax rotation**
-- RSM: quadratic + **backward elimination** with α = 0.05, keeping hierarchy
-- Benchmarks: Grid / Random / Bayesian / Hyperopt (TPE) within the same bounds as the DOE
+- Parallelism: XGBoost `n_jobs = -1` applied to all methods (fairness)
+- Integers: `max_depth`, `n_estimators` are rounded to int
+- FA: z-score standardization + PCA + **Varimax**
+- RSM: quadratic + backward elimination (α = 0.05)
+- Benchmarks: coarse grid / random / bayes / hyperopt (TPE)
 
 ---
 
-## Environment variables
+## Environment variables (optional)
 
-Copy `.env.example` to `.env` and edit if you want defaults:
+`run_experiment.py` reads `.env` and supports these variables as defaults:
 
-- `N_REPLICAS` (default: 30)
-- `SEED_BASE` (default: 42)
-- `NBI_BETA_STEP` (default: 0.02)
-- `NBI_EVAL_K` (default: 20)
-- `BUDGET` (default: 0 = auto-match)
+- `DATASET_PATH` (dataset path)
+- `DESIGN_PATH` (DOE design CSV path)
+- `OUT_ROOT` (default: `experiments`)
+- `TARGET_COL` (default: `y`)
+- `N_REPLICAS` (default: `30`)
+- `SEED_BASE` (default: `42`)
+- `BENCHMARK_BUDGET` (default: `0` → auto-fairness)
+- `NBI_BETA_STEP` (default: `0.02`)
+- `NBI_EVAL_K` (default: `0` in CLI; if set > 0 evaluates top-k)
+- `NBI_N_STARTS` (default: `10`)
 
 ---
 
 ## Notes
 
-- CSV outputs use `sep=';'` and `decimal=','` (Minitab/Excel friendly in pt-BR locale).
-- File names are in English by design; content may include Portuguese field names for compatibility.
+- CSV outputs use `sep=';'` and `decimal=','` (Excel/Minitab friendly in pt-BR locale).
+- Outputs are not meant to be committed (use `.gitignore` to keep `experiments/` out).
