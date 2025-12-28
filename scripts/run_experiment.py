@@ -42,6 +42,12 @@ def _env_int(name: str, default: int) -> int:
         return int(default)
     return int(v)
 
+def _env_float(name: str, default: float) -> float:
+    v = os.getenv(name)
+    if v is None or str(v).strip() == "":
+        return float(default)
+    return float(v)
+
 
 def _env_str(name: str, default: str | None = None) -> str | None:
     v = os.getenv(name)
@@ -91,8 +97,26 @@ def main() -> None:
     p.add_argument(
         "--budget",
         type=int,
-        default=_env_int("BUDGET", 40),
+        default=_env_int("BUDGET", 0),
         help="Budget for benchmark methods. CLI > .env:BUDGET",
+    )
+    p.add_argument(
+        "--beta-step",
+        type=float,
+        default=_env_float("NBI_BETA_STEP", 0.05),
+        help="NBI beta step (e.g., 0.05 or 0.02). CLI > .env:NBI_BETA_STEP",
+    )
+    p.add_argument(
+        "--nbi-eval-k",
+        type=int,
+        default=_env_int("NBI_EVAL_K", 20),
+        help="Max # NBI candidates to evaluate per replica. CLI > .env:NBI_EVAL_K",
+    )
+    p.add_argument(
+        "--nbi-n-starts",
+        type=int,
+        default=_env_int("NBI_N_STARTS", 10),
+        help="NBI multi-starts per beta (cheap). CLI > .env:NBI_N_STARTS",
     )
     p.add_argument(
         "--n",
@@ -202,6 +226,12 @@ def main() -> None:
             str(out_root),
             "--budget",
             str(int(args.budget)),
+            "--beta-step",
+            str(float(args.beta_step)),
+            "--nbi-eval-k",
+            str(int(args.nbi_eval_k)),
+            "--nbi-n-starts",
+            str(int(args.nbi_n_starts)),
             "--target",
             str(args.target),
         ]

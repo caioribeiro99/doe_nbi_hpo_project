@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import time
+import itertools
 from typing import Any, Dict, List, Tuple, cast
 
 import numpy as np
@@ -9,7 +10,7 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold, ParameterSampler
 from tqdm import tqdm
 
-from .config import DEFAULT_BOUNDS, INT_PARAMS
+from .config import DEFAULT_BOUNDS, INT_PARAMS, PARAM_NAMES
 from .evaluation import evaluate_xgb_cv
 from .io_utils import save_csv_ptbr
 
@@ -140,42 +141,48 @@ def coarse_grid_search(
     *,
     seed: int,
     budget: int = 40,
+    bounds: Dict[str, Tuple[float, float]] = DEFAULT_BOUNDS,
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
 ) -> Dict[str, Any]:
-    """Coarse Grid baseline bounded by budget.
+    """Coarse Grid Search baseline bounded by budget.
 
-    Strategy: vary (learning_rate, max_depth, n_estimators) on {low, center, high}
-    while keeping other params at center. Then truncate to `budget`.
+    We build a **3-level grid** for *all* hyperparameters: {center, low, high},
+    and evaluate at most `budget` points (deterministic order, center-first).
+    This keeps the method "grid-like" while supporting budgets > 27.
     """
-    def center(p: str) -> float:
-        lo, hi = DEFAULT_BOUNDS[p]
-        return (lo + hi) / 2.0
+    if budget < 1:
+        raise ValueError("budget must be >= 1")
 
-    grid_lr = [DEFAULT_BOUNDS["learning_rate"][0], center("learning_rate"), DEFAULT_BOUNDS["learning_rate"][1]]
-    grid_md = [int(DEFAULT_BOUNDS["max_depth"][0]), int(round(center("max_depth"))), int(DEFAULT_BOUNDS["max_depth"][1])]
-    grid_ne = [int(DEFAULT_BOUNDS["n_estimators"][0]), int(round(center("n_estimators"))), int(DEFAULT_BOUNDS["n_estimators"][1])]
+    # Build 3 levels per parameter: center-first ordering
+    levels: Dict[str, List[float]] = {}
+    for p, (lo, hi) in bounds.items():
+        mid = (float(lo) + float(hi)) / 2.0
+        # center-first improves typical performance vs starting at all-lows
+        if p in INT_PARAMS:
+            vals = [int(round(mid)), int(round(lo)), int(round(hi))]
+        else:
+            vals = [float(mid), float(lo), float(hi)]
+        # Remove duplicates if bounds collapse
+        uniq: List[float] = []
+        for v in vals:
+            if v not in uniq:
+                uniq.append(v)
+        levels[p] = uniq
 
-    base_params = {
-        "subsample": center("subsample"),
-        "colsample_bytree": center("colsample_bytree"),
-        "colsample_bylevel": center("colsample_bylevel"),
-        "gamma": center("gamma"),
-    }
-
+    # Deterministic cartesian product in PARAM_NAMES order
     candidates: List[Dict[str, Any]] = []
-    for lr in grid_lr:
-        for md in grid_md:
-            for ne in grid_ne:
-                p = dict(base_params)
-                p.update({"learning_rate": float(lr), "max_depth": int(md), "n_estimators": int(ne)})
-                candidates.append(p)
-
-    candidates = candidates[:budget]
+    for combo in itertools.product(*[levels[p] for p in PARAM_NAMES]):
+        cand: Dict[str, Any] = {p: v for p, v in zip(PARAM_NAMES, combo)}
+        candidates.append(cand)
+        if len(candidates) >= budget:
+            break
 
     t0 = time.perf_counter()
-    best, _ = evaluate_candidate_list(candidates, X, y, seed=seed, n_splits=n_splits, n_jobs=n_jobs, tree_method=tree_method)
+    best, _ = evaluate_candidate_list(
+        candidates, X, y, seed=seed, n_splits=n_splits, n_jobs=n_jobs, tree_method=tree_method
+    )
     opt_time = time.perf_counter() - t0
 
     best["method"] = "coarse_grid_search"
@@ -183,7 +190,6 @@ def coarse_grid_search(
     best["Optimization_Time_Seconds"] = float(opt_time)
     best["Total_Time_Seconds"] = float(opt_time + float(best.get("Time_MeanFold", 0.0)))
     return best
-
 
 def bayes_search(
     X: pd.DataFrame,

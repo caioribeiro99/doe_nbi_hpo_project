@@ -1,12 +1,12 @@
 # DOE + RSM + NBI Pipeline (XGBoost)
 
-This repository is a **reproducible pipeline** to run:
+This repository provides a **reproducible, end-to-end pipeline** to run:
 
-1. **DOE execution** (e.g., CCD face-centered) to evaluate XGBoost hyperparameters with CV
-2. **Factor Analysis (ML + Varimax)** to obtain rotated factor scores (Quality vs Cost)
+1. **DOE execution** (e.g., CCD face-centered exported from Minitab) to evaluate XGBoost hyperparameters with CV  
+2. **Factor Analysis** (z-score + PCA/Factor extraction + Varimax rotation) to obtain **orthogonal factor scores**
 3. **RSM (quadratic) + backward elimination** (α = 0.05, hierarchical)
-4. **NBI-like multiobjective optimization** (beta grid) to generate candidate hyperparameter sets
-5. **Confirmation run** + benchmark optimizers (Grid / Random / Bayes / Hyperopt)
+4. **NBI-like multiobjective optimization** (beta weight grid) to generate candidate hyperparameter sets
+5. **Confirmation run** + benchmark optimizers (**Grid / Random / Bayesian / Hyperopt (TPE)**)
 
 The code was modularized from the original Jupyter workflow (replicas differed only by seed).
 
@@ -14,54 +14,26 @@ The code was modularized from the original Jupyter workflow (replicas differed o
 
 ## Quickstart
 
-### Recommended: run the setup script (macOS / Linux)
+### Option A — Recommended: run the setup script
 
-This is the **recommended way** to set up the environment, as it encapsulates all required steps
-(virtual environment creation, dependency installation, and macOS-specific requirements).
+**macOS / Linux (bash or zsh):**
 
 ```bash
-chmod +x setup.sh
 ./setup.sh
 ```
 
-Optional flags:
-
-```bash
-./setup.sh --no-venv            # install into current Python environment
-./setup.sh --python python3.11  # choose a specific Python executable
-./setup.sh --no-libomp          # skip libomp installation on macOS
-```
-
-### Recommended: run the setup script (Windows PowerShell)
+**Windows PowerShell:**
 
 ```powershell
-.\setup.ps1
+./setup.ps1
 ```
 
-Optional flags:
-
-```powershell
-.\setup.ps1 -NoVenv
-.\setup.ps1 -Python python
-```
-
-> If your PowerShell blocks script execution, you may need to run:
-> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
-> If you prefer not to use scripts, follow the **manual setup** below (or use WSL).
-
----
-
-### Manual setup (alternative)
-
-If you prefer to run each command individually, follow the steps below
-(equivalent to the setup script).
-
-#### 1) Create environment
+### Option B — Manual setup
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # macOS/Linux
-# .venv\Scripts\activate  # Windows
+source .venv/bin/activate   # macOS/Linux (bash or zsh)
+# .venv\Scripts\activate  # Windows (PowerShell)
 
 pip install -r requirements.txt
 ```
@@ -74,114 +46,96 @@ brew install libomp
 
 ---
 
-### 2) Put your inputs
+## Inputs
 
-- Dataset (xlsx / csv / parquet): `data/source/`
+Put your files here:
+
+- Dataset (xlsx/csv/parquet): `data/source/`
 - DOE design CSV exported from Minitab: `data/design/`
+
+Dataset requirement:
+
+- A target column named `y` by default (override with `--target` or `TARGET_COL` in `.env`).
+- For the MAGIC Gamma Telescope example, the code maps `{g,h}` to `{0,1}`.
 
 ---
 
-### 3) Run one replica end-to-end (example)
+## Run
+
+### Run a single replica (end-to-end)
 
 ```bash
 python scripts/run_replica.py \
   --dataset data/source/telescope2.xlsx \
   --design  data/design/hyperparameter_design.csv \
-  --replica 1
+  --replica 1 \
+  --seed 42
 ```
 
-Outputs will be saved under:
-
-```bash
-experiments/<dataset_name>/<design_name>/replica_01/
-
-```
-
----
-
-### 4) Run the full experiment (N replicas)
-
-If you want to run the whole study (e.g., **30 replicas**), the recommended
-way is to create a `.env` file (optional but convenient) and use the experiment
-runner.
-
-#### Option A: using `.env` (recommended)
-
-```bash
-# macOS/Linux
-cp .env.example .env
-
-# Windows PowerShell
-# copy .env.example .env
-```
-
-Then run:
+### Run the full experiment (N replicas)
 
 ```bash
 python scripts/run_experiment.py
 ```
 
-#### Option B: all arguments via CLI
+By default it reads `.env` (optional) and runs `N_REPLICAS` replicas.
+
+Outputs will be saved under:
+`experiments/<dataset_name>/<design_name>/replica_XX/`
+
+---
+
+## Budget and fairness
+
+**Key point:** every "evaluation" is one hyperparameter configuration evaluated with **5-fold CV**.
+
+- DOE stage already consumes `DOE_RUNS` evaluations (e.g., 88 for the CCD you generated).
+- Confirmation stage evaluates at most `NBI_EVAL_K` NBI candidates.
+
+So the total evaluations used by DOE+NBI is approximately:
 
 ```bash
-python scripts/run_experiment.py \
-  --dataset data/source/telescope2.xlsx \
-  --design  data/design/hyperparameter_design.csv \
-  --n 30 \
-  --seed-base 42 \
-  --budget 40
+TOTAL_EVALS_DOE_NBI = DOE_RUNS + NBI_EVAL_K
 ```
 
-The experiment runner will:
+Benchmarks must be compared with the same evaluation budget to be fair.
 
-- Generate a deterministic seed list
-- Run `run_replica.py` for each replica
-- Write logs per replica
-- Aggregate all `confirmation_summary.csv` files into a single `experiment_summary.csv`
+### How fairness is implemented (default)
+
+If `BUDGET=0` (or `--budget 0`), the pipeline **auto-matches** benchmark budgets to:
+`DOE_RUNS + NBI_EVAL_K`.
+
+You can force a specific budget with `--budget <int>` (or `.env:BUDGET`).
 
 ---
 
 ## Key experimental decisions (frozen)
 
 - Replica seed affects **both**:
-  - CV split: `StratifiedKFold(random_state=seed)`
+  - CV split: `StratifiedKFold(shuffle=True, random_state=seed)`
   - XGBoost: `random_state=seed`
 - Time metric: **mean time per fold** (fit + predict), measured with `time.perf_counter()`
 - Parallelism: XGBoost `n_jobs = -1` (applied to all methods)
 - Integers: `max_depth = int(round(...))`, `n_estimators = int(round(...))`
-- Factor Analysis: **Maximum Likelihood + Varimax**, 2 factors
+- FA: z-score standardization + PCA/Factor extraction + **Varimax rotation**
 - RSM: quadratic + **backward elimination** with α = 0.05, keeping hierarchy
-- Benchmark fairness: same budget `BUDGET = 40` evaluations (default)
+- Benchmarks: Grid / Random / Bayesian / Hyperopt (TPE) within the same bounds as the DOE
 
 ---
 
-## Scripts
+## Environment variables
 
-- `scripts/run_doe.py` – run DOE evaluation and save `doe_results.csv`
-- `scripts/run_fa_rsm.py` – run FA + fit RSM models and save coefficients
-- `scripts/run_nbi.py` – generate NBI candidates from RSM coefficients
-- `scripts/run_confirmation.py` – evaluate NBI candidates + benchmark methods
-- `scripts/run_replica.py` – run all steps in sequence for one replica
-- `scripts/run_seeds.py` – generate the deterministic seed list (CLI > .env > defaults)
-- `scripts/run_experiment.py` – run **all replicas** and aggregate results
+Copy `.env.example` to `.env` and edit if you want defaults:
 
----
-
-## Reproducibility outputs
-
-For each replica:
-
-- `manifest.json` — includes `replica`, `seed`, and SHA-256 hashes of the dataset/design inputs
-- `run_replica.log` — full stdout/stderr log captured by the experiment runner
-
-For the full experiment (dataset + design):
-
-- `experiment_manifest.json` — seed list + per-replica status
-- `experiment_summary.csv` — concatenation of each replica's `confirmation_summary.csv`
+- `N_REPLICAS` (default: 30)
+- `SEED_BASE` (default: 42)
+- `NBI_BETA_STEP` (default: 0.02)
+- `NBI_EVAL_K` (default: 20)
+- `BUDGET` (default: 0 = auto-match)
 
 ---
 
 ## Notes
 
-- CSV outputs use `sep=';'` and `decimal=','` (Minitab / Excel friendly in pt-BR locale).
-- All file names are in English by design; content may contain Portuguese field names for compatibility.
+- CSV outputs use `sep=';'` and `decimal=','` (Minitab/Excel friendly in pt-BR locale).
+- File names are in English by design; content may include Portuguese field names for compatibility.
