@@ -6,7 +6,7 @@ from __future__ import annotations
 Design goals for this script:
   - Keep the original repo methodology: DOE -> RSM -> NBI (optionally DOE-refine -> RSM -> NBI).
   - Avoid touching src/doe_xgb/nbi.py (to keep merge with main safe).
-  - Provide progress bars (DOE, NBI evaluations, baselines).
+  - Provide progress indicators (DOE, NBI evaluations, baselines).
   - Keep Pylance happy (explicit casts, correct nbi.py signature).
 """
 
@@ -21,7 +21,6 @@ from typing import Any, Dict, IO, List, Optional, Tuple, cast
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from tqdm import tqdm
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(REPO_ROOT / "src"))
@@ -319,6 +318,23 @@ def main() -> None:
     # NBI
     p.add_argument("--beta-step", type=float, default=0.01)
     p.add_argument("--nbi-eval-k", type=int, default=60)
+    p.add_argument(
+        "--nbi-eval-k-stage1",
+        type=int,
+        default=None,
+        help="Optional override for how many NBI candidates to evaluate in stage1 (default: --nbi-eval-k).",
+    )
+    p.add_argument(
+        "--nbi-eval-k-stage2",
+        type=int,
+        default=None,
+        help="Optional override for how many NBI candidates to evaluate in stage2 (default: --nbi-eval-k).",
+    )
+    p.add_argument(
+        "--skip-nbi-stage2",
+        action="store_true",
+        help="If --refine is enabled, run refine DOE + refit RSM but skip running/evaluating NBI stage2.",
+    )
     p.add_argument("--nbi-n-starts", type=int, default=50)
     p.add_argument("--nbi-constrain-pred-range", action="store_true")
 
@@ -345,6 +361,11 @@ def main() -> None:
 
     args = p.parse_args()
 
+    # Phase A controls: evaluate different numbers of NBI candidates per stage
+    # (defaults to --nbi-eval-k when stage-specific values are not provided)
+    nbi_eval_k_stage1 = int(args.nbi_eval_k_stage1) if args.nbi_eval_k_stage1 is not None else int(args.nbi_eval_k)
+    nbi_eval_k_stage2 = int(args.nbi_eval_k_stage2) if args.nbi_eval_k_stage2 is not None else int(args.nbi_eval_k)
+
     dataset_path = Path(args.dataset)
     design_path = Path(args.design)
     out_root = Path(args.out_root)
@@ -368,6 +389,9 @@ def main() -> None:
             "args": {
                 "beta_step": float(args.beta_step),
                 "nbi_eval_k": int(args.nbi_eval_k),
+                "nbi_eval_k_stage1": int(nbi_eval_k_stage1),
+                "nbi_eval_k_stage2": int(nbi_eval_k_stage2),
+                "skip_nbi_stage2": bool(args.skip_nbi_stage2),
                 "nbi_n_starts": int(args.nbi_n_starts),
                 "nbi_constrain_pred_range": bool(args.nbi_constrain_pred_range),
                 "n_splits": int(args.n_splits),
@@ -459,7 +483,7 @@ def main() -> None:
             save_csv_ptbr(df_nbi_1, out_dir / "nbi_candidates_stage1_fairness.csv")
 
             # Pick K to evaluate (evenly across beta_2)
-            nbi_evalset_1 = _pick_evenly(df_nbi_1, int(args.nbi_eval_k), sort_col="beta_2")
+            nbi_evalset_1 = _pick_evenly(df_nbi_1, nbi_eval_k_stage1, sort_col="beta_2")
             nbi_evalset_1_params = cast(pd.DataFrame, nbi_evalset_1[PARAM_NAMES].copy())
 
             t0 = time.perf_counter()
@@ -552,46 +576,49 @@ def main() -> None:
                 save_rsm_coefficients(model_q2, str(out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv"))
                 save_rsm_coefficients(model_f2, str(out_dir / "rsm_coefficients_fairness_score_stage2.csv"))
 
-                utopia2, nadir2 = _range_for_nbi(stage2_doe, quality_floor=float(args.nbi_range_quality_floor))
+                if bool(args.skip_nbi_stage2):
+                    print("Skipping NBI stage2 (refine-only).", flush=True)
+                else:
+                    utopia2, nadir2 = _range_for_nbi(stage2_doe, quality_floor=float(args.nbi_range_quality_floor))
 
-                t0 = time.perf_counter()
-                nbi_candidates_2 = run_nbi_weighted_sum(
-                    load_coefficients_csv(str(out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv")),
-                    load_coefficients_csv(str(out_dir / "rsm_coefficients_fairness_score_stage2.csv")),
-                    observed_utopia=utopia2,
-                    observed_nadir=nadir2,
-                    beta_step=float(args.beta_step),
-                    seed=int(seed + 40_000),
-                    n_starts=int(args.nbi_n_starts),
-                    constrain_pred_range=bool(args.nbi_constrain_pred_range),
-                )
-                stage_times["nbi_stage2_seconds"] = float(time.perf_counter() - t0)
+                    t0 = time.perf_counter()
+                    nbi_candidates_2 = run_nbi_weighted_sum(
+                        load_coefficients_csv(str(out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv")),
+                        load_coefficients_csv(str(out_dir / "rsm_coefficients_fairness_score_stage2.csv")),
+                        observed_utopia=utopia2,
+                        observed_nadir=nadir2,
+                        beta_step=float(args.beta_step),
+                        seed=int(seed + 40_000),
+                        n_starts=int(args.nbi_n_starts),
+                        constrain_pred_range=bool(args.nbi_constrain_pred_range),
+                    )
+                    stage_times["nbi_stage2_seconds"] = float(time.perf_counter() - t0)
 
-                df_nbi_2_raw = nbi_candidates_to_df(nbi_candidates_2)
-                df_nbi_2 = _flatten_nbi_params(df_nbi_2_raw)
-                df_nbi_2 = df_nbi_2.drop_duplicates(subset=PARAM_NAMES).reset_index(drop=True)
-                save_csv_ptbr(df_nbi_2, out_dir / "nbi_candidates_stage2_fairness.csv")
+                    df_nbi_2_raw = nbi_candidates_to_df(nbi_candidates_2)
+                    df_nbi_2 = _flatten_nbi_params(df_nbi_2_raw)
+                    df_nbi_2 = df_nbi_2.drop_duplicates(subset=PARAM_NAMES).reset_index(drop=True)
+                    save_csv_ptbr(df_nbi_2, out_dir / "nbi_candidates_stage2_fairness.csv")
 
-                nbi_evalset_2 = _pick_evenly(df_nbi_2, int(args.nbi_eval_k), sort_col="beta_2")
-                nbi_evalset_2_params = cast(pd.DataFrame, nbi_evalset_2[PARAM_NAMES].copy())
+                    nbi_evalset_2 = _pick_evenly(df_nbi_2, nbi_eval_k_stage2, sort_col="beta_2")
+                    nbi_evalset_2_params = cast(pd.DataFrame, nbi_evalset_2[PARAM_NAMES].copy())
 
-                t0 = time.perf_counter()
-                nbi_eval_2 = run_doe_fairness(
-                    design_df=nbi_evalset_2_params,
-                    X=X,
-                    y=y,
-                    protected=protected,
-                    seed=seed + 50_000,
-                    n_splits=int(args.n_splits),
-                    n_jobs=int(args.n_jobs),
-                    tree_method=str(args.tree_method),
-                    auto_scale_pos_weight=bool(auto_spw),
-                    stratify_by_group=bool(args.stratify_by_group),
-                    privileged_value=1,
-                    desc=f"Evaluating NBI stage2 candidates ({len(nbi_evalset_2_params)})",
-                )
-                stage_times["nbi_stage2_eval_seconds"] = float(time.perf_counter() - t0)
-                save_csv_ptbr(nbi_eval_2, out_dir / "nbi_evaluated_stage2_fairness.csv")
+                    t0 = time.perf_counter()
+                    nbi_eval_2 = run_doe_fairness(
+                        design_df=nbi_evalset_2_params,
+                        X=X,
+                        y=y,
+                        protected=protected,
+                        seed=seed + 50_000,
+                        n_splits=int(args.n_splits),
+                        n_jobs=int(args.n_jobs),
+                        tree_method=str(args.tree_method),
+                        auto_scale_pos_weight=bool(auto_spw),
+                        stratify_by_group=bool(args.stratify_by_group),
+                        privileged_value=1,
+                        desc=f"Evaluating NBI stage2 candidates ({len(nbi_evalset_2_params)})",
+                    )
+                    stage_times["nbi_stage2_eval_seconds"] = float(time.perf_counter() - t0)
+                    save_csv_ptbr(nbi_eval_2, out_dir / "nbi_evaluated_stage2_fairness.csv")
 
             # ------------------------------------------------------------
             # Final selection (across all evaluated points)
