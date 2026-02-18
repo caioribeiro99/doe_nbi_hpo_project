@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Any, Union, cast
+from typing import Any, Dict, List, Sequence, Tuple, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -21,7 +21,11 @@ class RSMModel:
     r2_adj: float
 
 
-def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[str]]:
+def build_quadratic_design_matrix(
+    df: pd.DataFrame,
+    *,
+    param_names: Sequence[str] = PARAM_NAMES,
+) -> Tuple[pd.DataFrame, List[str]]:
     """
     Full quadratic RSM design matrix in **uncoded (actual) units**.
 
@@ -30,6 +34,12 @@ def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[
       - linear: p
       - squares: p*p
       - 2-way interactions: a*b
+
+    Parameters
+    ----------
+    param_names:
+        Sequence of factor names to include. Defaults to config.PARAM_NAMES to keep
+        backwards compatibility with the classic pipeline.
 
     Returns
     -------
@@ -41,17 +51,19 @@ def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[
     cols: Dict[str, Any] = {}
 
     # linear
-    for p in PARAM_NAMES:
-        cols[p] = df[p].astype(float).to_numpy()
+    for p in param_names:
+        cols[str(p)] = df[str(p)].astype(float).to_numpy()
 
     # squares
-    for p in PARAM_NAMES:
+    for p in param_names:
+        p = str(p)
         cols[f"{p}*{p}"] = (df[p].astype(float) ** 2).to_numpy()
 
     # interactions
-    for i in range(len(PARAM_NAMES)):
-        for j in range(i + 1, len(PARAM_NAMES)):
-            a, b = PARAM_NAMES[i], PARAM_NAMES[j]
+    pnames = [str(p) for p in param_names]
+    for i in range(len(pnames)):
+        for j in range(i + 1, len(pnames)):
+            a, b = pnames[i], pnames[j]
             cols[f"{a}*{b}"] = (df[a].astype(float) * df[b].astype(float)).to_numpy()
 
     X = pd.DataFrame(cols, index=df.index)
@@ -129,6 +141,7 @@ def fit_rsm_backward(
     *,
     response_name: str,
     alpha: float = 0.05,
+    param_names: Sequence[str] = PARAM_NAMES,
 ) -> RSMModel:
     """
     Fit quadratic RSM using backward elimination (α) with hierarchy.
@@ -141,15 +154,21 @@ def fit_rsm_backward(
     Robustness:
     - Accepts DataFrame or Series for df_factors. Series will be converted to DataFrame.
       This prevents noisy Pylance warnings in callers.
+
+    Parameters
+    ----------
+    param_names:
+        Factor names to include in the full quadratic. Defaults to config.PARAM_NAMES.
+        Fairness pipeline can pass its own factor list (e.g., includes threshold).
     """
     df_factors_df = _as_dataframe(df_factors)
 
-    # Validate columns: must contain all PARAM_NAMES (for full quadratic)
-    missing = [p for p in PARAM_NAMES if p not in df_factors_df.columns]
+    # Validate columns: must contain all required factors (for full quadratic)
+    missing = [str(p) for p in param_names if str(p) not in df_factors_df.columns]
     if missing:
         raise KeyError(f"Missing factor columns for RSM: {missing}")
 
-    X_full, _terms_full = build_quadratic_design_matrix(df_factors_df)
+    X_full, _terms_full = build_quadratic_design_matrix(df_factors_df, param_names=param_names)
 
     active_cols: List[str] = list(X_full.columns)
 

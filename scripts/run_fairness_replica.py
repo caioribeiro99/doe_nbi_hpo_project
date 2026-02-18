@@ -1,15 +1,6 @@
 #!/usr/bin/env python
 from __future__ import annotations
 
-"""Single-replica fairness pipeline (BankDataset).
-
-Design goals for this script:
-  - Keep the original repo methodology: DOE -> RSM -> NBI (optionally DOE-refine -> RSM -> NBI).
-  - Avoid touching src/doe_xgb/nbi.py (to keep merge with main safe).
-  - Provide progress indicators (DOE, NBI evaluations, baselines).
-  - Keep Pylance happy (explicit casts, correct nbi.py signature).
-"""
-
 import argparse
 import contextlib
 import os
@@ -25,16 +16,17 @@ from dotenv import load_dotenv
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(REPO_ROOT / "src"))
 
-from doe_xgb.config import DEFAULT_BOUNDS, INT_PARAMS, PARAM_NAMES
-from doe_xgb.doe_runner_fairness import run_doe_fairness
-from doe_xgb.io_utils import load_design, save_csv_ptbr
-from doe_xgb.nbi import load_coefficients_csv, nbi_candidates_to_df, run_nbi_weighted_sum
-from doe_xgb.rsm import fit_rsm_backward, save_rsm_coefficients
-from doe_xgb.tracking import build_replica_dir, write_manifest
+from doe_xgb.config import FAIRNESS_DEFAULT_BOUNDS, FAIRNESS_PARAM_NAMES, INT_PARAMS  # noqa: E402
+from doe_xgb.doe_runner_fairness import run_doe_fairness  # noqa: E402
+from doe_xgb.io_utils import load_design, save_csv_ptbr  # noqa: E402
+from doe_xgb.nbi import load_coefficients_csv, nbi_candidates_to_df  # noqa: E402
+from doe_xgb.nbi_fairness import run_nbi_weighted_sum_fairness  # noqa: E402
+from doe_xgb.rsm import fit_rsm_backward, save_rsm_coefficients  # noqa: E402
+from doe_xgb.tracking import build_replica_dir, write_manifest  # noqa: E402
 
 
 class Tee(IO[str]):
-    """Tee stdout/stderr to both terminal and file."""
+    """Tee stdout/stderr to both terminal and a file."""
 
     def __init__(self, *streams: IO[str]):
         self._streams = streams
@@ -77,19 +69,18 @@ def _drop_unknown_rows(df: pd.DataFrame) -> Tuple[pd.DataFrame, int]:
 
 
 def load_bank_dataset_from_repo(path: Path) -> Tuple[pd.DataFrame, pd.Series, pd.Series]:
-    """Load UCI Bank Marketing and mimic the common AIF360 BankDataset preprocessing.
+    """Load UCI Bank Marketing and mimic common fairness preprocessing.
 
-    Expected input file:
+    Expected input:
       - bank-additional-full.csv (separator=';')
 
     Preprocessing:
       - drop column 'duration' (leakage)
       - drop rows containing 'unknown' in any categorical column
       - target: y == 'yes' -> 1 else 0
-      - protected attribute: age >= 25  (privileged=1)
+      - protected attribute: age >= 25 (privileged=1)
       - one-hot encode categoricals
     """
-
     df = pd.read_csv(path, sep=";")
     if "y" not in df.columns:
         raise ValueError("Expected column 'y' in bank dataset.")
@@ -97,15 +88,13 @@ def load_bank_dataset_from_repo(path: Path) -> Tuple[pd.DataFrame, pd.Series, pd
         raise ValueError("Expected column 'age' in bank dataset.")
 
     if "duration" in df.columns:
-        df = df.drop(columns=["duration"])  # leakage feature
+        df = df.drop(columns=["duration"])
 
     df, removed = _drop_unknown_rows(df)
     if removed > 0:
         _print_warning(f"Missing Data: {removed} rows removed from BankDataset.")
 
     y = (df["y"].astype(str).str.lower() == "yes").astype(int)
-
-    # privileged group (binary)
     protected = (df["age"].astype(int) >= 25).astype(int)
 
     X = df.drop(columns=["y"]).copy()
@@ -128,17 +117,11 @@ def select_best_pareto_utopia(
     quality_floor: Optional[float] = None,
     quality_col: str = "BalancedAccuracy_Mean",
 ) -> Tuple[pd.Series, pd.DataFrame]:
-    """Pareto filter (maximize both objs) + closest to utopia.
-
-    Returns:
-      - best_row: pd.Series
-      - diag_df: original dataframe plus diagnostics columns:
-          Pass_QualityFloor, Is_Pareto, A_norm, B_norm, Utopia_Distance
-    """
-
+    """Pareto filter (maximize both objs) + closest to utopia."""
     a, b = obj_cols
     d = df.copy()
 
+    # 1) Apply quality floor for selection (never crash: fallback to full set if empty)
     if quality_floor is None:
         d["Pass_QualityFloor"] = True
         work = d.copy()
@@ -146,14 +129,13 @@ def select_best_pareto_utopia(
         d["Pass_QualityFloor"] = d[quality_col].astype(float) >= float(quality_floor)
         work = d[d["Pass_QualityFloor"]].copy()
         if work.empty:
-            # Never crash: if floor too high, fallback to all.
             work = d.copy()
 
-    # norms computed with reference = work (to avoid degenerate low-quality points dominating min-max)
+    # 2) Normalize objectives (min-max) using reference = work
     d["A_norm"] = _minmax_norm_from_ref(d[a].astype(float), work[a].astype(float))
     d["B_norm"] = _minmax_norm_from_ref(d[b].astype(float), work[b].astype(float))
 
-    # Pareto on work subset
+    # 3) Pareto filter on 'work'
     vals = work[[a, b]].to_numpy(dtype=float)
     n = vals.shape[0]
     is_nd = np.ones(n, dtype=bool)
@@ -173,9 +155,9 @@ def select_best_pareto_utopia(
     pareto_idx = work.index[is_nd]
     d.loc[pareto_idx, "Is_Pareto"] = True
 
+    # 4) Utopia distance on normalized objectives
     d["Utopia_Distance"] = np.sqrt((1.0 - d["A_norm"]) ** 2 + (1.0 - d["B_norm"]) ** 2)
 
-    # Choose best among Pareto points that pass quality floor (if any)
     cand = d[d["Is_Pareto"] & d["Pass_QualityFloor"]].copy()
     if cand.empty:
         cand = d[d["Is_Pareto"]].copy()
@@ -183,24 +165,56 @@ def select_best_pareto_utopia(
         cand = d.copy()
 
     best_idx = cast(int, cand["Utopia_Distance"].astype(float).idxmin())
-    best_any = d.loc[best_idx]
-    best = cast(pd.Series, best_any)  # Pylance: .loc can be Series|DataFrame
+    best = cast(pd.Series, d.loc[best_idx])
     return best, d
 
 
+def select_best_fairness_subject_to_ba(
+    diag_df: pd.DataFrame,
+    *,
+    ba_floor: float,
+    pareto_only: bool = True,
+    ba_col: str = "BalancedAccuracy_Mean",
+    bias_col: str = "BiasMean_Mean",
+) -> pd.Series:
+    """Pick minimum bias subject to BA >= floor.
+
+    Recommended use:
+      - diag_df is output of select_best_pareto_utopia (has Is_Pareto etc.)
+      - pareto_only=True: search only among Pareto points first
+      - fallback to non-Pareto if empty
+    """
+    d = diag_df.copy()
+    d[ba_col] = d[ba_col].astype(float)
+    d[bias_col] = d[bias_col].astype(float)
+
+    base = d[d["Is_Pareto"]].copy() if pareto_only and "Is_Pareto" in d.columns else d.copy()
+    cand = base[base[ba_col] >= float(ba_floor)].copy()
+
+    if cand.empty:
+        # fallback: try whole set with BA constraint
+        cand = d[d[ba_col] >= float(ba_floor)].copy()
+
+    if cand.empty:
+        # last fallback: no constraint (avoid crash)
+        cand = base.copy() if not base.empty else d.copy()
+
+    idx = cast(int, cand[bias_col].idxmin())
+    return cast(pd.Series, d.loc[idx])
+
+
 def _flatten_nbi_params(df_nbi: pd.DataFrame) -> pd.DataFrame:
-    """Expand nbi_candidates_to_df(hyperparameters=dict) into PARAM_NAMES columns."""
     d = df_nbi.copy()
     if "hyperparameters" not in d.columns:
         raise KeyError("Expected column 'hyperparameters' in NBI candidates dataframe")
 
     hps = d["hyperparameters"].apply(lambda x: x if isinstance(x, dict) else {})
     hp_df = pd.DataFrame(list(hps))
-    for p in PARAM_NAMES:
+    for p in FAIRNESS_PARAM_NAMES:
         if p not in hp_df.columns:
             hp_df[p] = np.nan
 
-    out = pd.concat([d.drop(columns=["hyperparameters"]), hp_df[PARAM_NAMES]], axis=1)
+    out = pd.concat([d.drop(columns=["hyperparameters"]), hp_df[FAIRNESS_PARAM_NAMES]], axis=1)
     return out
 
 
@@ -217,13 +231,13 @@ def _sample_random_configs(
     n: int,
     *,
     seed: int,
-    bounds: Dict[str, Tuple[float, float]] = DEFAULT_BOUNDS,
+    bounds: Dict[str, Tuple[float, float]] = FAIRNESS_DEFAULT_BOUNDS,
 ) -> pd.DataFrame:
     rng = np.random.default_rng(int(seed))
     rows: List[Dict[str, Any]] = []
     for _ in range(int(n)):
         cfg: Dict[str, Any] = {}
-        for p in PARAM_NAMES:
+        for p in FAIRNESS_PARAM_NAMES:
             lo, hi = bounds[p]
             v = float(rng.uniform(lo, hi))
             if p in INT_PARAMS:
@@ -239,27 +253,23 @@ def _sample_refine_configs(
     n_samples: int,
     seed: int,
     sigma_frac: float = 0.10,
-    bounds: Dict[str, Tuple[float, float]] = DEFAULT_BOUNDS,
+    bounds: Dict[str, Tuple[float, float]] = FAIRNESS_DEFAULT_BOUNDS,
 ) -> pd.DataFrame:
-    """Gaussian local sampling around top points."""
     rng = np.random.default_rng(int(seed))
     anchors = anchor_points.copy()
 
-    # Ensure anchor points have all params
-    for p in PARAM_NAMES:
+    for p in FAIRNESS_PARAM_NAMES:
         if p not in anchors.columns:
             raise KeyError(f"Anchor points missing param column: {p}")
 
     rows: List[Dict[str, Any]] = []
     seen: set[Tuple[Any, ...]] = set()
 
-    # Precompute sigmas
-    sigmas = {p: sigma_frac * (bounds[p][1] - bounds[p][0]) for p in PARAM_NAMES}
+    sigmas = {p: sigma_frac * (bounds[p][1] - bounds[p][0]) for p in FAIRNESS_PARAM_NAMES}
 
-    # Round-robin across anchors
     anchor_list = anchors.reset_index(drop=True)
     if anchor_list.empty:
-        return pd.DataFrame(columns=PARAM_NAMES)
+        return pd.DataFrame(columns=FAIRNESS_PARAM_NAMES)
 
     i = 0
     attempts = 0
@@ -270,7 +280,7 @@ def _sample_refine_configs(
         i += 1
 
         cfg: Dict[str, Any] = {}
-        for p in PARAM_NAMES:
+        for p in FAIRNESS_PARAM_NAMES:
             mu = float(base[p])
             lo, hi = bounds[p]
             v = float(rng.normal(mu, sigmas[p]))
@@ -279,7 +289,7 @@ def _sample_refine_configs(
                 v = int(round(v))
             cfg[p] = v
 
-        key = tuple(cfg[p] for p in PARAM_NAMES)
+        key = tuple(cfg[p] for p in FAIRNESS_PARAM_NAMES)
         if key in seen:
             continue
         seen.add(key)
@@ -295,7 +305,6 @@ def _range_for_nbi(
     q_col: str = "BalancedAccuracy_Mean",
     f_col: str = "FairnessScore_1_minus_Bias",
 ) -> Tuple[Tuple[float, float], Tuple[float, float]]:
-    """Pick observed (utopia, nadir) used for NBI normalization."""
     work = df[df[q_col].astype(float) >= float(quality_floor)].copy()
     if work.empty:
         work = df.copy()
@@ -318,23 +327,8 @@ def main() -> None:
     # NBI
     p.add_argument("--beta-step", type=float, default=0.01)
     p.add_argument("--nbi-eval-k", type=int, default=60)
-    p.add_argument(
-        "--nbi-eval-k-stage1",
-        type=int,
-        default=None,
-        help="Optional override for how many NBI candidates to evaluate in stage1 (default: --nbi-eval-k).",
-    )
-    p.add_argument(
-        "--nbi-eval-k-stage2",
-        type=int,
-        default=None,
-        help="Optional override for how many NBI candidates to evaluate in stage2 (default: --nbi-eval-k).",
-    )
-    p.add_argument(
-        "--skip-nbi-stage2",
-        action="store_true",
-        help="If --refine is enabled, run refine DOE + refit RSM but skip running/evaluating NBI stage2.",
-    )
+    p.add_argument("--nbi-eval-k-stage1", type=int, default=None)
+    p.add_argument("--nbi-eval-k-stage2", type=int, default=None)
     p.add_argument("--nbi-n-starts", type=int, default=50)
     p.add_argument("--nbi-constrain-pred-range", action="store_true")
 
@@ -359,12 +353,33 @@ def main() -> None:
     # Baselines
     p.add_argument("--run-baselines", action="store_true")
 
-    args = p.parse_args()
+    # NEW: fairness best subject to BA floor
+    p.add_argument(
+        "--fairness-best-floor",
+        choices=["quality", "absolute", "best", "rs"],
+        default="rs",
+        help=(
+            "How to set BA floor for the secondary 'best fairness' report: "
+            "'quality' uses --quality-floor; "
+            "'absolute' uses --fairness-best-ba-floor; "
+            "'best' uses (BestUtopia_BA - --fairness-best-delta); "
+            "'rs' uses (BestRandomSearch_BA - --fairness-best-delta) if baselines are enabled."
+        ),
+    )
+    p.add_argument(
+        "--fairness-best-ba-floor",
+        type=float,
+        default=0.68,
+        help="Absolute BA floor when --fairness-best-floor=absolute (default: 0.68)",
+    )
+    p.add_argument(
+        "--fairness-best-delta",
+        type=float,
+        default=0.005,
+        help="Delta used when --fairness-best-floor is 'best' or 'rs' (default: 0.005)",
+    )
 
-    # Phase A controls: evaluate different numbers of NBI candidates per stage
-    # (defaults to --nbi-eval-k when stage-specific values are not provided)
-    nbi_eval_k_stage1 = int(args.nbi_eval_k_stage1) if args.nbi_eval_k_stage1 is not None else int(args.nbi_eval_k)
-    nbi_eval_k_stage2 = int(args.nbi_eval_k_stage2) if args.nbi_eval_k_stage2 is not None else int(args.nbi_eval_k)
+    args = p.parse_args()
 
     dataset_path = Path(args.dataset)
     design_path = Path(args.design)
@@ -374,10 +389,13 @@ def main() -> None:
     out_dir = build_replica_dir(out_root, dataset_path, design_path, int(args.replica))
 
     auto_spw = True
-    if args.no_auto_scale_pos_weight:
+    if bool(args.no_auto_scale_pos_weight):
         auto_spw = False
-    if args.auto_scale_pos_weight:
+    if bool(args.auto_scale_pos_weight):
         auto_spw = True
+
+    nbi_eval_k_stage1 = int(args.nbi_eval_k_stage1 or args.nbi_eval_k)
+    nbi_eval_k_stage2 = int(args.nbi_eval_k_stage2 or args.nbi_eval_k)
 
     write_manifest(
         out_dir / "manifest.json",
@@ -386,27 +404,12 @@ def main() -> None:
         dataset_path=dataset_path,
         design_path=design_path,
         extra={
-            "args": {
-                "beta_step": float(args.beta_step),
-                "nbi_eval_k": int(args.nbi_eval_k),
+            "args": vars(args),
+            "resolved": {
+                "auto_scale_pos_weight": bool(auto_spw),
                 "nbi_eval_k_stage1": int(nbi_eval_k_stage1),
                 "nbi_eval_k_stage2": int(nbi_eval_k_stage2),
-                "skip_nbi_stage2": bool(args.skip_nbi_stage2),
-                "nbi_n_starts": int(args.nbi_n_starts),
-                "nbi_constrain_pred_range": bool(args.nbi_constrain_pred_range),
-                "n_splits": int(args.n_splits),
-                "n_jobs": int(args.n_jobs),
-                "tree_method": str(args.tree_method),
-                "auto_scale_pos_weight": bool(auto_spw),
-                "stratify_by_group": bool(args.stratify_by_group),
-                "quality_floor": float(args.quality_floor),
-                "nbi_range_quality_floor": float(args.nbi_range_quality_floor),
-                "refine": bool(args.refine),
-                "refine_top_m": int(args.refine_top_m),
-                "refine_n_samples": int(args.refine_n_samples),
-                "refine_sigma_frac": float(args.refine_sigma_frac),
-                "run_baselines": bool(args.run_baselines),
-            }
+            },
         },
     )
 
@@ -418,15 +421,15 @@ def main() -> None:
         with contextlib.redirect_stdout(tee_out), contextlib.redirect_stderr(tee_err):
             stage_times: Dict[str, float] = {}
 
-            # ------------------------------------------------------------
-            # Data
-            # ------------------------------------------------------------
+            # ---------------------------
+            # Data + design
+            # ---------------------------
             X, y, protected = load_bank_dataset_from_repo(dataset_path)
             design_df = load_design(design_path)
 
-            # ------------------------------------------------------------
-            # Stage 1: DOE -> RSM -> NBI -> evaluate NBI
-            # ------------------------------------------------------------
+            # ---------------------------
+            # Stage 1: DOE -> RSM -> NBI -> eval NBI
+            # ---------------------------
             t0 = time.perf_counter()
             doe_df = run_doe_fairness(
                 design_df=design_df,
@@ -445,46 +448,53 @@ def main() -> None:
             stage_times["doe_seconds"] = float(time.perf_counter() - t0)
             save_csv_ptbr(doe_df, out_dir / "doe_results_fairness.csv")
 
-            # Fit RSMs
+            # Fit RSMs (quality + fairness)
             t0 = time.perf_counter()
-            model_q = fit_rsm_backward(doe_df[PARAM_NAMES], doe_df["BalancedAccuracy_Mean"], response_name="BalancedAccuracy_Mean")
+            factors_df = doe_df[FAIRNESS_PARAM_NAMES].copy()
+
+            model_q = fit_rsm_backward(
+                factors_df,
+                doe_df["BalancedAccuracy_Mean"],
+                response_name="BalancedAccuracy_Mean",
+                param_names=FAIRNESS_PARAM_NAMES,
+            )
             model_f = fit_rsm_backward(
-                doe_df[PARAM_NAMES],
+                factors_df,
                 doe_df["FairnessScore_1_minus_Bias"],
                 response_name="FairnessScore_1_minus_Bias",
+                param_names=FAIRNESS_PARAM_NAMES,
             )
             stage_times["rsm_seconds"] = float(time.perf_counter() - t0)
 
-            save_rsm_coefficients(model_q, str(out_dir / "rsm_coefficients_balanced_accuracy.csv"))
-            save_rsm_coefficients(model_f, str(out_dir / "rsm_coefficients_fairness_score.csv"))
+            coef_q_path = out_dir / "rsm_coefficients_balanced_accuracy.csv"
+            coef_f_path = out_dir / "rsm_coefficients_fairness_score.csv"
+            save_rsm_coefficients(model_q, str(coef_q_path))
+            save_rsm_coefficients(model_f, str(coef_f_path))
 
-            # NBI normalization range (filter by quality floor)
-            utopia, nadir = _range_for_nbi(
-                doe_df,
-                quality_floor=float(args.nbi_range_quality_floor),
-            )
+            # NBI range
+            utopia, nadir = _range_for_nbi(doe_df, quality_floor=float(args.nbi_range_quality_floor))
 
             t0 = time.perf_counter()
-            nbi_candidates_1 = run_nbi_weighted_sum(
-                load_coefficients_csv(str(out_dir / "rsm_coefficients_balanced_accuracy.csv")),
-                load_coefficients_csv(str(out_dir / "rsm_coefficients_fairness_score.csv")),
+            nbi_candidates_1 = run_nbi_weighted_sum_fairness(
+                load_coefficients_csv(str(coef_q_path)),
+                load_coefficients_csv(str(coef_f_path)),
                 observed_utopia=utopia,
                 observed_nadir=nadir,
                 beta_step=float(args.beta_step),
                 seed=int(seed),
                 n_starts=int(args.nbi_n_starts),
-                constrain_pred_range=bool(args.nbi_constrain_pred_range),
+                clip_pred_range=bool(args.nbi_constrain_pred_range),
             )
             stage_times["nbi_stage1_seconds"] = float(time.perf_counter() - t0)
 
             df_nbi_1_raw = nbi_candidates_to_df(nbi_candidates_1)
             df_nbi_1 = _flatten_nbi_params(df_nbi_1_raw)
-            df_nbi_1 = df_nbi_1.drop_duplicates(subset=PARAM_NAMES).reset_index(drop=True)
+            df_nbi_1 = df_nbi_1.drop_duplicates(subset=FAIRNESS_PARAM_NAMES).reset_index(drop=True)
             save_csv_ptbr(df_nbi_1, out_dir / "nbi_candidates_stage1_fairness.csv")
 
-            # Pick K to evaluate (evenly across beta_2)
-            nbi_evalset_1 = _pick_evenly(df_nbi_1, nbi_eval_k_stage1, sort_col="beta_2")
-            nbi_evalset_1_params = cast(pd.DataFrame, nbi_evalset_1[PARAM_NAMES].copy())
+            # Evaluate NBI stage1
+            nbi_evalset_1 = _pick_evenly(df_nbi_1, int(nbi_eval_k_stage1), sort_col="beta_2")
+            nbi_evalset_1_params = cast(pd.DataFrame, nbi_evalset_1[FAIRNESS_PARAM_NAMES].copy())
 
             t0 = time.perf_counter()
             nbi_eval_1 = run_doe_fairness(
@@ -504,28 +514,24 @@ def main() -> None:
             stage_times["nbi_stage1_eval_seconds"] = float(time.perf_counter() - t0)
             save_csv_ptbr(nbi_eval_1, out_dir / "nbi_evaluated_stage1_fairness.csv")
 
-            # Stage1 combined selection
-            stage1_all = pd.concat(
-                [
-                    doe_df.assign(Method="DOE+RSM"),
-                    nbi_eval_1.assign(Method="DOE+RSM+NBI_stage1"),
-                ],
-                ignore_index=True,
-            )
-            best_stage1, stage1_diag = select_best_pareto_utopia(
-                stage1_all,
-                quality_floor=float(args.quality_floor),
-            )
-            save_csv_ptbr(stage1_diag, out_dir / "all_evaluated_stage1_fairness.csv")
-            save_csv_ptbr(pd.DataFrame([best_stage1.to_dict()]), out_dir / "best_solution_stage1_fairness.csv")
-
-            # ------------------------------------------------------------
-            # Stage 2 (optional): local refinement DOE -> RSM -> NBI
-            # ------------------------------------------------------------
+            # ---------------------------
+            # Stage 2: refine DOE -> refit RSM -> NBI -> eval
+            # ---------------------------
             refine_eval = pd.DataFrame()
             nbi_eval_2 = pd.DataFrame()
 
             if bool(args.refine):
+                stage1_all = pd.concat(
+                    [
+                        doe_df.assign(Method="DOE+RSM"),
+                        nbi_eval_1.assign(Method="DOE+RSM+NBI_stage1"),
+                    ],
+                    ignore_index=True,
+                )
+                best_stage1, stage1_diag = select_best_pareto_utopia(stage1_all, quality_floor=float(args.quality_floor))
+                save_csv_ptbr(stage1_diag, out_dir / "all_evaluated_stage1_fairness.csv")
+                save_csv_ptbr(pd.DataFrame([best_stage1.to_dict()]), out_dir / "best_solution_stage1_fairness.csv")
+
                 pareto = stage1_diag[stage1_diag["Is_Pareto"] & stage1_diag["Pass_QualityFloor"]].copy()
                 if pareto.empty:
                     pareto = stage1_diag[stage1_diag["Pass_QualityFloor"]].copy()
@@ -536,7 +542,7 @@ def main() -> None:
                 anchors = pareto.head(int(args.refine_top_m)).copy()
 
                 refine_design = _sample_refine_configs(
-                    anchors,
+                    anchors[FAIRNESS_PARAM_NAMES].copy(),
                     n_samples=int(args.refine_n_samples),
                     seed=seed + 20_000,
                     sigma_frac=float(args.refine_sigma_frac),
@@ -565,64 +571,71 @@ def main() -> None:
 
                 # Refit RSM
                 t0 = time.perf_counter()
-                model_q2 = fit_rsm_backward(stage2_doe[PARAM_NAMES], stage2_doe["BalancedAccuracy_Mean"], response_name="BalancedAccuracy_Mean")
+                stage2_factors = stage2_doe[FAIRNESS_PARAM_NAMES].copy()
+
+                model_q2 = fit_rsm_backward(
+                    stage2_factors,
+                    stage2_doe["BalancedAccuracy_Mean"],
+                    response_name="BalancedAccuracy_Mean",
+                    param_names=FAIRNESS_PARAM_NAMES,
+                )
                 model_f2 = fit_rsm_backward(
-                    stage2_doe[PARAM_NAMES],
+                    stage2_factors,
                     stage2_doe["FairnessScore_1_minus_Bias"],
                     response_name="FairnessScore_1_minus_Bias",
+                    param_names=FAIRNESS_PARAM_NAMES,
                 )
                 stage_times["rsm_stage2_seconds"] = float(time.perf_counter() - t0)
 
-                save_rsm_coefficients(model_q2, str(out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv"))
-                save_rsm_coefficients(model_f2, str(out_dir / "rsm_coefficients_fairness_score_stage2.csv"))
+                coef_q2_path = out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv"
+                coef_f2_path = out_dir / "rsm_coefficients_fairness_score_stage2.csv"
+                save_rsm_coefficients(model_q2, str(coef_q2_path))
+                save_rsm_coefficients(model_f2, str(coef_f2_path))
 
-                if bool(args.skip_nbi_stage2):
-                    print("Skipping NBI stage2 (refine-only).", flush=True)
-                else:
-                    utopia2, nadir2 = _range_for_nbi(stage2_doe, quality_floor=float(args.nbi_range_quality_floor))
+                utopia2, nadir2 = _range_for_nbi(stage2_doe, quality_floor=float(args.nbi_range_quality_floor))
 
-                    t0 = time.perf_counter()
-                    nbi_candidates_2 = run_nbi_weighted_sum(
-                        load_coefficients_csv(str(out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv")),
-                        load_coefficients_csv(str(out_dir / "rsm_coefficients_fairness_score_stage2.csv")),
-                        observed_utopia=utopia2,
-                        observed_nadir=nadir2,
-                        beta_step=float(args.beta_step),
-                        seed=int(seed + 40_000),
-                        n_starts=int(args.nbi_n_starts),
-                        constrain_pred_range=bool(args.nbi_constrain_pred_range),
-                    )
-                    stage_times["nbi_stage2_seconds"] = float(time.perf_counter() - t0)
+                t0 = time.perf_counter()
+                nbi_candidates_2 = run_nbi_weighted_sum_fairness(
+                    load_coefficients_csv(str(coef_q2_path)),
+                    load_coefficients_csv(str(coef_f2_path)),
+                    observed_utopia=utopia2,
+                    observed_nadir=nadir2,
+                    beta_step=float(args.beta_step),
+                    seed=int(seed + 40_000),
+                    n_starts=int(args.nbi_n_starts),
+                    clip_pred_range=bool(args.nbi_constrain_pred_range),
+                )
+                stage_times["nbi_stage2_seconds"] = float(time.perf_counter() - t0)
 
-                    df_nbi_2_raw = nbi_candidates_to_df(nbi_candidates_2)
-                    df_nbi_2 = _flatten_nbi_params(df_nbi_2_raw)
-                    df_nbi_2 = df_nbi_2.drop_duplicates(subset=PARAM_NAMES).reset_index(drop=True)
-                    save_csv_ptbr(df_nbi_2, out_dir / "nbi_candidates_stage2_fairness.csv")
+                df_nbi_2_raw = nbi_candidates_to_df(nbi_candidates_2)
+                df_nbi_2 = _flatten_nbi_params(df_nbi_2_raw)
+                df_nbi_2 = df_nbi_2.drop_duplicates(subset=FAIRNESS_PARAM_NAMES).reset_index(drop=True)
+                save_csv_ptbr(df_nbi_2, out_dir / "nbi_candidates_stage2_fairness.csv")
 
-                    nbi_evalset_2 = _pick_evenly(df_nbi_2, nbi_eval_k_stage2, sort_col="beta_2")
-                    nbi_evalset_2_params = cast(pd.DataFrame, nbi_evalset_2[PARAM_NAMES].copy())
+                nbi_evalset_2 = _pick_evenly(df_nbi_2, int(nbi_eval_k_stage2), sort_col="beta_2")
+                nbi_evalset_2_params = cast(pd.DataFrame, nbi_evalset_2[FAIRNESS_PARAM_NAMES].copy())
 
-                    t0 = time.perf_counter()
-                    nbi_eval_2 = run_doe_fairness(
-                        design_df=nbi_evalset_2_params,
-                        X=X,
-                        y=y,
-                        protected=protected,
-                        seed=seed + 50_000,
-                        n_splits=int(args.n_splits),
-                        n_jobs=int(args.n_jobs),
-                        tree_method=str(args.tree_method),
-                        auto_scale_pos_weight=bool(auto_spw),
-                        stratify_by_group=bool(args.stratify_by_group),
-                        privileged_value=1,
-                        desc=f"Evaluating NBI stage2 candidates ({len(nbi_evalset_2_params)})",
-                    )
-                    stage_times["nbi_stage2_eval_seconds"] = float(time.perf_counter() - t0)
-                    save_csv_ptbr(nbi_eval_2, out_dir / "nbi_evaluated_stage2_fairness.csv")
+                t0 = time.perf_counter()
+                nbi_eval_2 = run_doe_fairness(
+                    design_df=nbi_evalset_2_params,
+                    X=X,
+                    y=y,
+                    protected=protected,
+                    seed=seed + 50_000,
+                    n_splits=int(args.n_splits),
+                    n_jobs=int(args.n_jobs),
+                    tree_method=str(args.tree_method),
+                    auto_scale_pos_weight=bool(auto_spw),
+                    stratify_by_group=bool(args.stratify_by_group),
+                    privileged_value=1,
+                    desc=f"Evaluating NBI stage2 candidates ({len(nbi_evalset_2_params)})",
+                )
+                stage_times["nbi_stage2_eval_seconds"] = float(time.perf_counter() - t0)
+                save_csv_ptbr(nbi_eval_2, out_dir / "nbi_evaluated_stage2_fairness.csv")
 
-            # ------------------------------------------------------------
+            # ---------------------------
             # Final selection (across all evaluated points)
-            # ------------------------------------------------------------
+            # ---------------------------
             parts = [doe_df.assign(Method="DOE+RSM")]
             if not nbi_eval_1.empty:
                 parts.append(nbi_eval_1.assign(Method="DOE+RSM+NBI_stage1"))
@@ -632,13 +645,14 @@ def main() -> None:
                 parts.append(nbi_eval_2.assign(Method="DOE+RSM+NBI_stage2"))
 
             all_eval = pd.concat(parts, ignore_index=True)
+
             best_overall, all_diag = select_best_pareto_utopia(all_eval, quality_floor=float(args.quality_floor))
             save_csv_ptbr(all_diag, out_dir / "all_evaluated_candidates_fairness.csv")
             save_csv_ptbr(pd.DataFrame([best_overall.to_dict()]), out_dir / "best_solution_fairness.csv")
 
-            # ------------------------------------------------------------
-            # Baselines (optional)
-            # ------------------------------------------------------------
+            # ---------------------------
+            # Baselines + Comparison summary
+            # ---------------------------
             comparison_rows: List[Dict[str, Any]] = []
 
             def _row_from_best(tag: str, best_series: pd.Series) -> Dict[str, Any]:
@@ -648,16 +662,20 @@ def main() -> None:
                     "BalancedAccuracy_Mean": float(dct.get("BalancedAccuracy_Mean", 0.0)),
                     "BiasMean_Mean": float(dct.get("BiasMean_Mean", 0.0)),
                     "FairnessScore_1_minus_Bias": float(dct.get("FairnessScore_1_minus_Bias", 0.0)),
+                    "scale_pos_weight": float(dct.get("scale_pos_weight", np.nan)),
+                    "threshold": float(dct.get("threshold", np.nan)),
                 }
 
-            comparison_rows.append(_row_from_best("DOE+RSM+NBI" + ("_2stage" if args.refine else ""), best_overall))
+            method_tag = "DOE+RSM+NBI_2stage" if bool(args.refine) else "DOE+RSM+NBI_stage1"
+            comparison_rows.append(_row_from_best(method_tag, best_overall))
+
+            rs_best_ba: Optional[float] = None
 
             if bool(args.run_baselines):
-                # Budget parity with our method
                 budget = int(len(all_eval))
 
-                # XGB default
-                xgb_default_df = pd.DataFrame([{}])
+                # XGB default baseline
+                xgb_default_df = pd.DataFrame([{"scale_pos_weight": 1.0, "threshold": 0.5}])
                 xgb_default_eval = run_doe_fairness(
                     design_df=xgb_default_df,
                     X=X,
@@ -667,7 +685,7 @@ def main() -> None:
                     n_splits=int(args.n_splits),
                     n_jobs=int(args.n_jobs),
                     tree_method=str(args.tree_method),
-                    auto_scale_pos_weight=bool(auto_spw),
+                    auto_scale_pos_weight=False,
                     stratify_by_group=bool(args.stratify_by_group),
                     privileged_value=1,
                     desc="Baseline: XGB default",
@@ -675,7 +693,7 @@ def main() -> None:
                 best_xgb = cast(pd.Series, xgb_default_eval.iloc[0])
                 comparison_rows.append(_row_from_best("XGB_Default", best_xgb))
 
-                # Random Search baseline (same budget)
+                # Random Search baseline
                 rs_design = _sample_random_configs(budget, seed=seed + 70_000)
                 rs_eval = run_doe_fairness(
                     design_df=rs_design,
@@ -686,25 +704,66 @@ def main() -> None:
                     n_splits=int(args.n_splits),
                     n_jobs=int(args.n_jobs),
                     tree_method=str(args.tree_method),
-                    auto_scale_pos_weight=bool(auto_spw),
+                    auto_scale_pos_weight=False,
                     stratify_by_group=bool(args.stratify_by_group),
                     privileged_value=1,
                     desc=f"Baseline: Random Search (N={budget})",
                 )
                 best_rs, rs_diag = select_best_pareto_utopia(rs_eval, quality_floor=float(args.quality_floor))
                 save_csv_ptbr(rs_diag, out_dir / "baseline_random_search_fairness.csv")
-                comparison_rows.append(_row_from_best(f"RandomSearch_N={budget}", best_rs))
+                rs_tag = f"RandomSearch_N={budget}"
+                comparison_rows.append(_row_from_best(rs_tag, best_rs))
+
+                rs_best_ba = float(best_rs.get("BalancedAccuracy_Mean", np.nan))
+                if np.isnan(rs_best_ba):
+                    rs_best_ba = None
+
+            # ---------------------------
+            # NEW: secondary report = best fairness subject to BA floor
+            # ---------------------------
+            floor_mode = str(args.fairness_best_floor)
+            delta = float(args.fairness_best_delta)
+
+            if floor_mode == "quality":
+                ba_floor = float(args.quality_floor)
+            elif floor_mode == "absolute":
+                ba_floor = float(args.fairness_best_ba_floor)
+            elif floor_mode == "best":
+                ba_floor = float(best_overall.get("BalancedAccuracy_Mean", 0.0)) - float(delta)
+            elif floor_mode == "rs":
+                if rs_best_ba is not None:
+                    ba_floor = float(rs_best_ba) - float(delta)
+                else:
+                    # fallback if RS not available
+                    ba_floor = float(best_overall.get("BalancedAccuracy_Mean", 0.0)) - float(delta)
+            else:
+                ba_floor = float(args.quality_floor)
+
+            # keep a sane minimum (never below quality floor)
+            ba_floor = max(float(args.quality_floor), float(ba_floor))
+
+            best_fair = select_best_fairness_subject_to_ba(all_diag, ba_floor=ba_floor, pareto_only=True)
+            best_fair = best_fair.copy()
+            best_fair["FairnessBest_BA_Floor"] = float(ba_floor)
+            save_csv_ptbr(pd.DataFrame([best_fair.to_dict()]), out_dir / "best_solution_fairness_constrained.csv")
+
+            fair_tag = f"{method_tag}_Fairness@BA>={ba_floor:.3f}"
+            comparison_rows.append(_row_from_best(fair_tag, best_fair))
 
             comp = pd.DataFrame(comparison_rows)
             save_csv_ptbr(comp, out_dir / "comparison_summary_fairness.csv")
 
             print("\n=== Comparison summary (best points) ===")
-            cols_show = ["Method", "BalancedAccuracy_Mean", "BiasMean_Mean", "FairnessScore_1_minus_Bias"]
+            cols_show = [
+                "Method",
+                "BalancedAccuracy_Mean",
+                "BiasMean_Mean",
+                "FairnessScore_1_minus_Bias",
+                "scale_pos_weight",
+                "threshold",
+            ]
             print(comp[cols_show].to_string(index=False))
 
-            # ------------------------------------------------------------
-            # Finish
-            # ------------------------------------------------------------
             save_csv_ptbr(pd.DataFrame([stage_times]), out_dir / "stage_times_fairness.csv")
 
             print("\n✅ Fairness replica pipeline finished")
