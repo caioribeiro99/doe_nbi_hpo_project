@@ -177,13 +177,7 @@ def select_best_fairness_subject_to_ba(
     ba_col: str = "BalancedAccuracy_Mean",
     bias_col: str = "BiasMean_Mean",
 ) -> pd.Series:
-    """Pick minimum bias subject to BA >= floor.
-
-    Recommended use:
-      - diag_df is output of select_best_pareto_utopia (has Is_Pareto etc.)
-      - pareto_only=True: search only among Pareto points first
-      - fallback to non-Pareto if empty
-    """
+    """Pick minimum bias subject to BA >= floor."""
     d = diag_df.copy()
     d[ba_col] = d[ba_col].astype(float)
     d[bias_col] = d[bias_col].astype(float)
@@ -192,15 +186,155 @@ def select_best_fairness_subject_to_ba(
     cand = base[base[ba_col] >= float(ba_floor)].copy()
 
     if cand.empty:
-        # fallback: try whole set with BA constraint
         cand = d[d[ba_col] >= float(ba_floor)].copy()
 
     if cand.empty:
-        # last fallback: no constraint (avoid crash)
         cand = base.copy() if not base.empty else d.copy()
 
     idx = cast(int, cand[bias_col].idxmin())
     return cast(pd.Series, d.loc[idx])
+
+
+def select_refine_anchors(
+    stage1_diag: pd.DataFrame,
+    *,
+    top_m: int,
+    strategy: str = "mixed",
+    mix: Tuple[float, float, float] = (0.4, 0.4, 0.2),
+    quality_col: str = "BalancedAccuracy_Mean",
+    fairness_col: str = "FairnessScore_1_minus_Bias",
+) -> pd.DataFrame:
+    """Select anchor points for stage2 refinement.
+
+    strategy:
+      - 'utopia': legacy behavior (closest-to-utopia on Pareto)
+      - 'mixed': combine:
+          * closest-to-utopia
+          * highest fairness
+          * highest BA
+
+    mix:
+      Fractions for (utopia, fairness, ba). They will be normalized to sum=1.
+    """
+    if top_m <= 0:
+        return stage1_diag.head(0).copy()
+
+    d = stage1_diag.copy()
+
+    # Candidate pool: Pareto + pass quality floor (fallbacks)
+    pool = d
+    if "Is_Pareto" in d.columns and "Pass_QualityFloor" in d.columns:
+        pool = d[d["Is_Pareto"] & d["Pass_QualityFloor"]].copy()
+        if pool.empty:
+            pool = d[d["Pass_QualityFloor"]].copy()
+        if pool.empty:
+            pool = d[d["Is_Pareto"]].copy()
+    elif "Is_Pareto" in d.columns:
+        pool = d[d["Is_Pareto"]].copy()
+
+    if pool.empty:
+        pool = d.copy()
+
+    # Ensure numeric
+    for c in ["Utopia_Distance", quality_col, fairness_col]:
+        if c in pool.columns:
+            pool[c] = pool[c].astype(float)
+
+    pool = pool.dropna(subset=[quality_col, fairness_col]).copy()
+
+    if pool.empty:
+        return d.head(min(int(top_m), len(d))).copy()
+
+    top_m_eff = min(int(top_m), int(len(pool)))
+
+    if strategy == "utopia":
+        anchors = pool.sort_values("Utopia_Distance", ascending=True).head(top_m_eff).copy()
+        anchors["AnchorGroup"] = "utopia"
+        return anchors
+
+    # Normalize mix
+    fu, ff, fq = (float(mix[0]), float(mix[1]), float(mix[2]))
+    s = fu + ff + fq
+    if s <= 1e-12:
+        fu, ff, fq = 0.4, 0.4, 0.2
+        s = fu + ff + fq
+    fu, ff, fq = fu / s, ff / s, fq / s
+
+    # Quotas
+    k_fair = max(1, int(round(top_m_eff * ff)))
+    k_ba = max(1, int(round(top_m_eff * fq)))
+    k_utopia = top_m_eff - k_fair - k_ba
+    if k_utopia < 1:
+        # Borrow from the largest bucket
+        if k_fair >= k_ba and k_fair > 1:
+            k_fair -= 1
+        elif k_ba > 1:
+            k_ba -= 1
+        k_utopia = top_m_eff - k_fair - k_ba
+        if k_utopia < 1:
+            k_utopia = 1
+            k_fair = max(1, top_m_eff - 1 - k_ba)
+
+    # Orders (tie-breakers help stability)
+    utopia_order = pool.sort_values(
+        ["Utopia_Distance", fairness_col, quality_col],
+        ascending=[True, False, False],
+    ).index.tolist()
+    fairness_order = pool.sort_values(
+        [fairness_col, quality_col, "Utopia_Distance"],
+        ascending=[False, False, True],
+    ).index.tolist()
+    ba_order = pool.sort_values(
+        [quality_col, fairness_col, "Utopia_Distance"],
+        ascending=[False, False, True],
+    ).index.tolist()
+
+    chosen_set: set[Any] = set()
+    group_map: Dict[Any, str] = {}
+    chosen: List[Any] = []
+
+    def take(order: List[Any], k: int, label: str) -> None:
+        if k <= 0:
+            return
+        taken = 0
+        for idx in order:
+            if idx in chosen_set:
+                continue
+            chosen_set.add(idx)
+            group_map[idx] = label
+            chosen.append(idx)
+            taken += 1
+            if taken >= k:
+                break
+
+    take(utopia_order, k_utopia, "utopia")
+    take(fairness_order, k_fair, "fairness")
+    take(ba_order, k_ba, "quality")
+
+    # Fill remainder (prefer utopia -> fairness -> quality)
+    while len(chosen) < top_m_eff:
+        added = False
+        for order, label in [
+            (utopia_order, "fill_utopia"),
+            (fairness_order, "fill_fairness"),
+            (ba_order, "fill_quality"),
+        ]:
+            for idx in order:
+                if idx in chosen_set:
+                    continue
+                chosen_set.add(idx)
+                group_map[idx] = label
+                chosen.append(idx)
+                added = True
+                break
+            if len(chosen) >= top_m_eff:
+                break
+        if not added:
+            break
+
+    anchors = pool.loc[chosen].copy()
+    anchors["AnchorGroup"] = anchors.index.map(lambda idx: group_map.get(idx, "fill"))
+    return anchors
 
 
 def _flatten_nbi_params(df_nbi: pd.DataFrame) -> pd.DataFrame:
@@ -350,10 +484,26 @@ def main() -> None:
     p.add_argument("--refine-n-samples", type=int, default=40)
     p.add_argument("--refine-sigma-frac", type=float, default=0.10)
 
+    # NEW: anchor selection strategy for refine
+    p.add_argument(
+        "--refine-anchor-strategy",
+        choices=["utopia", "mixed"],
+        default="mixed",
+        help="Anchor selection for refine stage2. 'utopia' reproduces legacy; 'mixed' adds fairness+BA extremes.",
+    )
+    p.add_argument(
+        "--refine-anchor-mix",
+        type=float,
+        nargs=3,
+        default=[0.4, 0.4, 0.2],
+        metavar=("UTOPIA", "FAIR", "BA"),
+        help="Fractions used when --refine-anchor-strategy=mixed. Will be normalized to sum=1.",
+    )
+
     # Baselines
     p.add_argument("--run-baselines", action="store_true")
 
-    # NEW: fairness best subject to BA floor
+    # Fairness best subject to BA floor
     p.add_argument(
         "--fairness-best-floor",
         choices=["quality", "absolute", "best", "rs"],
@@ -421,15 +571,11 @@ def main() -> None:
         with contextlib.redirect_stdout(tee_out), contextlib.redirect_stderr(tee_err):
             stage_times: Dict[str, float] = {}
 
-            # ---------------------------
             # Data + design
-            # ---------------------------
             X, y, protected = load_bank_dataset_from_repo(dataset_path)
             design_df = load_design(design_path)
 
-            # ---------------------------
             # Stage 1: DOE -> RSM -> NBI -> eval NBI
-            # ---------------------------
             t0 = time.perf_counter()
             doe_df = run_doe_fairness(
                 design_df=design_df,
@@ -448,7 +594,7 @@ def main() -> None:
             stage_times["doe_seconds"] = float(time.perf_counter() - t0)
             save_csv_ptbr(doe_df, out_dir / "doe_results_fairness.csv")
 
-            # Fit RSMs (quality + fairness)
+            # Fit RSMs
             t0 = time.perf_counter()
             factors_df = doe_df[FAIRNESS_PARAM_NAMES].copy()
 
@@ -514,9 +660,7 @@ def main() -> None:
             stage_times["nbi_stage1_eval_seconds"] = float(time.perf_counter() - t0)
             save_csv_ptbr(nbi_eval_1, out_dir / "nbi_evaluated_stage1_fairness.csv")
 
-            # ---------------------------
             # Stage 2: refine DOE -> refit RSM -> NBI -> eval
-            # ---------------------------
             refine_eval = pd.DataFrame()
             nbi_eval_2 = pd.DataFrame()
 
@@ -532,14 +676,22 @@ def main() -> None:
                 save_csv_ptbr(stage1_diag, out_dir / "all_evaluated_stage1_fairness.csv")
                 save_csv_ptbr(pd.DataFrame([best_stage1.to_dict()]), out_dir / "best_solution_stage1_fairness.csv")
 
-                pareto = stage1_diag[stage1_diag["Is_Pareto"] & stage1_diag["Pass_QualityFloor"]].copy()
-                if pareto.empty:
-                    pareto = stage1_diag[stage1_diag["Pass_QualityFloor"]].copy()
-                if pareto.empty:
-                    pareto = stage1_diag.copy()
-
-                pareto = pareto.sort_values("Utopia_Distance", ascending=True)
-                anchors = pareto.head(int(args.refine_top_m)).copy()
+                anchors = select_refine_anchors(
+                    stage1_diag,
+                    top_m=int(args.refine_top_m),
+                    strategy=str(args.refine_anchor_strategy),
+                    mix=tuple(float(x) for x in args.refine_anchor_mix),
+                )
+                save_csv_ptbr(anchors, out_dir / "refine_anchors_stage2.csv")
+                try:
+                    counts = anchors["AnchorGroup"].value_counts().to_dict()
+                except Exception:
+                    counts = {}
+                print(
+                    f"Refine anchors: strategy={args.refine_anchor_strategy}, requested={args.refine_top_m}, "
+                    f"selected={len(anchors)}, mix={args.refine_anchor_mix}, counts={counts}",
+                    flush=True,
+                )
 
                 refine_design = _sample_refine_configs(
                     anchors[FAIRNESS_PARAM_NAMES].copy(),
@@ -633,9 +785,7 @@ def main() -> None:
                 stage_times["nbi_stage2_eval_seconds"] = float(time.perf_counter() - t0)
                 save_csv_ptbr(nbi_eval_2, out_dir / "nbi_evaluated_stage2_fairness.csv")
 
-            # ---------------------------
             # Final selection (across all evaluated points)
-            # ---------------------------
             parts = [doe_df.assign(Method="DOE+RSM")]
             if not nbi_eval_1.empty:
                 parts.append(nbi_eval_1.assign(Method="DOE+RSM+NBI_stage1"))
@@ -650,9 +800,7 @@ def main() -> None:
             save_csv_ptbr(all_diag, out_dir / "all_evaluated_candidates_fairness.csv")
             save_csv_ptbr(pd.DataFrame([best_overall.to_dict()]), out_dir / "best_solution_fairness.csv")
 
-            # ---------------------------
             # Baselines + Comparison summary
-            # ---------------------------
             comparison_rows: List[Dict[str, Any]] = []
 
             def _row_from_best(tag: str, best_series: pd.Series) -> Dict[str, Any]:
@@ -718,9 +866,7 @@ def main() -> None:
                 if np.isnan(rs_best_ba):
                     rs_best_ba = None
 
-            # ---------------------------
-            # NEW: secondary report = best fairness subject to BA floor
-            # ---------------------------
+            # Secondary report: best fairness subject to BA floor
             floor_mode = str(args.fairness_best_floor)
             delta = float(args.fairness_best_delta)
 
@@ -734,12 +880,10 @@ def main() -> None:
                 if rs_best_ba is not None:
                     ba_floor = float(rs_best_ba) - float(delta)
                 else:
-                    # fallback if RS not available
                     ba_floor = float(best_overall.get("BalancedAccuracy_Mean", 0.0)) - float(delta)
             else:
                 ba_floor = float(args.quality_floor)
 
-            # keep a sane minimum (never below quality floor)
             ba_floor = max(float(args.quality_floor), float(ba_floor))
 
             best_fair = select_best_fairness_subject_to_ba(all_diag, ba_floor=ba_floor, pareto_only=True)
