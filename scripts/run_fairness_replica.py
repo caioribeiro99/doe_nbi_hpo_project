@@ -23,6 +23,11 @@ from doe_xgb.nbi import load_coefficients_csv, nbi_candidates_to_df  # noqa: E40
 from doe_xgb.nbi_fairness import run_nbi_weighted_sum_fairness  # noqa: E402
 from doe_xgb.rsm import fit_rsm_backward, save_rsm_coefficients  # noqa: E402
 from doe_xgb.tracking import build_replica_dir, write_manifest  # noqa: E402
+from doe_xgb.fairness_dataset_utils import (  # noqa: E402
+    load_bank_dataset,
+    load_credit_card_default_dataset,
+    load_generic_fairness_dataset,
+)
 
 
 class Tee(IO[str]):
@@ -458,6 +463,31 @@ def main() -> None:
     p.add_argument("--seed", type=int, default=None)
     p.add_argument("--out_root", default="experiments")
 
+    # Dataset loading / fairness metadata
+    p.add_argument(
+        "--dataset-kind",
+        choices=["bank", "credit_card_default", "generic"],
+        default="bank",
+        help="Dataset loader to use (default: bank)",
+    )
+    p.add_argument("--target-col", default="y")
+    p.add_argument("--target-positive", default=None)
+    p.add_argument("--protected-col", default=None)
+    p.add_argument(
+        "--protected-attr-mode",
+        default="binary_one_is_privileged",
+        choices=[
+            "age_ge_25",
+            "age_ge_30",
+            "sex_male_is_1",
+            "sex_female_is_1",
+            "binary_one_is_privileged",
+            "binary_zero_is_privileged",
+            "median_ge_is_privileged",
+        ],
+    )
+    p.add_argument("--drop-unknown-rows", action="store_true")
+
     # NBI
     p.add_argument("--beta-step", type=float, default=0.01)
     p.add_argument("--nbi-eval-k", type=int, default=60)
@@ -572,7 +602,22 @@ def main() -> None:
             stage_times: Dict[str, float] = {}
 
             # Data + design
-            X, y, protected = load_bank_dataset_from_repo(dataset_path)
+            if str(args.dataset_kind) == "bank":
+                X, y, protected = load_bank_dataset(dataset_path)
+            elif str(args.dataset_kind) == "credit_card_default":
+                X, y, protected = load_credit_card_default_dataset(
+                    dataset_path,
+                    protected_attr_mode=str(args.protected_attr_mode),
+                )
+            else:
+                X, y, protected = load_generic_fairness_dataset(
+                    dataset_path,
+                    target_col=str(args.target_col),
+                    target_positive=(None if args.target_positive in {None, "", "None"} else str(args.target_positive)),
+                    protected_col=args.protected_col,
+                    protected_attr_mode=str(args.protected_attr_mode),
+                    drop_unknown_rows=bool(args.drop_unknown_rows),
+                )
             design_df = load_design(design_path)
 
             # Stage 1: DOE -> RSM -> NBI -> eval NBI

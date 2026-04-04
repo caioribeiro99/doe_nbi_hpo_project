@@ -27,3 +27,6 @@ data/design/*
 # macOS files
 **/.DS_Store
 
+# Auxiliar docs
+COMMANDS.md
+FAIRNESS.md

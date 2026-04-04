@@ -1,0 +1,38 @@
+{
+  "suite_name": "fairness_4bases_r30",
+  "replicas": 30,
+  "seed0": 42,
+  "design": "data/design/hiperparameter_design_fairness.csv",
+  "datasets": [
+    {
+      "name": "bank_marketing",
+      "path": "data/source/bank/bank-additional-full.csv",
+      "dataset_kind": "bank"
+    },
+    {
+      "name": "german_credit",
+      "path": "data/source/fairness/german_credit.csv",
+      "dataset_kind": "generic",
+      "target_col": "y",
+      "target_positive": "1",
+      "protected_col": "age",
+      "protected_attr_mode": "age_ge_25"
+    },
+    {
+      "name": "adult",
+      "path": "data/source/fairness/adult.csv",
+      "dataset_kind": "generic",
+      "target_col": "y",
+      "target_positive": "1",
+      "protected_col": "sex",
+      "protected_attr_mode": "sex_male_is_1",
+      "drop_unknown_rows": true
+    },
+    {
+      "name": "credit_card_default",
+      "path": "data/source/fairness/credit_card_default.csv",
+      "dataset_kind": "credit_card_default",
+      "protected_attr_mode": "sex_male_is_1"
+    }
+  ]
+}
