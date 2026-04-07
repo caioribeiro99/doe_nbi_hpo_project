@@ -24,7 +24,8 @@ def _seed_for(replica: int, seed0: int) -> int:
 
 
 def _dataset_out_root(base_out_root: Path, dataset_name: str) -> Path:
-    return base_out_root / dataset_name
+    """Return suite root; dataset subdir is added later by build_replica_dir."""
+    return base_out_root
 
 
 def _build_cmd(job: Dict[str, Any], python_exe: str) -> List[str]:
@@ -48,6 +49,8 @@ def _build_cmd(job: Dict[str, Any], python_exe: str) -> List[str]:
         str(job["inner_n_jobs"]),
         "--run-baselines",
         "--stratify-by-group",
+        "--n-splits",
+        str(job["n_splits"]),
         "--refine",
         "--refine-anchor-strategy",
         "mixed",
@@ -57,6 +60,8 @@ def _build_cmd(job: Dict[str, Any], python_exe: str) -> List[str]:
         "0.2",
         "--beta-step",
         str(job["beta_step"]),
+        "--nbi-n-starts",
+        str(job["nbi_n_starts"]),
         "--nbi-eval-k-stage1",
         str(job["nbi_eval_k_stage1"]),
         "--refine-n-samples",
@@ -73,7 +78,7 @@ def _build_cmd(job: Dict[str, Any], python_exe: str) -> List[str]:
         str(job["fairness_best_delta"]),
     ]
 
-    if "target_col" in cfg:
+    if cfg.get("target_col") is not None:
         cmd += ["--target-col", str(cfg["target_col"])]
     if cfg.get("target_positive") is not None:
         cmd += ["--target-positive", str(cfg["target_positive"])]
@@ -112,12 +117,14 @@ def _run_job(job: Dict[str, Any], python_exe: str) -> Dict[str, Any]:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Run the 4-base fairness R30 suite with maximum outer parallelism.")
-    p.add_argument("--config", default=str(REPO_ROOT / "configs" / "fairness_suite_4bases_r30.json"))
-    p.add_argument("--out-root", default=str(REPO_ROOT / "experiments" / "fairness_suite_4bases_r30"))
-    p.add_argument("--max-workers", type=int, default=max(1, os.cpu_count() or 1))
-    p.add_argument("--inner-n-jobs", type=int, default=1, help="Threads passed to each inner XGBoost evaluation. Keep at 1 when maxing outer parallelism.")
+    p = argparse.ArgumentParser(description="Run the finance fairness R30 suite with outer parallelism.")
+    p.add_argument("--config", default=str(REPO_ROOT / "configs" / "fairness_suite_3bases_finance_r30.json"))
+    p.add_argument("--out-root", default=str(REPO_ROOT / "experiments" / "fairness_suite_3bases_finance_r30"))
+    p.add_argument("--max-workers", type=int, default=max(1, min(12, (os.cpu_count() or 1) - 2 if (os.cpu_count() or 1) >= 8 else (os.cpu_count() or 1))))
+    p.add_argument("--inner-n-jobs", type=int, default=1, help="Threads passed to each inner XGBoost evaluation.")
+    p.add_argument("--n-splits", type=int, default=5)
     p.add_argument("--beta-step", type=float, default=0.005)
+    p.add_argument("--nbi-n-starts", type=int, default=50)
     p.add_argument("--nbi-eval-k-stage1", type=int, default=180)
     p.add_argument("--refine-n-samples", type=int, default=350)
     p.add_argument("--nbi-eval-k-stage2", type=int, default=200)
@@ -158,7 +165,9 @@ def main() -> None:
                     "design": design,
                     "out_root": str(_dataset_out_root(out_root, dcfg["name"])),
                     "inner_n_jobs": int(args.inner_n_jobs),
+                    "n_splits": int(args.n_splits),
                     "beta_step": float(args.beta_step),
+                    "nbi_n_starts": int(args.nbi_n_starts),
                     "nbi_eval_k_stage1": int(args.nbi_eval_k_stage1),
                     "refine_n_samples": int(args.refine_n_samples),
                     "nbi_eval_k_stage2": int(args.nbi_eval_k_stage2),

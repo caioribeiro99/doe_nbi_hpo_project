@@ -36,6 +36,24 @@ def _drop_unknown_rows(df: pd.DataFrame) -> Tuple[pd.DataFrame, int]:
     return df, removed
 
 
+def _drop_known_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop known duplicate-value columns seen in public fairness datasets.
+
+    Current use case:
+      - german_credit.csv often contains both `x13` and `age` with identical values.
+    """
+    out = df.copy()
+    if "x13" in out.columns and "age" in out.columns:
+        try:
+            a = pd.to_numeric(out["x13"], errors="coerce")
+            b = pd.to_numeric(out["age"], errors="coerce")
+            if a.equals(b):
+                out = out.drop(columns=["x13"])
+        except Exception:
+            pass
+    return out
+
+
 def _coerce_target_binary(series: pd.Series, target_positive: Optional[str] = None) -> pd.Series:
     """Convert a target column to {0,1}."""
     s = series.copy()
@@ -145,6 +163,7 @@ def load_credit_card_default_dataset(
     path: str | Path,
     *,
     protected_attr_mode: str = "sex_male_is_1",
+    target_positive: str = "1",
 ) -> Tuple[pd.DataFrame, pd.Series, pd.Series]:
     """Load the UCI Credit Card Default dataset already stored in the repo."""
     path = Path(path)
@@ -154,7 +173,7 @@ def load_credit_card_default_dataset(
     if "SEX" not in df.columns:
         raise ValueError("Expected column 'SEX' in credit card default dataset.")
 
-    y = _coerce_target_binary(df["y"], target_positive="1")
+    y = _coerce_target_binary(df["y"], target_positive=str(target_positive))
     protected = _protected_from_mode(df["SEX"], protected_attr_mode)
 
     X = df.drop(columns=["y"]).copy()
@@ -184,6 +203,8 @@ def load_generic_fairness_dataset(
         df = pd.read_parquet(path)
     else:
         raise ValueError(f"Unsupported dataset format for fairness experiment: {path.suffix}")
+
+    df = _drop_known_duplicate_columns(df)
 
     if target_col not in df.columns:
         raise ValueError(f"Target column not found: {target_col}")

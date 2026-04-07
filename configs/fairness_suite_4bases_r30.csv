@@ -1,5 +1,0 @@
-name,path,dataset_kind,target_col,target_positive,protected_col,protected_attr_mode,drop_unknown_rows
-bank_marketing,data/source/bank/bank-additional-full.csv,bank,y,,age,age_ge_25,false
-south_german_credit,data/source/fairness/south_german_credit.csv,generic,y,1,age,age_ge_25,false
-adult,data/source/fairness/adult.csv,generic,y,1,sex,sex_male_is_1,true
-credit_card_default,data/source/credit_card_default.csv,credit_card_default,y,1,SEX,sex_male_is_1,false

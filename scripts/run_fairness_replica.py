@@ -463,29 +463,12 @@ def main() -> None:
     p.add_argument("--seed", type=int, default=None)
     p.add_argument("--out_root", default="experiments")
 
-    # Dataset loading / fairness metadata
-    p.add_argument(
-        "--dataset-kind",
-        choices=["bank", "credit_card_default", "generic"],
-        default="bank",
-        help="Dataset loader to use (default: bank)",
-    )
+    # Dataset loader controls
+    p.add_argument("--dataset-kind", choices=["bank", "credit_card_default", "generic"], default="bank")
     p.add_argument("--target-col", default="y")
     p.add_argument("--target-positive", default=None)
     p.add_argument("--protected-col", default=None)
-    p.add_argument(
-        "--protected-attr-mode",
-        default="binary_one_is_privileged",
-        choices=[
-            "age_ge_25",
-            "age_ge_30",
-            "sex_male_is_1",
-            "sex_female_is_1",
-            "binary_one_is_privileged",
-            "binary_zero_is_privileged",
-            "median_ge_is_privileged",
-        ],
-    )
+    p.add_argument("--protected-attr-mode", default="age_ge_25")
     p.add_argument("--drop-unknown-rows", action="store_true")
 
     # NBI
@@ -602,22 +585,27 @@ def main() -> None:
             stage_times: Dict[str, float] = {}
 
             # Data + design
-            if str(args.dataset_kind) == "bank":
+            dataset_kind = str(args.dataset_kind)
+            if dataset_kind == "bank":
                 X, y, protected = load_bank_dataset(dataset_path)
-            elif str(args.dataset_kind) == "credit_card_default":
+            elif dataset_kind == "credit_card_default":
                 X, y, protected = load_credit_card_default_dataset(
                     dataset_path,
                     protected_attr_mode=str(args.protected_attr_mode),
+                    target_positive=str(args.target_positive) if args.target_positive is not None else "1",
                 )
-            else:
+            elif dataset_kind == "generic":
                 X, y, protected = load_generic_fairness_dataset(
                     dataset_path,
                     target_col=str(args.target_col),
-                    target_positive=(None if args.target_positive in {None, "", "None"} else str(args.target_positive)),
-                    protected_col=args.protected_col,
+                    target_positive=str(args.target_positive) if args.target_positive is not None else None,
+                    protected_col=str(args.protected_col) if args.protected_col is not None else None,
                     protected_attr_mode=str(args.protected_attr_mode),
                     drop_unknown_rows=bool(args.drop_unknown_rows),
                 )
+            else:
+                raise ValueError(f"Unsupported dataset kind: {dataset_kind}")
+
             design_df = load_design(design_path)
 
             # Stage 1: DOE -> RSM -> NBI -> eval NBI
@@ -855,14 +843,17 @@ def main() -> None:
                     "BalancedAccuracy_Mean": float(dct.get("BalancedAccuracy_Mean", 0.0)),
                     "BiasMean_Mean": float(dct.get("BiasMean_Mean", 0.0)),
                     "FairnessScore_1_minus_Bias": float(dct.get("FairnessScore_1_minus_Bias", 0.0)),
+                    "Time_MeanFold": float(dct.get("Time_MeanFold", np.nan)),
+                    "Time_TotalCV": float(dct.get("Time_TotalCV", np.nan)),
                     "scale_pos_weight": float(dct.get("scale_pos_weight", np.nan)),
                     "threshold": float(dct.get("threshold", np.nan)),
+                    "BA_Floor": float(dct.get("FairnessBest_BA_Floor", np.nan)),
                 }
 
-            method_tag = "DOE+RSM+NBI_2stage" if bool(args.refine) else "DOE+RSM+NBI_stage1"
-            comparison_rows.append(_row_from_best(method_tag, best_overall))
+            comparison_rows.append(_row_from_best("Proposed_Utopia", best_overall))
 
             rs_best_ba: Optional[float] = None
+            rs_diag: Optional[pd.DataFrame] = None
 
             if bool(args.run_baselines):
                 budget = int(len(all_eval))
@@ -884,6 +875,7 @@ def main() -> None:
                     desc="Baseline: XGB default",
                 )
                 best_xgb = cast(pd.Series, xgb_default_eval.iloc[0])
+                save_csv_ptbr(xgb_default_eval, out_dir / "baseline_xgb_default_fairness.csv")
                 comparison_rows.append(_row_from_best("XGB_Default", best_xgb))
 
                 # Random Search baseline
@@ -904,8 +896,8 @@ def main() -> None:
                 )
                 best_rs, rs_diag = select_best_pareto_utopia(rs_eval, quality_floor=float(args.quality_floor))
                 save_csv_ptbr(rs_diag, out_dir / "baseline_random_search_fairness.csv")
-                rs_tag = f"RandomSearch_N={budget}"
-                comparison_rows.append(_row_from_best(rs_tag, best_rs))
+                save_csv_ptbr(pd.DataFrame([best_rs.to_dict()]), out_dir / "best_solution_random_search_fairness.csv")
+                comparison_rows.append(_row_from_best("RandomSearch_Utopia", best_rs))
 
                 rs_best_ba = float(best_rs.get("BalancedAccuracy_Mean", np.nan))
                 if np.isnan(rs_best_ba):
@@ -935,9 +927,14 @@ def main() -> None:
             best_fair = best_fair.copy()
             best_fair["FairnessBest_BA_Floor"] = float(ba_floor)
             save_csv_ptbr(pd.DataFrame([best_fair.to_dict()]), out_dir / "best_solution_fairness_constrained.csv")
+            comparison_rows.append(_row_from_best("Proposed_Constrained", best_fair))
 
-            fair_tag = f"{method_tag}_Fairness@BA>={ba_floor:.3f}"
-            comparison_rows.append(_row_from_best(fair_tag, best_fair))
+            if rs_diag is not None:
+                best_rs_fair = select_best_fairness_subject_to_ba(rs_diag, ba_floor=ba_floor, pareto_only=True)
+                best_rs_fair = best_rs_fair.copy()
+                best_rs_fair["FairnessBest_BA_Floor"] = float(ba_floor)
+                save_csv_ptbr(pd.DataFrame([best_rs_fair.to_dict()]), out_dir / "best_solution_random_search_constrained.csv")
+                comparison_rows.append(_row_from_best("RandomSearch_Constrained", best_rs_fair))
 
             comp = pd.DataFrame(comparison_rows)
             save_csv_ptbr(comp, out_dir / "comparison_summary_fairness.csv")
@@ -948,8 +945,10 @@ def main() -> None:
                 "BalancedAccuracy_Mean",
                 "BiasMean_Mean",
                 "FairnessScore_1_minus_Bias",
+                "Time_MeanFold",
                 "scale_pos_weight",
                 "threshold",
+                "BA_Floor",
             ]
             print(comp[cols_show].to_string(index=False))
 

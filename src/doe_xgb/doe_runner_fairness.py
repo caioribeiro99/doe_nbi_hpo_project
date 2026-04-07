@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from typing import Any, Dict, List
 
 import numpy as np
@@ -73,7 +74,6 @@ def _xgb_classifier(params: Dict[str, Any], seed: int):
         random_state=int(seed),
     )
 
-    # optional: scale_pos_weight
     spw = params.get("scale_pos_weight", None)
     if spw is not None:
         spw_f = _as_float(spw, float(FAIRNESS_DEFAULTS["scale_pos_weight"]))
@@ -83,7 +83,6 @@ def _xgb_classifier(params: Dict[str, Any], seed: int):
 
 
 def _progress(desc: str, i: int, total: int, every: int) -> None:
-    """Minimal progress indicator (no tqdm)."""
     if i == 1 or i == total or (every > 0 and i % every == 0):
         print(f"{desc}: {i}/{total}", flush=True)
 
@@ -103,54 +102,33 @@ def run_doe_fairness(
     desc: str = "DOE runs (fairness)",
     progress_every: int | None = None,
 ) -> pd.DataFrame:
-    """
-    Execute DoE points and return a results dataframe.
-
-    This fairness runner:
-      - maximizes Balanced Accuracy
-      - minimizes BiasMean (reported as FairnessScore = 1 - BiasMean)
-      - supports an explicit `threshold` hyperparameter (probability -> class)
-      - supports tuning `scale_pos_weight` (override), or auto-infer per fold if enabled
-
-    Progress:
-      Prints simple progress (no tqdm) every ~5% by default.
-    """
+    """Execute DoE points and return a results dataframe."""
     y_np = y.astype(int).to_numpy()
     prot_np = protected.astype(int).to_numpy()
 
-    # Define CV split labels
-    if stratify_by_group:
-        strat = _build_stratify_labels(y_np, prot_np)
-    else:
-        strat = y_np
-
+    strat = _build_stratify_labels(y_np, prot_np) if stratify_by_group else y_np
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=int(seed))
 
     rows: List[Dict[str, Any]] = []
-
     total = int(len(design_df))
     if progress_every is None:
-        progress_every = max(1, total // 20)  # ~5% updates
+        progress_every = max(1, total // 20)
 
     for i, (_, row) in enumerate(design_df.iterrows(), start=1):
         _progress(desc, i, total, progress_every)
 
-        # Start from whatever the design provides (if a column exists)
         params: Dict[str, Any] = {}
         for p in FAIRNESS_PARAM_NAMES:
             if p in row.index:
                 params[p] = row.get(p)
 
-        # Fixed runtime params
         params["n_jobs"] = int(n_jobs)
         params["tree_method"] = str(tree_method)
 
-        # threshold (always numeric)
         thr = _as_float(params.get("threshold"), float(FAIRNESS_DEFAULTS["threshold"]))
         thr = float(np.clip(thr, 0.01, 0.99))
         params["threshold"] = thr
 
-        # scale_pos_weight (design override if present and numeric)
         spw_design = None
         if "scale_pos_weight" in params:
             spw_val = _as_float(params.get("scale_pos_weight"), float("nan"))
@@ -158,6 +136,7 @@ def run_doe_fairness(
                 spw_design = float(max(0.0, spw_val))
 
         fold_metrics = []
+        fold_times: List[float] = []
         spw_used: List[float] = []
 
         for fold, (tr, te) in enumerate(skf.split(X, strat), start=1):
@@ -166,11 +145,6 @@ def run_doe_fairness(
             pte = protected.iloc[te]
 
             params_fold = dict(params)
-
-            # scale_pos_weight decision:
-            #  1) if design provides a value -> use it (constant across folds)
-            #  2) else if auto enabled -> infer from y_train
-            #  3) else -> leave unset (XGB default = 1)
             if spw_design is not None:
                 params_fold["scale_pos_weight"] = float(spw_design)
                 spw_used.append(float(spw_design))
@@ -182,9 +156,11 @@ def run_doe_fairness(
                 spw_used.append(1.0)
 
             clf = _xgb_classifier(params_fold, seed=int(seed) + fold)
+            t0 = time.perf_counter()
             clf.fit(Xtr, ytr)
-
             proba = clf.predict_proba(Xte)[:, 1]
+            fold_elapsed = float(time.perf_counter() - t0)
+            fold_times.append(fold_elapsed)
             yhat = (proba >= thr).astype(int)
 
             fold_metrics.append(
@@ -197,11 +173,9 @@ def run_doe_fairness(
             )
 
         agg = summarize_folds(fold_metrics)
-
         out: Dict[str, Any] = {}
         out.update(agg)
 
-        # Persist hyperparameters in the output (use rounded ints where relevant)
         spw_mean = float(np.mean(spw_used)) if spw_used else float(FAIRNESS_DEFAULTS["scale_pos_weight"])
         for p in FAIRNESS_PARAM_NAMES:
             if p == "scale_pos_weight":
@@ -216,6 +190,9 @@ def run_doe_fairness(
         out["ScalePosWeight_MeanFold"] = float(spw_mean)
         out["auto_scale_pos_weight"] = bool(auto_scale_pos_weight)
         out["stratify_by_group"] = bool(stratify_by_group)
+        out["Time_MeanFold"] = float(np.mean(fold_times)) if fold_times else np.nan
+        out["Time_TotalCV"] = float(np.sum(fold_times)) if fold_times else np.nan
+        out["n_splits"] = int(n_splits)
 
         rows.append(out)
 
