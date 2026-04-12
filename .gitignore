@@ -17,6 +17,8 @@ build/
 experiments/
 runs/
 *.log
+notebooks/*.zip
+notebooks/artifacts/*
 
 # Data (keep folder structure)
 data/source/*
