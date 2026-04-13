@@ -15,6 +15,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(REPO_ROOT / "src"))
 from doe_xgb.io_utils import _read_csv_flexible  # noqa: E402
 
+QUALITY_COL = "BalancedAccuracy_Mean"
+FAIRNESS_OBJ_COL = "FairnessScore_DI_Only"
+FAIRNESS_BIAS_COL = "Bias_DI_Mean"
+LEGACY_FAIRNESS_OBJ_COL = "FairnessScore_1_minus_Bias"
+LEGACY_FAIRNESS_BIAS_COL = "BiasMean_Mean"
+
 
 def _load_cfg(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -88,15 +94,15 @@ def _stats_diff(a: Iterable[float], b: Iterable[float], *, greater_better: bool 
 
 def _select_best_fairness_subject_to_ba(diag_df: pd.DataFrame, ba_floor: float, *, pareto_only: bool = True) -> pd.Series:
     d = diag_df.copy()
-    d["BalancedAccuracy_Mean"] = d["BalancedAccuracy_Mean"].astype(float)
-    d["BiasMean_Mean"] = d["BiasMean_Mean"].astype(float)
+    d[QUALITY_COL] = d[QUALITY_COL].astype(float)
+    d[FAIRNESS_BIAS_COL] = d[FAIRNESS_BIAS_COL].astype(float)
     base = d[d["Is_Pareto"]].copy() if pareto_only and "Is_Pareto" in d.columns else d.copy()
-    cand = base[base["BalancedAccuracy_Mean"] >= float(ba_floor)].copy()
+    cand = base[base[QUALITY_COL] >= float(ba_floor)].copy()
     if cand.empty:
-        cand = d[d["BalancedAccuracy_Mean"] >= float(ba_floor)].copy()
+        cand = d[d[QUALITY_COL] >= float(ba_floor)].copy()
     if cand.empty:
         cand = base.copy() if not base.empty else d.copy()
-    return cand.loc[cand["BiasMean_Mean"].astype(float).idxmin()]
+    return cand.loc[cand[FAIRNESS_BIAS_COL].astype(float).idxmin()]
 
 
 def _compute_tradeoff_curves(replica_rows: pd.DataFrame, replica_dirs: Dict[str, Path]) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -128,10 +134,10 @@ def _compute_tradeoff_curves(replica_rows: pd.DataFrame, replica_dirs: Dict[str,
             ours_c = ours.loc[ours["BalancedAccuracy_Mean"].astype(float) >= float(thr)]
             rs_c = rs.loc[rs["BalancedAccuracy_Mean"].astype(float) >= float(thr)]
             if not ours_c.empty:
-                ours_bias = float(ours_c["BiasMean_Mean"].astype(float).min())
+                ours_bias = float(ours_c[FAIRNESS_BIAS_COL].astype(float).min())
                 ours_vals.append(ours_bias)
             if not rs_c.empty:
-                rs_bias = float(rs_c["BiasMean_Mean"].astype(float).min())
+                rs_bias = float(rs_c[FAIRNESS_BIAS_COL].astype(float).min())
                 rs_vals.append(rs_bias)
             if not ours_c.empty and not rs_c.empty:
                 diffs.append(ours_bias - rs_bias)
@@ -187,7 +193,7 @@ def _compute_delta_sensitivity(replica_rows: pd.DataFrame, replica_dirs: Dict[st
             ba_floor = max(float(quality_floor), rs_utopia_ba - float(delta))
             ours_sel = _select_best_fairness_subject_to_ba(ours, ba_floor=ba_floor, pareto_only=True)
             rs_sel = _select_best_fairness_subject_to_ba(rs, ba_floor=ba_floor, pareto_only=True)
-            bias_diffs.append(float(ours_sel["BiasMean_Mean"]) - float(rs_sel["BiasMean_Mean"]))
+            bias_diffs.append(float(ours_sel[FAIRNESS_BIAS_COL]) - float(rs_sel[FAIRNESS_BIAS_COL]))
             ba_diffs.append(float(ours_sel["BalancedAccuracy_Mean"]) - float(rs_sel["BalancedAccuracy_Mean"]))
         d = np.asarray(bias_diffs, dtype=float)
         n = int(d.size)
@@ -235,24 +241,34 @@ def aggregate_dataset(dataset_root: Path, *, quality_floor: float) -> Dict[str, 
                 "seed": seed,
                 "ba_floor": _safe_float(rows["Proposed_Constrained"].get("BA_Floor")) if rows["Proposed_Constrained"] is not None else np.nan,
                 "ours_utopia_BA": _safe_float(rows["Proposed_Utopia"].get("BalancedAccuracy_Mean")) if rows["Proposed_Utopia"] is not None else np.nan,
-                "ours_utopia_Bias": _safe_float(rows["Proposed_Utopia"].get("BiasMean_Mean")) if rows["Proposed_Utopia"] is not None else np.nan,
-                "ours_utopia_Fair": _safe_float(rows["Proposed_Utopia"].get("FairnessScore_1_minus_Bias")) if rows["Proposed_Utopia"] is not None else np.nan,
+                "ours_utopia_Bias": _safe_float(rows["Proposed_Utopia"].get(FAIRNESS_BIAS_COL)) if rows["Proposed_Utopia"] is not None else np.nan,
+                "ours_utopia_BiasMeanComposite": _safe_float(rows["Proposed_Utopia"].get(LEGACY_FAIRNESS_BIAS_COL)) if rows["Proposed_Utopia"] is not None else np.nan,
+                "ours_utopia_Fair": _safe_float(rows["Proposed_Utopia"].get(FAIRNESS_OBJ_COL)) if rows["Proposed_Utopia"] is not None else np.nan,
+                "ours_utopia_FairComposite": _safe_float(rows["Proposed_Utopia"].get(LEGACY_FAIRNESS_OBJ_COL)) if rows["Proposed_Utopia"] is not None else np.nan,
                 "ours_utopia_TimeMeanFold": _safe_float(rows["Proposed_Utopia"].get("Time_MeanFold")) if rows["Proposed_Utopia"] is not None else np.nan,
                 "ours_constrained_BA": _safe_float(rows["Proposed_Constrained"].get("BalancedAccuracy_Mean")) if rows["Proposed_Constrained"] is not None else np.nan,
-                "ours_constrained_Bias": _safe_float(rows["Proposed_Constrained"].get("BiasMean_Mean")) if rows["Proposed_Constrained"] is not None else np.nan,
-                "ours_constrained_Fair": _safe_float(rows["Proposed_Constrained"].get("FairnessScore_1_minus_Bias")) if rows["Proposed_Constrained"] is not None else np.nan,
+                "ours_constrained_Bias": _safe_float(rows["Proposed_Constrained"].get(FAIRNESS_BIAS_COL)) if rows["Proposed_Constrained"] is not None else np.nan,
+                "ours_constrained_BiasMeanComposite": _safe_float(rows["Proposed_Constrained"].get(LEGACY_FAIRNESS_BIAS_COL)) if rows["Proposed_Constrained"] is not None else np.nan,
+                "ours_constrained_Fair": _safe_float(rows["Proposed_Constrained"].get(FAIRNESS_OBJ_COL)) if rows["Proposed_Constrained"] is not None else np.nan,
+                "ours_constrained_FairComposite": _safe_float(rows["Proposed_Constrained"].get(LEGACY_FAIRNESS_OBJ_COL)) if rows["Proposed_Constrained"] is not None else np.nan,
                 "ours_constrained_TimeMeanFold": _safe_float(rows["Proposed_Constrained"].get("Time_MeanFold")) if rows["Proposed_Constrained"] is not None else np.nan,
                 "rs_utopia_BA": _safe_float(rows["RandomSearch_Utopia"].get("BalancedAccuracy_Mean")) if rows["RandomSearch_Utopia"] is not None else np.nan,
-                "rs_utopia_Bias": _safe_float(rows["RandomSearch_Utopia"].get("BiasMean_Mean")) if rows["RandomSearch_Utopia"] is not None else np.nan,
-                "rs_utopia_Fair": _safe_float(rows["RandomSearch_Utopia"].get("FairnessScore_1_minus_Bias")) if rows["RandomSearch_Utopia"] is not None else np.nan,
+                "rs_utopia_Bias": _safe_float(rows["RandomSearch_Utopia"].get(FAIRNESS_BIAS_COL)) if rows["RandomSearch_Utopia"] is not None else np.nan,
+                "rs_utopia_BiasMeanComposite": _safe_float(rows["RandomSearch_Utopia"].get(LEGACY_FAIRNESS_BIAS_COL)) if rows["RandomSearch_Utopia"] is not None else np.nan,
+                "rs_utopia_Fair": _safe_float(rows["RandomSearch_Utopia"].get(FAIRNESS_OBJ_COL)) if rows["RandomSearch_Utopia"] is not None else np.nan,
+                "rs_utopia_FairComposite": _safe_float(rows["RandomSearch_Utopia"].get(LEGACY_FAIRNESS_OBJ_COL)) if rows["RandomSearch_Utopia"] is not None else np.nan,
                 "rs_utopia_TimeMeanFold": _safe_float(rows["RandomSearch_Utopia"].get("Time_MeanFold")) if rows["RandomSearch_Utopia"] is not None else np.nan,
                 "xgb_default_BA": _safe_float(rows["XGB_Default"].get("BalancedAccuracy_Mean")) if rows["XGB_Default"] is not None else np.nan,
-                "xgb_default_Bias": _safe_float(rows["XGB_Default"].get("BiasMean_Mean")) if rows["XGB_Default"] is not None else np.nan,
-                "xgb_default_Fair": _safe_float(rows["XGB_Default"].get("FairnessScore_1_minus_Bias")) if rows["XGB_Default"] is not None else np.nan,
+                "xgb_default_Bias": _safe_float(rows["XGB_Default"].get(FAIRNESS_BIAS_COL)) if rows["XGB_Default"] is not None else np.nan,
+                "xgb_default_BiasMeanComposite": _safe_float(rows["XGB_Default"].get(LEGACY_FAIRNESS_BIAS_COL)) if rows["XGB_Default"] is not None else np.nan,
+                "xgb_default_Fair": _safe_float(rows["XGB_Default"].get(FAIRNESS_OBJ_COL)) if rows["XGB_Default"] is not None else np.nan,
+                "xgb_default_FairComposite": _safe_float(rows["XGB_Default"].get(LEGACY_FAIRNESS_OBJ_COL)) if rows["XGB_Default"] is not None else np.nan,
                 "xgb_default_TimeMeanFold": _safe_float(rows["XGB_Default"].get("Time_MeanFold")) if rows["XGB_Default"] is not None else np.nan,
                 "rs_best_at_floor_BA": _safe_float(rows["RandomSearch_Constrained"].get("BalancedAccuracy_Mean")) if rows["RandomSearch_Constrained"] is not None else np.nan,
-                "rs_best_at_floor_Bias": _safe_float(rows["RandomSearch_Constrained"].get("BiasMean_Mean")) if rows["RandomSearch_Constrained"] is not None else np.nan,
-                "rs_best_at_floor_Fair": _safe_float(rows["RandomSearch_Constrained"].get("FairnessScore_1_minus_Bias")) if rows["RandomSearch_Constrained"] is not None else np.nan,
+                "rs_best_at_floor_Bias": _safe_float(rows["RandomSearch_Constrained"].get(FAIRNESS_BIAS_COL)) if rows["RandomSearch_Constrained"] is not None else np.nan,
+                "rs_best_at_floor_BiasMeanComposite": _safe_float(rows["RandomSearch_Constrained"].get(LEGACY_FAIRNESS_BIAS_COL)) if rows["RandomSearch_Constrained"] is not None else np.nan,
+                "rs_best_at_floor_Fair": _safe_float(rows["RandomSearch_Constrained"].get(FAIRNESS_OBJ_COL)) if rows["RandomSearch_Constrained"] is not None else np.nan,
+                "rs_best_at_floor_FairComposite": _safe_float(rows["RandomSearch_Constrained"].get(LEGACY_FAIRNESS_OBJ_COL)) if rows["RandomSearch_Constrained"] is not None else np.nan,
                 "rs_best_at_floor_TimeMeanFold": _safe_float(rows["RandomSearch_Constrained"].get("Time_MeanFold")) if rows["RandomSearch_Constrained"] is not None else np.nan,
             }
         )
@@ -264,15 +280,15 @@ def aggregate_dataset(dataset_root: Path, *, quality_floor: float) -> Dict[str, 
     comps: List[Dict[str, Any]] = []
     comparison_specs = [
         ("Utopia: BA ours - RS", "ours_utopia_BA", "rs_utopia_BA"),
-        ("Utopia: Bias ours - RS", "ours_utopia_Bias", "rs_utopia_Bias"),
+        ("Utopia: DI-bias ours - RS", "ours_utopia_Bias", "rs_utopia_Bias"),
         ("Constrained: BA ours - RS_utopia", "ours_constrained_BA", "rs_utopia_BA"),
-        ("Constrained: Bias ours - RS_utopia", "ours_constrained_Bias", "rs_utopia_Bias"),
+        ("Constrained: DI-bias ours - RS_utopia", "ours_constrained_Bias", "rs_utopia_Bias"),
         ("Constrained: BA ours - RS_best_at_floor", "ours_constrained_BA", "rs_best_at_floor_BA"),
-        ("Constrained: Bias ours - RS_best_at_floor", "ours_constrained_Bias", "rs_best_at_floor_Bias"),
+        ("Constrained: DI-bias ours - RS_best_at_floor", "ours_constrained_Bias", "rs_best_at_floor_Bias"),
         ("Utopia: BA ours - XGB_default", "ours_utopia_BA", "xgb_default_BA"),
-        ("Utopia: Bias ours - XGB_default", "ours_utopia_Bias", "xgb_default_Bias"),
+        ("Utopia: DI-bias ours - XGB_default", "ours_utopia_Bias", "xgb_default_Bias"),
         ("Constrained: BA ours - XGB_default", "ours_constrained_BA", "xgb_default_BA"),
-        ("Constrained: Bias ours - XGB_default", "ours_constrained_Bias", "xgb_default_Bias"),
+        ("Constrained: DI-bias ours - XGB_default", "ours_constrained_Bias", "xgb_default_Bias"),
     ]
     for label, a_col, b_col in comparison_specs:
         stats = _stats_diff(per_rep_df[a_col], per_rep_df[b_col], greater_better=("Bias" not in label))

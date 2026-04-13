@@ -20,7 +20,7 @@ Notes on constraints
 In fairness mode we model both objectives as maximization:
 
 - Score_Quality  = BalancedAccuracy_Mean
-- Score_Fairness = FairnessScore_1_minus_Bias
+- Score_Fairness = FairnessScore_DI_Only (DI-only symmetric score)
 
 When `clip_pred_range=True`, we add inequality constraints so the predicted
 (quality, fairness) remain within the observed [nadir, utopia] box. This

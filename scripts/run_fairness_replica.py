@@ -29,6 +29,12 @@ from doe_xgb.fairness_dataset_utils import (  # noqa: E402
     load_generic_fairness_dataset,
 )
 
+QUALITY_OBJ_COL = "BalancedAccuracy_Mean"
+FAIRNESS_OBJ_COL = "FairnessScore_DI_Only"
+FAIRNESS_BIAS_COL = "Bias_DI_Mean"
+LEGACY_FAIRNESS_OBJ_COL = "FairnessScore_1_minus_Bias"
+LEGACY_FAIRNESS_BIAS_COL = "BiasMean_Mean"
+
 
 class Tee(IO[str]):
     """Tee stdout/stderr to both terminal and a file."""
@@ -118,9 +124,9 @@ def _minmax_norm_from_ref(values: pd.Series, ref: pd.Series) -> pd.Series:
 def select_best_pareto_utopia(
     df: pd.DataFrame,
     *,
-    obj_cols: Tuple[str, str] = ("BalancedAccuracy_Mean", "FairnessScore_1_minus_Bias"),
+    obj_cols: Tuple[str, str] = (QUALITY_OBJ_COL, FAIRNESS_OBJ_COL),
     quality_floor: Optional[float] = None,
-    quality_col: str = "BalancedAccuracy_Mean",
+    quality_col: str = QUALITY_OBJ_COL,
 ) -> Tuple[pd.Series, pd.DataFrame]:
     """Pareto filter (maximize both objs) + closest to utopia."""
     a, b = obj_cols
@@ -180,7 +186,7 @@ def select_best_fairness_subject_to_ba(
     ba_floor: float,
     pareto_only: bool = True,
     ba_col: str = "BalancedAccuracy_Mean",
-    bias_col: str = "BiasMean_Mean",
+    bias_col: str = FAIRNESS_BIAS_COL,
 ) -> pd.Series:
     """Pick minimum bias subject to BA >= floor."""
     d = diag_df.copy()
@@ -206,8 +212,8 @@ def select_refine_anchors(
     top_m: int,
     strategy: str = "mixed",
     mix: Tuple[float, float, float] = (0.4, 0.4, 0.2),
-    quality_col: str = "BalancedAccuracy_Mean",
-    fairness_col: str = "FairnessScore_1_minus_Bias",
+    quality_col: str = QUALITY_OBJ_COL,
+    fairness_col: str = FAIRNESS_OBJ_COL,
 ) -> pd.DataFrame:
     """Select anchor points for stage2 refinement.
 
@@ -442,7 +448,7 @@ def _range_for_nbi(
     *,
     quality_floor: float,
     q_col: str = "BalancedAccuracy_Mean",
-    f_col: str = "FairnessScore_1_minus_Bias",
+    f_col: str = FAIRNESS_OBJ_COL,
 ) -> Tuple[Tuple[float, float], Tuple[float, float]]:
     work = df[df[q_col].astype(float) >= float(quality_floor)].copy()
     if work.empty:
@@ -639,14 +645,14 @@ def main() -> None:
             )
             model_f = fit_rsm_backward(
                 factors_df,
-                doe_df["FairnessScore_1_minus_Bias"],
-                response_name="FairnessScore_1_minus_Bias",
+                doe_df[FAIRNESS_OBJ_COL],
+                response_name=FAIRNESS_OBJ_COL,
                 param_names=FAIRNESS_PARAM_NAMES,
             )
             stage_times["rsm_seconds"] = float(time.perf_counter() - t0)
 
             coef_q_path = out_dir / "rsm_coefficients_balanced_accuracy.csv"
-            coef_f_path = out_dir / "rsm_coefficients_fairness_score.csv"
+            coef_f_path = out_dir / "rsm_coefficients_fairness_di_only.csv"
             save_rsm_coefficients(model_q, str(coef_q_path))
             save_rsm_coefficients(model_f, str(coef_f_path))
 
@@ -766,14 +772,14 @@ def main() -> None:
                 )
                 model_f2 = fit_rsm_backward(
                     stage2_factors,
-                    stage2_doe["FairnessScore_1_minus_Bias"],
-                    response_name="FairnessScore_1_minus_Bias",
+                    stage2_doe[FAIRNESS_OBJ_COL],
+                    response_name=FAIRNESS_OBJ_COL,
                     param_names=FAIRNESS_PARAM_NAMES,
                 )
                 stage_times["rsm_stage2_seconds"] = float(time.perf_counter() - t0)
 
                 coef_q2_path = out_dir / "rsm_coefficients_balanced_accuracy_stage2.csv"
-                coef_f2_path = out_dir / "rsm_coefficients_fairness_score_stage2.csv"
+                coef_f2_path = out_dir / "rsm_coefficients_fairness_di_only_stage2.csv"
                 save_rsm_coefficients(model_q2, str(coef_q2_path))
                 save_rsm_coefficients(model_f2, str(coef_f2_path))
 
@@ -841,8 +847,10 @@ def main() -> None:
                 return {
                     "Method": tag,
                     "BalancedAccuracy_Mean": float(dct.get("BalancedAccuracy_Mean", 0.0)),
-                    "BiasMean_Mean": float(dct.get("BiasMean_Mean", 0.0)),
-                    "FairnessScore_1_minus_Bias": float(dct.get("FairnessScore_1_minus_Bias", 0.0)),
+                    "Bias_DI_Mean": float(dct.get(FAIRNESS_BIAS_COL, 0.0)),
+                    "FairnessScore_DI_Only": float(dct.get(FAIRNESS_OBJ_COL, 0.0)),
+                    "BiasMean_Mean": float(dct.get(LEGACY_FAIRNESS_BIAS_COL, 0.0)),
+                    "FairnessScore_1_minus_Bias": float(dct.get(LEGACY_FAIRNESS_OBJ_COL, 0.0)),
                     "Time_MeanFold": float(dct.get("Time_MeanFold", np.nan)),
                     "Time_TotalCV": float(dct.get("Time_TotalCV", np.nan)),
                     "scale_pos_weight": float(dct.get("scale_pos_weight", np.nan)),
@@ -943,6 +951,8 @@ def main() -> None:
             cols_show = [
                 "Method",
                 "BalancedAccuracy_Mean",
+                "Bias_DI_Mean",
+                "FairnessScore_DI_Only",
                 "BiasMean_Mean",
                 "FairnessScore_1_minus_Bias",
                 "Time_MeanFold",

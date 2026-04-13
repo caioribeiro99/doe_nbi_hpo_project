@@ -147,12 +147,16 @@ def summarize_folds(rows: list[FairnessFoldMetrics]) -> Dict[str, float]:
     def _mean(attr: str) -> float:
         return float(np.mean([getattr(r, attr) for r in rows])) if rows else 0.0
 
+    bias_di_mean = _mean("bias_di")
+    fairness_score_di_only = float(np.clip(1.0 - bias_di_mean, 0.0, 1.0))
+
     return {
         "BalancedAccuracy_Mean": _mean("balanced_accuracy"),
         "Bias_SPD_Mean": _mean("bias_spd"),
         "Bias_EOD_Mean": _mean("bias_eod"),
         "Bias_AOD_Mean": _mean("bias_aod"),
-        "Bias_DI_Mean": _mean("bias_di"),
+        "Bias_DI_Mean": bias_di_mean,
+        "FairnessScore_DI_Only": fairness_score_di_only,
         "BiasMean_Mean": _mean("bias_mean"),
         "FairnessScore_1_minus_Bias": _mean("fairness_score"),
     }
