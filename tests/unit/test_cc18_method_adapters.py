@@ -84,10 +84,18 @@ def test_every_adapter_import_check_returns_capability_status() -> None:
         }
 
 
-def test_every_adapter_run_is_blocked_in_commit_29() -> None:
+def test_stub_or_dispatch_only_adapters_run_is_blocked() -> None:
+    """Adapters that have not yet been promoted to smoke_ready must keep
+    their run() guarded behind NotImplementedError. Smoke-ready adapters
+    (Commit 30 promoted default_gbdt, random_search, tpe_optuna,
+    doe_rsm_vrf_true_nbi) have a real implementation and are exercised
+    by tests/unit/test_cc18_canary_adapters.py."""
     for mid in ALL_METHOD_IDS:
+        adapter = get_adapter(mid)
+        if adapter.run_status in ("smoke_ready", "full_ready"):
+            continue
         with pytest.raises(NotImplementedError):
-            get_adapter(mid).run()
+            adapter.run()
 
 
 def test_adapter_supports_filters_by_task_type_and_algorithm() -> None:
@@ -252,7 +260,9 @@ def test_runner_help_runs() -> None:
 
 def test_runner_dispatch_decision_does_not_invoke_run() -> None:
     """Spot-check the in-process API: dispatch_decision() never calls
-    adapter.run()."""
+    adapter.run(). Use a stub_only method so the decision is
+    deterministic across Commit 29 (all adapters stub) and Commit 30
+    (four adapters smoke_ready)."""
     from scripts.cc18_runner import dispatch_decision
 
     class FakeRow(dict):
@@ -260,11 +270,17 @@ def test_runner_dispatch_decision_does_not_invoke_run() -> None:
             return super().__getitem__(k)
 
     row = FakeRow(
-        job_id="x", method="doe_rsm_vrf_true_nbi", algorithm="xgboost",
+        job_id="x", method="bohb", algorithm="xgboost",
         openml_task_id=3, stage="stage0_replica_001", notes=None,
     )
-    decision = dispatch_decision(row, signoff_ok=True, train=True)
-    # train=True + dispatch_only adapter => decision is dispatch_only,
-    # not "would_train". Crucially, no NotImplementedError leaked out.
-    assert decision["decision"] == "dispatch_only"
+    decision = dispatch_decision(row, signoff_ok=True, train=False)
+    # bohb is stub_only. With train=False the decision is stub_only.
+    # Crucially, dispatch_decision never invoked NotImplementedError.
+    assert decision["decision"] == "stub_only"
     assert decision["would_run"] is False
+    # And with train=True under canary_only it is refused as not in
+    # the canary set (Commit 30 guardrail) — still no run() invocation.
+    decision_canary = dispatch_decision(row, signoff_ok=True, train=True,
+                                         canary_only=True)
+    assert decision_canary["decision"] == "refused_not_in_canary_set"
+    assert decision_canary["would_run"] is False

@@ -4,16 +4,46 @@ with no HPO. One fit per CV split per replica."""
 from __future__ import annotations
 
 from .base import AdapterBase
+from .canary import (
+    CanaryResult,
+    MethodRunContext,
+    TaskData,
+    aggregate_fold_metrics,
+    evaluate_fitted_model,
+)
 
 
 class DefaultGbdtAdapter(AdapterBase):
     method_id = "default_gbdt"
-    # The required packages are the GBDT libraries themselves; missing
-    # any of them means the corresponding (algorithm) cell cannot run,
-    # not that the method is broken in general.
     required_packages = ("xgboost", "lightgbm", "catboost")
-    run_status = "stub_only"
+    run_status = "smoke_ready"
     notes = (
         "No search; one fit per CV split with library defaults. "
-        "supports_categorical_native=catboost_only in the method matrix."
+        "Smoke-ready (Commit 30) — runs end-to-end on synthetic and CC18 "
+        "tasks once the GBDT library for the target algorithm is installed."
     )
+
+    def run(self, *, task: TaskData, ctx: MethodRunContext) -> CanaryResult:
+        from ._gbdt_factory import make_fit_predict
+
+        fit, predict = make_fit_predict(
+            ctx.algorithm, params={}, seed=ctx.derived_seed(),
+        )
+        fold_metrics, runtime = evaluate_fitted_model(
+            model_fit=fit, model_predict=predict,
+            X=task.X, y=task.y, task_type=task.task_type,
+            n_folds=ctx.n_folds, seed=ctx.derived_seed(salt=1),
+        )
+        return CanaryResult(
+            method_id=self.method_id,
+            algorithm=ctx.algorithm,
+            replica=ctx.replica,
+            task_type=task.task_type,
+            n_folds=ctx.n_folds,
+            fold_metrics=fold_metrics,
+            aggregate_metrics=aggregate_fold_metrics(fold_metrics),
+            best_config={},  # no HPO performed
+            n_configurations_tried=1,
+            runtime_seconds=runtime,
+            notes="library defaults; no HPO",
+        )

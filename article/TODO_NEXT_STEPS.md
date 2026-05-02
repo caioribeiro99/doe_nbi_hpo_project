@@ -39,13 +39,19 @@
 > the audit script
 > (`scripts/audit_method_capabilities.py`) writes
 > `experiments/_capability_audit/cc18_capability_report.{json,md}`.
-> The local runner (`scripts/cc18_runner.py`) is a skeleton: it
-> selects pending jobs, resolves the adapter, logs the dispatch
-> decision, and does **not** train models. Stage 3 is gated by a
-> manual sign-off file. **Next operational step:** implement the
-> first executable adapters for the canary cell (`default_gbdt`,
-> `random_search`, `tpe_optuna`, `doe_rsm_vrf_true_nbi`) — Commit
-> 30. No benchmark runs yet.
+>
+> **Executable canary adapters landed in Commit 30.** Four adapters
+> are `smoke_ready` (`default_gbdt`, `random_search`, `tpe_optuna`,
+> `doe_rsm_vrf_true_nbi`); the rest stay `stub_only` /
+> `dispatch_only`. The runner now supports `--canary-only --train
+> --synthetic-task` to exercise the four adapters on a synthetic
+> binary task on a temp-copied shard. The default is still
+> `--no-train`; `--train` requires `--canary-only`; stage-3
+> sign-off guardrail still applies. **Next operational step:**
+> Commit 31 — prepare the dedicated Mac environment (install
+> `[gbdt,hpo_baselines,doctoral,dev]` extras, refresh the
+> capability audit there, run the synthetic canary, post the audit
+> JSON/MD as the gate before stage 0). No CC18 task download yet.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

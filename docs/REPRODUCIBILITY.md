@@ -83,12 +83,35 @@ python scripts/audit_method_capabilities.py
 
 to refresh `experiments/_capability_audit/cc18_capability_report.{json,md}`
 on the dedicated Mac; the report lists which adapters are
-`stub_only` vs `dispatch_only` and which optional packages are
-missing. The local runner (`scripts/cc18_runner.py`) is a skeleton
-that selects pending jobs and logs the dispatch decision but does
-**not** train models. Stage 3 is gated by a sign-off file at
+`stub_only` / `dispatch_only` / `smoke_ready` and which optional
+packages are missing. Stage 3 is gated by a sign-off file at
 `jobs/doctoral/openml_cc18/stage3_signoff.json`; the runner refuses
 to claim stage-3 jobs until that file exists.
+
+**Executable canary adapters (Commit 30).** Four adapters are now
+`smoke_ready`: `default_gbdt`, `random_search`, `tpe_optuna`,
+`doe_rsm_vrf_true_nbi`. They run end-to-end on a synthetic binary
+task. The runner default is still `--no-train`; training requires
+both `--canary-only` and `--train`, and even then only the four
+canary methods are dispatched. Sample command (on a temp-copied
+shard):
+
+```bash
+cp jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite /tmp/canary.sqlite
+python scripts/cc18_runner.py \
+    --shard /tmp/canary.sqlite --max-jobs 12 \
+    --canary-only --train --synthetic-task \
+    --max-evaluations 5 --n-folds 2 \
+    --output-root experiments/_canary_runs
+```
+
+The committed shards under `jobs/doctoral/openml_cc18/shards/`
+must not be passed to `--train` directly — always copy first.
+
+**Stage 0 must not start** until the canary above passes on the
+dedicated Mac with all four adapters marked `success` and the
+audit reporting zero missing canary packages. The other 9
+adapters remain stub/dispatch-only and are wired in later commits.
 
 The CC18 task / dataset registry lives at
 `benchmarks/doctoral/openml_cc18/{tasks.csv, datasets.csv,

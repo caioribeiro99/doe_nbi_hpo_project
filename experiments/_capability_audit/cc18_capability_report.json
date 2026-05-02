@@ -27,12 +27,11 @@
     "parego: missing smac,pymoo"
   ],
   "dispatch_only": [
-    "doe_rsm_vrf_true_nbi",
     "doe_rsm_vrf_true_nbi_no_mbpa",
     "legacy_weighted_sum_scalarization"
   ],
   "full_ready": [],
-  "generated_at": "2026-05-02T22:15:47Z",
+  "generated_at": "2026-05-02T22:33:38Z",
   "literature_only": [
     "flaml_optional",
     "auto_sklearn_context",
@@ -69,7 +68,7 @@
         "lightgbm",
         "catboost"
       ],
-      "notes": "No search; one fit per CV split with library defaults. supports_categorical_native=catboost_only in the method matrix.",
+      "notes": "No search; one fit per CV split with library defaults. Smoke-ready (Commit 30) \u2014 runs end-to-end on synthetic and CC18 tasks once the GBDT library for the target algorithm is installed.",
       "package_versions": {
         "catboost": null,
         "lightgbm": null,
@@ -80,7 +79,7 @@
         "lightgbm",
         "catboost"
       ],
-      "run_status": "stub_only",
+      "run_status": "smoke_ready",
       "supports_binary": true,
       "supports_catboost": true,
       "supports_lightgbm": true,
@@ -91,7 +90,7 @@
       "adapter_import_ok": true,
       "method_id": "random_search",
       "missing_packages": [],
-      "notes": "Bergstra & Bengio 2012. Headline single-objective baseline.",
+      "notes": "Bergstra & Bengio 2012. Smoke-ready (Commit 30) over the canary search space; the full per-algorithm search space lives in configs/cc18/<algorithm>/random_search/<task>.yaml and is wired in by the runner via ctx.config_path.",
       "package_versions": {
         "joblib": "1.5.3",
         "scipy": "1.13.1"
@@ -100,7 +99,7 @@
         "scipy",
         "joblib"
       ],
-      "run_status": "stub_only",
+      "run_status": "smoke_ready",
       "supports_binary": true,
       "supports_catboost": true,
       "supports_lightgbm": true,
@@ -113,14 +112,14 @@
       "missing_packages": [
         "optuna"
       ],
-      "notes": "Akiba et al. 2019. Default-prior TPESampler.",
+      "notes": "Akiba et al. 2019. Default-prior TPESampler. Smoke-ready (Commit 30) over the canary search space; raises ImportError(clear message) when Optuna is not installed.",
       "package_versions": {
         "optuna": null
       },
       "required_packages": [
         "optuna"
       ],
-      "run_status": "stub_only",
+      "run_status": "smoke_ready",
       "supports_binary": true,
       "supports_catboost": true,
       "supports_lightgbm": true,
@@ -274,14 +273,14 @@
       "adapter_import_ok": true,
       "method_id": "doe_rsm_vrf_true_nbi",
       "missing_packages": [],
-      "notes": "Headline proposed method. All implementation lives in-tree under src/doe_xgb (factor_model, nbi_core, post_optimization). run() still raises NotImplementedError until Commit 30 wires the per-task config and CV harness.",
+      "notes": "Headline proposed method. Smoke-ready (Commit 30) on the 2-objective canary path (mean accuracy maximize, mean fold runtime minimize). The Varimax / FMSE wrap-around and the conditional MBPA solve are exercised by name; the full factor-model + post-optimization path lands on the dedicated Mac with the per-task config under configs/cc18/.",
       "package_versions": {
         "doe_xgb": "0.2.0.dev0"
       },
       "required_packages": [
         "doe_xgb"
       ],
-      "run_status": "dispatch_only",
+      "run_status": "smoke_ready",
       "supports_binary": true,
       "supports_catboost": true,
       "supports_lightgbm": true,
@@ -330,11 +329,13 @@
     "python": "3.9.6",
     "system": "Darwin"
   },
-  "smoke_ready": [],
-  "stub_only": [
+  "smoke_ready": [
     "default_gbdt",
     "random_search",
     "tpe_optuna",
+    "doe_rsm_vrf_true_nbi"
+  ],
+  "stub_only": [
     "smac3",
     "asha",
     "bohb",

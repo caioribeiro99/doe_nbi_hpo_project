@@ -117,11 +117,15 @@ sqlite3 jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite \
     "SELECT count(*), stage FROM cc18_jobs GROUP BY stage"
 ```
 
-The runner skeleton at `scripts/cc18_runner.py` (Commit 29) opens a
-shard, selects pending jobs, resolves the method adapter, logs a
-dispatch decision, and (in non-`--dry-run` mode) briefly claims +
-releases each job without training. It does **not** execute any
-HPO yet — every adapter's `run()` raises `NotImplementedError`.
+The runner at `scripts/cc18_runner.py` opens a shard, selects
+pending jobs, resolves the method adapter, and logs a dispatch
+decision. The default `--no-train` mode briefly claims + releases
+each job without training. With **both** `--canary-only` and
+`--train`, the four canary adapters
+(`default_gbdt`, `random_search`, `tpe_optuna`,
+`doe_rsm_vrf_true_nbi`) execute end-to-end on a `--synthetic-task`;
+non-canary methods are still refused
+(`refused_not_in_canary_set`).
 
 Before running on the dedicated Mac, refresh the capability audit:
 
@@ -132,8 +136,10 @@ python scripts/audit_method_capabilities.py
 
 Stage 3 is locked: the runner refuses to claim any job carrying the
 `requires_manual_signoff_before_stage3` note unless
-`jobs/doctoral/openml_cc18/stage3_signoff.json` exists. Commit 29
-deliberately does not create that file.
+`jobs/doctoral/openml_cc18/stage3_signoff.json` exists. Neither
+Commit 29 nor Commit 30 creates that file. **Stage 0 must not
+start** until the canary on the dedicated Mac reports
+all-green with the four canary methods marked `success`.
 
 ## Task-based vs dataset-based identity
 

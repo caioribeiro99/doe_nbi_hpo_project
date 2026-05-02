@@ -1,6 +1,6 @@
 # OpenML-CC18 method capability audit
 
-- generated_at: `2026-05-02T22:15:47Z`
+- generated_at: `2026-05-02T22:33:38Z`
 - python: `3.9.6` (Darwin/arm64)
 - methods in matrix: 16
 - benchmarked: 13
@@ -21,17 +21,17 @@
 ## Adapter run-status
 
 - **full_ready** (0): _(none)_
-- **smoke_ready** (0): _(none)_
-- **dispatch_only** (3): `doe_rsm_vrf_true_nbi`, `doe_rsm_vrf_true_nbi_no_mbpa`, `legacy_weighted_sum_scalarization`
-- **stub_only** (10): `default_gbdt`, `random_search`, `tpe_optuna`, `smac3`, `asha`, `bohb`, `dehb`, `nsga2`, `motpe`, `parego`
+- **smoke_ready** (4): `default_gbdt`, `random_search`, `tpe_optuna`, `doe_rsm_vrf_true_nbi`
+- **dispatch_only** (2): `doe_rsm_vrf_true_nbi_no_mbpa`, `legacy_weighted_sum_scalarization`
+- **stub_only** (7): `smac3`, `asha`, `bohb`, `dehb`, `nsga2`, `motpe`, `parego`
 
 ## Per-method
 
 | method | import_ok | run_status | required | missing | notes |
 |---|---|---|---|---|---|
-| `default_gbdt` | True | `stub_only` | xgboost,lightgbm,catboost | lightgbm,catboost | No search; one fit per CV split with library defaults. supports_categorical_nati |
-| `random_search` | True | `stub_only` | scipy,joblib | — | Bergstra & Bengio 2012. Headline single-objective baseline. |
-| `tpe_optuna` | True | `stub_only` | optuna | optuna | Akiba et al. 2019. Default-prior TPESampler. |
+| `default_gbdt` | True | `smoke_ready` | xgboost,lightgbm,catboost | lightgbm,catboost | No search; one fit per CV split with library defaults. Smoke-ready (Commit 30) — |
+| `random_search` | True | `smoke_ready` | scipy,joblib | — | Bergstra & Bengio 2012. Smoke-ready (Commit 30) over the canary search space; th |
+| `tpe_optuna` | True | `smoke_ready` | optuna | optuna | Akiba et al. 2019. Default-prior TPESampler. Smoke-ready (Commit 30) over the ca |
 | `smac3` | True | `stub_only` | smac | smac | Lindauer et al. 2022. RF surrogate with intensification. Native categorical hand |
 | `asha` | True | `stub_only` | optuna | optuna | Li et al. 2017/2020. Fidelity dimension = boosting iterations (n_estimators). Fr |
 | `bohb` | True | `stub_only` | smac | smac | Falkner et al. 2018. Implementation route: SMAC3 multi-fidelity facade. The hpba |
@@ -39,7 +39,7 @@
 | `nsga2` | True | `stub_only` | pymoo | pymoo | Deb et al. 2002. Reference evolutionary multi-objective baseline. |
 | `motpe` | True | `stub_only` | optuna | optuna | Ozaki et al. 2020. Optuna MOTPESampler. |
 | `parego` | True | `stub_only` | smac,pymoo | smac,pymoo | Knowles 2006. Subset-only (48 of 72 CC18 tasks); the subset is frozen by benchma |
-| `doe_rsm_vrf_true_nbi` | True | `dispatch_only` | doe_xgb | — | Headline proposed method. All implementation lives in-tree under src/doe_xgb (fa |
+| `doe_rsm_vrf_true_nbi` | True | `smoke_ready` | doe_xgb | — | Headline proposed method. Smoke-ready (Commit 30) on the 2-objective canary path |
 | `doe_rsm_vrf_true_nbi_no_mbpa` | True | `dispatch_only` | doe_xgb | — | Ablation: same pipeline as doe_rsm_vrf_true_nbi but with MBPA stage disabled. Qu |
 | `legacy_weighted_sum_scalarization` | True | `dispatch_only` | doe_xgb | — | Ablation: dissertation-era weighted-sum solver kept verbatim (doe_xgb.scalarizat |
 

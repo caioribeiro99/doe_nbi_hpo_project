@@ -187,10 +187,53 @@ manual sign-off file at
 **not** create that file. Without it, the runner refuses to claim
 stage-3 jobs and reports them as `refused_stage3_signoff_missing`.
 
-The next operational step is to implement the first executable
-adapters for a canary cell: `default_gbdt`, `random_search`,
-`tpe_optuna`, and `doe_rsm_vrf_true_nbi`. The runner skeleton's
-`--no-train` default flips off only after that.
+## Executable canary adapters (Commit 30)
+
+The four canary adapters are now `smoke_ready` and execute
+end-to-end on a synthetic binary task:
+
+- `default_gbdt` — one fit per CV split with library defaults;
+- `random_search` — uniform draws over the canary search space at
+  `--max-evaluations` budget;
+- `tpe_optuna` — Optuna `TPESampler` at the same budget; raises a
+  clear `ImportError` when `optuna` is not installed;
+- `doe_rsm_vrf_true_nbi` — Latin-hypercube DOE → quadratic RSM →
+  true 2-objective NBI (mean accuracy max, mean fold runtime min) →
+  distance-to-utopia selection → conditional MBPA diagnostics →
+  retrain at the chosen hyperparameters.
+
+The runner default is still `--no-train`; training is **only**
+allowed when `--canary-only` and `--train` are set together. Even
+under `--canary-only --train`, non-canary methods are refused
+(`refused_not_in_canary_set`), and stage-3 jobs carrying the
+`requires_manual_signoff_before_stage3` note are still refused
+without the sign-off file.
+
+Running the synthetic canary on a temp shard:
+
+```bash
+# On the dedicated Mac, after `pip install -e .[gbdt,hpo_baselines,doctoral,dev]`:
+cp jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite /tmp/canary.sqlite
+sqlite3 /tmp/canary.sqlite "DELETE FROM cc18_jobs WHERE method NOT IN \
+  ('default_gbdt','random_search','tpe_optuna','doe_rsm_vrf_true_nbi')"
+python scripts/cc18_runner.py \
+    --shard /tmp/canary.sqlite --max-jobs 12 \
+    --canary-only --train --synthetic-task \
+    --max-evaluations 5 --n-folds 2 \
+    --output-root experiments/_canary_runs
+
+# Refresh the capability audit so the report reflects the dedicated Mac.
+python scripts/audit_method_capabilities.py
+```
+
+**Stage 0 must not start until the canary above passes on the
+dedicated Mac**, with all four adapters marked `success` and the
+audit reporting zero missing packages for the canary set.
+
+The other 9 adapters (`smac3`, `asha`, `bohb`, `dehb`, `nsga2`,
+`motpe`, `parego`, `doe_rsm_vrf_true_nbi_no_mbpa`,
+`legacy_weighted_sum_scalarization`) remain `stub_only` /
+`dispatch_only` and are wired in later commits.
 
 ## What this commit does NOT do
 
