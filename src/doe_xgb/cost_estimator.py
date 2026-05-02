@@ -436,28 +436,35 @@ PRESETS: dict[str, BenchmarkSpec] = {
         n_algorithms=3,
         n_replicas=30,
     ),
-    # Doctoral campaign staged presets (Commit 24).
+    # OpenML-CC18 doctoral presets (Commit 25 — primary doctoral target).
+    "openml_cc18_72_tasks_3_algorithms_1_replicas": BenchmarkSpec(
+        n_datasets=72, n_algorithms=3, n_replicas=1),
+    "openml_cc18_72_tasks_3_algorithms_5_replicas": BenchmarkSpec(
+        n_datasets=72, n_algorithms=3, n_replicas=5),
+    "openml_cc18_72_tasks_3_algorithms_10_replicas": BenchmarkSpec(
+        n_datasets=72, n_algorithms=3, n_replicas=10),
+    "openml_cc18_72_tasks_3_algorithms_30_replicas": BenchmarkSpec(
+        n_datasets=72, n_algorithms=3, n_replicas=30),
+    # Deprecated pre-pivot 82-dataset presets (Commit 24). Kept as aliases
+    # so the older tests still resolve; new code should use the
+    # openml_cc18_72_tasks_* keys.
     "doctoral_82_datasets_3_algorithms_1_replicas": BenchmarkSpec(
-        n_datasets=82,
-        n_algorithms=3,
-        n_replicas=1,
-    ),
+        n_datasets=82, n_algorithms=3, n_replicas=1),
     "doctoral_82_datasets_3_algorithms_5_replicas": BenchmarkSpec(
-        n_datasets=82,
-        n_algorithms=3,
-        n_replicas=5,
-    ),
+        n_datasets=82, n_algorithms=3, n_replicas=5),
     "doctoral_82_datasets_3_algorithms_10_replicas": BenchmarkSpec(
-        n_datasets=82,
-        n_algorithms=3,
-        n_replicas=10,
-    ),
+        n_datasets=82, n_algorithms=3, n_replicas=10),
     "doctoral_82_datasets_3_algorithms_30_replicas": BenchmarkSpec(
-        n_datasets=82,
-        n_algorithms=3,
-        n_replicas=30,
-    ),
+        n_datasets=82, n_algorithms=3, n_replicas=30),
 }
+
+
+DEPRECATED_PRESETS: tuple[str, ...] = (
+    "doctoral_82_datasets_3_algorithms_1_replicas",
+    "doctoral_82_datasets_3_algorithms_5_replicas",
+    "doctoral_82_datasets_3_algorithms_10_replicas",
+    "doctoral_82_datasets_3_algorithms_30_replicas",
+)
 
 
 def list_presets() -> list[str]:
@@ -467,6 +474,16 @@ def list_presets() -> list[str]:
 def get_preset(name: str) -> BenchmarkSpec:
     if name not in PRESETS:
         raise KeyError(f"unknown preset {name!r}; choose from {list_presets()}")
+    if name in DEPRECATED_PRESETS:
+        import warnings as _warnings
+
+        _warnings.warn(
+            f"preset {name!r} is deprecated; the doctoral primary benchmark is "
+            "OpenML-CC18 (72 tasks). Use 'openml_cc18_72_tasks_3_algorithms_<R>_replicas' "
+            "instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
     return PRESETS[name]
 
 

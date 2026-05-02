@@ -62,6 +62,9 @@ gbdt = [
     "lightgbm>=4.1",
     "catboost>=1.2",
 ]
+doctoral = [
+    "openml>=0.14",
+]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=4.1",

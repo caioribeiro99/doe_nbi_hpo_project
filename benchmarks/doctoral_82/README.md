@@ -1,4 +1,16 @@
-# Doctoral benchmark registry (target = 82 datasets)
+# DEPRECATED — pre-pivot doctoral registry (Commit 24 scaffolding)
+
+> **As of Commit 25**, the doctoral benchmark is reframed around the
+> **OpenML-CC18 suite** (72 standardized classification tasks). The
+> canonical primary benchmark lives at
+> `benchmarks/doctoral/openml_cc18/`. The 12-dataset internal panel
+> moved to `benchmarks/doctoral/internal_smoke_panel/datasets.csv`
+> and is now reserved for smoke / profiling / development.
+>
+> Treat this directory as deprecated; do not generate new artifacts
+> here. The text below is kept for history.
+
+# (legacy) Doctoral benchmark registry — target = 82 datasets
 
 This directory holds the canonical list of datasets that drive the
 doctoral-scale benchmark campaign for the DOE + RSM + VRF + true NBI

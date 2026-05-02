@@ -58,16 +58,25 @@ Output is JSON to stdout; pass `--output PATH` to also save it.
 
 ## Presets
 
-| Preset | Datasets | Algorithms | Replicas |
-|---|---:|---:|---:|
-| `article_v1_8_datasets_3_algorithms_10_replicas` | 8 | 3 | 10 |
-| `article_v1_12_datasets_3_algorithms_10_replicas` | 12 | 3 | 10 |
-| `thesis_82_datasets_3_algorithms_10_replicas` | 82 | 3 | 10 |
-| `thesis_82_datasets_3_algorithms_30_replicas` | 82 | 3 | 30 |
+| Preset | Datasets / Tasks | Algorithms | Replicas | Notes |
+|---|---:|---:|---:|---|
+| `article_v1_8_datasets_3_algorithms_10_replicas` | 8 | 3 | 10 | v1 binary panel |
+| `article_v1_12_datasets_3_algorithms_10_replicas` | 12 | 3 | 10 | v1 panel (smoke / profiling fixture) |
+| `thesis_82_datasets_3_algorithms_10_replicas` | 82 | 3 | 10 | legacy thesis sweep |
+| `thesis_82_datasets_3_algorithms_30_replicas` | 82 | 3 | 30 | legacy thesis sweep |
+| `openml_cc18_72_tasks_3_algorithms_1_replicas` | 72 | 3 | 1 | **CC18 doctoral, stage 0** |
+| `openml_cc18_72_tasks_3_algorithms_5_replicas` | 72 | 3 | 5 | CC18 doctoral, stage 1 cumulative |
+| `openml_cc18_72_tasks_3_algorithms_10_replicas` | 72 | 3 | 10 | CC18 doctoral, stage 2 cumulative |
+| `openml_cc18_72_tasks_3_algorithms_30_replicas` | 72 | 3 | 30 | **CC18 doctoral, headline** |
+| `doctoral_82_datasets_3_algorithms_{1,5,10,30}_replicas` | 82 | 3 | 1 / 5 / 10 / 30 | **deprecated** — emits `DeprecationWarning`; superseded by `openml_cc18_72_tasks_*` (Commit 25) |
 
 All presets default to: `n_folds=5`, `doe_evaluations=88`,
 `nbi_candidates=50`, `benchmark_evaluations=138`,
 `n_optimization_methods=4` (matching the dissertation conventions).
+Resolving any of the deprecated `doctoral_82_*` presets via
+`get_preset(...)` raises a `DeprecationWarning` redirecting callers to
+the `openml_cc18_72_tasks_*` keys; the `BenchmarkSpec` itself is
+unchanged so existing tests still resolve.
 
 ## Local profile fields
 
@@ -207,7 +216,7 @@ python scripts/profile_v1_full_dataset_runtime.py
 
 The profiler does not run DOE / RSM / NBI / MBPA.
 
-## Doctoral benchmark profiles (Commit 24)
+## Doctoral benchmark profiles (Commit 24, retargeted in Commit 25)
 
 The doctoral campaign assumes a **dedicated MacBook Pro** and an
 optional **Caio personal Mac**. Helpers in
@@ -224,7 +233,7 @@ combined  = two_macs_combined(dedicated_efficiency=0.85,
                               caio_hours_per_day=14.0)
 
 combined.daily_cpu_hours()
-combined.wall_days_for_cpu_hours(1416)  # 82 x 3 x 10 at 4x inflation
+combined.wall_days_for_cpu_hours(1243)  # CC18 72 x 3 x 10 at 4x inflation
 ```
 
 Dedicated-Mac efficiency presets:
@@ -236,7 +245,7 @@ Dedicated-Mac efficiency presets:
 The 0.70 figure is reserved for the Caio personal Mac, not the
 dedicated machine.
 
-### Provisional 82 × 3 × R estimates
+### Provisional OpenML-CC18 72 × 3 × R estimates (Commit 25, primary)
 
 Anchored on the v1 mean per-pair 5-fold runtime
 (~0.75 s; full table in
@@ -246,13 +255,32 @@ inflation multiplier:
 
 | Scope | Total CPU-h | Dedicated 0.75 | Dedicated 0.85 | Dedicated 0.90 | Two Macs (0.85+0.70) |
 |---|---:|---:|---:|---:|---:|
+| 72 × 3 × 1 | 124 | 0.69 d | 0.61 d | 0.58 d | 0.47 d |
+| 72 × 3 × 5 | 622 | 3.46 d | 3.05 d | 2.88 d | 2.37 d |
+| 72 × 3 × 10 | 1,243 | 6.91 d | 6.09 d | 5.76 d | 4.73 d |
+| 72 × 3 × 30 | **3,730** | **20.72 d** | **18.28 d** | **17.27 d** | **14.19 d** |
+
+These are **provisional** until a real CC18 profiler runs. CC18 is
+heavier in expectation than the 12-dataset v1 panel (it includes
+larger datasets such as `adult`, `bank-marketing`, `nomao`,
+`numerai28.6`, etc.), so the realistic 4× multiplier may underestimate
+the headline 30-replica wall-clock. Re-anchor after the first real
+CC18 sweep on the dedicated Mac.
+
+### Deprecated 82 × 3 × R estimates (Commit 24, kept for historical context)
+
+The 82-dataset projections from Commit 24 — anchored on the same v1
+mean per-pair runtime — were:
+
+| Scope | Total CPU-h | Dedicated 0.75 | Dedicated 0.85 | Dedicated 0.90 | Two Macs (0.85+0.70) |
+|---|---:|---:|---:|---:|---:|
 | 82 × 3 × 1 | 142 | 0.79 d | 0.69 d | 0.66 d | 0.54 d |
 | 82 × 3 × 5 | 708 | 3.93 d | 3.47 d | 3.28 d | 2.69 d |
 | 82 × 3 × 10 | 1,416 | 7.87 d | 6.94 d | 6.56 d | 5.39 d |
-| 82 × 3 × 30 | **4,248** | **23.60 d** | **20.82 d** | **19.67 d** | **16.16 d** |
+| 82 × 3 × 30 | 4,248 | 23.60 d | 20.82 d | 19.67 d | 16.16 d |
 
-These numbers are **provisional** until the actual 82-dataset list
-exists and a real 82-dataset profiler runs.
+These are kept only as historical record; the doctoral primary target
+is the CC18 72-task panel above.
 
 ## Caveats
 

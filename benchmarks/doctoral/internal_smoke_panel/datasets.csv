@@ -1,0 +1,13 @@
+dataset_id,display_name,source,openml_id,uci_id,task_type,n_rows,n_features,n_classes,has_categorical,class_imbalance_ratio,license,include,reason,loader_status,notes
+adult,Adult / Census Income,uci,1590,2,binary,48842,14,2,True,3.15,CC BY 4.0,True,v1 panel seed,registered,Imbalanced; categorical-heavy.
+bank_marketing,Bank Marketing,uci,1461,222,binary,45211,16,2,True,7.55,CC BY 4.0,True,v1 panel seed,registered,bank-additional-full variant.
+breast_cancer,Breast Cancer Wisconsin (Diagnostic),sklearn,,17,binary,569,30,2,False,1.68,CC BY 4.0,True,v1 panel seed,registered,sklearn-bundled; small classical.
+credit_card_default,Default of Credit Card Clients,uci,42477,350,binary,30000,23,2,False,3.52,CC BY 4.0,True,v1 panel seed,registered,XLS source; OpenML 42477 fallback.
+dry_bean,Dry Bean,uci,43466,602,multiclass,13611,16,7,False,2.71,CC BY 4.0,True,v1 panel seed; only multiclass entry,registered,Appendix-only stress test.
+german_credit,German Credit,uci,31,144,binary,1000,20,2,True,2.33,CC BY 4.0,True,v1 panel seed,registered,Categorical+numeric mix.
+magic,MAGIC Gamma Telescope,uci,1120,159,binary,19020,10,2,False,1.84,CC BY 4.0,True,v1 panel seed; dissertation continuity,registered,
+mushroom,Mushroom,uci,24,73,binary,8124,22,2,True,1.07,CC BY 4.0,True,v1 panel seed,registered,Categorical-only; CatBoost showcase.
+phishing,Phishing Websites (UCI 327),uci,4534,327,binary,11055,30,2,True,1.26,CC BY 4.0,True,v1 panel seed,registered,Engineered features in {-1, 0, 1}.
+pima_diabetes,Pima Indians Diabetes,openml,37,,binary,768,8,2,False,1.87,CC BY 4.0,True,v1 panel seed,registered,Original UCI version retracted; OpenML 37 mirror.
+spambase,Spambase,uci,44,94,binary,4601,57,2,False,1.54,CC BY 4.0,True,v1 panel seed,registered,
+wine_quality,Wine Quality (binarised; red+white),uci,287,186,binary,6497,12,2,False,1.13,CC BY 4.0,True,v1 panel seed,registered,Binarised target_high_quality = (quality >= 6).

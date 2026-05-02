@@ -1,14 +1,17 @@
 # Article v1 — next steps (now subordinate to the doctoral benchmark)
 
-> **Pivot (Commit 24).** The repository now targets the
-> **doctoral-scale benchmark** (82 datasets × 3 algorithms × 30
-> replicas) as its scientific objective; the 12-dataset article v1
-> campaign is no longer the main target. The publication will be
-> extracted from the doctoral-scale results, not from a separate
-> intermediate campaign. The 12-dataset panel is preserved as a
-> smoke / profiling subset of the doctoral panel under
-> `benchmarks/doctoral_82/datasets.csv`. See
-> `docs/DOCTORAL_BENCHMARK.md`.
+> **Pivot (Commit 24, retargeted in Commit 25).** The repository now
+> targets the **doctoral-scale benchmark on OpenML-CC18**
+> (`suite_id = 99`, 72 standardized classification tasks × 3 GBDT
+> algorithms × 30 replicas = 6,480 jobs) as its scientific objective;
+> the 12-dataset article v1 campaign is no longer the main target.
+> The publication will be extracted from the doctoral-scale CC18
+> results, not from a separate intermediate campaign. The 12-dataset
+> panel is **demoted** to a smoke / profiling / development fixture
+> under `benchmarks/doctoral/internal_smoke_panel/datasets.csv` and
+> is **not** part of the CC18 benchmark count. The previous
+> "82 datasets" framing (`benchmarks/doctoral_82/`) is deprecated.
+> See `docs/DOCTORAL_BENCHMARK.md`.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the
@@ -172,7 +175,8 @@ v1 dataset. The 11 binary datasets remain the headline panel.
 
 ## Out of scope for v1
 
-- 82-dataset doctoral benchmark.
+- OpenML-CC18 doctoral benchmark (72 tasks × 3 algorithms × 30
+  replicas; runs as a separate campaign on the dedicated Mac).
 - Deep-tabular baselines.
 - Calibration as a primary objective (only reported in v1).
 - Fairness extension (lives on a separate branch).

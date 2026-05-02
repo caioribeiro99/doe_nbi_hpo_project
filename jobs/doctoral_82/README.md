@@ -1,4 +1,11 @@
-# Doctoral benchmark — SQLite job matrix
+# DEPRECATED — pre-pivot job-matrix scaffolding (Commit 24)
+
+> **As of Commit 25**, the doctoral benchmark is reframed around the
+> **OpenML-CC18 suite**. The canonical primary job matrix is now
+> `jobs/doctoral/openml_cc18/schema.sql` (table `cc18_jobs`). Do not
+> generate shards in this directory.
+
+# (legacy) Doctoral benchmark — SQLite job matrix
 
 This directory holds the per-shard SQLite job-queue files that drive
 the doctoral campaign. Schema in `schema.sql`. Concrete shard files
