@@ -269,6 +269,41 @@ python scripts/filter_cc18_shard_for_batch.py \
     --out jobs/doctoral/openml_cc18/batch_shards/batch_01_shard_00.sqlite
 ```
 
+## Dedicated Mac batch_00 gate (Commit 32)
+
+The first required gate is `batch_00_synthetic_canary`, which the
+operator must run on the dedicated MacBook Pro before any real CC18
+batch is allowed. The procedure is fully scripted:
+
+```bash
+# On the dedicated Mac (the script requires Python >= 3.10):
+bash scripts/setup_dedicated_mac.sh
+python scripts/audit_method_capabilities.py
+python scripts/run_batch_00_synthetic_canary.py
+```
+
+The setup script installs the minimum environment for the gate
+(`pip install -e ".[gbdt,doctoral,dev]"` plus `optuna>=3.5`) and
+attempts the broader `[hpo_baselines]` extras (failures tolerated).
+The batch_00 runner copies the committed shard
+`jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite`
+to a private temp path, prunes it to the 12-cell canary slice
+(4 canary methods × 3 algorithms × 1 replica), and dispatches via
+`scripts/cc18_runner.py --canary-only --train --synthetic-task`.
+**No CC18 dataset is downloaded; no real OpenML task is touched.**
+
+The gate artifact lands at
+`experiments/_batch_runs/batch_00_synthetic_canary_latest.{json,md}`
+with: git SHA, hostname, Python version, package versions,
+runner command, per-cell status, capability audit summary, source
+shard MD5 before/after (must match), and confirmation that the
+stage-3 sign-off file was NOT created. The artifact is committed
+**only when produced on the dedicated Mac** — never fabricated.
+
+**Batch 01 (`batch_01_cc18_tiny_3_tasks`) is blocked** until the
+gate artifact above shows `n_cells_failed == 0` and
+`source_shard_unchanged == true`.
+
 ## What this commit does NOT do
 
 - Does **not** download CC18 dataset payloads (only OpenML metadata).

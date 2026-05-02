@@ -38,6 +38,13 @@ experiments/_runtime_profile/*
 experiments/_capability_audit/*
 !experiments/_capability_audit/*.json
 !experiments/_capability_audit/*.md
+# CC18 batch-run gate artifacts (Commit 32). Only the small JSON/MD
+# headline files are committed; per-cell manifests, fold CSVs,
+# fitted models, catboost_info, etc. stay untracked.
+!experiments/_batch_runs/
+experiments/_batch_runs/*
+!experiments/_batch_runs/*.json
+!experiments/_batch_runs/*.md
 
 # Data (keep folder structure)
 data/source/*

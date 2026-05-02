@@ -151,7 +151,18 @@ mutated). Output goes under `jobs/doctoral/openml_cc18/batch_shards/`
 or a tmp directory.
 
 **Stage 0 must not start** until batches A→E land green sign-off
-artifacts.
+artifacts. The first gate (`batch_00_synthetic_canary`) is
+scripted in Commit 32:
+
+```bash
+bash scripts/setup_dedicated_mac.sh
+python scripts/audit_method_capabilities.py
+python scripts/run_batch_00_synthetic_canary.py
+```
+
+Artifacts land at
+`experiments/_batch_runs/batch_00_synthetic_canary_latest.{json,md}`
+and are committed only when produced on the dedicated Mac.
 
 ## Task-based vs dataset-based identity
 

@@ -53,14 +53,18 @@
 > `batch_01_cc18_tiny_3_tasks` (3 tasks) →
 > `batch_02_cc18_small_12_tasks` (12 tasks) →
 > `batch_03_cc18_representative_18_tasks` (18 tasks) →
-> `batch_04_stage0_shard00_only`. Manifests at
-> `benchmarks/doctoral/openml_cc18/batches/`; deterministic
-> selection from `tasks.csv` via `scripts/create_cc18_batches.py`;
-> shard filtering via `scripts/filter_cc18_shard_for_batch.py`
-> (read-only on the source). **Next operational step:** Commit 32
-> — prepare the dedicated Mac and run `batch_00_synthetic_canary`
-> only. Commit 33 runs `batch_01_cc18_tiny_3_tasks`. No full
-> stage 0 yet.
+> `batch_04_stage0_shard00_only`.
+>
+> **Dedicated Mac batch_00 gate scripted in Commit 32.**
+> `scripts/setup_dedicated_mac.sh` installs the minimum
+> environment; `scripts/run_batch_00_synthetic_canary.py` copies a
+> stage-0 shard to a temp path, prunes to the 12-cell canary
+> slice, and runs the canary via `cc18_runner.py`. Artifacts at
+> `experiments/_batch_runs/batch_00_synthetic_canary_latest.{json,md}`
+> are committed only when produced on the dedicated Mac. **Next
+> operational step:** Commit 33 — only after the dedicated-Mac
+> batch_00 gate is green, run `batch_01_cc18_tiny_3_tasks` (3
+> real OpenML-CC18 tasks).
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the
