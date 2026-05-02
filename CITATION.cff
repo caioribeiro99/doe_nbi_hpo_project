@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+title: "DOE + RSM + Varimax + NBI for Multi-objective Hyperparameter Optimization"
+message: "If you use this software, please cite the dissertation and (when applicable) the EAAI 2025 article that inspired the article-track methodology."
+type: software
+authors:
+  - family-names: "Tertuliano Ribeiro"
+    given-names: "Caio"
+    email: "caio.tertu99@gmail.com"
+    affiliation: "Federal University of Itajubá (UNIFEI)"
+repository-code: "https://github.com/caioribeiro99/doe_nbi_hpo_project"
+license: MIT
+version: "0.2.0.dev0"
+date-released: "2026-05-02"
+references:
+  - type: thesis
+    title: "Meta-otimização dos Hiperparâmetros do Algoritmo XGBoost para classificação binária: uma integração entre Planejamento de Experimentos e o Método da Interseção Normal à Fronteira"
+    authors:
+      - family-names: "Tertuliano Ribeiro"
+        given-names: "Caio"
+    institution:
+      name: "Universidade Federal de Itajubá (UNIFEI)"
+    year: 2026
+    notes: "Master's dissertation. The 'main' branch of this repository (tag v0.1.0-dissertation) reflects the implementation as defended."
+  - type: article
+    title: "A hybrid multivariate normal boundary intersection approach with post-optimization assisted by mixture design of experiments"
+    authors:
+      - family-names: "Costa Pereira"
+        given-names: "Matheus"
+      - family-names: "Tertuliano Ribeiro"
+        given-names: "Caio"
+      - family-names: "Amaury Mendes"
+        given-names: "Roña Rinston"
+      - family-names: "da Silva Campos"
+        given-names: "Paulo Henrique"
+      - family-names: "de Paiva"
+        given-names: "Anderson Paulo"
+    journal: "Engineering Applications of Artificial Intelligence"
+    volume: 162
+    start: 112510
+    year: 2025
+    doi: "10.1016/j.engappai.2025.112510"
+    notes: "Methodological inspiration for the article-track (VRF-NBI with conditional MBPA post-optimization) implemented on branch repo-publication-readiness."

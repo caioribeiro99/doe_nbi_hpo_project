@@ -1,0 +1,109 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "doe_xgb"
+version = "0.2.0.dev0"
+description = "DOE + RSM + Varimax + N-objective NBI for multi-objective HPO of GBDT models (article-track of Ribeiro 2026 dissertation)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Caio Tertuliano Ribeiro", email = "caio.tertu99@gmail.com" },
+]
+keywords = [
+    "design of experiments",
+    "response surface methodology",
+    "normal boundary intersection",
+    "multi-objective optimization",
+    "hyperparameter optimization",
+    "xgboost",
+    "varimax",
+    "factor analysis",
+    "scheffe mixture",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scikit-learn>=1.4",
+    "scipy>=1.11",
+    "statsmodels>=0.14",
+    "xgboost>=2.0",
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+    "openpyxl>=3.1",
+    "tqdm>=4.66",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+benchmarks = [
+    "scikit-optimize>=0.9",
+    "hyperopt>=0.2",
+]
+designs = [
+    "pyDOE3>=1.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+    "pyright>=1.1",
+    "pip-tools>=7.4",
+]
+notebooks = [
+    "jupyter>=1.0",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+]
+
+[project.scripts]
+doe-xgb = "doe_xgb.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/caioribeiro99/doe_nbi_hpo_project"
+Issues = "https://github.com/caioribeiro99/doe_nbi_hpo_project/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["doe_xgb*"]
+
+[tool.setuptools.package-data]
+doe_xgb = ["py.typed"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "slow: tests that take more than a few seconds",
+    "smoke: end-to-end pipeline smoke tests",
+    "methodology: methodology-pinning tests for NBI / FA / DOE",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.pyright]
+include = ["src"]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"

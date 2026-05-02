@@ -1,0 +1,20 @@
+# Runtime requirements for the publication-readiness branch.
+# Compile to requirements.lock.txt with:
+#     pip-compile --resolver=backtracking -o requirements.lock.txt requirements.in
+
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.4
+scipy>=1.11
+statsmodels>=0.14
+xgboost>=2.0
+pydantic>=2.6
+pyyaml>=6.0
+openpyxl>=3.1
+tqdm>=4.66
+python-dotenv>=1.0
+
+# Optional but commonly used; keep here so the lockfile is complete.
+scikit-optimize>=0.9
+hyperopt>=0.2
+pyDOE3>=1.0
