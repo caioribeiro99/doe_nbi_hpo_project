@@ -91,10 +91,15 @@ v1 dataset. The 11 binary datasets remain the headline panel.
    dissertation-era binary keys are populated; writes
    `experiments/_v1_smoke/binary_smoke_output.json`. Total runtime
    ~1.3 s. Does **not** run DOE / RSM / NBI / MBPA.
-7. **Three-algorithm smoke (next).** Re-run the same datasets at
-   the same hyperparameter point with each of XGBoost / LightGBM /
-   CatBoost to confirm the loader / metric path is uniform across
-   the three GBDT families.
+7. **Three-algorithm smoke (DONE).**
+   `scripts/run_v1_binary_3alg_smoke.py` evaluates each of the
+   three fetched datasets with XGBoost / LightGBM / CatBoost at one
+   safe hyperparameter point under 2-fold CV; writes
+   `experiments/_v1_smoke/binary_3alg_smoke_output.json`. CatBoost
+   uses native categorical handling on `german_credit` and falls
+   back to encoded ints on the all-numeric datasets. Total runtime
+   ~1.7 s. All 9 (dataset, algorithm) pairs passed the binary-key
+   and accuracy-floor assertions.
 8. **Single-dataset DOE+NBI smoke (later).** Once the orchestrator
    wrapper lands, run `doe-xgb run --config configs/article_3vrf_xgb_magic.yaml`
    on MAGIC at `n_replicas=2` and confirm NBI residuals < 1e-3,

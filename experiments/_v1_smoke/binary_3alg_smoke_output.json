@@ -1,0 +1,321 @@
+{
+  "smoke": "v1_binary_3alg",
+  "started_at": "2026-05-02T15:56:37",
+  "package_versions": {
+    "xgboost": "3.2.0",
+    "lightgbm": "4.6.0",
+    "catboost": "1.2.10",
+    "sklearn": "1.8.0"
+  },
+  "params": {
+    "xgboost": {
+      "n_estimators": 50,
+      "max_depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "colsample_bylevel": 0.8,
+      "gamma": 0.1,
+      "tree_method": "hist"
+    },
+    "lightgbm": {
+      "n_estimators": 50,
+      "num_leaves": 31,
+      "max_depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_samples": 5,
+      "verbose": -1
+    },
+    "catboost": {
+      "iterations": 50,
+      "depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.8,
+      "rsm": 0.8,
+      "min_data_in_leaf": 5,
+      "thread_count": 1,
+      "verbose": false,
+      "allow_writing_files": false,
+      "bootstrap_type": "Bernoulli"
+    }
+  },
+  "n_splits": 2,
+  "seed": 42,
+  "max_rows": 1000,
+  "datasets": [
+    "german_credit",
+    "pima_diabetes",
+    "spambase"
+  ],
+  "algorithms": [
+    "xgboost",
+    "lightgbm",
+    "catboost"
+  ],
+  "results": [
+    {
+      "dataset_id": "german_credit",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 1000,
+      "n_features": 20,
+      "class_distribution": {
+        "0": 700,
+        "1": 300
+      },
+      "categorical_columns_count": 13,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.751,
+        "Precision_Mean": 0.6177570093457944,
+        "Recall_Mean": 0.44666666666666666,
+        "Specificity_Mean": 0.8814285714285715,
+        "Time_MeanFold": 0.009822562500630738
+      },
+      "fit_time_mean_fold": 0.009822562500630738,
+      "runtime_seconds": 0.03304874999957974,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "german_credit",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 1000,
+      "n_features": 20,
+      "class_distribution": {
+        "0": 700,
+        "1": 300
+      },
+      "categorical_columns_count": 13,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.772,
+        "Precision_Mean": 0.6685452162516383,
+        "Recall_Mean": 0.4766666666666667,
+        "Specificity_Mean": 0.8985714285714286,
+        "Time_MeanFold": 0.00699102099861193
+      },
+      "fit_time_mean_fold": 0.00699102099861193,
+      "runtime_seconds": 0.020326083002146333,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "german_credit",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 1000,
+      "n_features": 20,
+      "class_distribution": {
+        "0": 700,
+        "1": 300
+      },
+      "categorical_columns_count": 13,
+      "preprocessing_mode": "catboost_native_categorical",
+      "metrics": {
+        "Accuracy_Mean": 0.741,
+        "Precision_Mean": 0.6395896084337349,
+        "Recall_Mean": 0.31333333333333335,
+        "Specificity_Mean": 0.9242857142857143,
+        "Time_MeanFold": 0.07787106300020241
+      },
+      "fit_time_mean_fold": 0.07787106300020241,
+      "runtime_seconds": 0.16236662499795784,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "pima_diabetes",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 768,
+      "n_features": 8,
+      "class_distribution": {
+        "0": 500,
+        "1": 268
+      },
+      "categorical_columns_count": 0,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7421875,
+        "Precision_Mean": 0.656637717121588,
+        "Recall_Mean": 0.5559701492537313,
+        "Specificity_Mean": 0.8420000000000001,
+        "Time_MeanFold": 0.004252583499692264
+      },
+      "fit_time_mean_fold": 0.004252583499692264,
+      "runtime_seconds": 0.01302479200239759,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "pima_diabetes",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 768,
+      "n_features": 8,
+      "class_distribution": {
+        "0": 500,
+        "1": 268
+      },
+      "categorical_columns_count": 0,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7526041666666667,
+        "Precision_Mean": 0.6833333333333333,
+        "Recall_Mean": 0.5485074626865671,
+        "Specificity_Mean": 0.862,
+        "Time_MeanFold": 0.0033759795005607884
+      },
+      "fit_time_mean_fold": 0.0033759795005607884,
+      "runtime_seconds": 0.010509542000363581,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "pima_diabetes",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 768,
+      "n_features": 8,
+      "class_distribution": {
+        "0": 500,
+        "1": 268
+      },
+      "categorical_columns_count": 0,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7591145833333333,
+        "Precision_Mean": 0.7012778084206657,
+        "Recall_Mean": 0.5447761194029851,
+        "Specificity_Mean": 0.874,
+        "Time_MeanFold": 0.00799641649973637
+      },
+      "fit_time_mean_fold": 0.00799641649973637,
+      "runtime_seconds": 0.019874417001119582,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "spambase",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 1000,
+      "n_features": 57,
+      "class_distribution": {
+        "0": 606,
+        "1": 394
+      },
+      "categorical_columns_count": 0,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.924,
+        "Precision_Mean": 0.9206606942889137,
+        "Recall_Mean": 0.883248730964467,
+        "Specificity_Mean": 0.9504950495049505,
+        "Time_MeanFold": 0.009808791999603272
+      },
+      "fit_time_mean_fold": 0.009808791999603272,
+      "runtime_seconds": 0.03338787499887985,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "spambase",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 1000,
+      "n_features": 57,
+      "class_distribution": {
+        "0": 606,
+        "1": 394
+      },
+      "categorical_columns_count": 0,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.921,
+        "Precision_Mean": 0.920199146514936,
+        "Recall_Mean": 0.8756345177664975,
+        "Specificity_Mean": 0.9504950495049505,
+        "Time_MeanFold": 0.00765135399706196
+      },
+      "fit_time_mean_fold": 0.00765135399706196,
+      "runtime_seconds": 0.026409707999846432,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    },
+    {
+      "dataset_id": "spambase",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "n_rows": 1000,
+      "n_features": 57,
+      "class_distribution": {
+        "0": 606,
+        "1": 394
+      },
+      "categorical_columns_count": 0,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.929,
+        "Precision_Mean": 0.9352949723917466,
+        "Recall_Mean": 0.8807106598984771,
+        "Specificity_Mean": 0.9603960396039604,
+        "Time_MeanFold": 0.03749285400044755
+      },
+      "fit_time_mean_fold": 0.03749285400044755,
+      "runtime_seconds": 0.0876872499975434,
+      "metric_keys_present": {
+        "Accuracy_Mean": true,
+        "Precision_Mean": true,
+        "Recall_Mean": true,
+        "Specificity_Mean": true
+      }
+    }
+  ],
+  "failures": []
+}

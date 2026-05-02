@@ -104,6 +104,43 @@ re-download.
 `doe-xgb datasets verify-checksums [--dataset-id <id>]` re-hashes every
 file referenced in the manifests and reports True/False per dataset.
 
+## Three-algorithm binary smoke (Commit 21)
+
+`scripts/run_v1_binary_3alg_smoke.py` extends the Commit 20 smoke
+across the three article-track GBDT families:
+
+```bash
+python scripts/run_v1_binary_3alg_smoke.py --max-rows 1000
+```
+
+Per-(dataset, algorithm) it loads the cached dataset, applies the
+algorithm-specific preprocessing, fits one safe hyperparameter point
+under 2-fold stratified CV, and writes
+`experiments/_v1_smoke/binary_3alg_smoke_output.json`. The script
+fails fast if any pair returns missing keys, accuracy below 0.50, or
+non-finite runtime.
+
+### Algorithm-specific notes
+
+- **XGBoost** (`tree_method="hist"`, `n_jobs=1`,
+  `eval_metric="logloss"`): non-numeric columns are converted to
+  deterministic integer category codes via `pd.Categorical(...).codes`.
+- **LightGBM** (`verbose=-1`, `n_jobs=1`): same encoding as XGBoost.
+  A residual sklearn `UserWarning` about feature names is suppressed
+  inside the smoke.
+- **CatBoost** (`thread_count=1`, `verbose=False`,
+  `allow_writing_files=False`, `bootstrap_type="Bernoulli"`): tries
+  native categorical handling first by passing the DataFrame as-is
+  with `cat_features=<indices of non-numeric columns>` and casting
+  string columns to `str`. Falls back to the same encoded-int-codes
+  representation if the native path raises; the chosen path is
+  recorded under `preprocessing_mode` in the output JSON
+  (`catboost_native_categorical` or
+  `catboost_fallback_encoded_int_codes`).
+
+The smoke does **not** run DOE / RSM / NBI / MBPA. Total runtime is
+~1.7 s on Apple Silicon.
+
 ## Tiny binary smoke (Commit 20)
 
 `scripts/run_v1_binary_smoke.py` exercises the load -> evaluate path
