@@ -58,6 +58,10 @@ benchmarks = [
 designs = [
     "pyDOE3>=1.0",
 ]
+gbdt = [
+    "lightgbm>=4.1",
+    "catboost>=1.2",
+]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=4.1",

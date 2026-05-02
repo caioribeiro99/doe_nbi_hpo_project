@@ -27,20 +27,37 @@ next.
    are versioned (after the first authoritative run on the user's
    machine).
 
-## Phase B — sizing
+## Phase B — sizing [DONE in Commit 17]
 
-4. **Cost calibration.** Run
-   `doe-xgb estimate-cost --calibrate
-   --calibration-output cost_estimate_calibration.json --algorithm
-   xgboost` on the target machine; repeat with `--algorithm
-   lightgbm` and `--algorithm catboost`. Save the JSON files under
-   `experiments/_cost_calibration/`.
-5. **Project the v1 wall-clock and dollar cost.** Run
-   `doe-xgb estimate-cost --preset
-   article_v1_12_datasets_3_algorithms_10_replicas` for both the
-   local profile (Mac defaults) and a candidate cloud profile.
-   Sign-off if the projected wall-clock is acceptable; else reduce
-   replicas or evaluation budget.
+4. **Cost calibration.** Done. Calibration JSONs at
+   `experiments/_cost_calibration/{xgboost,lightgbm,catboost}.json`
+   on Apple Silicon Mac. Best-of-N seconds per fit on a 1500-row ×
+   12-feature synthetic problem at default hyperparameters:
+   XGBoost ~0.054 s, LightGBM ~0.041 s, CatBoost ~0.135 s.
+   Worst-case used for planning: **0.135 s/fit** (CatBoost).
+5. **Projected v1 wall-clock and cost.** Sizing report at
+   `experiments/_cost_calibration/article_v1_cost_estimates.{json,md}`.
+   At a realistic 4× inflation factor for full DoE / heavy CV
+   configurations (~0.54 s/fit), the headline 12 × 3 × 10 scenario
+   finishes in **1.2 days on a dedicated Mac**, **0.8 days on
+   combined two Macs (16 workers @ 24 h, eff 0.70)**, or **7.5 h /
+   $24 on a 32-worker $0.10/h cloud**. The pessimistic 8× scenario
+   finishes in 2.4 days dedicated or $48 cloud.
+6. **Sign-off.** Recommended scope: **run the full 12 × 3 × 10
+   headline panel**. Drop to 5 replicas only selectively on the
+   heaviest datasets if real-world inflation exceeds 8×.
+
+### Dry Bean (multiclass) -- BLOCKER for headline tables
+
+`src/doe_xgb/metrics.py::compute_binary_metrics` is binary-only and
+will fail on Dry Bean (7 classes). Decision: **Option B -- keep
+Dry Bean in the registry and report it as a multiclass case study in
+the appendix/supplementary**, contingent on a follow-up commit that
+adds `compute_multiclass_metrics(...)` returning
+`{f1_macro, balanced_accuracy, mcc, roc_auc_ovr, brier_multiclass,
+ece_multiclass}` and threads those keys through the FA / NBI
+pipeline. The v1 orchestrator must refuse to run Dry Bean until that
+lands.
 
 ## Phase C — small smoke run
 

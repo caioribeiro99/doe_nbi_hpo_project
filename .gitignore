@@ -14,9 +14,15 @@ build/
 .ipynb_checkpoints/
 
 # Outputs
-experiments/
+experiments/*
 runs/
 *.log
+catboost_info/
+# Article-track cost calibration artifacts are versioned.
+!experiments/_cost_calibration/
+experiments/_cost_calibration/*
+!experiments/_cost_calibration/*.json
+!experiments/_cost_calibration/*.md
 
 # Data (keep folder structure)
 data/source/*

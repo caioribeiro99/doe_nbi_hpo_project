@@ -1,0 +1,13 @@
+{
+  "timings_per_algorithm": {
+    "xgboost": 0.05440979199920548,
+    "lightgbm": 0.04173958300088998,
+    "catboost": 0.13319304099786677,
+    "histgb": 0.5580834159991355
+  },
+  "n_samples": 1500,
+  "n_features": 12,
+  "n_repeats": 3,
+  "platform": "macOS-26.4.1-arm64-arm-64bit",
+  "python": "3.12.13"
+}

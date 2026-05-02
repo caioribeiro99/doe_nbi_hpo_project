@@ -139,6 +139,30 @@ estimate = estimate_cost(spec, local=local, cloud=cloud)
 print(estimate.local_wall.wall_days, estimate.cloud_wall.cost_usd)
 ```
 
+## Article-track v1 sizing (Commit 17)
+
+A full sizing study for the v1 panel lives at
+`experiments/_cost_calibration/article_v1_cost_estimates.md` (and
+JSON). Headlines:
+
+- Calibrated worst-case `avg_seconds_per_fit = 0.135 s` (CatBoost,
+  Apple Silicon Mac, 1500 rows × 12 feats, default hyperparameters).
+- At 4× inflation (~0.54 s/fit), the headline 12 × 3 × 10 panel
+  finishes in **1.2 days on a dedicated Mac**, **0.8 days on
+  combined two Macs (16 workers × 24 h, eff 0.70)**, or
+  **~7.5 h / $24 on a 32-worker $0.10/h cloud**.
+- At 8× inflation (~1.08 s/fit), the same panel takes 2.4 days
+  dedicated or $48 cloud.
+- The full 12 × 3 × 10 panel is feasible without dropping replicas.
+
+Re-run the sizing report at any time with:
+
+```bash
+python scripts/article_v1_sizing.py
+```
+
+This script does not run the experiment.
+
 ## Caveats
 
 The estimator is intentionally conservative:

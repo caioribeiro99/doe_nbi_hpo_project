@@ -328,6 +328,11 @@ def estimate_cost(
 
 
 PRESETS: dict[str, BenchmarkSpec] = {
+    "article_v1_8_datasets_3_algorithms_5_replicas": BenchmarkSpec(
+        n_datasets=8,
+        n_algorithms=3,
+        n_replicas=5,
+    ),
     "article_v1_8_datasets_3_algorithms_10_replicas": BenchmarkSpec(
         n_datasets=8,
         n_algorithms=3,
@@ -337,6 +342,11 @@ PRESETS: dict[str, BenchmarkSpec] = {
         nbi_candidates=50,
         benchmark_evaluations=138,
         n_optimization_methods=4,
+    ),
+    "article_v1_12_datasets_3_algorithms_5_replicas": BenchmarkSpec(
+        n_datasets=12,
+        n_algorithms=3,
+        n_replicas=5,
     ),
     "article_v1_12_datasets_3_algorithms_10_replicas": BenchmarkSpec(
         n_datasets=12,
