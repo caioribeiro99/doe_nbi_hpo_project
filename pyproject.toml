@@ -65,6 +65,17 @@ gbdt = [
 doctoral = [
     "openml>=0.14",
 ]
+hpo_baselines = [
+    "optuna>=3.5",
+    "smac>=2.0",
+    "pymoo>=0.6",
+    "dehb>=0.0.6",
+    # NOTE: BOHB's reference implementation (hpbandster) is intentionally
+    # NOT listed here; the BOHB adapter dispatches via SMAC3's
+    # multi-fidelity facade because hpbandster is not actively maintained
+    # for current Python versions. AutoML frameworks (FLAML, Auto-sklearn,
+    # AutoGluon) are intentionally excluded.
+]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=4.1",

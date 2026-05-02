@@ -73,9 +73,22 @@ the generator after any edit to the four CSVs:
 python scripts/generate_cc18_job_shards.py --shards 10 --force
 ```
 
-The runner that actually claims jobs and trains models is **not**
-part of Commit 28; it lands after the method-adapter capability
-audit.
+**Capability audit + runner skeleton (Commit 29).** Adapters for
+every non-literature method live under `src/doe_xgb/methods/`. Run
+
+```bash
+pip install -e ".[gbdt,hpo_baselines,doctoral,dev]"
+python scripts/audit_method_capabilities.py
+```
+
+to refresh `experiments/_capability_audit/cc18_capability_report.{json,md}`
+on the dedicated Mac; the report lists which adapters are
+`stub_only` vs `dispatch_only` and which optional packages are
+missing. The local runner (`scripts/cc18_runner.py`) is a skeleton
+that selects pending jobs and logs the dispatch decision but does
+**not** train models. Stage 3 is gated by a sign-off file at
+`jobs/doctoral/openml_cc18/stage3_signoff.json`; the runner refuses
+to claim stage-3 jobs until that file exists.
 
 The CC18 task / dataset registry lives at
 `benchmarks/doctoral/openml_cc18/{tasks.csv, datasets.csv,

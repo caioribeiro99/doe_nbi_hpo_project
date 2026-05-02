@@ -32,9 +32,20 @@
 > `jobs/doctoral/openml_cc18/shards/<stage>/shard_NN.sqlite`,
 > totalling 79,920 jobs (2,304 / 9,216 / 13,680 / 54,720 by stage).
 > The shards are committed to the repository so the dedicated Mac
-> fetches them by `git pull`. **Next operational step:**
-> method-adapter capability audit + local runner skeleton (Commit
-> 29). No benchmark runs yet.
+> fetches them by `git pull`.
+>
+> **Capability audit + runner skeleton landed in Commit 29.** All 13
+> non-literature methods have an adapter under `src/doe_xgb/methods/`;
+> the audit script
+> (`scripts/audit_method_capabilities.py`) writes
+> `experiments/_capability_audit/cc18_capability_report.{json,md}`.
+> The local runner (`scripts/cc18_runner.py`) is a skeleton: it
+> selects pending jobs, resolves the adapter, logs the dispatch
+> decision, and does **not** train models. Stage 3 is gated by a
+> manual sign-off file. **Next operational step:** implement the
+> first executable adapters for the canary cell (`default_gbdt`,
+> `random_search`, `tpe_optuna`, `doe_rsm_vrf_true_nbi`) — Commit
+> 30. No benchmark runs yet.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

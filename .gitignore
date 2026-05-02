@@ -33,6 +33,11 @@ experiments/_v1_smoke/*
 experiments/_runtime_profile/*
 !experiments/_runtime_profile/*.json
 !experiments/_runtime_profile/*.md
+# CC18 capability-audit artifacts (Commit 29).
+!experiments/_capability_audit/
+experiments/_capability_audit/*
+!experiments/_capability_audit/*.json
+!experiments/_capability_audit/*.md
 
 # Data (keep folder structure)
 data/source/*

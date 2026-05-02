@@ -1,0 +1,346 @@
+{
+  "adapters_found": [
+    "default_gbdt",
+    "random_search",
+    "tpe_optuna",
+    "smac3",
+    "asha",
+    "bohb",
+    "dehb",
+    "nsga2",
+    "motpe",
+    "parego",
+    "doe_rsm_vrf_true_nbi",
+    "doe_rsm_vrf_true_nbi_no_mbpa",
+    "legacy_weighted_sum_scalarization"
+  ],
+  "adapters_missing": [],
+  "blockers_before_stage0": [
+    "default_gbdt: missing lightgbm,catboost",
+    "tpe_optuna: missing optuna",
+    "smac3: missing smac",
+    "asha: missing optuna",
+    "bohb: missing smac",
+    "dehb: missing dehb",
+    "nsga2: missing pymoo",
+    "motpe: missing optuna",
+    "parego: missing smac,pymoo"
+  ],
+  "dispatch_only": [
+    "doe_rsm_vrf_true_nbi",
+    "doe_rsm_vrf_true_nbi_no_mbpa",
+    "legacy_weighted_sum_scalarization"
+  ],
+  "full_ready": [],
+  "generated_at": "2026-05-02T22:15:47Z",
+  "literature_only": [
+    "flaml_optional",
+    "auto_sklearn_context",
+    "autogluon_context"
+  ],
+  "missing_packages_overall": [
+    "catboost",
+    "dehb",
+    "lightgbm",
+    "optuna",
+    "pymoo",
+    "smac"
+  ],
+  "n_benchmarked": 13,
+  "n_literature_only": 3,
+  "n_methods_in_matrix": 16,
+  "package_versions": {
+    "catboost": null,
+    "dehb": null,
+    "doe_xgb": "0.2.0.dev0",
+    "joblib": "1.5.3",
+    "lightgbm": null,
+    "optuna": null,
+    "pymoo": null,
+    "scipy": "1.13.1",
+    "smac": null,
+    "xgboost": "2.1.4"
+  },
+  "per_method": [
+    {
+      "adapter_import_ok": true,
+      "method_id": "default_gbdt",
+      "missing_packages": [
+        "lightgbm",
+        "catboost"
+      ],
+      "notes": "No search; one fit per CV split with library defaults. supports_categorical_native=catboost_only in the method matrix.",
+      "package_versions": {
+        "catboost": null,
+        "lightgbm": null,
+        "xgboost": "2.1.4"
+      },
+      "required_packages": [
+        "xgboost",
+        "lightgbm",
+        "catboost"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "random_search",
+      "missing_packages": [],
+      "notes": "Bergstra & Bengio 2012. Headline single-objective baseline.",
+      "package_versions": {
+        "joblib": "1.5.3",
+        "scipy": "1.13.1"
+      },
+      "required_packages": [
+        "scipy",
+        "joblib"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "tpe_optuna",
+      "missing_packages": [
+        "optuna"
+      ],
+      "notes": "Akiba et al. 2019. Default-prior TPESampler.",
+      "package_versions": {
+        "optuna": null
+      },
+      "required_packages": [
+        "optuna"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "smac3",
+      "missing_packages": [
+        "smac"
+      ],
+      "notes": "Lindauer et al. 2022. RF surrogate with intensification. Native categorical handling via SMAC categorical hyperparameter type.",
+      "package_versions": {
+        "smac": null
+      },
+      "required_packages": [
+        "smac"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "asha",
+      "missing_packages": [
+        "optuna"
+      ],
+      "notes": "Li et al. 2017/2020. Fidelity dimension = boosting iterations (n_estimators). Frozen choice over Hyperband in Commit 27.",
+      "package_versions": {
+        "optuna": null
+      },
+      "required_packages": [
+        "optuna"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "bohb",
+      "missing_packages": [
+        "smac"
+      ],
+      "notes": "Falkner et al. 2018. Implementation route: SMAC3 multi-fidelity facade. The hpbandster reference implementation is not actively maintained for Python 3.12 and is intentionally NOT a required package. Manual review may be needed before stage 0.",
+      "package_versions": {
+        "smac": null
+      },
+      "required_packages": [
+        "smac"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "dehb",
+      "missing_packages": [
+        "dehb"
+      ],
+      "notes": "Awad, Mallik & Hutter 2021. DE inner loop on a Hyperband schedule.",
+      "package_versions": {
+        "dehb": null
+      },
+      "required_packages": [
+        "dehb"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "nsga2",
+      "missing_packages": [
+        "pymoo"
+      ],
+      "notes": "Deb et al. 2002. Reference evolutionary multi-objective baseline.",
+      "package_versions": {
+        "pymoo": null
+      },
+      "required_packages": [
+        "pymoo"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "motpe",
+      "missing_packages": [
+        "optuna"
+      ],
+      "notes": "Ozaki et al. 2020. Optuna MOTPESampler.",
+      "package_versions": {
+        "optuna": null
+      },
+      "required_packages": [
+        "optuna"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "parego",
+      "missing_packages": [
+        "smac",
+        "pymoo"
+      ],
+      "notes": "Knowles 2006. Subset-only (48 of 72 CC18 tasks); the subset is frozen by benchmarks/doctoral/openml_cc18/parego_subset.csv.",
+      "package_versions": {
+        "pymoo": null,
+        "smac": null
+      },
+      "required_packages": [
+        "smac",
+        "pymoo"
+      ],
+      "run_status": "stub_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "doe_rsm_vrf_true_nbi",
+      "missing_packages": [],
+      "notes": "Headline proposed method. All implementation lives in-tree under src/doe_xgb (factor_model, nbi_core, post_optimization). run() still raises NotImplementedError until Commit 30 wires the per-task config and CV harness.",
+      "package_versions": {
+        "doe_xgb": "0.2.0.dev0"
+      },
+      "required_packages": [
+        "doe_xgb"
+      ],
+      "run_status": "dispatch_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "doe_rsm_vrf_true_nbi_no_mbpa",
+      "missing_packages": [],
+      "notes": "Ablation: same pipeline as doe_rsm_vrf_true_nbi but with MBPA stage disabled. Quantifies the contribution of the conditional post-optimization.",
+      "package_versions": {
+        "doe_xgb": "0.2.0.dev0"
+      },
+      "required_packages": [
+        "doe_xgb"
+      ],
+      "run_status": "dispatch_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    },
+    {
+      "adapter_import_ok": true,
+      "method_id": "legacy_weighted_sum_scalarization",
+      "missing_packages": [],
+      "notes": "Ablation: dissertation-era weighted-sum solver kept verbatim (doe_xgb.scalarization.run_nbi_weighted_sum). Never referred to as NBI in the article text.",
+      "package_versions": {
+        "doe_xgb": "0.2.0.dev0"
+      },
+      "required_packages": [
+        "doe_xgb"
+      ],
+      "run_status": "dispatch_only",
+      "supports_binary": true,
+      "supports_catboost": true,
+      "supports_lightgbm": true,
+      "supports_multiclass": true,
+      "supports_xgboost": true
+    }
+  ],
+  "platform": {
+    "machine": "arm64",
+    "python": "3.9.6",
+    "system": "Darwin"
+  },
+  "smoke_ready": [],
+  "stub_only": [
+    "default_gbdt",
+    "random_search",
+    "tpe_optuna",
+    "smac3",
+    "asha",
+    "bohb",
+    "dehb",
+    "nsga2",
+    "motpe",
+    "parego"
+  ]
+}

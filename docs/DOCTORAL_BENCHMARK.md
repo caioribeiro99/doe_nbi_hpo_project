@@ -160,12 +160,37 @@ the `requires_manual_signoff_before_stage3` note in
 `cc18_jobs.notes`, so the runner can ship a stage-2 (10-replica)
 snapshot if the stage-3 cost is judged unacceptable.
 
-The next operational step is the **method-adapter capability
-audit**: a per-method dry-run that imports the implementation
-package, exercises a one-cell smoke job, and reports which methods
-are actually executable on the dedicated Mac before stage 0
-starts. The runner that claims jobs and trains models lands after
-that audit.
+## Method capability audit + runner skeleton (Commit 29)
+
+Adapters for every non-literature method live under
+`src/doe_xgb/methods/`. The capability audit
+(`scripts/audit_method_capabilities.py`) imports each adapter,
+records its declared `run_status` (`stub_only` / `dispatch_only` /
+`smoke_ready` / `full_ready`), and inspects whether the required
+package is importable. The audit report lives at
+`experiments/_capability_audit/cc18_capability_report.{json,md}`
+and is the gating artifact between protocol freeze and the actual
+benchmark run.
+
+The local runner (`scripts/cc18_runner.py`) is a skeleton: it
+opens a shard, selects pending jobs, resolves the adapter, and
+logs a dispatch decision **without training**. `--dry-run` opens
+the database read-only; the default `--no-train` mode briefly
+claims a job and immediately releases it, so the row's logical
+state is unchanged. Tests always copy a shard to a tmp directory
+before exercising the runner; the committed shard files are not
+mutated by tests.
+
+Stage-3 jobs of every tier-1+ method are still locked behind a
+manual sign-off file at
+`jobs/doctoral/openml_cc18/stage3_signoff.json`; this commit does
+**not** create that file. Without it, the runner refuses to claim
+stage-3 jobs and reports them as `refused_stage3_signoff_missing`.
+
+The next operational step is to implement the first executable
+adapters for a canary cell: `default_gbdt`, `random_search`,
+`tpe_optuna`, and `doe_rsm_vrf_true_nbi`. The runner skeleton's
+`--no-train` default flips off only after that.
 
 ## What this commit does NOT do
 
