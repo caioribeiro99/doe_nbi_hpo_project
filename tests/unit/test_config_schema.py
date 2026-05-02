@@ -10,7 +10,6 @@ from pydantic import ValidationError
 
 from doe_xgb.config_schema import ExperimentConfig, load_config
 
-
 CONFIGS = Path(__file__).resolve().parents[2] / "configs"
 
 

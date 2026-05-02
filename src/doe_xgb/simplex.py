@@ -11,9 +11,9 @@ any particular q.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from itertools import combinations
 from math import comb
-from typing import Iterable, List, Optional
 
 import numpy as np
 
@@ -42,9 +42,9 @@ def generate_simplex_lattice(q: int, m: int) -> np.ndarray:
     if m < 1:
         raise ValueError("m must be >= 1")
 
-    rows: List[List[int]] = []
+    rows: list[list[int]] = []
 
-    def _recurse(remaining: int, slots: int, prefix: List[int]) -> None:
+    def _recurse(remaining: int, slots: int, prefix: list[int]) -> None:
         if slots == 1:
             rows.append(prefix + [remaining])
             return
@@ -60,7 +60,7 @@ def generate_simplex_lattice(q: int, m: int) -> np.ndarray:
     return arr
 
 
-def generate_simplex_centroid(q: int, depth: Optional[int] = None) -> np.ndarray:
+def generate_simplex_centroid(q: int, depth: int | None = None) -> np.ndarray:
     """Simplex-centroid design.
 
     For each subset of size ``r in {1, …, depth}``, places a single
@@ -73,7 +73,7 @@ def generate_simplex_centroid(q: int, depth: Optional[int] = None) -> np.ndarray
         depth = q
     if not (1 <= depth <= q):
         raise ValueError("depth must be in [1, q]")
-    rows: List[np.ndarray] = []
+    rows: list[np.ndarray] = []
     for r in range(1, depth + 1):
         for subset in combinations(range(q), r):
             v = np.zeros(q, dtype=float)
@@ -110,7 +110,7 @@ def generate_extreme_vertices(
         raise ValueError("need at least two components")
 
     grid = [np.linspace(lower[i], upper[i], n_grid) for i in range(q)]
-    candidates: List[np.ndarray] = []
+    candidates: list[np.ndarray] = []
     mesh = np.array(np.meshgrid(*grid, indexing="ij")).reshape(q, -1).T
     for row in mesh:
         s = row.sum()

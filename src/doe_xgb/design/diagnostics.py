@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Dict
-
 import numpy as np
 
 
-def matrix_diagnostics(X: np.ndarray) -> Dict[str, float]:
+def matrix_diagnostics(X: np.ndarray) -> dict[str, float]:
     """Compute rank, condition number, and basic shape diagnostics."""
     arr = np.asarray(X, dtype=float)
     if arr.ndim != 2:
@@ -30,7 +28,7 @@ def matrix_diagnostics(X: np.ndarray) -> Dict[str, float]:
     }
 
 
-def design_coverage(coded: np.ndarray) -> Dict[str, float]:
+def design_coverage(coded: np.ndarray) -> dict[str, float]:
     """Per-factor coverage of the coded box [-1, +1]."""
     arr = np.asarray(coded, dtype=float)
     if arr.ndim != 2:

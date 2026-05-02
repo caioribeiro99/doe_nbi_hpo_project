@@ -22,11 +22,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import product
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -60,32 +61,32 @@ class FactorMeta:
 @dataclass(frozen=True)
 class DesignSpec:
     kind: DesignKind
-    factors: Tuple[FactorMeta, ...] = ()
+    factors: tuple[FactorMeta, ...] = ()
     n_center: int = 0
-    fractional_resolution: Optional[int] = None
+    fractional_resolution: int | None = None
     lhs_criterion: Literal["maximin", "correlation", "centermaximin"] = "maximin"
-    d_optimal_model: Optional[str] = None
-    simplex_q: Optional[int] = None
-    simplex_m: Optional[int] = None
-    seed: Optional[int] = None
-    external_path: Optional[Path] = None
-    metadata_overrides: Dict[str, Any] = field(default_factory=dict)
+    d_optimal_model: str | None = None
+    simplex_q: int | None = None
+    simplex_m: int | None = None
+    seed: int | None = None
+    external_path: Path | None = None
+    metadata_overrides: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
 class DesignArtifact:
     matrix_coded: pd.DataFrame
     matrix_uncoded: pd.DataFrame
-    metadata: Dict[str, Any]
-    diagnostics: Dict[str, Any]
+    metadata: dict[str, Any]
+    diagnostics: dict[str, Any]
 
 
 @dataclass(frozen=True)
 class ValidationReport:
     ok: bool
-    warnings: Tuple[str, ...]
-    errors: Tuple[str, ...]
-    detail: Dict[str, Any]
+    warnings: tuple[str, ...]
+    errors: tuple[str, ...]
+    detail: dict[str, Any]
 
 
 # ---------------------------------------------------------------------------
@@ -93,7 +94,7 @@ class ValidationReport:
 # ---------------------------------------------------------------------------
 
 
-def _lo_hi(factors: Sequence[FactorMeta]) -> Tuple[np.ndarray, np.ndarray]:
+def _lo_hi(factors: Sequence[FactorMeta]) -> tuple[np.ndarray, np.ndarray]:
     lo = np.array([f.lo for f in factors], dtype=float)
     hi = np.array([f.hi for f in factors], dtype=float)
     return lo, hi
@@ -134,7 +135,7 @@ def _box_behnken_design(k: int) -> np.ndarray:
     """
     if k < 3 or k > 7:
         raise ValueError("Box-Behnken supports k in {3, 4, 5, 6, 7}")
-    rows: List[np.ndarray] = []
+    rows: list[np.ndarray] = []
     for i in range(k):
         for j in range(i + 1, k):
             for s1 in (-1.0, 1.0):
@@ -146,7 +147,7 @@ def _box_behnken_design(k: int) -> np.ndarray:
     return np.vstack(rows)
 
 
-def _fractional_factorial(k: int, resolution: int, seed: Optional[int]) -> np.ndarray:
+def _fractional_factorial(k: int, resolution: int, seed: int | None) -> np.ndarray:
     """Two-level fractional factorial with given resolution.
 
     Uses a defining-relation generator approach: take the full factorial
@@ -167,8 +168,8 @@ def _fractional_factorial(k: int, resolution: int, seed: Optional[int]) -> np.nd
         return base
     extra_cols = []
     rng = np.random.default_rng(seed if seed is not None else 0)
-    used: List[Tuple[int, ...]] = []
-    for j in range(k - base_k):
+    used: list[tuple[int, ...]] = []
+    for _j in range(k - base_k):
         size = max(2, resolution - 1)
         candidate = tuple(sorted(rng.choice(base_k, size=size, replace=False).tolist()))
         while candidate in used:
@@ -179,7 +180,7 @@ def _fractional_factorial(k: int, resolution: int, seed: Optional[int]) -> np.nd
     return np.hstack([base] + extra_cols)
 
 
-def _lhs(n: int, k: int, criterion: str, seed: Optional[int]) -> np.ndarray:
+def _lhs(n: int, k: int, criterion: str, seed: int | None) -> np.ndarray:
     from scipy.stats import qmc
 
     sampler = qmc.LatinHypercube(d=k, seed=seed)
@@ -193,7 +194,7 @@ def _lhs(n: int, k: int, criterion: str, seed: Optional[int]) -> np.ndarray:
     return 2.0 * sample - 1.0
 
 
-def _sobol(n: int, k: int, seed: Optional[int]) -> np.ndarray:
+def _sobol(n: int, k: int, seed: int | None) -> np.ndarray:
     from scipy.stats import qmc
 
     sampler = qmc.Sobol(d=k, seed=seed)
@@ -248,11 +249,11 @@ def _load_external_csv(spec: DesignSpec) -> DesignArtifact:
         coded = uncoded.copy()
 
     sidecar_path = csv_path.with_suffix(csv_path.suffix + ".metadata.json")
-    sidecar: Dict[str, Any] = {}
+    sidecar: dict[str, Any] = {}
     if sidecar_path.exists():
         sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
 
-    metadata: Dict[str, Any] = {
+    metadata: dict[str, Any] = {
         "kind": "external_csv",
         "external_path": str(csv_path),
         "sha256": _sha256(csv_path),
@@ -262,7 +263,7 @@ def _load_external_csv(spec: DesignSpec) -> DesignArtifact:
     metadata.update(sidecar)
     metadata.update(spec.metadata_overrides or {})
 
-    diagnostics: Dict[str, Any] = {
+    diagnostics: dict[str, Any] = {
         "matrix": matrix_diagnostics(uncoded.to_numpy()),
         "coverage": design_coverage(coded.to_numpy()) if spec.factors else {},
     }
@@ -280,7 +281,7 @@ def _load_external_csv(spec: DesignSpec) -> DesignArtifact:
 # ---------------------------------------------------------------------------
 
 
-def _wrap_coded(coded: np.ndarray, spec: DesignSpec, kind: DesignKind, extra_meta: Dict[str, Any]) -> DesignArtifact:
+def _wrap_coded(coded: np.ndarray, spec: DesignSpec, kind: DesignKind, extra_meta: dict[str, Any]) -> DesignArtifact:
     factor_names = [f.name for f in spec.factors]
     lo, hi = _lo_hi(spec.factors) if spec.factors else (None, None)
     if lo is not None and hi is not None:
@@ -415,8 +416,8 @@ def validate_for_model(artifact: DesignArtifact, *, family: str, order: str) -> 
     - ``mixture_scheffe`` + simplex_lattice/centroid: OK.
     - ``mixture_scheffe`` + non-mixture: ERROR.
     """
-    warnings: List[str] = []
-    errors: List[str] = []
+    warnings: list[str] = []
+    errors: list[str] = []
 
     kind = str(artifact.metadata.get("kind", "")).lower()
     fam = family.lower()

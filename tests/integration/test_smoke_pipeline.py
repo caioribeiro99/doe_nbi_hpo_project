@@ -19,7 +19,6 @@ from doe_xgb.post_optimization import MBPASpec, run_mbpa
 from doe_xgb.selection import SelectionRule, select
 from doe_xgb.simplex import generate_simplex_lattice
 
-
 CONFIGS = Path(__file__).resolve().parents[2] / "configs"
 
 

@@ -11,7 +11,7 @@ import paths.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -19,13 +19,12 @@ from .objectives import (
     ObjectiveDirection,
     ObjectiveNormalization,
     ObjectiveRole,
+    ObjectivesConfig,
     ObjectiveSpec,
     ObjectiveTransform,
-    ObjectivesConfig,
 )
 
-
-_StrictModel: Dict[str, Any] = {"extra": "forbid", "frozen": True}
+_StrictModel: dict[str, Any] = {"extra": "forbid", "frozen": True}
 
 
 class ExperimentBlock(BaseModel):
@@ -41,14 +40,14 @@ class DatasetBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     path: Path
     target: str = "y"
-    target_map: Optional[Dict[str, int]] = None
-    expected_sha256: Optional[str] = None
+    target_map: dict[str, int] | None = None
+    expected_sha256: str | None = None
 
 
 class ModelBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     estimator: str = "xgboost.XGBClassifier"
-    fixed_kwargs: Dict[str, Any] = Field(default_factory=dict)
+    fixed_kwargs: dict[str, Any] = Field(default_factory=dict)
 
 
 class FactorBoundSpec(BaseModel):
@@ -59,7 +58,7 @@ class FactorBoundSpec(BaseModel):
     type: Literal["float", "int"] = "float"
 
     @model_validator(mode="after")
-    def _check_bounds(self) -> "FactorBoundSpec":
+    def _check_bounds(self) -> FactorBoundSpec:
         if self.lo >= self.hi:
             raise ValueError(f"factor {self.name!r}: lo must be < hi")
         return self
@@ -80,19 +79,19 @@ class DesignBlock(BaseModel):
         "d_optimal",
         "simplex_lattice",
     ]
-    external_path: Optional[Path] = None
-    metadata: Dict[str, Any] = Field(default_factory=dict)
-    factors: List[FactorBoundSpec] = Field(default_factory=list)
+    external_path: Path | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    factors: list[FactorBoundSpec] = Field(default_factory=list)
     n_center: int = 0
-    fractional_resolution: Optional[int] = None
+    fractional_resolution: int | None = None
     lhs_criterion: Literal["maximin", "correlation", "centermaximin"] = "maximin"
-    d_optimal_model: Optional[str] = None
-    simplex_q: Optional[int] = None
-    simplex_m: Optional[int] = None
-    seed: Optional[int] = None
+    d_optimal_model: str | None = None
+    simplex_q: int | None = None
+    simplex_m: int | None = None
+    seed: int | None = None
 
     @model_validator(mode="after")
-    def _consistency(self) -> "DesignBlock":
+    def _consistency(self) -> DesignBlock:
         if self.kind == "external_csv" and self.external_path is None:
             raise ValueError("design.kind=external_csv requires external_path")
         if self.kind == "simplex_lattice" and (self.simplex_q is None or self.simplex_m is None):
@@ -109,7 +108,7 @@ class CVBlock(BaseModel):
 class EvaluationBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     cv: CVBlock = CVBlock()
-    raw_metrics: List[str] = Field(
+    raw_metrics: list[str] = Field(
         default_factory=lambda: [
             "Accuracy_Mean",
             "Precision_Mean",
@@ -131,21 +130,21 @@ class FactorAutoCriteriaModel(BaseModel):
 class FactorConstructModel(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     name: str
-    members: List[str]
+    members: list[str]
 
 
 class FactorModelBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     mode: Literal["auto", "fixed", "manual", "none"] = "auto"
-    n_factors: Optional[int] = None
-    constructs: Optional[List[FactorConstructModel]] = None
+    n_factors: int | None = None
+    constructs: list[FactorConstructModel] | None = None
     rotation: Literal["varimax", "none"] = "varimax"
     standardize: bool = True
     sign_orientation: Literal["construct_avg", "first_loading_positive", "explicit"] = "construct_avg"
     auto: FactorAutoCriteriaModel = FactorAutoCriteriaModel()
 
     @model_validator(mode="after")
-    def _consistency(self) -> "FactorModelBlock":
+    def _consistency(self) -> FactorModelBlock:
         if self.mode == "fixed" and self.n_factors is None:
             raise ValueError("factor_model.mode=fixed requires n_factors")
         if self.mode == "manual" and not self.constructs:
@@ -159,11 +158,11 @@ class ObjectiveSpecModel(BaseModel):
     source: str
     direction: ObjectiveDirection
     transform: ObjectiveTransform = ObjectiveTransform.RAW
-    target: Optional[float] = None
-    weight: Optional[float] = None
+    target: float | None = None
+    weight: float | None = None
     role: ObjectiveRole = ObjectiveRole.PRIMARY_NBI
-    group: Optional[str] = None
-    bounds: Optional[Tuple[float, float]] = None
+    group: str | None = None
+    bounds: tuple[float, float] | None = None
     normalization: ObjectiveNormalization = ObjectiveNormalization.PAYOFF
 
     @field_validator("target", mode="before")
@@ -174,7 +173,7 @@ class ObjectiveSpecModel(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _direction_target_consistency(self) -> "ObjectiveSpecModel":
+    def _direction_target_consistency(self) -> ObjectiveSpecModel:
         if self.direction is ObjectiveDirection.TARGET and self.target is None:
             raise ValueError(
                 f"objective {self.name!r}: direction=target requires a target value "
@@ -214,7 +213,7 @@ class ObjectiveSpecModel(BaseModel):
 class ObjectivesBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     convention: Literal["minimize", "maximize"] = "minimize"
-    specs: List[ObjectiveSpecModel]
+    specs: list[ObjectiveSpecModel]
 
     def to_objectives_config(self) -> ObjectivesConfig:
         return ObjectivesConfig(
@@ -239,7 +238,7 @@ class SurrogateBlock(BaseModel):
     ] = "process_quadratic"
     order: str = "quadratic"
     coding: Literal["coded", "uncoded"] = "coded"
-    backward_elimination: Optional[BackwardEliminationBlock] = BackwardEliminationBlock()
+    backward_elimination: BackwardEliminationBlock | None = BackwardEliminationBlock()
 
 
 class WeightsBlock(BaseModel):
@@ -247,12 +246,12 @@ class WeightsBlock(BaseModel):
     method: Literal["simplex_lattice", "simplex_centroid", "custom"] = "simplex_lattice"
     q: int = Field(default=2, ge=2)
     m: int = Field(default=50, ge=1)
-    custom: Optional[List[List[float]]] = None
+    custom: list[list[float]] | None = None
 
 
 class FeasibilityBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
-    spherical_radius_squared: Optional[Any] = None  # float or "auto_2k_quarter"
+    spherical_radius_squared: Any | None = None  # float or "auto_2k_quarter"
 
 
 class NBIBlock(BaseModel):
@@ -276,8 +275,8 @@ class SelectionBlock(BaseModel):
         "lexicographic",
         "topsis",
     ] = "distance_to_utopia"
-    tie_breaker: Optional[str] = None
-    weights: Optional[List[float]] = None
+    tie_breaker: str | None = None
+    weights: list[float] | None = None
 
 
 class PostOptTriggerBlock(BaseModel):
@@ -306,14 +305,14 @@ class InnerObjectiveBlock(BaseModel):
 class EllipticalConstraintBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     center: Literal["centroid", "explicit"] = "centroid"
-    explicit_center: Optional[List[float]] = None
-    radii: List[float]
+    explicit_center: list[float] | None = None
+    radii: list[float]
 
 
 class MBPABlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     inner_design: InnerDesignBlock = InnerDesignBlock()
-    inner_objectives: List[InnerObjectiveBlock] = Field(
+    inner_objectives: list[InnerObjectiveBlock] = Field(
         default_factory=lambda: [
             InnerObjectiveBlock(name="GD", direction=ObjectiveDirection.MINIMIZE),
             InnerObjectiveBlock(name="S", direction=ObjectiveDirection.MAXIMIZE),
@@ -331,7 +330,7 @@ class PostOptimizationBlock(BaseModel):
 
 class BenchmarksBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
-    enabled: List[str] = Field(default_factory=lambda: ["coarse_grid", "random", "bayes", "hyperopt_tpe"])
+    enabled: list[str] = Field(default_factory=lambda: ["coarse_grid", "random", "bayes", "hyperopt_tpe"])
     budget: Any = "fairness"
     selection_rule: Literal["max_accuracy", "max_quality", "distance_to_utopia"] = "max_accuracy"
 
@@ -339,7 +338,7 @@ class BenchmarksBlock(BaseModel):
 class ReportingBlock(BaseModel):
     model_config = ConfigDict(**_StrictModel)
     paper_tables: bool = True
-    multiobjective_metrics: List[str] = Field(
+    multiobjective_metrics: list[str] = Field(
         default_factory=lambda: ["igd", "spread", "spacing_entropy", "hypervolume", "mahalanobis"]
     )
 
@@ -362,7 +361,7 @@ class ExperimentConfig(BaseModel):
     reporting: ReportingBlock = ReportingBlock()
 
     @model_validator(mode="after")
-    def _at_least_two_primary(self) -> "ExperimentConfig":
+    def _at_least_two_primary(self) -> ExperimentConfig:
         primaries = [s for s in self.objectives.specs if s.role == ObjectiveRole.PRIMARY_NBI]
         if len(primaries) < 2:
             raise ValueError(

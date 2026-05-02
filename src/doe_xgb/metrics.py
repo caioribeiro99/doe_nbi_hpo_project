@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Tuple
 
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
 
 
 @dataclass(frozen=True)
@@ -33,7 +32,7 @@ def compute_binary_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> FoldMetric
     return FoldMetrics(accuracy=acc, precision=prec, recall=rec, specificity=spec)
 
 
-def aggregate_fold_metrics(folds: Tuple[FoldMetrics, ...]) -> Dict[str, float]:
+def aggregate_fold_metrics(folds: tuple[FoldMetrics, ...]) -> dict[str, float]:
     """Aggregate fold metrics (mean)."""
     return {
         "Accuracy_Mean": float(np.mean([f.accuracy for f in folds])),

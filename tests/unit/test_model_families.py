@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -20,7 +18,7 @@ from doe_xgb.model_families import (
 from doe_xgb.simplex import generate_simplex_lattice
 
 
-def _ccd_artifact(k: int = 3) -> Tuple[pd.DataFrame, pd.DataFrame, list[str]]:
+def _ccd_artifact(k: int = 3) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
     spec = DesignSpec(
         kind=DesignKind.CCD_FACE_CENTERED,
         factors=tuple(FactorMeta(f"x{i}", 0.0, 1.0) for i in range(k)),
@@ -49,7 +47,7 @@ def test_process_quadratic_recovers_known_polynomial() -> None:
         order="quadratic",
         backward=None,  # do not eliminate; we want exact recovery
     )
-    coefs = dict(zip(model.terms, model.coefficients))
+    coefs = dict(zip(model.terms, model.coefficients, strict=True))
     assert coefs["Intercept"] == pytest.approx(2.0, abs=1e-3)
     assert coefs["x0"] == pytest.approx(3.0, abs=1e-3)
     assert coefs["x1"] == pytest.approx(-1.0, abs=1e-3)
@@ -101,7 +99,7 @@ def test_mixture_scheffe_quadratic_fits_known_simplex_polynomial() -> None:
         + rng.normal(0, 1e-6, size=len(df))
     )
     model = MixtureScheffeModel.fit(df, y, component_names=["w1", "w2", "w3"], order="quadratic")
-    coefs = dict(zip(model.terms, model.coefficients))
+    coefs = dict(zip(model.terms, model.coefficients, strict=True))
     assert coefs["w1"] == pytest.approx(1.0, abs=1e-3)
     assert coefs["w2"] == pytest.approx(2.0, abs=1e-3)
     assert coefs["w3"] == pytest.approx(3.0, abs=1e-3)

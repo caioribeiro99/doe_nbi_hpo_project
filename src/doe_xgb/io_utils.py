@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Iterable
 
 import pandas as pd
 
 
 def _resolve_target_column(
     df: pd.DataFrame,
-    target_col: Optional[str] = None,
+    target_col: str | None = None,
     *,
     fallback_candidates: Iterable[str] = ("y", "target", "label", "class"),
 ) -> str:
@@ -29,9 +29,9 @@ def _resolve_target_column(
 
 def load_dataset(
     path: str | Path,
-    target_col: Optional[str] = "y",
-    target_map: Optional[Dict] = None,
-) -> Tuple[pd.DataFrame, pd.Series]:
+    target_col: str | None = "y",
+    target_map: dict | None = None,
+) -> tuple[pd.DataFrame, pd.Series]:
     """Load a dataset from xlsx/csv/parquet."""
     path = Path(path)
     if not path.exists():

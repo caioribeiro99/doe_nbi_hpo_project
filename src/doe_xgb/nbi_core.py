@@ -24,12 +24,12 @@ remain 2D/3D-specific.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Literal, Optional, Sequence, Tuple
+from typing import Any, Literal
 
 import numpy as np
 from scipy.optimize import minimize
-
 
 SurrogateCallable = Callable[[np.ndarray], float]
 
@@ -38,11 +38,11 @@ SurrogateCallable = Callable[[np.ndarray], float]
 class NBIConfig:
     objective_count: int
     bounds: np.ndarray  # shape (k, 2): per-decision-variable [lo, hi]
-    integer_dims: Tuple[int, ...] = ()
+    integer_dims: tuple[int, ...] = ()
     n_starts: int = 10
     seed: int = 42
     solver: Literal["slsqp", "trust_constr"] = "slsqp"
-    feasibility_constraint: Optional[Callable[[np.ndarray], np.ndarray]] = None
+    feasibility_constraint: Callable[[np.ndarray], np.ndarray] | None = None
     use_pseudo_nadir: bool = True
     quasi_normal: Literal["minus_phi_ones", "gram_schmidt"] = "minus_phi_ones"
     record_trajectory: bool = False
@@ -56,7 +56,7 @@ class AnchorSet:
     utopia: np.ndarray         # (q,)  : diag(F_star)
     nadir: np.ndarray          # (q,)  : per-objective worst (anti-utopia)
     pseudo_nadir: np.ndarray   # (q,)  : column-wise max of F_star
-    diagnostics: Dict[str, Any]
+    diagnostics: dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -74,7 +74,7 @@ class NBISubproblemResult:
     residual_norm: float
     success: bool
     message: str
-    optimizer_info: Dict[str, Any]
+    optimizer_info: dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -82,7 +82,7 @@ class NBIRun:
     anchors: AnchorSet
     chim: CHIM
     weights: np.ndarray                  # (N, q)
-    candidates: Tuple[NBISubproblemResult, ...]
+    candidates: tuple[NBISubproblemResult, ...]
     config: NBIConfig
 
 
@@ -94,9 +94,8 @@ class NBIRun:
 def _multistart_minimize(
     objective: SurrogateCallable,
     cfg: NBIConfig,
-) -> Tuple[np.ndarray, float, bool, str]:
+) -> tuple[np.ndarray, float, bool, str]:
     bounds = cfg.bounds
-    k = bounds.shape[0]
     rng = np.random.default_rng(cfg.seed)
     starts = [np.mean(bounds, axis=1)]
     for _ in range(max(0, cfg.n_starts - 1)):
@@ -106,7 +105,7 @@ def _multistart_minimize(
     if cfg.feasibility_constraint is not None:
         constraints.append({"type": "ineq", "fun": cfg.feasibility_constraint})
 
-    best_x: Optional[np.ndarray] = None
+    best_x: np.ndarray | None = None
     best_f = float("inf")
     success_flag = False
     msg = "no successful start"
@@ -153,7 +152,7 @@ def compute_anchors(
     x_star = np.zeros((q, k), dtype=float)
     F_star = np.zeros((q, q), dtype=float)
     nadir = np.full(q, -np.inf, dtype=float)
-    diag_msgs: Dict[str, Any] = {}
+    diag_msgs: dict[str, Any] = {}
     for j, fj in enumerate(surrogates):
         x_min, _, _, msg_min = _multistart_minimize(fj, cfg)
         x_star[j, :] = x_min
@@ -220,7 +219,7 @@ def solve_nbi_subproblem(
     *,
     anchors: AnchorSet,
     cfg: NBIConfig,
-    x0: Optional[np.ndarray] = None,
+    x0: np.ndarray | None = None,
 ) -> NBISubproblemResult:
     """Solve the NBI subproblem `max t s.t. F̂(x) = utopia + Phi*beta + t*n_hat`.
 
@@ -267,7 +266,7 @@ def solve_nbi_subproblem(
         rx = rng.uniform(cfg.bounds[:, 0], cfg.bounds[:, 1])
         starts.append(np.concatenate([rx, [0.0]]))
 
-    best: Optional[NBISubproblemResult] = None
+    best: NBISubproblemResult | None = None
     best_t = -np.inf
 
     for z_start in starts:

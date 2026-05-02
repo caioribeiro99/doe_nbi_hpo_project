@@ -7,8 +7,8 @@ row plus a diagnostics dict.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from enum import Enum
-from typing import Dict, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -35,10 +35,10 @@ def select(
     F: np.ndarray,
     rule: SelectionRule,
     *,
-    weights: Optional[Sequence[float]] = None,
-    utopia: Optional[Sequence[float]] = None,
+    weights: Sequence[float] | None = None,
+    utopia: Sequence[float] | None = None,
     quality_index: int = 0,
-) -> Tuple[int, Dict[str, object]]:
+) -> tuple[int, dict[str, object]]:
     """Pick a row of ``F`` (canonical-min) according to ``rule``.
 
     Parameters

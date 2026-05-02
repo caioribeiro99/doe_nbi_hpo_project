@@ -19,14 +19,20 @@ modify any of them.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, Optional, Sequence, Tuple
+from typing import Any
 
 import numpy as np
 import pandas as pd
 
-from .diagnostics import FrontierDiagnostics, PostOptTriggerThresholds, evaluate_frontier, should_post_optimize
+from .diagnostics import (
+    DEFAULT_POST_OPT_THRESHOLDS,
+    FrontierDiagnostics,
+    PostOptTriggerThresholds,
+    evaluate_frontier,
+    should_post_optimize,
+)
 from .model_families import MixtureScheffeModel
-from .nbi_core import NBIConfig, NBIRun, NBISubproblemResult, run_nbi
+from .nbi_core import NBIRun, NBISubproblemResult, run_nbi
 from .reporting import generalized_distance, shannon_entropy
 from .simplex import generate_simplex_lattice
 
@@ -35,8 +41,8 @@ from .simplex import generate_simplex_lattice
 class MBPASpec:
     inner_simplex_q: int
     inner_simplex_m: int = 10
-    elliptical_radii: Tuple[float, ...] = (0.30, 0.30, 0.30)
-    elliptical_center: Optional[Tuple[float, ...]] = None  # default: simplex centroid
+    elliptical_radii: tuple[float, ...] = (0.30, 0.30, 0.30)
+    elliptical_center: tuple[float, ...] | None = None  # default: simplex centroid
     n_starts: int = 5
     seed: int = 42
 
@@ -45,12 +51,12 @@ class MBPASpec:
 class MBPAResult:
     triggered: bool
     diagnostics: FrontierDiagnostics
-    refined_weights: Optional[np.ndarray] = None
-    refined_candidate: Optional[NBISubproblemResult] = None
-    gd_surrogate: Optional[MixtureScheffeModel] = None
-    entropy_surrogate: Optional[MixtureScheffeModel] = None
-    inner_run: Optional[NBIRun] = None
-    summary: Dict[str, Any] = field(default_factory=dict)
+    refined_weights: np.ndarray | None = None
+    refined_candidate: NBISubproblemResult | None = None
+    gd_surrogate: MixtureScheffeModel | None = None
+    entropy_surrogate: MixtureScheffeModel | None = None
+    inner_run: NBIRun | None = None
+    summary: dict[str, Any] = field(default_factory=dict)
 
 
 def _per_weight_F_at_x(run: NBIRun) -> np.ndarray:
@@ -76,7 +82,7 @@ def run_mbpa(
     primary_run: NBIRun,
     spec: MBPASpec,
     *,
-    thresholds: PostOptTriggerThresholds = PostOptTriggerThresholds(),
+    thresholds: PostOptTriggerThresholds = DEFAULT_POST_OPT_THRESHOLDS,
     enabled: str = "conditional",
 ) -> MBPAResult:
     """Conditional or forced MBPA second stage.
@@ -112,7 +118,9 @@ def run_mbpa(
         row = pd.DataFrame([w], columns=df_w.columns)
         return -float(s_model.predict(row)[0])
 
-    surrogates = [gd_call, neg_s_call]
+    # Surrogates list kept here as documentation of the canonical-min
+    # objectives that an extended inner-NBI implementation would consume.
+    _surrogates_for_inner_nbi = [gd_call, neg_s_call]  # noqa: F841
 
     # Decision variables = simplex weights, but SLSQP cannot natively
     # handle equality sum(w) = 1. We add it as an extra equality
@@ -152,8 +160,8 @@ def run_mbpa(
 
     # Run an NBI subproblem on the primary surrogates at that refined
     # weight vector to produce the refined candidate.
-    refined_candidate: Optional[NBISubproblemResult] = None
-    inner_run: Optional[NBIRun] = None
+    refined_candidate: NBISubproblemResult | None = None
+    inner_run: NBIRun | None = None
     try:
         inner_run = run_nbi(
             [c for c in primary_run.candidates],  # placeholder; not used

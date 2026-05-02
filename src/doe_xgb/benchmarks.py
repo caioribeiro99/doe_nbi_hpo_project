@@ -4,7 +4,7 @@ import ast
 import itertools
 import time
 from math import ceil
-from typing import Any, Dict, List, Tuple, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -16,9 +16,9 @@ from .evaluation import evaluate_xgb_cv
 from .io_utils import save_csv_ptbr
 
 
-def _cast_ints(params: Dict[str, Any]) -> Dict[str, float | int]:
+def _cast_ints(params: dict[str, Any]) -> dict[str, float | int]:
     """Cast integer hyperparameters to int (keeps others as float)."""
-    out: Dict[str, float | int] = {}
+    out: dict[str, float | int] = {}
     for k, v in params.items():
         if k in INT_PARAMS:
             out[k] = int(round(float(v)))
@@ -28,14 +28,14 @@ def _cast_ints(params: Dict[str, Any]) -> Dict[str, float | int]:
 
 
 def _eval_params(
-    params: Dict[str, float | int],
+    params: dict[str, float | int],
     X_np: np.ndarray,
     y_np: np.ndarray,
     kfold: StratifiedKFold,
     seed: int,
     n_jobs: int,
     tree_method: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     # evaluate_xgb_cv expects (params, X, y, kfold, ...)
     ev = evaluate_xgb_cv(
         params,
@@ -46,13 +46,13 @@ def _eval_params(
         n_jobs=n_jobs,
         tree_method=tree_method,
     )
-    out = cast(Dict[str, Any], ev.as_dict())
+    out = cast(dict[str, Any], ev.as_dict())
     out["hyperparameters"] = dict(params)
     return out
 
 
 def evaluate_candidate_list(
-    candidates: List[Dict[str, float]],
+    candidates: list[dict[str, float]],
     X: pd.DataFrame,
     y: pd.Series,
     *,
@@ -61,7 +61,7 @@ def evaluate_candidate_list(
     n_jobs: int = -1,
     tree_method: str = "hist",
     desc: str = "Evaluating candidates",
-) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Evaluate a list of hyperparameter candidates.
 
     Returns:
@@ -75,8 +75,8 @@ def evaluate_candidate_list(
     y_np = y.to_numpy()
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-    all_rows: List[Dict[str, Any]] = []
-    best_row: Dict[str, Any] | None = None
+    all_rows: list[dict[str, Any]] = []
+    best_row: dict[str, Any] | None = None
     best_acc = -np.inf
 
     for params in tqdm(candidates, desc=desc, dynamic_ncols=True):
@@ -94,7 +94,7 @@ def evaluate_candidate_list(
     return best_row, all_rows
 
 
-def load_nbi_candidates(path: str) -> List[Dict[str, float]]:
+def load_nbi_candidates(path: str) -> list[dict[str, float]]:
     """Load NBI candidates from CSV.
 
     Supports:
@@ -105,17 +105,17 @@ def load_nbi_candidates(path: str) -> List[Dict[str, float]]:
 
     # Format 1
     if all(p in df.columns for p in PARAM_NAMES):
-        out: List[Dict[str, float]] = []
+        out: list[dict[str, float]] = []
         for _, row in df.iterrows():
             out.append({p: float(row[p]) for p in PARAM_NAMES})
         return out
 
     # Format 2
     if "hyperparameters" in df.columns:
-        out2: List[Dict[str, float]] = []
+        out2: list[dict[str, float]] = []
         for _, row in df.iterrows():
             cell = row["hyperparameters"]
-            hp: Dict[str, Any] = {}
+            hp: dict[str, Any] = {}
             if isinstance(cell, dict):
                 hp = cell
             elif isinstance(cell, str) and cell.strip():
@@ -127,7 +127,7 @@ def load_nbi_candidates(path: str) -> List[Dict[str, float]]:
                     hp = {}
 
             ok = True
-            cand: Dict[str, float] = {}
+            cand: dict[str, float] = {}
             for p in PARAM_NAMES:
                 if p not in hp:
                     ok = False
@@ -153,7 +153,7 @@ def coarse_grid_search(
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Coarse grid search over DEFAULT_BOUNDS.
 
     Chooses k levels per parameter so that k^d >= budget, then samples `budget` points.
@@ -164,13 +164,13 @@ def coarse_grid_search(
     d = len(PARAM_NAMES)
     k = max(3, int(ceil(budget ** (1.0 / d))))
 
-    levels: Dict[str, List[float]] = {}
+    levels: dict[str, list[float]] = {}
     for p in PARAM_NAMES:
         lo, hi = DEFAULT_BOUNDS[p]
         if p in INT_PARAMS:
             raw = np.linspace(lo, hi, num=k)
             ints = [int(round(v)) for v in raw]
-            uniq: List[int] = []
+            uniq: list[int] = []
             for iv in ints:
                 iv = int(min(max(iv, int(round(lo))), int(round(hi))))
                 if iv not in uniq:
@@ -182,7 +182,7 @@ def coarse_grid_search(
             levels[p] = [float(v) for v in np.linspace(lo, hi, num=k)]
 
     grid = list(itertools.product(*[levels[p] for p in PARAM_NAMES]))
-    candidates_all: List[Dict[str, float]] = [{p: float(v) for p, v in zip(PARAM_NAMES, combo)} for combo in grid]
+    candidates_all: list[dict[str, float]] = [{p: float(v) for p, v in zip(PARAM_NAMES, combo, strict=False)} for combo in grid]
 
     if len(candidates_all) <= budget:
         candidates = candidates_all
@@ -220,13 +220,13 @@ def random_search(
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Random search within DEFAULT_BOUNDS."""
     if budget < 1:
         raise ValueError("budget must be >= 1")
 
     rng = np.random.default_rng(seed)
-    param_grid: Dict[str, List[float]] = {}
+    param_grid: dict[str, list[float]] = {}
     for p in PARAM_NAMES:
         lo, hi = DEFAULT_BOUNDS[p]
         if p in INT_PARAMS:
@@ -237,7 +237,7 @@ def random_search(
             param_grid[p] = [float(v) for v in vals]
 
     sampler = list(ParameterSampler(param_grid, n_iter=budget, random_state=seed))
-    candidates: List[Dict[str, float]] = [{p: float(s[p]) for p in PARAM_NAMES} for s in sampler]
+    candidates: list[dict[str, float]] = [{p: float(s[p]) for p in PARAM_NAMES} for s in sampler]
 
     t0 = time.perf_counter()
     best_eval, _ = evaluate_candidate_list(
@@ -268,7 +268,7 @@ def bayes_search(
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Bayesian optimization via scikit-optimize BayesSearchCV."""
     if budget < 1:
         raise ValueError("budget must be >= 1")
@@ -278,7 +278,7 @@ def bayes_search(
     from xgboost import XGBClassifier
 
     # ✅ FIX: BayesSearchCV expects a dict mapping param_name -> Dimension
-    search_spaces: Dict[str, Any] = {}
+    search_spaces: dict[str, Any] = {}
     for p in PARAM_NAMES:
         lo, hi = DEFAULT_BOUNDS[p]
         if p in INT_PARAMS:
@@ -314,7 +314,7 @@ def bayes_search(
     opt.fit(X_np, y_np)
     opt_time = time.perf_counter() - t0
 
-    best_params_raw = cast(Dict[str, Any], getattr(opt, "best_params_"))
+    best_params_raw = cast(dict[str, Any], opt.best_params_)
     best_params = _cast_ints(best_params_raw)
     best_eval = _eval_params(best_params, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
 
@@ -334,14 +334,14 @@ def hyperopt_tpe(
     n_splits: int = 5,
     n_jobs: int = -1,
     tree_method: str = "hist",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Hyperopt TPE search."""
     if budget < 1:
         raise ValueError("budget must be >= 1")
 
     from hyperopt import STATUS_OK, Trials, fmin, hp, tpe
 
-    space: Dict[str, Any] = {}
+    space: dict[str, Any] = {}
     for p in PARAM_NAMES:
         lo, hi = DEFAULT_BOUNDS[p]
         if p in INT_PARAMS:
@@ -353,7 +353,7 @@ def hyperopt_tpe(
     y_np = y.to_numpy()
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-    def objective(params: Dict[str, Any]) -> Dict[str, Any]:
+    def objective(params: dict[str, Any]) -> dict[str, Any]:
         casted = _cast_ints(params)
         ev = evaluate_xgb_cv(casted, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
         acc = ev.metrics.get("Accuracy_Mean")
@@ -374,7 +374,7 @@ def hyperopt_tpe(
     )
     opt_time = time.perf_counter() - t0
 
-    best_params = _cast_ints(cast(Dict[str, Any], best))
+    best_params = _cast_ints(cast(dict[str, Any], best))
     best_eval = _eval_params(best_params, X_np, y_np, kfold, seed=seed, n_jobs=n_jobs, tree_method=tree_method)
 
     best_eval["method"] = "hyperopt_tpe"
@@ -384,7 +384,7 @@ def hyperopt_tpe(
     return best_eval
 
 
-def save_benchmark_summary(rows: List[Dict[str, Any]], path: str) -> None:
+def save_benchmark_summary(rows: list[dict[str, Any]], path: str) -> None:
     """Save a one-row-per-method benchmark summary as pt-BR friendly CSV."""
     if not rows:
         raise ValueError("rows is empty")

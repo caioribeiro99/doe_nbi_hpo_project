@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Union
 
-
-PathLike = Union[str, Path]
+# Runtime alias (deliberately ``Union`` rather than ``X | Y`` so the package
+# remains importable on Python 3.9; project minimum is 3.10 but legacy
+# environments may still try to import this module).
+PathLike = Union[str, Path]  # noqa: UP007
 
 
 def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
@@ -50,11 +53,11 @@ def build_replica_dir(
 def write_manifest(
     path: PathLike,
     *,
-    replica: Optional[int] = None,
-    seed: Optional[int] = None,
-    dataset_path: Optional[Path] = None,
-    design_path: Optional[Path] = None,
-    extra: Optional[Mapping[str, Any]] = None,
+    replica: int | None = None,
+    seed: int | None = None,
+    dataset_path: Path | None = None,
+    design_path: Path | None = None,
+    extra: Mapping[str, Any] | None = None,
 ) -> Path:
     """
     Flexible manifest writer.
@@ -66,7 +69,7 @@ def write_manifest(
 
     p = Path(path)
 
-    manifest: Dict[str, Any] = {
+    manifest: dict[str, Any] = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
     }
 

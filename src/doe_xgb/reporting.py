@@ -16,8 +16,6 @@ Pure-NumPy implementations suitable for any q >= 2:
 
 from __future__ import annotations
 
-from typing import Optional, Tuple
-
 import numpy as np
 
 
@@ -38,7 +36,7 @@ def pareto_front(F: np.ndarray) -> np.ndarray:
 def generalized_distance(
     F_at_x: np.ndarray,
     utopia: np.ndarray,
-    cov: Optional[np.ndarray] = None,
+    cov: np.ndarray | None = None,
 ) -> np.ndarray:
     """GD per Pereira et al. (2025) Eq. 29 using Mahalanobis distance."""
     F_at_x = np.asarray(F_at_x, dtype=float)

@@ -9,7 +9,6 @@ trigger flag.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List
 
 import numpy as np
 
@@ -26,6 +25,11 @@ class PostOptTriggerThresholds:
     min_spread: float = 0.5
 
 
+# Module-level singleton used as a safe default in function signatures
+# (avoids ruff B008 / mutable default pitfalls).
+DEFAULT_POST_OPT_THRESHOLDS: PostOptTriggerThresholds = PostOptTriggerThresholds()
+
+
 @dataclass(frozen=True)
 class FrontierDiagnostics:
     normalized_ranges: np.ndarray
@@ -34,8 +38,8 @@ class FrontierDiagnostics:
     weight_concentration: float
     curvature_score: float
     spread: float
-    triggers: Dict[str, bool] = field(default_factory=dict)
-    summary: Dict[str, object] = field(default_factory=dict)
+    triggers: dict[str, bool] = field(default_factory=dict)
+    summary: dict[str, object] = field(default_factory=dict)
 
 
 def _avg_pairwise_distance(F: np.ndarray) -> float:

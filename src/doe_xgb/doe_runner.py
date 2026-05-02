@@ -1,21 +1,19 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List
 from threading import RLock
 
-import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from tqdm import tqdm
 
-# Use a thread-based lock instead of multiprocessing lock
-# This keeps the progress bar and avoids SemLock / resource_tracker on macOS.
-tqdm.set_lock(RLock())
-
 from .config import PARAM_NAMES
 from .evaluation import evaluate_xgb_cv
 from .io_utils import save_csv_ptbr
+
+# Use a thread-based lock instead of multiprocessing lock.
+# Keeps the progress bar and avoids SemLock / resource_tracker on macOS.
+tqdm.set_lock(RLock())
 
 
 def run_doe(
@@ -35,7 +33,7 @@ def run_doe(
 
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-    results: List[dict] = []
+    results: list[dict] = []
 
     iterator = tqdm(
         design_df.iterrows(),

@@ -21,16 +21,16 @@ recommends a default family + order from a :class:`DesignArtifact`.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from itertools import combinations
-from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple, Union
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 
 from .design import DesignArtifact
-
 
 # ---------------------------------------------------------------------------
 # Specs and result types
@@ -48,26 +48,31 @@ class BackwardEliminationSpec:
     enforce_hierarchy: bool = True
 
 
+# Module-level singleton used as a safe default in function signatures
+# (avoids ruff B008 / mutable default pitfalls).
+DEFAULT_BACKWARD_ELIMINATION: BackwardEliminationSpec = BackwardEliminationSpec()
+
+
 @dataclass(frozen=True)
 class SurrogateSpec:
     family: ModelFamilyName
-    order: Union[ProcessOrder, ScheffeOrder] = "quadratic"
+    order: ProcessOrder | ScheffeOrder = "quadratic"
     coding: Literal["coded", "uncoded"] = "coded"
-    backward_elimination: Optional[BackwardEliminationSpec] = BackwardEliminationSpec()
+    backward_elimination: BackwardEliminationSpec | None = DEFAULT_BACKWARD_ELIMINATION
 
 
 @dataclass(frozen=True)
 class FitReport:
-    terms: Tuple[str, ...]
-    coefficients: Tuple[float, ...]
+    terms: tuple[str, ...]
+    coefficients: tuple[float, ...]
     r2: float
     r2_adj: float
     rank: int
     condition_number: float
     n_obs: int
     n_params: int
-    notes: Tuple[str, ...] = ()
-    pvalues: Optional[Dict[str, float]] = None
+    notes: tuple[str, ...] = ()
+    pvalues: dict[str, float] | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -75,7 +80,7 @@ class FitReport:
 # ---------------------------------------------------------------------------
 
 
-def _term_vars(term: str) -> List[str]:
+def _term_vars(term: str) -> list[str]:
     if term in ("Intercept", "const", "1"):
         return []
     return term.split("*")
@@ -115,8 +120,8 @@ def _build_process_design_matrix(
     *,
     factor_names: Sequence[str],
     order: ProcessOrder,
-) -> Tuple[pd.DataFrame, List[str]]:
-    cols: Dict[str, np.ndarray] = {}
+) -> tuple[pd.DataFrame, list[str]]:
+    cols: dict[str, np.ndarray] = {}
     for p in factor_names:
         cols[p] = df[p].astype(float).to_numpy()
     if order in ("two_factor_interaction", "quadratic"):
@@ -139,14 +144,14 @@ def _backward_eliminate(
     y: np.ndarray,
     alpha: float,
     enforce_hierarchy: bool,
-) -> Tuple[List[str], "sm.regression.linear_model.RegressionResultsWrapper"]:
+) -> tuple[list[str], sm.regression.linear_model.RegressionResultsWrapper]:
     active = list(X_full.columns)
     while True:
         X = X_full.loc[:, active]
         model = sm.OLS(y, X).fit()
         pvals = model.pvalues.to_dict()
         active_terms = ["Intercept" if c == "const" else c for c in active]
-        candidates: List[Tuple[float, str]] = []
+        candidates: list[tuple[float, str]] = []
         for col in active:
             term = "Intercept" if col == "const" else col
             if _is_intercept(term):
@@ -167,14 +172,14 @@ def _backward_eliminate(
 
 @dataclass
 class _LinearRSMBase:
-    factor_names: Tuple[str, ...]
-    terms: Tuple[str, ...]
-    coefficients: Tuple[float, ...]
+    factor_names: tuple[str, ...]
+    terms: tuple[str, ...]
+    coefficients: tuple[float, ...]
     fit_report: FitReport
 
-    def predict_row(self, x: Dict[str, float]) -> float:
+    def predict_row(self, x: dict[str, float]) -> float:
         v = 0.0
-        for term, coef in zip(self.terms, self.coefficients):
+        for term, coef in zip(self.terms, self.coefficients, strict=True):
             v += float(coef) * _evaluate_term_value(term, x)
         return v
 
@@ -186,7 +191,7 @@ class _LinearRSMBase:
         return out
 
 
-def _evaluate_term_value(term: str, x: Dict[str, float]) -> float:
+def _evaluate_term_value(term: str, x: dict[str, float]) -> float:
     if _is_intercept(term):
         return 1.0
     parts = term.split("*")
@@ -211,11 +216,11 @@ class ProcessQuadraticRSM(_LinearRSMBase):
         *,
         factor_names: Sequence[str],
         order: ProcessOrder = "quadratic",
-        backward: Optional[BackwardEliminationSpec] = BackwardEliminationSpec(),
-    ) -> "ProcessQuadraticRSM":
+        backward: BackwardEliminationSpec | None = DEFAULT_BACKWARD_ELIMINATION,
+    ) -> ProcessQuadraticRSM:
         X_full, _ = _build_process_design_matrix(df, factor_names=factor_names, order=order)
         y_arr = y.astype(float).to_numpy()
-        notes: List[str] = []
+        notes: list[str] = []
         if backward is not None:
             active, fit = _backward_eliminate(
                 X_full, y_arr, alpha=backward.alpha, enforce_hierarchy=backward.enforce_hierarchy
@@ -238,7 +243,7 @@ class ProcessQuadraticRSM(_LinearRSMBase):
             n_obs=int(X_final.shape[0]),
             n_params=int(X_final.shape[1]),
             notes=tuple(notes),
-            pvalues={str(t): float(fit.pvalues[c]) for c, t in zip(X_final.columns, terms)},
+            pvalues={str(t): float(fit.pvalues[c]) for c, t in zip(X_final.columns, terms, strict=True)},
         )
         return cls(
             factor_names=tuple(factor_names),
@@ -258,7 +263,7 @@ def _build_scheffe_design_matrix(
     *,
     component_names: Sequence[str],
     order: ScheffeOrder,
-) -> Tuple[pd.DataFrame, List[str]]:
+) -> tuple[pd.DataFrame, list[str]]:
     """Scheffé canonical polynomial in q components (sum to 1).
 
     Conventions (Cornell, 2002):
@@ -267,7 +272,7 @@ def _build_scheffe_design_matrix(
     - special_cubic: quadratic + sum_{i<j<k} b_{ijk} x_i x_j x_k
     - cubic:         special_cubic + sum_{i<j} d_{ij} x_i x_j (x_i - x_j)
     """
-    cols: Dict[str, np.ndarray] = {}
+    cols: dict[str, np.ndarray] = {}
     q = len(component_names)
     for p in component_names:
         cols[p] = df[p].astype(float).to_numpy()
@@ -295,7 +300,7 @@ def _build_scheffe_design_matrix(
     return X, list(X.columns)
 
 
-def _evaluate_scheffe_term(term: str, x: Dict[str, float]) -> float:
+def _evaluate_scheffe_term(term: str, x: dict[str, float]) -> float:
     """Evaluate a Scheffé canonical term, including the cubic ``(a-b)*a*b`` form."""
     t = term.strip()
     if t.startswith("(") and ")" in t:
@@ -317,9 +322,9 @@ def _evaluate_scheffe_term(term: str, x: Dict[str, float]) -> float:
 
 @dataclass
 class MixtureScheffeModel:
-    component_names: Tuple[str, ...]
-    terms: Tuple[str, ...]
-    coefficients: Tuple[float, ...]
+    component_names: tuple[str, ...]
+    terms: tuple[str, ...]
+    coefficients: tuple[float, ...]
     fit_report: FitReport
 
     @classmethod
@@ -330,7 +335,7 @@ class MixtureScheffeModel:
         *,
         component_names: Sequence[str],
         order: ScheffeOrder = "quadratic",
-    ) -> "MixtureScheffeModel":
+    ) -> MixtureScheffeModel:
         X, terms = _build_scheffe_design_matrix(
             df, component_names=component_names, order=order
         )
@@ -350,7 +355,7 @@ class MixtureScheffeModel:
             n_obs=int(X.shape[0]),
             n_params=int(X.shape[1]),
             notes=("Scheffé canonical polynomial; no intercept; backward elimination disabled.",),
-            pvalues={str(t): float(fit.pvalues[c]) for c, t in zip(X.columns, terms)},
+            pvalues={str(t): float(fit.pvalues[c]) for c, t in zip(X.columns, terms, strict=True)},
         )
         return cls(
             component_names=tuple(component_names),
@@ -359,9 +364,9 @@ class MixtureScheffeModel:
             fit_report=report,
         )
 
-    def predict_row(self, x: Dict[str, float]) -> float:
+    def predict_row(self, x: dict[str, float]) -> float:
         v = 0.0
-        for term, coef in zip(self.terms, self.coefficients):
+        for term, coef in zip(self.terms, self.coefficients, strict=True):
             v += float(coef) * _evaluate_scheffe_term(term, x)
         return v
 

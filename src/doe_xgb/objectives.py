@@ -18,9 +18,9 @@ objectives are negated; FMSE objectives are squared-deviation-plus-variance.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Dict, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -95,11 +95,11 @@ class ObjectiveSpec:
     source: str
     direction: ObjectiveDirection
     transform: ObjectiveTransform = ObjectiveTransform.RAW
-    target: Optional[float] = None
-    weight: Optional[float] = None
+    target: float | None = None
+    weight: float | None = None
     role: ObjectiveRole = ObjectiveRole.PRIMARY_NBI
-    group: Optional[str] = None
-    bounds: Optional[Tuple[float, float]] = None
+    group: str | None = None
+    bounds: tuple[float, float] | None = None
     normalization: ObjectiveNormalization = ObjectiveNormalization.PAYOFF
 
     def __post_init__(self) -> None:  # pragma: no cover - simple validation
@@ -119,16 +119,16 @@ class ObjectiveSpec:
 
 @dataclass(frozen=True)
 class ObjectivesConfig:
-    specs: Tuple[ObjectiveSpec, ...]
+    specs: tuple[ObjectiveSpec, ...]
     convention: str = "minimize"
 
-    def primary(self) -> Tuple[ObjectiveSpec, ...]:
+    def primary(self) -> tuple[ObjectiveSpec, ...]:
         return tuple(s for s in self.specs if s.role is ObjectiveRole.PRIMARY_NBI)
 
-    def post_opt(self) -> Tuple[ObjectiveSpec, ...]:
+    def post_opt(self) -> tuple[ObjectiveSpec, ...]:
         return tuple(s for s in self.specs if s.role is ObjectiveRole.POST_OPTIMIZATION)
 
-    def reporting(self) -> Tuple[ObjectiveSpec, ...]:
+    def reporting(self) -> tuple[ObjectiveSpec, ...]:
         return tuple(s for s in self.specs if s.role is ObjectiveRole.REPORTING)
 
 
@@ -199,9 +199,9 @@ class ObjectiveCanonicalizer:
     ``F(x) -> (q,) ndarray`` into a minimization-only one.
     """
 
-    specs: Tuple[ObjectiveSpec, ...]
-    callables: Dict[str, Callable[[np.ndarray], float]]
-    sigma2_provider: Optional[Callable[[str], float]] = None
+    specs: tuple[ObjectiveSpec, ...]
+    callables: dict[str, Callable[[np.ndarray], float]]
+    sigma2_provider: Callable[[str], float] | None = None
 
     def evaluate(self, x: np.ndarray) -> np.ndarray:
         out = np.empty(len(self.specs), dtype=float)
@@ -241,7 +241,7 @@ class ObjectiveCanonicalizer:
 # ---------------------------------------------------------------------------
 
 
-_DEFAULT_DIRECTION_HINTS: Dict[str, ObjectiveDirection] = {
+_DEFAULT_DIRECTION_HINTS: dict[str, ObjectiveDirection] = {
     "accuracy": ObjectiveDirection.MAXIMIZE,
     "precision": ObjectiveDirection.MAXIMIZE,
     "recall": ObjectiveDirection.MAXIMIZE,
@@ -261,7 +261,7 @@ _DEFAULT_DIRECTION_HINTS: Dict[str, ObjectiveDirection] = {
 }
 
 
-def hint_direction(name: str) -> Optional[ObjectiveDirection]:
+def hint_direction(name: str) -> ObjectiveDirection | None:
     """Best-effort hint for human use only; never used by the core."""
     key = name.strip().lower().replace("-", "").replace("_", "")
     for token, direction in _DEFAULT_DIRECTION_HINTS.items():
@@ -270,7 +270,7 @@ def hint_direction(name: str) -> Optional[ObjectiveDirection]:
     return None
 
 
-def primary_specs(specs: Sequence[ObjectiveSpec]) -> Tuple[ObjectiveSpec, ...]:
+def primary_specs(specs: Sequence[ObjectiveSpec]) -> tuple[ObjectiveSpec, ...]:
     return tuple(s for s in specs if s.role is ObjectiveRole.PRIMARY_NBI)
 
 

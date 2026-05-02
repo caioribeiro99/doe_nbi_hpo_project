@@ -24,6 +24,17 @@ from __future__ import annotations
 
 import warnings
 
+from .nbi_core import (  # noqa: F401
+    CHIM,
+    AnchorSet,
+    NBIConfig,
+    NBIRun,
+    NBISubproblemResult,
+    build_chim,
+    compute_anchors,
+    run_nbi,
+    solve_nbi_subproblem,
+)
 from .scalarization import (  # noqa: F401
     NBICandidate,
     evaluate_term,
@@ -33,17 +44,6 @@ from .scalarization import (  # noqa: F401
     save_nbi_candidates,
 )
 from .scalarization import run_nbi_weighted_sum as _legacy_run_nbi_weighted_sum
-from .nbi_core import (  # noqa: F401
-    AnchorSet,
-    CHIM,
-    NBIConfig,
-    NBIRun,
-    NBISubproblemResult,
-    build_chim,
-    compute_anchors,
-    run_nbi,
-    solve_nbi_subproblem,
-)
 
 
 def run_nbi_weighted_sum(*args, **kwargs):  # type: ignore[no-untyped-def]

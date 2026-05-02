@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import List
 import numpy as np
 
 
-def generate_seeds(initial_seed: int = 42, n_replicas: int = 30) -> List[int]:
+def generate_seeds(initial_seed: int = 42, n_replicas: int = 30) -> list[int]:
     """Generate a deterministic list of replica seeds.
 
     The first seed is `initial_seed`, and the remaining `n_replicas-1` seeds

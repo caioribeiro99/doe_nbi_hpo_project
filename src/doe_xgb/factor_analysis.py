@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from .io_utils import save_csv_ptbr
 # Defaults (match the columns produced by our DOE evaluator)
 # ----------------------------------------------------------------------
 
-DEFAULT_METRICS: Tuple[str, ...] = (
+DEFAULT_METRICS: tuple[str, ...] = (
     "Accuracy_Mean",
     "Precision_Mean",
     "Recall_Mean",
@@ -46,7 +46,7 @@ def _varimax(
     gamma: float = 1.0,
     q: int = 100,
     tol: float = 1e-7,
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     p, k = Phi.shape
     R = np.eye(k)
     d = 0.0
@@ -79,14 +79,14 @@ def run_factor_analysis(
     *,
     metrics: Sequence[str] = DEFAULT_METRICS,
     time_col: str = DEFAULT_TIME_COL,
-    n_factors: Optional[int] = 3,
+    n_factors: int | None = 3,
     auto_n_factors: bool = False,
     force_time_factor: bool = True,
     rotation: str = "varimax",
     zscore_ddof: int = 1,
     time_transform: str = "log1p",
     combine_quality_factors: bool = True,
-    quality_weights: Optional[Sequence[float]] = None,
+    quality_weights: Sequence[float] | None = None,
     sanity_check: bool = True,
 ) -> FAResult:
 

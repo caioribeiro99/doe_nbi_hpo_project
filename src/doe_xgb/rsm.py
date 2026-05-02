@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Any, Union, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -14,14 +14,14 @@ from .io_utils import save_csv_ptbr
 @dataclass(frozen=True)
 class RSMModel:
     response_name: str
-    terms: List[str]
-    coefs: List[float]
+    terms: list[str]
+    coefs: list[float]
     alpha: float
     r2: float
     r2_adj: float
 
 
-def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[str]]:
+def build_quadratic_design_matrix(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     """
     Full quadratic RSM design matrix in **uncoded (actual) units**.
 
@@ -38,7 +38,7 @@ def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[
     terms : List[str]
         Terms aligned with coefficients export.
     """
-    cols: Dict[str, Any] = {}
+    cols: dict[str, Any] = {}
 
     # linear
     for p in PARAM_NAMES:
@@ -66,7 +66,7 @@ def build_quadratic_design_matrix(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[
     return X_const, terms
 
 
-def _as_dataframe(df_factors: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
+def _as_dataframe(df_factors: pd.DataFrame | pd.Series) -> pd.DataFrame:
     """
     Pylance sometimes infers df[col_list] as Series[Any] in callers.
     To make the API resilient, accept Series and convert to DataFrame.
@@ -91,7 +91,7 @@ def _is_main_effect(term: str) -> bool:
     return "*" not in term and term != "Intercept"
 
 
-def _term_vars(term: str) -> List[str]:
+def _term_vars(term: str) -> list[str]:
     if term == "Intercept":
         return []
     if "*" in term:
@@ -99,7 +99,7 @@ def _term_vars(term: str) -> List[str]:
     return [term]
 
 
-def _is_removable(term: str, active_terms: List[str]) -> bool:
+def _is_removable(term: str, active_terms: list[str]) -> bool:
     """
     Hierarchy rule:
       - Intercept never removable
@@ -124,7 +124,7 @@ def _is_removable(term: str, active_terms: List[str]) -> bool:
 
 
 def fit_rsm_backward(
-    df_factors: Union[pd.DataFrame, pd.Series],
+    df_factors: pd.DataFrame | pd.Series,
     y: pd.Series,
     *,
     response_name: str,
@@ -151,9 +151,9 @@ def fit_rsm_backward(
 
     X_full, _terms_full = build_quadratic_design_matrix(df_factors_df)
 
-    active_cols: List[str] = list(X_full.columns)
+    active_cols: list[str] = list(X_full.columns)
 
-    def cols_to_terms(cols: List[str]) -> List[str]:
+    def cols_to_terms(cols: list[str]) -> list[str]:
         return ["Intercept" if c == "const" else c for c in cols]
 
     while True:
@@ -163,7 +163,7 @@ def fit_rsm_backward(
         pvals = model.pvalues.to_dict()
         active_terms = cols_to_terms(active_cols)
 
-        candidates: List[Tuple[float, str, str]] = []
+        candidates: list[tuple[float, str, str]] = []
         for col in active_cols:
             term = "Intercept" if col == "const" else col
             if term == "Intercept":
@@ -188,8 +188,8 @@ def fit_rsm_backward(
     X_final = X_full.loc[:, active_cols]
     final = sm.OLS(y.astype(float).to_numpy(), X_final).fit()
 
-    terms: List[str] = []
-    coefs: List[float] = []
+    terms: list[str] = []
+    coefs: list[float] = []
     for col in X_final.columns:
         terms.append("Intercept" if col == "const" else col)
         coefs.append(float(final.params[col]))

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, List, Tuple
+from collections.abc import Callable
 
 import numpy as np
 import pytest
@@ -32,7 +32,6 @@ def _quadratic_minimizer_at(target: np.ndarray, k: int) -> Callable[[np.ndarray]
 @pytest.mark.parametrize("q", [2, 3, 4, 5])
 def test_nbi_recovers_anchors_for_separable_quadratics(q: int) -> None:
     """Each ``f_i`` minimized by a unit-vector target. NBI must recover them."""
-    rng = np.random.default_rng(0)
     targets = np.eye(q)  # k = q in this synthetic problem
     bounds = np.array([[-1.5, 1.5]] * q)
     surrogates = [_quadratic_minimizer_at(targets[i], q) for i in range(q)]

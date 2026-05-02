@@ -1,10 +1,6 @@
 """DOE + RSM + NBI pipeline package."""
 
-from . import config
-from . import io_utils
-from . import seeds
-from . import evaluation
-from . import tracking
+from . import config, evaluation, io_utils, seeds, tracking
 
 __all__ = [
     "config",

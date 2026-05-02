@@ -15,7 +15,6 @@ from doe_xgb.design import (
 )
 from doe_xgb.design.coding import decode, encode
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXTERNAL_DESIGN = REPO_ROOT / "data" / "design" / "hyperparameter_design.csv"
 

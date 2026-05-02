@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 # -------------------------
 # Core hyperparameters
 # -------------------------
-PARAM_NAMES: List[str] = [
+PARAM_NAMES: list[str] = [
     "subsample",
     "colsample_bytree",
     "colsample_bylevel",
@@ -20,7 +19,7 @@ PARAM_NAMES: List[str] = [
 INT_PARAMS = {"max_depth", "n_estimators"}
 
 # Default bounds for CCD face-centered (edit if you expand beyond the usual limits)
-DEFAULT_BOUNDS: Dict[str, Tuple[float, float]] = {
+DEFAULT_BOUNDS: dict[str, tuple[float, float]] = {
     "subsample": (0.05, 1.0),
     "colsample_bytree": (0.05, 1.0),
     "colsample_bylevel": (0.05, 1.0),

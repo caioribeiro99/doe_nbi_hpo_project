@@ -24,13 +24,13 @@ dissertation baseline; the new article-track pipeline calls
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Dict, List, Literal, Optional, Sequence, Tuple
+from typing import Literal
 
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
-
 
 FactorMode = Literal["auto", "fixed", "manual", "none"]
 
@@ -45,14 +45,14 @@ class FactorAutoCriteria:
 @dataclass(frozen=True)
 class FactorConstruct:
     name: str
-    members: Tuple[str, ...]
+    members: tuple[str, ...]
 
 
 @dataclass(frozen=True)
 class FactorModelSpec:
     mode: FactorMode = "auto"
-    n_factors: Optional[int] = None
-    constructs: Optional[Tuple[FactorConstruct, ...]] = None
+    n_factors: int | None = None
+    constructs: tuple[FactorConstruct, ...] | None = None
     rotation: Literal["varimax", "none"] = "varimax"
     standardize: bool = True
     sign_orientation: Literal[
@@ -63,7 +63,7 @@ class FactorModelSpec:
 
 @dataclass
 class FactorModelResult:
-    metrics: Tuple[str, ...]
+    metrics: tuple[str, ...]
     loadings: pd.DataFrame
     scores: pd.DataFrame
     eigenvalues: np.ndarray
@@ -71,9 +71,9 @@ class FactorModelResult:
     cumulative_variance: np.ndarray
     communalities: pd.Series
     rotation_matrix: np.ndarray
-    construct_map: Dict[str, Tuple[str, ...]]
+    construct_map: dict[str, tuple[str, ...]]
     sign_signs: np.ndarray
-    diagnostics: Dict[str, object] = field(default_factory=dict)
+    diagnostics: dict[str, object] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -88,7 +88,7 @@ def _zscore(x: np.ndarray, ddof: int = 1) -> np.ndarray:
     return (x - mu) / sigma
 
 
-def _varimax(Phi: np.ndarray, gamma: float = 1.0, q: int = 200, tol: float = 1e-9) -> Tuple[np.ndarray, np.ndarray]:
+def _varimax(Phi: np.ndarray, gamma: float = 1.0, q: int = 200, tol: float = 1e-9) -> tuple[np.ndarray, np.ndarray]:
     p, k = Phi.shape
     R = np.eye(k)
     d = 0.0
@@ -110,7 +110,7 @@ def _kaiser_n_factors(corr: np.ndarray, threshold: float) -> int:
     return int(np.sum(eigvals > threshold))
 
 
-def _kmo(corr: np.ndarray) -> Optional[float]:
+def _kmo(corr: np.ndarray) -> float | None:
     """Kaiser-Meyer-Olkin measure of sampling adequacy.
 
     Returns None if the partial correlation matrix is singular.
@@ -239,7 +239,7 @@ def fit_factor_model(
         columns=[f"FACTOR{i + 1}_SCORE" for i in range(n_factors)],
     )
 
-    construct_map: Dict[str, Tuple[str, ...]] = {}
+    construct_map: dict[str, tuple[str, ...]] = {}
     for j, factor in enumerate(factor_cols):
         members = tuple(
             metrics[i]
@@ -248,7 +248,7 @@ def fit_factor_model(
         )
         construct_map[factor] = members
 
-    diagnostics: Dict[str, object] = {
+    diagnostics: dict[str, object] = {
         "mode": spec.mode,
         "n_factors_chosen": int(n_factors),
         "kmo": _kmo(corr.copy()),
@@ -278,7 +278,7 @@ def _fit_manual(
     spec: FactorModelSpec,
 ) -> FactorModelResult:
     metrics_list = list(metrics)
-    metric_index: Dict[str, int] = {m: i for i, m in enumerate(metrics_list)}
+    metric_index: dict[str, int] = {m: i for i, m in enumerate(metrics_list)}
     constructs = list(spec.constructs or ())
     factor_cols = [f"Factor{i + 1}" for i in range(len(constructs))]
 
@@ -286,7 +286,7 @@ def _fit_manual(
     scores_arr = np.zeros((n, len(constructs)), dtype=float)
     loadings_arr = np.zeros((len(metrics_list), len(constructs)), dtype=float)
 
-    construct_map: Dict[str, Tuple[str, ...]] = {}
+    construct_map: dict[str, tuple[str, ...]] = {}
     for j, c in enumerate(constructs):
         missing = [m for m in c.members if m not in metric_index]
         if missing:
@@ -316,7 +316,7 @@ def _fit_manual(
         index=metrics_list,
         name="h2",
     )
-    diagnostics: Dict[str, object] = {
+    diagnostics: dict[str, object] = {
         "mode": "manual",
         "n_factors_chosen": int(len(constructs)),
         "construct_map": construct_map,

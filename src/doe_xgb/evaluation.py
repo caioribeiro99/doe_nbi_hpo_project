@@ -1,18 +1,17 @@
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
 
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from xgboost import XGBClassifier
-import time
 
 from .config import INT_PARAMS
-from .metrics import compute_binary_metrics, aggregate_fold_metrics, FoldMetrics
+from .metrics import FoldMetrics, aggregate_fold_metrics, compute_binary_metrics
 
 
-def _cast_params(params: Dict) -> Dict:
+def _cast_params(params: dict) -> dict:
     """Round/cast integer hyperparameters consistently."""
     out = dict(params)
     for k in list(out.keys()):
@@ -25,23 +24,23 @@ def _cast_params(params: Dict) -> Dict:
 
 @dataclass(frozen=True)
 class EvalResult:
-    metrics: Dict[str, float]
+    metrics: dict[str, float]
     time_mean_fold: float
-    params: Dict
+    params: dict
 
-    def as_dict(self) -> Dict[str, float | Dict]:
+    def as_dict(self) -> dict[str, float | dict]:
         """Flatten evaluation outputs to a single dict.
 
         This helper exists so downstream modules (benchmarks, scripts) can
         treat CV outputs uniformly.
         """
-        out: Dict[str, float | Dict] = dict(self.metrics)
+        out: dict[str, float | dict] = dict(self.metrics)
         out["Time_MeanFold"] = float(self.time_mean_fold)
         return out
 
 
 def evaluate_xgb_cv(
-    params: Dict,
+    params: dict,
     X: np.ndarray,
     y: np.ndarray,
     kfold: StratifiedKFold,
