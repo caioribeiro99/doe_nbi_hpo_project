@@ -4,20 +4,21 @@ These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the
 next.
 
-## Phase A — confirm and prepare data (no full runs)
+## Phase A — confirm and prepare data (no full runs) [DONE in Commit 15]
 
-1. **Dataset availability check.** Verify each entry in
-   `EXPERIMENT_PLAN_V1.md` is reachable on UCI / OpenML / sklearn.
-   Capture license, expected SHA-256, original URL, and any access
-   caveats (some UCI URLs require headers). Output:
-   `data/source/AVAILABILITY_CHECK.md`.
-2. **Implement loaders.** One thin loader per dataset under
-   `scripts/fetch_<dataset>_dataset.py`. Each loader downloads,
-   verifies SHA-256, and writes a normalized CSV/Parquet under
-   `data/source/`. Reuse the pattern of
-   `scripts/fetch_magic_dataset.py`.
-3. **Update `data/source/CHECKSUMS.txt`** as each download is
-   validated.
+1. **Dataset availability check.** Done. All 12 entries probed; report
+   at `data/source/AVAILABILITY_CHECK.md` and JSON registry at
+   `data/source/dataset_registry.json`. CLI:
+   `doe-xgb datasets check-availability`.
+2. **Loaders implemented.** `src/doe_xgb/datasets/loaders.py` exposes
+   one loader per dataset returning `(X, y, metadata)`. Loaders read
+   from `data/source/<id>/` if cached and otherwise raise
+   `DatasetUnavailableError` with the canonical URL.
+3. **Download scripts (next step).** Per-dataset
+   `scripts/fetch_<dataset>_dataset.py` will download, verify
+   SHA-256, and write the normalized form expected by the loader.
+   The MAGIC downloader is the existing template. Update
+   `data/source/CHECKSUMS.txt` as each is validated.
 
 ## Phase B — sizing
 

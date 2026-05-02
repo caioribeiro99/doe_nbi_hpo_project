@@ -75,6 +75,74 @@ def _cmd_smoke(_args: argparse.Namespace) -> int:
     return 0 if max(residuals) < 1e-2 else 1
 
 
+def _cmd_datasets(args: argparse.Namespace) -> int:
+    from .datasets import (
+        REGISTRY,
+        DatasetUnavailableError,
+        check_all,
+        get_metadata,
+        list_dataset_ids,
+        load,
+        write_availability_report,
+    )
+
+    if args.dataset_action == "list":
+        for did in list_dataset_ids():
+            meta = REGISTRY[did]
+            star = "[v1]" if meta.include_in_v1 else "    "
+            print(f"  {star} {did:24s} {meta.task_type:10s} {meta.source_type:8s} {meta.display_name}")
+        return 0
+
+    if args.dataset_action == "check-availability":
+        results = check_all(timeout=args.timeout)
+        print(f"Probed {len(results)} datasets:")
+        for r in results:
+            print(f"  - {r.dataset_id:24s} {r.status:14s} http={r.http_status}")
+        if args.out_md is not None:
+            write_availability_report(
+                results,
+                out_md=args.out_md,
+                out_json=args.out_json or args.out_md.with_suffix(".json"),
+            )
+            print(f"Report written to {args.out_md}")
+        return 0
+
+    if args.dataset_action == "inspect":
+        if not args.dataset_id:
+            raise SystemExit("inspect requires --dataset-id")
+        meta = get_metadata(args.dataset_id)
+        from dataclasses import asdict
+
+        print(json.dumps(asdict(meta), indent=2, default=str))
+        return 0
+
+    if args.dataset_action == "smoke":
+        ids = list_dataset_ids() if args.all else [args.dataset_id]
+        if not args.all and not args.dataset_id:
+            raise SystemExit("smoke requires --dataset-id or --all")
+        successes, failures = [], []
+        for did in ids:
+            try:
+                ds = load(did)
+                successes.append(
+                    {
+                        "id": did,
+                        "rows": ds.metadata.n_rows,
+                        "features": ds.metadata.n_features,
+                        "task": ds.metadata.task_type,
+                        "classes": ds.metadata.class_distribution,
+                    }
+                )
+            except DatasetUnavailableError as e:
+                failures.append({"id": did, "reason": str(e)})
+            except Exception as e:  # pragma: no cover - defensive
+                failures.append({"id": did, "reason": f"unexpected: {e}"})
+        print(json.dumps({"loaded": successes, "failures": failures}, indent=2))
+        return 0 if not failures else 1
+
+    raise SystemExit(f"unknown datasets action: {args.dataset_action}")
+
+
 def _cmd_estimate_cost(args: argparse.Namespace) -> int:
     from .cost_estimator import (
         BenchmarkSpec,
@@ -186,6 +254,25 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     p_info = sub.add_parser("info", help="Print branch / methodology pointers.")
     p_info.set_defaults(func=_cmd_info)
+
+    p_ds = sub.add_parser("datasets", help="Inspect / probe / load v1 datasets.")
+    ds_sub = p_ds.add_subparsers(dest="dataset_action", required=True)
+    ds_sub.add_parser("list", help="List the dataset registry.")
+    p_ds_chk = ds_sub.add_parser(
+        "check-availability",
+        help="HEAD-probe the canonical URLs and write a Markdown + JSON report.",
+    )
+    p_ds_chk.add_argument("--timeout", type=float, default=5.0)
+    p_ds_chk.add_argument("--out-md", type=Path, default=None,
+                          help="Path to write the Markdown report (default: stdout only).")
+    p_ds_chk.add_argument("--out-json", type=Path, default=None,
+                          help="Path to write the JSON report.")
+    p_ds_ins = ds_sub.add_parser("inspect", help="Print one dataset's metadata.")
+    p_ds_ins.add_argument("--dataset-id", type=str, required=True)
+    p_ds_smk = ds_sub.add_parser("smoke", help="Load one or all datasets to verify shapes.")
+    p_ds_smk.add_argument("--dataset-id", type=str, default=None)
+    p_ds_smk.add_argument("--all", action="store_true")
+    p_ds.set_defaults(func=_cmd_datasets)
 
     p_cost = sub.add_parser(
         "estimate-cost",
