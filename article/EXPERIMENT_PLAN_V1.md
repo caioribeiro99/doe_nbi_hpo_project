@@ -50,6 +50,32 @@ implementation.
 - **Covertype (binarised)** could replace Spambase for a larger
   numerical-only benchmark.
 
+## Dry Bean — multiclass case study (appendix only)
+
+Dry Bean is the only multiclass entry in the v1 panel (7 classes).
+`docs/METHODOLOGY_DECISIONS.md` D15 documents the decision:
+
+**Option B.** Dry Bean is reported as a *multiclass case study in the
+appendix / supplementary section*, **not a headline dataset**. The v1
+headline tables use the **eleven binary datasets**.
+
+Multiclass evaluator (Commit 18):
+
+- `compute_multiclass_metrics(...)` returns `accuracy`, `f1_macro`,
+  `balanced_accuracy`, `mcc`, `roc_auc_ovr_macro`, `pr_auc_ovr_macro`,
+  `brier_multiclass`, `ece_multiclass`. Aggregated keys:
+  `F1Macro_Mean`, `BalancedAccuracy_Mean`, `MCC_Mean`,
+  `ROCAUC_OVR_Mean`, `PRAUC_OVR_Mean`, `BrierMC_Mean`, `ECE_Mean`.
+- `evaluate_xgb_cv` auto-detects the task type and uses
+  `predict_proba` for probability-based metrics.
+- `assert_metric_set_compatible_with_task` is the orchestrator-side
+  guardrail that refuses to start an FA / NBI run on Dry Bean with the
+  binary response defaults.
+
+Dry Bean enters the appendix tables only after a multiclass YAML
+config (article track) ships that explicitly selects the eight
+multiclass response columns above for FA / NBI.
+
 ## Per-dataset metric coverage
 
 For all datasets we report:

@@ -239,6 +239,51 @@ trade determinism for speed.
 
 ---
 
+## D15 — Multiclass classification (post-dissertation extension)
+
+**Dissertation scope.** Binary classification only. The
+dissertation-era evaluator emits four binary keys
+(`Accuracy_Mean`, `Precision_Mean`, `Recall_Mean`,
+`Specificity_Mean`); `compute_binary_metrics` calls
+`precision_score` / `recall_score` with their default
+`average="binary"` and uses a fixed `confusion_matrix(labels=[0,1])`.
+
+**Article-track decision.** The framework is a post-dissertation
+generalization. We add:
+
+- `compute_multiclass_metrics(y_true, y_pred, y_prob=None, labels=None)`
+  returning `accuracy`, `f1_macro`, `balanced_accuracy`, `mcc`,
+  `roc_auc_ovr_macro`, `pr_auc_ovr_macro`, `brier_multiclass`,
+  `ece_multiclass`. Probability-based metrics return `np.nan` when
+  `y_prob` is not supplied; failures populate a per-fold `warnings`
+  list rather than raising.
+- `compute_classification_metrics(...)` -- a dispatcher that picks
+  the binary or multiclass path from `len(np.unique(y_true))` (or an
+  explicit `task_type`).
+- `aggregate_metric_dicts` -- aggregates per-fold dicts into mean
+  keys; handles NaN cleanly.
+- Aggregated multiclass keys: `Accuracy_Mean`, `F1Macro_Mean`,
+  `BalancedAccuracy_Mean`, `MCC_Mean`, `ROCAUC_OVR_Mean`,
+  `PRAUC_OVR_Mean`, `BrierMC_Mean`, `ECE_Mean`.
+
+**Backward compatibility.** Binary tasks emit exactly the
+dissertation-era four keys; the
+`compute_binary_metrics` / `aggregate_fold_metrics` API is unchanged.
+`evaluate_xgb_cv` auto-detects the task type but accepts an explicit
+`task_type` override.
+
+**Article v1 panel scope.** Of the twelve datasets in
+`EXPERIMENT_PLAN_V1.md`, **eleven are binary** (headline tables) and
+**Dry Bean is the only multiclass entry** (7 classes); Dry Bean is
+held in the registry as a *secondary multiclass stress test* until the
+multiclass FA / NBI response set is validated end-to-end.
+
+**Guardrail.** A new
+`evaluation.assert_metric_set_compatible_with_task` raises
+`MultiClassNotConfiguredError` when a multiclass task is paired with
+the binary FA / NBI response defaults, so headline tables can never
+silently mix binary and multiclass response sets.
+
 ## D14 — Mixture model basis is not ordinary RSM
 
 **Publication-branch decision.**
