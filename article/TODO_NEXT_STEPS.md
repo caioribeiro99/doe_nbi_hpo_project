@@ -1,4 +1,14 @@
-# Article v1 — next steps
+# Article v1 — next steps (now subordinate to the doctoral benchmark)
+
+> **Pivot (Commit 24).** The repository now targets the
+> **doctoral-scale benchmark** (82 datasets × 3 algorithms × 30
+> replicas) as its scientific objective; the 12-dataset article v1
+> campaign is no longer the main target. The publication will be
+> extracted from the doctoral-scale results, not from a separate
+> intermediate campaign. The 12-dataset panel is preserved as a
+> smoke / profiling subset of the doctoral panel under
+> `benchmarks/doctoral_82/datasets.csv`. See
+> `docs/DOCTORAL_BENCHMARK.md`.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

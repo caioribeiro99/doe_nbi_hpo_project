@@ -112,6 +112,79 @@ DEFAULT_CLOUD_PROFILE: CloudProfile = CloudProfile()
 
 
 # ---------------------------------------------------------------------------
+# Multi-machine profile (Commit 24)
+#
+# Sums the daily CPU-hours of an arbitrary set of MachineProfile entries
+# so a "dedicated Mac + Caio Mac" combined estimate is computable without
+# duplicating the LocalProfile arithmetic.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class MachineProfile:
+    machine_id: str
+    workers: int
+    hours_per_day: float
+    efficiency_factor: float
+    model_n_jobs: int = 1
+
+
+@dataclass(frozen=True)
+class MultiMachineProfile:
+    machines: tuple[MachineProfile, ...]
+
+    def daily_cpu_hours(self) -> float:
+        return float(sum(
+            m.workers * m.hours_per_day * m.efficiency_factor for m in self.machines
+        ))
+
+    def wall_days_for_cpu_hours(self, cpu_hours: float) -> float:
+        d = self.daily_cpu_hours()
+        return cpu_hours / d if d > 0 else float("inf")
+
+
+def dedicated_mac_profile(efficiency: float = 0.85) -> MachineProfile:
+    """Default dedicated MacBook Pro profile.
+
+    Efficiency presets: 0.75 (conservative), 0.85 (realistic with
+    cooling, **default**), 0.90 (optimistic). The 0.70 figure used
+    elsewhere is reserved for the Caio personal Mac, not the
+    dedicated machine.
+    """
+    return MachineProfile(
+        machine_id="mac_dedicado",
+        workers=10,
+        hours_per_day=24.0,
+        efficiency_factor=float(efficiency),
+        model_n_jobs=1,
+    )
+
+
+def caio_mac_profile(efficiency: float = 0.70, hours_per_day: float = 14.0) -> MachineProfile:
+    """Default Caio personal Mac profile (opportunistic supplement)."""
+    return MachineProfile(
+        machine_id="macbook_caio",
+        workers=6,
+        hours_per_day=float(hours_per_day),
+        efficiency_factor=float(efficiency),
+        model_n_jobs=1,
+    )
+
+
+def two_macs_combined(
+    *,
+    dedicated_efficiency: float = 0.85,
+    caio_efficiency: float = 0.70,
+    caio_hours_per_day: float = 14.0,
+) -> MultiMachineProfile:
+    """Convenience constructor for the dedicated + Caio Mac duo."""
+    return MultiMachineProfile(machines=(
+        dedicated_mac_profile(efficiency=dedicated_efficiency),
+        caio_mac_profile(efficiency=caio_efficiency, hours_per_day=caio_hours_per_day),
+    ))
+
+
+# ---------------------------------------------------------------------------
 # Output
 # ---------------------------------------------------------------------------
 
@@ -359,6 +432,27 @@ PRESETS: dict[str, BenchmarkSpec] = {
         n_replicas=10,
     ),
     "thesis_82_datasets_3_algorithms_30_replicas": BenchmarkSpec(
+        n_datasets=82,
+        n_algorithms=3,
+        n_replicas=30,
+    ),
+    # Doctoral campaign staged presets (Commit 24).
+    "doctoral_82_datasets_3_algorithms_1_replicas": BenchmarkSpec(
+        n_datasets=82,
+        n_algorithms=3,
+        n_replicas=1,
+    ),
+    "doctoral_82_datasets_3_algorithms_5_replicas": BenchmarkSpec(
+        n_datasets=82,
+        n_algorithms=3,
+        n_replicas=5,
+    ),
+    "doctoral_82_datasets_3_algorithms_10_replicas": BenchmarkSpec(
+        n_datasets=82,
+        n_algorithms=3,
+        n_replicas=10,
+    ),
+    "doctoral_82_datasets_3_algorithms_30_replicas": BenchmarkSpec(
         n_datasets=82,
         n_algorithms=3,
         n_replicas=30,

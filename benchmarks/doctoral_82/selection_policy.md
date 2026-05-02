@@ -1,0 +1,78 @@
+# Doctoral benchmark — dataset selection policy
+
+This document defines how the 82 datasets of the doctoral campaign are
+chosen. The 12 v1 datasets are seeded into the registry as
+`include=true, loader_status=registered`. The remaining 70 are
+*pending*; a future commit (likely Commit 25) executes this policy
+end-to-end and fills the registry.
+
+## Constraints
+
+- **Tabular classification only.** No image, text, time-series, or
+  structured-graph datasets.
+- **Public / open licence.** Prefer CC BY 4.0; accept other public
+  licences only after explicit review.
+- **Reproducible source.** Prefer OpenML / UCI; reject Kaggle-only
+  datasets unless no equivalent exists elsewhere.
+- **Reasonable size.** Default cap n_rows ≤ 200 000 and
+  n_features ≤ 1 024. Outliers are allowed only when they bring a
+  property the panel otherwise lacks (e.g., heavy class imbalance).
+- **Coverage targets** (rough; tuned during Commit 25):
+
+  | Property | Target share |
+  |---|---|
+  | binary | ~70 % |
+  | multiclass (3-10 classes) | ~25 % |
+  | multiclass (>10 classes) | ~5 % |
+  | with categorical features | ≥ 30 % |
+  | imbalanced (≥ 1:5) | ≥ 30 % |
+  | small (n_rows ≤ 1 000) | ≥ 15 % |
+  | medium (1 000 < n_rows ≤ 30 000) | ≥ 50 % |
+  | large (n_rows > 30 000) | ≥ 15 % |
+
+## Sources to canvass
+
+1. **OpenML CC18 study (suite_id = 99).** 72 curated tabular
+   classification datasets; the most natural backbone for the doctoral
+   panel.
+2. **OpenML CC100 study (or successor).** Augments CC18 with larger
+   datasets when applicable.
+3. **UCI ML Repository "Tabular Data Benchmark for Multi-Modal
+   Classification" lists.** Use as a deduplication / sanity check.
+4. **`Penn ML Benchmarks` (PMLB)** for additional small / synthetic
+   tabular targets if the OpenML pool is too small after filtering.
+
+## Exclusion rules
+
+- Datasets with leakage flagged in the OpenML community (record the
+  reason in the `reason` column).
+- Datasets that require image / text / audio preprocessing to look
+  tabular.
+- Datasets where the original target column is ambiguous or has been
+  retracted (e.g., the original UCI Pima Indians Diabetes — replaced
+  by OpenML id 37 in our registry).
+- Datasets whose licence forbids re-distribution of the processed CSV
+  used by our pipeline (the registry stores manifests; payloads are
+  always gitignored, so this is a soft constraint).
+
+## Procedure (Commit 25)
+
+1. Pull OpenML CC18 metadata via `openml.study.get_study(99).data`.
+2. Filter rows by the constraints above; record skip reasons.
+3. Score each candidate with a small linear utility based on the
+   coverage targets so the resulting 82 are diverse, not all medium
+   and balanced.
+4. Merge the 12 already-included entries (skip duplicates by
+   `openml_id`).
+5. Run `scripts/import_doctoral_benchmark_datasets.py --csv <staged>
+   --out benchmarks/doctoral_82/datasets.csv`. The importer enforces
+   the schema and uniqueness rules.
+6. Commit the resulting `datasets.csv`. Open follow-up loaders for any
+   row whose `loader_status` came back `pending`.
+
+## Versioning
+
+The registry is versioned via Git. When the panel changes between
+campaign stages, increment the `panel_version` field of the future
+`datasets.csv` (or move to a separate file `benchmarks/doctoral_82/
+datasets_v<N>.csv`) so reviewers can pin a specific panel snapshot.

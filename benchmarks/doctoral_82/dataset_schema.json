@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "description": "Schema for benchmarks/doctoral_82/datasets.csv. The importer at scripts/import_doctoral_benchmark_datasets.py validates every row against this contract.",
+  "primary_key": ["dataset_id"],
+  "uniqueness": [["dataset_id"], ["openml_id"]],
+  "columns": [
+    {"name": "dataset_id", "type": "string", "required": true,
+     "description": "Stable identifier; matches doe_xgb.datasets.REGISTRY when an entry exists. Snake_case."},
+    {"name": "display_name", "type": "string", "required": true},
+    {"name": "source", "type": "enum", "values": ["uci", "openml", "sklearn", "kaggle", "local", "other"], "required": true},
+    {"name": "openml_id", "type": "int|null", "required": false,
+     "description": "OpenML data id when applicable. Must be unique across the registry."},
+    {"name": "uci_id", "type": "int|null", "required": false,
+     "description": "UCI repository id when known."},
+    {"name": "task_type", "type": "enum", "values": ["binary", "multiclass"], "required": true},
+    {"name": "n_rows", "type": "int|null", "required": false},
+    {"name": "n_features", "type": "int|null", "required": false},
+    {"name": "n_classes", "type": "int|null", "required": false,
+     "description": "2 for binary; >=3 for multiclass."},
+    {"name": "has_categorical", "type": "bool|null", "required": false,
+     "description": "True when at least one categorical feature is present in the canonical schema."},
+    {"name": "class_imbalance_ratio", "type": "float|null", "required": false,
+     "description": "max(class_count) / min(class_count). Optional; computed by the loader on first fetch."},
+    {"name": "license", "type": "string|null", "required": false,
+     "description": "Free-form license note (CC BY 4.0, GPL, etc.)."},
+    {"name": "include", "type": "bool", "required": true,
+     "description": "Whether the dataset is part of the active doctoral panel."},
+    {"name": "reason", "type": "string|null", "required": false,
+     "description": "Why the dataset was included or excluded."},
+    {"name": "loader_status", "type": "enum", "values": ["registered", "pending", "broken"], "required": true,
+     "description": "registered = doe_xgb.datasets.REGISTRY has it; pending = needs work; broken = blocked."},
+    {"name": "notes", "type": "string|null", "required": false}
+  ],
+  "validation_rules": [
+    "task_type='binary' implies n_classes IN {NULL, 2}.",
+    "task_type='multiclass' implies n_classes IS NULL OR n_classes >= 3.",
+    "include=True implies loader_status='registered'.",
+    "openml_id values must be unique when set."
+  ]
+}

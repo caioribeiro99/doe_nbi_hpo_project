@@ -207,6 +207,53 @@ python scripts/profile_v1_full_dataset_runtime.py
 
 The profiler does not run DOE / RSM / NBI / MBPA.
 
+## Doctoral benchmark profiles (Commit 24)
+
+The doctoral campaign assumes a **dedicated MacBook Pro** and an
+optional **Caio personal Mac**. Helpers in
+`doe_xgb.cost_estimator`:
+
+```python
+from doe_xgb.cost_estimator import (
+    dedicated_mac_profile, caio_mac_profile, two_macs_combined,
+)
+
+dedicated = dedicated_mac_profile(efficiency=0.85)   # default doctoral profile
+combined  = two_macs_combined(dedicated_efficiency=0.85,
+                              caio_efficiency=0.70,
+                              caio_hours_per_day=14.0)
+
+combined.daily_cpu_hours()
+combined.wall_days_for_cpu_hours(1416)  # 82 x 3 x 10 at 4x inflation
+```
+
+Dedicated-Mac efficiency presets:
+
+- **0.75** conservative,
+- **0.85** realistic with cooling (default),
+- **0.90** optimistic.
+
+The 0.70 figure is reserved for the Caio personal Mac, not the
+dedicated machine.
+
+### Provisional 82 × 3 × R estimates
+
+Anchored on the v1 mean per-pair 5-fold runtime
+(~0.75 s; full table in
+`experiments/_runtime_profile/v1_full_dataset_5fold_profile.json`)
+and 690 evaluations per replica per pair, at the realistic 4×
+inflation multiplier:
+
+| Scope | Total CPU-h | Dedicated 0.75 | Dedicated 0.85 | Dedicated 0.90 | Two Macs (0.85+0.70) |
+|---|---:|---:|---:|---:|---:|
+| 82 × 3 × 1 | 142 | 0.79 d | 0.69 d | 0.66 d | 0.54 d |
+| 82 × 3 × 5 | 708 | 3.93 d | 3.47 d | 3.28 d | 2.69 d |
+| 82 × 3 × 10 | 1,416 | 7.87 d | 6.94 d | 6.56 d | 5.39 d |
+| 82 × 3 × 30 | **4,248** | **23.60 d** | **20.82 d** | **19.67 d** | **16.16 d** |
+
+These numbers are **provisional** until the actual 82-dataset list
+exists and a real 82-dataset profiler runs.
+
 ## Caveats
 
 The estimator is intentionally conservative:

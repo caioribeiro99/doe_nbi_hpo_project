@@ -36,6 +36,21 @@ make repro-full      # = python -m doe_xgb.cli run --config configs/dissertation
 make tables          # regenerates aggregated tables under experiments/
 ```
 
+## Doctoral benchmark scope (Commit 24)
+
+The repository now targets the doctoral-scale campaign:
+**82 datasets × 3 algorithms × 30 replicas**, staged through
+1 → 5 → 10 → 30 replicas. The dataset registry lives at
+`benchmarks/doctoral_82/datasets.csv` (12 v1 entries seeded; 70
+pending). The SQLite job-matrix schema lives at
+`jobs/doctoral_82/schema.sql`. See `docs/DOCTORAL_BENCHMARK.md` for
+the full pivot summary.
+
+The 12-dataset article v1 panel is preserved as a smoke / profiling
+subset of the doctoral panel; the existing scripts under
+`scripts/run_v1_*` and `scripts/profile_v1_*` keep working and remain
+useful for integration testing and capacity calibration.
+
 ## End-to-end article-track smoke (Commit 23)
 
 A reduced article-track smoke is committed for sanity checks:
