@@ -1,14 +1,30 @@
-# DOE + FA/PCA + RSM + NBI for Multi-Objective HPO (XGBoost)
+# DOE + RSM + Varimax + N-objective NBI for Multi-objective HPO of GBDT
 
-This repository provides a **reproducible end-to-end pipeline** for **multi-objective hyperparameter tuning** of XGBoost (binary classification) using:
+> Branch policy: `main` is the **immutable dissertation baseline** (tag
+> `v0.1.0-dissertation`). Active development happens on
+> `repo-publication-readiness`, the article-track evolution. See
+> [`docs/ARTIFACT_GUIDE.md`](docs/ARTIFACT_GUIDE.md) and
+> [`docs/METHODOLOGY_DECISIONS.md`](docs/METHODOLOGY_DECISIONS.md).
 
-1. **DOE execution** (design matrix CSV) to evaluate hyperparameter configurations with stratified CV  
-2. **Factor Analysis via PCA + Varimax rotation** to build two orthogonal objective scores:
-   - **Score_Quality** (maximize)
-   - **Score_Cost** (minimize; derived from `Time_MeanFold`)
-3. **RSM (quadratic) + backward elimination** to fit surrogate response surfaces
-4. **NBI-like candidate generation** using a **β grid** (e.g., step = 0.02)
-5. **Confirmation run** + benchmark optimizers (**coarse grid / random / bayes / hyperopt (TPE)**) under a **fairness-by-evaluations** budget
+This repository provides a reproducible end-to-end pipeline for
+**multi-objective hyperparameter tuning** of XGBoost (binary
+classification) using:
+
+1. **DOE execution** (Minitab CCDFC or any CSV) to evaluate
+   hyperparameter configurations with stratified CV.
+2. **Flexible factor analysis** (PCA + Varimax rotation) with
+   `auto / fixed / manual / none` modes -- not hardcoded to 2 or 3
+   factors.
+3. **Design-aware response surfaces** (`ProcessQuadraticRSM` for
+   process variables; `MixtureScheffeModel` for simplex weights).
+4. **True N-objective Normal Boundary Intersection** in
+   `doe_xgb.nbi_core` (Das & Dennis 1998; Pereira et al. 2025). The
+   legacy weighted-sum scalarization is preserved under
+   `doe_xgb.scalarization` for ablation and is **never** called NBI.
+5. **Conditional MBPA post-optimization** (Pereira et al. 2025) over
+   the simplex of weights, gated by frontier-quality diagnostics.
+6. **Benchmark optimizers** (coarse grid, random, Bayesian, Hyperopt
+   TPE) under a fairness-by-evaluations budget.
 
 Outputs are written under:
 
