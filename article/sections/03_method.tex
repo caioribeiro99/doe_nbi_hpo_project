@@ -2,7 +2,21 @@
 
 The article-track pipeline has six stages. Each stage corresponds to a
 self-contained module in the companion repository (the module name is
-indicated parenthetically below).
+indicated parenthetically below). The pipeline is evaluated on the
+OpenML-CC18 curated classification suite
+(\texttt{suite\_id}~$=$~99) of \citet{bischl2021openmlbenchmark} as
+the primary doctoral benchmark; the suite contains 72 standardized
+classification tasks (35 binary + 37 multiclass) and is therefore a
+\emph{task-based} benchmark rather than a dataset-based one. All
+algorithm and method choices below apply uniformly to binary and
+multiclass tasks; the binary guardrail
+\texttt{validate\_task\_metric\_compatibility} is enforced per task
+before stage 1, and the metric set adapts via the
+\texttt{compute\_classification\_metrics} dispatcher
+(Section~\ref{sec:method-cv}). Throughout the article, ``replica''
+means one independent execution of the full six-stage pipeline; the
+campaign runs $R{=}30$ replicas per (task, algorithm, method) cell,
+staged as $1\!\to\!5\!\to\!10\!\to\!30$.
 
 \subsection{Stage 1 -- Design of Experiments}
 \label{sec:method-doe}
@@ -19,12 +33,16 @@ source CSV so reviewers can replay it byte-for-byte.
 
 \subsection{Stage 2 -- Cross-validated evaluation}
 \label{sec:method-cv}
-Each design row is evaluated under stratified $k$-fold CV
+Each design row is evaluated under the OpenML task-defined folds when
+they are available, and otherwise under stratified $k$-fold CV
 (default $k{=}5$); per-fold metrics are persisted in a long-format
-CSV. Quality metrics include accuracy, precision, recall, specificity,
-F1, ROC-AUC, PR-AUC, balanced accuracy, MCC, Brier score, and
-expected calibration error (ECE). Wall-clock cost is the mean
-fit-plus-predict time per fold. The single source of truth for
+CSV. Quality metrics adapt to the task type via
+\texttt{compute\_classification\_metrics}: binary tasks emit
+accuracy, precision, recall, specificity, F1, ROC-AUC, PR-AUC,
+balanced accuracy, MCC, Brier score, and ECE; multiclass tasks emit
+F1-macro, balanced accuracy, MCC, ROC-AUC (one-vs-rest), PR-AUC
+(one-vs-rest), Brier (multiclass), and ECE. Wall-clock cost is the
+mean fit-plus-predict time per fold. The single source of truth for
 hyperparameter naming and types is \texttt{doe\_xgb.config}.
 
 \subsection{Stage 3 -- Factor model with Varimax rotation}
@@ -154,7 +172,34 @@ always persisted regardless of the selection rule.
 \label{sec:method-legacy}
 The dissertation-era weighted-sum scalarization
 (\texttt{doe\_xgb.scalarization.run\_nbi\_weighted\_sum}) is preserved
-verbatim and exposed as an ablation baseline. It is never referred to
-as NBI in the article text or in the article-track code; the
-discrepancy is documented in
-\texttt{docs/METHODOLOGY\_DECISIONS.md} D1.
+verbatim and exposed as an ablation baseline only -- \emph{never} as
+the proposed method. It is never referred to as NBI in the article
+text or in the article-track code; the discrepancy is documented in
+\texttt{docs/METHODOLOGY\_DECISIONS.md} D1. A second ablation runs
+the proposed pipeline with the conditional MBPA stage forced off, so
+the contribution of the post-optimization can be quantified
+independently of the change from weighted-sum to true NBI. Both
+ablations are listed as \texttt{ablation} rows of
+\texttt{benchmarks/doctoral/openml\_cc18/method\_matrix.csv} and
+participate in the comparative protocol from stage~2 onward
+(Section~\ref{sec:exp-protocol}).
+
+\subsection{Reproducibility infrastructure}
+\label{sec:method-infra}
+The doctoral campaign runs locally on a dedicated MacBook Pro by
+default. The job matrix is sharded across SQLite files under
+\texttt{jobs/doctoral/openml\_cc18/shards/}; each shard holds one
+worker's slice of the
+\texttt{(\texttt{openml\_task\_id},\,\texttt{algorithm},\,\texttt{method},\,\texttt{replica})}
+tuples. The schema (\texttt{cc18\_jobs} table in
+\texttt{jobs/doctoral/openml\_cc18/schema.sql}) records claim /
+running / success / failure transitions, retry counts, and per-job
+runtime, so a campaign can resume after interruption without
+re-running successful jobs. Replica seeds are derived from a single
+\texttt{seed\_base} so the protocol can be replayed byte-for-byte;
+each replica writes a manifest that includes the system fingerprint,
+\texttt{pip freeze} snapshot, and SHA-256 of the active config. The
+list of methods participating in the campaign is read at
+shard-generation time from
+\texttt{benchmarks/doctoral/openml\_cc18/method\_matrix.csv}, never
+hardcoded in the orchestration scripts.

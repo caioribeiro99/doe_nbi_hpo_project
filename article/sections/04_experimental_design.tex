@@ -1,51 +1,59 @@
 \section{Experimental design}\label{sec:experimental-design}
 
-\subsection{Datasets}
+\subsection{Primary benchmark: OpenML-CC18}
 \label{sec:exp-datasets}
-We evaluate the framework on twelve public tabular classification
-datasets selected to span dataset size, target class balance,
-feature-type mix, and application domain. The panel and the rationale
-for each entry are detailed in \texttt{EXPERIMENT\_PLAN\_V1.md}; the
-summary appears in Table~\ref{tab:datasets}.
-\todoblock{Replace this paragraph with the final dataset table once
-licences and downloader scripts are validated. The current panel is
-exploratory; final inclusion is conditional on a successful preflight
-check via \texttt{doe-xgb estimate-cost} and the loaders to be added in
-\texttt{scripts/fetch\_*\_dataset.py}.}
+The primary doctoral benchmark is the OpenML-CC18 curated
+classification suite of \citet{bischl2021openmlbenchmark}
+(\texttt{suite\_id}~$=$~99), containing 72 standardized classification
+tasks served by the OpenML platform \citep{vanschoren2014openml}. The
+suite was constructed by filtering OpenML for tasks with verified
+licences, well-defined train/test splits, dataset sizes between
+500 and 100\,000 rows (with a small number of larger exceptions),
+$\geq\!2$ classes, and reasonable class balance, and is widely used
+as a fair common ground for HPO and AutoML evaluation. We use it as
+\emph{a task-based benchmark, not a dataset-based one}: a few CC18
+tasks share the same underlying OpenML dataset under different target
+columns or train/test splits, so identity is by
+\texttt{openml\_task\_id} and never by dataset name alone. The
+materialized task / dataset registry, suite metadata, and a
+binary / multiclass / categorical / imbalance / size-bucket coverage
+report are committed under
+\texttt{benchmarks/doctoral/openml\_cc18/} and are produced
+deterministically by \texttt{scripts/import\_openml\_cc18.py}.
 
-\begin{table}[t]
-  \centering
-  \caption{Planned panel of twelve datasets for the article-track v1
-  experiment. ``Cat.'' = categorical-heavy; ``Imb.'' = noticeable class
-  imbalance.}
-  \label{tab:datasets}
-  \begin{tabular}{rlllrrll}
-    \toprule
-    \# & Dataset & Source & Task & Rows & Feats & Cat. / Imb. & Role \\
-    \midrule
-    1  & MAGIC Gamma Telescope        & UCI    & binary     & 19{,}020 & 10  & no  / mild & dissertation continuity \\
-    2  & Breast Cancer Wisc.\ Diag.   & UCI / sklearn & binary & 569 & 30 & no / mild & small classical \\
-    3  & Pima Indians Diabetes        & UCI / OpenML & binary & 768 & 8 & no / mild & small medical \\
-    4  & Spambase                     & UCI    & binary     & 4{,}601 & 57  & no  / mild & classical ML \\
-    5  & Adult / Census Income        & UCI    & binary     & 48{,}842 & 14 & yes / yes & CatBoost showcase \\
-    6  & Bank Marketing               & UCI    & binary     & 45{,}211 & 16 & yes / yes & business \\
-    7  & Default of Credit Card       & UCI    & binary     & 30{,}000 & 23 & no  / yes & finance \\
-    8  & German Credit                & UCI    & binary     & 1{,}000  & 20 & yes / mild & credit-risk \\
-    9  & Wine Quality (binarised)     & UCI    & binary     & 6{,}497  & 11 & no  / mild & sensitivity \\
-   10  & Dry Bean                     & UCI    & multiclass &13{,}611  & 16 & no  / mild & multiclass test \\
-   11  & Mushroom                     & UCI    & binary     & 8{,}124  & 22 & yes / no   & categorical \\
-   12  & Phishing Websites            & UCI    & binary     & 11{,}055 & 30 & yes / no   & security app. \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\paragraph{Coverage of the panel.} The 72 tasks split as 35 binary
+and 37 multiclass; 24 tasks have at least one categorical feature;
+19 tasks have a class-imbalance ratio $\geq\!5$. By size, 18 tasks
+have $\leq\!1\,000$ rows, 43 have $1\,001$--$30\,000$, and 11 have
+$>\!30\,000$. The full per-task table (rows, features, $n$ classes,
+class distribution, license, OpenML URL) lives in
+\texttt{benchmarks/doctoral/openml\_cc18/tasks.csv}; we do not
+reproduce it here because the suite is canonical and externally
+specified.
+
+\paragraph{Internal smoke panel (not part of the benchmark).} The
+12-dataset panel that drove earlier integration testing
+(\texttt{magic}, \texttt{breast\_cancer}, \texttt{pima\_diabetes},
+\texttt{spambase}, \texttt{adult}, \texttt{bank\_marketing},
+\texttt{credit\_card\_default}, \texttt{german\_credit},
+\texttt{wine\_quality}, \texttt{dry\_bean}, \texttt{mushroom},
+\texttt{phishing}) is preserved as a development / smoke / runtime
+profiling fixture under
+\texttt{benchmarks/doctoral/internal\_smoke\_panel/} and is
+\emph{not} reported as part of the doctoral benchmark.
 
 \subsection{Algorithms}
 \label{sec:exp-algorithms}
 We compare three GBDT families: XGBoost \citep{chen2016xgboost},
 LightGBM \citep{ke2017lightgbm}, and CatBoost
-\citep{prokhorenkova2018catboost}. The proposed method and every
-baseline tune the same per-algorithm hyperparameter list under the
-same bounds, listed in Table~\ref{tab:hpo-spaces}.
+\citep{prokhorenkova2018catboost}. Categorical features are passed
+natively to CatBoost; for XGBoost and LightGBM the headline run uses
+label-encoded ints for cross-method parity with HPO baselines that
+do not understand categorical columns natively (this default is
+toggleable per algorithm and is logged in the per-replica manifest).
+The proposed method and every baseline tune the same per-algorithm
+hyperparameter list under the same bounds, listed in
+Table~\ref{tab:hpo-spaces}.
 \todoblock{Confirm the LightGBM / CatBoost search spaces. Initial
 plan: keep the seven-factor XGBoost space for parity with the
 dissertation, and use analogues for LightGBM (\texttt{num\_leaves},
@@ -76,59 +84,151 @@ dissertation, and use analogues for LightGBM (\texttt{num\_leaves},
   \end{tabular}
 \end{table}
 
-\subsection{Optimization protocol}
+\subsection{Comparative protocol and method matrix}
 \label{sec:exp-protocol}
-\paragraph{Replicas and CV.} Each (dataset, algorithm) cell is
-repeated for $R{=}10$ independent replicas; each replica fits a
-stratified 5-fold cross-validation. Replica seeds are derived from a
-single \texttt{seed\_base} (default $42$) so the protocol can be
-re-played byte-for-byte. A subset of datasets where the v1 results
-look interesting may be re-run at $R{=}30$ for a tighter confidence
-interval before submission.
+The methods entering the doctoral benchmark are frozen by the
+machine-readable matrix at
+\texttt{benchmarks/doctoral/openml\_cc18/method\_matrix.csv}; the
+authoritative narrative specification is
+\texttt{docs/COMPARATIVE\_PROTOCOL.md}. The matrix is the single
+source of truth for shard generation: the script that materializes
+the SQLite job matrix reads its method list from that CSV and never
+hardcodes method names. Table~\ref{tab:methods} summarizes the
+matrix. Methods carry a \emph{primary / subset / ablation /
+literature\_only} status and an \emph{objective mode} flag (single-
+versus multi-objective).
 
-\paragraph{Methods.} Five HPO strategies under matched evaluation
-budget: (i) the proposed DoE + true $N$-objective NBI; (ii) coarse
-grid search; (iii) random search; (iv) Bayesian optimization
-(scikit-optimize \texttt{BayesSearchCV}); (v) tree-structured Parzen
-estimator (Hyperopt). A sixth ablation track runs the legacy
-weighted-sum scalarization to quantify the methodological correction.
+\begin{table}[t]
+  \centering
+  \caption{Methods participating in the OpenML-CC18 doctoral
+  benchmark. ``Status'' is one of \emph{primary} (runs on all 72
+  tasks at every stage), \emph{subset} (runs only on the CC18 subset
+  defined in \texttt{benchmarks/doctoral/openml\_cc18/comparative\_protocol.md}),
+  \emph{ablation} (joins from stage 2 onward), or \emph{literature}
+  (cited as context, not benchmarked). Multi-fidelity rows share a
+  budget-equivalence rule based on total boosting iterations rather
+  than configuration count. The full machine-readable specification
+  is \texttt{benchmarks/doctoral/openml\_cc18/method\_matrix.csv}.}
+  \label{tab:methods}
+  \small
+  \begin{tabular}{lllll}
+    \toprule
+    Method & Family & Status & Objective & Reference \\
+    \midrule
+    \texttt{default\_gbdt}                & control          & primary    & single & --- \\
+    \texttt{random\_search}               & classical        & primary    & single & \citep{bergstra2012random} \\
+    \texttt{tpe\_optuna}                  & classical        & primary    & single & \citep{bergstra2011tpe,akiba2019optuna} \\
+    \texttt{smac3}                        & SMAC             & primary    & single & \citep{hutter2011smac,lindauer2022smac3} \\
+    \texttt{hyperband\_or\_asha}          & multi-fidelity   & primary    & single & \citep{li2017hyperband,li2020asha} \\
+    \texttt{bohb}                         & multi-fidelity   & primary    & single & \citep{falkner2018bohb} \\
+    \texttt{dehb}                         & multi-fidelity   & primary    & single & \citep{awad2021dehb} \\
+    \texttt{nsga2}                        & evolutionary MOO & primary    & multi  & \citep{deb2002nsga2,blank2020pymoo} \\
+    \texttt{motpe}                        & MOO              & primary    & multi  & \citep{ozaki2020motpe} \\
+    \texttt{parego}                       & MOO              & subset     & multi  & \citep{knowles2006parego} \\
+    \texttt{doe\_rsm\_vrf\_true\_nbi}     & proposed         & primary    & multi  & this work \\
+    \texttt{\ldots\_no\_mbpa}             & ablation         & ablation   & multi  & this work \\
+    \texttt{legacy\_weighted\_sum}        & ablation         & ablation   & multi  & \citep{ribeiro2026dissertation} \\
+    \texttt{flaml\_optional}              & AutoML context   & literature & single & \citep{wang2021flaml} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-\paragraph{Budget.} The shared budget is the dissertation default
+\paragraph{Replicas and CV.} Each (task, algorithm, method) cell is
+repeated for $R{=}30$ replicas, staged $1\!\to\!5\!\to\!10\!\to\!30$
+through the four stages \texttt{stage0\_replica\_001},
+\texttt{stage1\_topup\_to\_005}, \texttt{stage2\_topup\_to\_010},
+\texttt{stage3\_topup\_to\_030}. Each replica fits the OpenML
+task-defined CV folds when available and otherwise stratified
+5-fold. Replica seeds are derived from a single \texttt{seed\_base}
+(default 42) so the protocol can be replayed byte-for-byte.
+
+\paragraph{Budget equivalence.} Single-objective + multi-objective
+non-fidelity methods all run at the same headline budget
 $B = \mathrm{DOE\_RUNS} + \mathrm{NBI\_EVAL\_K} = 88 + 50 = 138$
-configurations, each evaluated under the same 5-fold CV. Benchmarks
-are passed \texttt{--budget 0} (auto-fairness) so they receive the
-same number of objective evaluations.
+configurations per replica per (task, algorithm), each evaluated
+under the same CV split. Multi-fidelity methods are budgeted by
+total boosting iterations rather than configuration count
+($\text{total\_n\_estimators\_budget} = B \cdot \texttt{max\_iter}$).
+Evolutionary methods set population size and generations so
+$\text{pop\_size} \cdot \text{gens} = B$. The full specification is in
+Section~``Budget equivalence rule'' of
+\texttt{docs/COMPARATIVE\_PROTOCOL.md}.
 
+\paragraph{Headline target.} For the methods that run on all 72 CC18
+tasks (every row of the method matrix with \texttt{full\_cc18}~$=$
+\texttt{true}), the campaign is
+
+\[
+  72\ \text{tasks} \times 3\ \text{algorithms} \times
+  n_{\text{methods,full}} \times 30\ \text{replicas},
+\]
+plus the per-replica jobs contributed by the \emph{subset} methods on
+their defined CC18 subset. The exact $n_{\text{methods,full}}$ is
+counted from \texttt{method\_matrix.csv} at shard-generation time and
+is not duplicated as a constant in the manuscript.
+
+\subsection{Metrics and statistical analysis}
+\label{sec:exp-metrics}
 \paragraph{Quality metrics.} ROC-AUC, PR-AUC, F1 (binary) /
-F1-macro (multiclass), balanced accuracy, MCC. Calibration metrics
-where probability outputs are well-defined: Brier score and ECE.
+F1-macro (multiclass), balanced accuracy, MCC. Multiclass tasks use
+the one-vs-rest variants of the AUC metrics.
 
-\paragraph{Cost metrics.} Mean fit-plus-predict time per fold; total
-optimization time; total wall-clock time per replica.
+\paragraph{Calibration metrics.} Brier score (binary or multiclass)
+and Expected Calibration Error (ECE)
+\citep{naeini2015calibration}.
 
-\paragraph{Statistical analysis.}
-Paired comparisons within each dataset
-(non-parametric \emph{Wilcoxon} or paired \emph{t} after
-log-transform); cross-dataset comparison via Friedman test followed
-by Nemenyi post-hoc with critical-difference plots, following
+\paragraph{Cost metrics.} Mean fit-plus-predict time per fold;
+total optimization time; total wall-clock time per replica.
+
+\paragraph{Multi-objective frontier diagnostics.} For
+multi-objective methods we additionally report: number of unique
+non-dominated points; spread $\Delta$; weight-concentration index;
+NBI sub-problem residual statistics (where applicable); MBPA-trigger
+state. These are emitted regardless of whether MBPA fired so that
+the conditional decision is always auditable.
+
+\paragraph{Statistical analysis.} Paired comparisons within each task
+use a non-parametric Wilcoxon signed-rank test (or paired $t$ after
+log-transform when the residuals are reasonably Gaussian). Across
+tasks, we use the Friedman test followed by Nemenyi post-hoc with
+critical-difference plots, following
 \citet{demsar2006statistical}. All $p$-values use Holm--Bonferroni
-correction within each family of comparisons.
+correction within each family of comparisons. Effect sizes are
+reported as the median of paired differences plus a non-parametric
+bootstrap 95\% confidence interval; rank statistics are computed
+both per task and aggregated across the 72 tasks.
 
-\paragraph{Cost discipline.}
-Before launch, \texttt{doe-xgb estimate-cost --preset
-article\_v1\_12\_datasets\_3\_algorithms\_10\_replicas} produces an
-authoritative wall-clock and dollar-cost estimate. The campaign is
-gated by a sign-off on this estimate to avoid burning compute on
-mis-scoped runs.
+\paragraph{Robustness across replicas.} For each (task, algorithm,
+method) cell we report the across-replica IQR of every quality
+metric, and we additionally report the rate of replica-level
+failures (job exits with status \texttt{failed}) so that the
+robustness of each method is visible at the task level.
 
-\paragraph{Determinism.}
-Headline tables use \texttt{tree\_method=exact} and
-\texttt{n\_jobs=1} (article-track default); the determinism cost is
-documented in \texttt{docs/METHODOLOGY\_DECISIONS.md} D13.
+\subsection{Cost discipline and reproducibility}
+\label{sec:exp-cost-discipline}
+\paragraph{Cost discipline.} Before any shard generation,
+\texttt{doe-xgb estimate-cost --preset
+openml\_cc18\_72\_tasks\_3\_algorithms\_30\_replicas} produces an
+authoritative wall-clock estimate. The campaign is gated by a
+sign-off on this estimate.
 
-\paragraph{Reproducibility.}
-Every replica writes a system-fingerprinted manifest, the full
-Pareto front, the NBI sub-problem residuals, the MBPA trigger
-diagnostics, and a long-format per-fold metric CSV. Aggregation
-scripts regenerate Tables~\ref{tab:performance}--\ref{tab:cost} of
-Section~\ref{sec:results}.
+\paragraph{Determinism.} Headline tables use
+\texttt{tree\_method=exact} and \texttt{n\_jobs=1} (article-track
+default); the determinism cost is documented in
+\texttt{docs/METHODOLOGY\_DECISIONS.md} D13.
+
+\paragraph{Sharded execution.} The job matrix is sharded across
+SQLite files under \texttt{jobs/doctoral/openml\_cc18/shards/} so
+that the dedicated MacBook Pro can run the campaign with low lock
+contention; the schema (Section~\ref{sec:method-infra}) tracks
+claim / success / failure transitions and per-job runtime so the
+campaign can resume after interruption without re-running successful
+jobs.
+
+\paragraph{Reproducibility.} Every replica writes a
+system-fingerprinted manifest, the full Pareto front (for
+multi-objective methods), the NBI sub-problem residuals
+(for the proposed method), the MBPA trigger diagnostics, and a
+long-format per-fold metric CSV. Aggregation scripts regenerate
+Tables~\ref{tab:performance}--\ref{tab:cost} of
+Section~\ref{sec:results} from those artifacts.

@@ -1,29 +1,84 @@
 \section{Related work}\label{sec:related-work}
 
-\subsection{Hyperparameter optimization for GBDT}
-Random search \citep{bergstra2012random}, Bayesian optimization
-\citep{shahriari2016bayesian,frazier2018tutorial}, and tree-structured
-Parzen estimators \citep{bergstra2011tpe} are the dominant baselines
-for HPO of tabular classifiers. They are the four reference
-optimizers used in the dissertation pipeline
-\citep{ribeiro2026dissertation} and remain the four reference
-benchmarks here.
-\todoblock{Tighten this paragraph after a literature pass selects
-exactly which BO and TPE variants to compare against (Optuna,
-scikit-optimize, Hyperopt). Currently we plan: scikit-optimize
-\texttt{BayesSearchCV} and Hyperopt TPE, matching the dissertation.}
+We position the proposed method against six families of hyperparameter
+optimization (HPO) algorithms, plus the OpenML benchmarking ecosystem
+that defines our evaluation protocol. The selected baselines span
+single-objective HPO under a fixed evaluation budget, multi-fidelity
+optimization, evolutionary search, and multi-objective HPO; AutoML
+systems are referenced as context rather than as direct baselines.
 
-\subsection{Multi-objective HPO}
-\citet{morales2022survey} survey multi-objective HPO; recurring
-patterns include scalarization with rotating weights, NSGA-II-style
-evolutionary search \citep{deb2002nsga2}, and decomposition along the
-Pareto frontier. Within the DoE/RSM tradition, multi-objective
-problems are commonly attacked with Normal Boundary Intersection
-\citep{das1998nbi}, which generates evenly spaced points on the
-Pareto front of nonlinear MOO problems and is well-defined for
-arbitrary $q$ objectives.
+\subsection{Classical HPO baselines}\label{sec:rw-classical}
+The dominant single-objective baselines for tabular HPO are random
+search \citep{bergstra2012random}, Gaussian-process Bayesian
+optimization (GP-BO) \citep{snoek2012bayesian,shahriari2016bayesian,
+frazier2018tutorial}, and the tree-structured Parzen estimator (TPE)
+\citep{bergstra2011tpe}, the latter as implemented by Hyperopt and
+exposed in the form of the Optuna \texttt{TPESampler}
+\citep{akiba2019optuna}. \citet{probst2019tunability} report that for
+gradient-boosting decision trees (GBDT) most of the variance in
+generalization is captured by a small set of tuned hyperparameters,
+which makes random search a non-trivial control even at modest
+budgets.
 
-\subsection{Multivariate NBI with factor scores}
+\subsection{Sequential model-based algorithm
+configuration}\label{sec:rw-smac}
+The Sequential Model-Based Algorithm Configuration (SMAC) family
+\citep{hutter2011smac,lindauer2022smac3} replaces the GP surrogate
+with a random forest, which natively handles mixed-type and
+conditional hyperparameter spaces and tolerates noisy evaluations via
+intensification and racing. SMAC3 is the de facto state of the art
+for general-purpose HPO of tabular ML pipelines, and powers the
+classical Auto-sklearn \citep{feurer2015autosklearn} backend.
+
+\subsection{Multi-fidelity HPO}\label{sec:rw-multifidelity}
+Multi-fidelity methods reuse cheap, low-fidelity evaluations
+(e.g., few epochs, few CV folds, sub-sampled training set) to
+prune unpromising configurations early. Successive Halving and
+Hyperband \citep{li2017hyperband} formalize this as a bandit problem;
+ASHA \citep{li2020asha} parallelizes the schedule for asynchronous
+workers. BOHB \citep{falkner2018bohb} couples Hyperband's bracket
+schedule with TPE-style model-based sampling, and DEHB
+\citep{awad2021dehb} replaces TPE with differential evolution
+\citep{storn1997differential} for better high-dimensional behavior.
+For GBDT models, the most natural fidelity dimension is the number of
+boosting iterations (\texttt{n\_estimators} for XGBoost / LightGBM /
+CatBoost), which lets multi-fidelity methods reuse partially trained
+ensembles cheaply.
+
+\subsection{Evolutionary and derivative-free
+HPO}\label{sec:rw-evolutionary}
+Differential evolution \citep{storn1997differential} and
+covariance-matrix adaptation evolution strategy (CMA-ES)
+\citep{hansen2001cmaes} are derivative-free baselines for continuous
+HPO; they are particularly relevant when the objective surface is
+non-smooth or when the budget allows a generation-based search rather
+than the strictly sequential single-incumbent dynamics of GP-BO. The
+Nevergrad platform \citep{rapin2018nevergrad} is referenced as a
+unified implementation harness for evolutionary and derivative-free
+optimizers; the present article cites it for context rather than
+reporting Nevergrad-only baselines.
+
+\subsection{Multi-objective HPO}\label{sec:rw-moo}
+\citet{morales2022survey} survey multi-objective HPO and group the
+literature into evolutionary, scalarization-based, and decomposition
+approaches. NSGA-II \citep{deb2002nsga2} and its many-objective
+extension NSGA-III \citep{deb2014nsga3} are the canonical
+evolutionary baselines (the latter is relevant for $q\!>\!2$
+objectives via reference points, paralleling the simplex-lattice
+weight grid we use for NBI). The multi-objective TPE variant MOTPE
+\citep{ozaki2020motpe} is the natural multi-objective counterpart of
+TPE-Hyperopt. ParEGO \citep{knowles2006parego} represents
+scalarization-based BO with rotating weight vectors. Within the
+DoE / RSM tradition, multi-objective problems are commonly attacked
+with Normal Boundary Intersection \citep{das1998nbi}, which generates
+evenly spaced points on the Pareto front of nonlinear MOO problems
+and is well-defined for arbitrary $q$ objectives. The pymoo library
+\citep{blank2020pymoo} provides reference Python implementations of
+NSGA-II / NSGA-III and is the natural implementation candidate for the
+evolutionary baselines in the comparative protocol.
+
+\subsection{Multivariate NBI with factor
+scores}\label{sec:rw-pereira}
 The closest methodological reference for the article-track is
 \citet{pereira2025eaai}, who replace the original responses with
 Varimax-rotated factor scores ($\VRF$), wrap each $\VRF$ in an FMSE
@@ -34,7 +89,33 @@ canonical polynomials over the simplex of NBI weights and refines
 $\bm w^{*}$ by minimizing a generalized distance to utopia subject to
 an elliptical interior constraint and an entropy preference.
 
-\subsection{This work in context}
+\subsection{AutoML systems as context}\label{sec:rw-automl}
+Auto-sklearn \citep{feurer2015autosklearn}, FLAML
+\citep{wang2021flaml} and AutoGluon-Tabular
+\citep{erickson2020autogluon} bundle HPO with model selection,
+ensembling, and resource control. They are cited as context: the
+proposed method targets the HPO sub-problem of a fixed GBDT
+algorithm, not full pipeline AutoML. FLAML is the most natural
+practical baseline of the three (single-algorithm tuning with a CPU
+budget) and is listed in the comparative protocol as an optional
+addition; Auto-sklearn and AutoGluon are excluded from the headline
+comparison because their search spaces are not directly aligned with
+the per-algorithm hyperparameter list of XGBoost / LightGBM /
+CatBoost.
+
+\subsection{Benchmark suites}\label{sec:rw-benchmarks}
+We use the OpenML-CC18 curated classification benchmark suite
+\citep{bischl2021openmlbenchmark} as the primary evaluation panel.
+OpenML-CC18 (\texttt{suite\_id = 99}) collects 72 standardized
+classification tasks selected for license clarity, dataset diversity,
+and well-defined train/test splits, and is widely used as a fair
+common ground for HPO and AutoML evaluation. The OpenML platform
+\citep{vanschoren2014openml} provides task identifiers, default folds,
+and metadata that make task-based (rather than dataset-based)
+benchmarks reproducible across implementations. Cross-method
+statistical comparison follows \citet{demsar2006statistical}.
+
+\subsection{This work in context}\label{sec:rw-positioning}
 Relative to \citep{pereira2025eaai}, we (a) port the framework to HPO
 of GBDT models with explicit hyperparameter box constraints rather
 than a hyperspherical region; (b) keep the FMSE wrapping for $\VRF$
@@ -49,4 +130,8 @@ scalarization with the true $N$-objective NBI, generalize the
 RSM design-aware (separating process-quadratic from Scheff\'{e}
 mixture models), and add the conditional MBPA stage. The legacy
 weighted-sum solver is preserved as an explicit ablation baseline and
-is never referred to as NBI in the article-track code or text.
+is never referred to as NBI in the article-track code or text. The
+formal comparative protocol against the baselines listed above is
+specified in \texttt{docs/COMPARATIVE\_PROTOCOL.md} and the
+machine-readable method matrix at
+\texttt{benchmarks/doctoral/openml\_cc18/method\_matrix.csv}.

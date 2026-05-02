@@ -115,11 +115,47 @@ scales with the actual DoE / NBI configuration chosen; (iii) thermal
 / sustained-load efficiency on a dedicated Mac is empirical.
 Re-anchor these numbers after the first real CC18 profiler pass.
 
+## Comparative protocol (Commit 26)
+
+The doctoral campaign is not a single-method run; it is a comparative
+study against the dominant HPO families. The authoritative narrative
+specification is `docs/COMPARATIVE_PROTOCOL.md`; the canonical
+machine-readable list is
+`benchmarks/doctoral/openml_cc18/method_matrix.csv`. Every method
+participating in the SQLite job matrix MUST come from a row of that
+CSV — the shard generator (planned next commit) reads the method
+list from the CSV and never hardcodes method names. Method families
+covered: classical (random search, Optuna TPE), SMAC family (SMAC3),
+multi-fidelity (ASHA / BOHB / DEHB), evolutionary multi-objective
+(NSGA-II), other multi-objective (MOTPE, ParEGO on subset),
+proposed (DOE+RSM+VRF+true NBI+conditional MBPA), and ablations
+(no-MBPA, legacy weighted-sum). AutoML systems (Auto-sklearn, FLAML,
+AutoGluon) are cited as context, not benchmarked, with FLAML
+optionally promoted to a baseline once the open items at the bottom
+of `docs/COMPARATIVE_PROTOCOL.md` are resolved.
+
+## Next operational step
+
+The next operational step is **not** "run the 12-dataset campaign";
+it is:
+
+1. Resolve the open items in `docs/COMPARATIVE_PROTOCOL.md` (FLAML
+   inclusion, ASHA vs Hyperband, ParEGO subset, TODO references in
+   `article/references.bib`).
+2. Freeze `benchmarks/doctoral/openml_cc18/method_matrix.csv`.
+3. Implement `scripts/generate_cc18_job_shards.py` (Commit 27 plan)
+   to materialize SQLite shards under
+   `jobs/doctoral/openml_cc18/shards/`, driven by the frozen CSV.
+4. Profile a single CC18 task at `R=1` per (task, algorithm, method)
+   to re-anchor the wall-clock estimates above.
+
+The method list must be frozen before any SQLite shards are
+committed.
+
 ## What this commit does NOT do
 
 - Does **not** download CC18 dataset payloads (only OpenML metadata).
-- Does **not** generate any job SQLite shards (planned for the next
-  commit, using `scripts/generate_cc18_job_shards.py`).
+- Does **not** generate any job SQLite shards.
 - Does **not** run any benchmark.
 - Does **not** kill the article-track smoke / profiler scripts; they
   remain useful for the 12-dataset smoke panel and as integration

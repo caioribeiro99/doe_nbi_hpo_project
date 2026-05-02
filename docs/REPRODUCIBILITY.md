@@ -36,13 +36,29 @@ make repro-full      # = python -m doe_xgb.cli run --config configs/dissertation
 make tables          # regenerates aggregated tables under experiments/
 ```
 
-## Doctoral benchmark scope (Commit 24, retargeted in Commit 25)
+## Doctoral benchmark scope (Commit 24, retargeted in Commit 25,
+## comparative protocol frozen in Commit 26)
 
 The repository targets a doctoral-scale campaign on the
 **OpenML-CC18 curated classification suite** (`suite_id = 99`,
 **72 standardized tasks**) × **3 GBDT algorithms** (XGBoost, LightGBM,
-CatBoost) × **30 replicas**, staged through 1 → 5 → 10 → 30
-replicas. Total: `72 × 3 × 30 = 6,480` jobs.
+CatBoost) × **N methods** × **30 replicas**, staged through
+1 → 5 → 10 → 30 replicas. The headline job count for the methods that
+run on all 72 tasks is `72 × 3 × N_full × 30`, plus the per-replica
+jobs contributed by subset-only methods on their defined CC18 subset;
+the exact total is computed at shard-generation time from
+`benchmarks/doctoral/openml_cc18/method_matrix.csv` and is not
+hardcoded. The methods themselves are listed in
+`docs/COMPARATIVE_PROTOCOL.md`.
+
+**Protocol freeze gate.** The next operational step is *not* to run a
+12-dataset campaign; it is to (i) resolve the open items at the bottom
+of `docs/COMPARATIVE_PROTOCOL.md` (FLAML inclusion, ASHA vs Hyperband,
+ParEGO subset, TODO references), then (ii) run
+`scripts/generate_cc18_job_shards.py` (planned), driven by the frozen
+`method_matrix.csv`, to materialize the SQLite shards under
+`jobs/doctoral/openml_cc18/shards/`. The method list must be frozen
+before any SQLite shards are committed.
 
 The CC18 task / dataset registry lives at
 `benchmarks/doctoral/openml_cc18/{tasks.csv, datasets.csv,

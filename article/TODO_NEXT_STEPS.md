@@ -1,17 +1,30 @@
 # Article v1 — next steps (now subordinate to the doctoral benchmark)
 
-> **Pivot (Commit 24, retargeted in Commit 25).** The repository now
-> targets the **doctoral-scale benchmark on OpenML-CC18**
-> (`suite_id = 99`, 72 standardized classification tasks × 3 GBDT
-> algorithms × 30 replicas = 6,480 jobs) as its scientific objective;
-> the 12-dataset article v1 campaign is no longer the main target.
-> The publication will be extracted from the doctoral-scale CC18
+> **Pivot (Commit 24, retargeted in Commit 25, comparative protocol
+> frozen in Commit 26).** The repository now targets the
+> **doctoral-scale benchmark on OpenML-CC18** (`suite_id = 99`,
+> 72 standardized classification tasks × 3 GBDT algorithms × N
+> methods × 30 replicas) as its scientific objective; the
+> 12-dataset article v1 campaign is no longer the main target. The
+> publication will be extracted from the doctoral-scale CC18
 > results, not from a separate intermediate campaign. The 12-dataset
 > panel is **demoted** to a smoke / profiling / development fixture
 > under `benchmarks/doctoral/internal_smoke_panel/datasets.csv` and
 > is **not** part of the CC18 benchmark count. The previous
 > "82 datasets" framing (`benchmarks/doctoral_82/`) is deprecated.
-> See `docs/DOCTORAL_BENCHMARK.md`.
+> The comparison methods (random search, Optuna TPE, SMAC3,
+> ASHA / BOHB / DEHB, NSGA-II, MOTPE, ParEGO on a subset, plus the
+> proposed method and its two ablations) are frozen by
+> `benchmarks/doctoral/openml_cc18/method_matrix.csv`; see
+> `docs/COMPARATIVE_PROTOCOL.md` and `docs/DOCTORAL_BENCHMARK.md`.
+>
+> **Next operational step is not "run the 12-dataset campaign".** It
+> is: (i) resolve the open items at the bottom of
+> `docs/COMPARATIVE_PROTOCOL.md`, (ii) freeze
+> `method_matrix.csv`, (iii) generate SQLite shards driven by the
+> CSV via `scripts/generate_cc18_job_shards.py` (planned for the
+> next commit). The method list must be frozen before any SQLite
+> shards are committed.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

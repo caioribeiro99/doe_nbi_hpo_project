@@ -46,6 +46,7 @@
 }
 
 % --- Hyperparameter optimization references ---------------------------------
+% Classical baselines: random search, GP-BO, TPE.
 
 @article{bergstra2012random,
   author  = {Bergstra, James and Bengio, Yoshua},
@@ -63,6 +64,15 @@
   booktitle = {Advances in Neural Information Processing Systems},
   volume    = {24},
   year      = {2011}
+}
+
+@inproceedings{snoek2012bayesian,
+  author    = {Snoek, Jasper and Larochelle, Hugo and Adams, Ryan P.},
+  title     = {Practical {B}ayesian optimization of machine learning
+               algorithms},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {25},
+  year      = {2012}
 }
 
 @article{shahriari2016bayesian,
@@ -96,6 +106,129 @@
   year    = {2019}
 }
 
+% --- Sequential model-based algorithm configuration (SMAC family) -----------
+
+@inproceedings{hutter2011smac,
+  author    = {Hutter, Frank and Hoos, Holger H. and Leyton-Brown, Kevin},
+  title     = {Sequential model-based optimization for general algorithm
+               configuration},
+  booktitle = {Learning and Intelligent Optimization (LION 5)},
+  pages     = {507--523},
+  year      = {2011},
+  doi       = {10.1007/978-3-642-25566-3_40}
+}
+
+@article{lindauer2022smac3,
+  author  = {Lindauer, Marius and Eggensperger, Katharina and
+             Feurer, Matthias and Biedenkapp, Andr{\'e} and
+             Deng, Difan and Benjamins, Carolin and
+             Ruhkopf, Tim and Sass, Ren{\'e} and Hutter, Frank},
+  title   = {{SMAC3}: A versatile {B}ayesian optimization package for
+             hyperparameter optimization},
+  journal = {Journal of Machine Learning Research},
+  volume  = {23},
+  number  = {54},
+  pages   = {1--9},
+  year    = {2022}
+}
+
+% --- Hyperparameter optimization frameworks ---------------------------------
+
+@inproceedings{akiba2019optuna,
+  author    = {Akiba, Takuya and Sano, Shotaro and Yanase, Toshihiko and
+               Ohta, Takeru and Koyama, Masanori},
+  title     = {{Optuna}: A next-generation hyperparameter optimization
+               framework},
+  booktitle = {Proceedings of the 25th ACM SIGKDD International Conference
+               on Knowledge Discovery and Data Mining},
+  pages     = {2623--2631},
+  year      = {2019},
+  doi       = {10.1145/3292500.3330701}
+}
+
+@misc{rapin2018nevergrad,
+  author       = {Rapin, J. and Teytaud, O.},
+  title        = {{Nevergrad} -- A gradient-free optimization platform},
+  howpublished = {\url{https://github.com/facebookresearch/nevergrad}},
+  year         = {2018},
+  note         = {Online; verify release tag before submission. TODO}
+}
+
+% --- Multi-fidelity HPO (Hyperband / ASHA / BOHB / DEHB) -------------------
+
+@article{li2017hyperband,
+  author  = {Li, Lisha and Jamieson, Kevin and DeSalvo, Giulia and
+             Rostamizadeh, Afshin and Talwalkar, Ameet},
+  title   = {{Hyperband}: A novel bandit-based approach to hyperparameter
+             optimization},
+  journal = {Journal of Machine Learning Research},
+  volume  = {18},
+  number  = {185},
+  pages   = {1--52},
+  year    = {2018},
+  note    = {Conference version: ICLR 2017}
+}
+
+@inproceedings{li2020asha,
+  author    = {Li, Liam and Jamieson, Kevin and Rostamizadeh, Afshin and
+               Gonina, Ekaterina and Ben-Tzur, Jonathan and
+               Hardt, Moritz and Recht, Benjamin and Talwalkar, Ameet},
+  title     = {A system for massively parallel hyperparameter tuning},
+  booktitle = {Proceedings of Machine Learning and Systems (MLSys)},
+  volume    = {2},
+  pages     = {230--246},
+  year      = {2020}
+}
+
+@inproceedings{falkner2018bohb,
+  author    = {Falkner, Stefan and Klein, Aaron and Hutter, Frank},
+  title     = {{BOHB}: Robust and efficient hyperparameter optimization at
+               scale},
+  booktitle = {Proceedings of the 35th International Conference on Machine
+               Learning},
+  series    = {Proceedings of Machine Learning Research (PMLR)},
+  volume    = {80},
+  pages     = {1437--1446},
+  year      = {2018}
+}
+
+@inproceedings{awad2021dehb,
+  author    = {Awad, Noor and Mallik, Neeratyoy and Hutter, Frank},
+  title     = {{DEHB}: Evolutionary hyperband for scalable, robust and
+               efficient hyperparameter optimization},
+  booktitle = {Proceedings of the 30th International Joint Conference on
+               Artificial Intelligence ({IJCAI})},
+  pages     = {2147--2153},
+  year      = {2021},
+  doi       = {10.24963/ijcai.2021/296}
+}
+
+% --- Evolutionary / derivative-free baselines ------------------------------
+
+@article{storn1997differential,
+  author  = {Storn, Rainer and Price, Kenneth},
+  title   = {Differential evolution -- a simple and efficient heuristic for
+             global optimization over continuous spaces},
+  journal = {Journal of Global Optimization},
+  volume  = {11},
+  number  = {4},
+  pages   = {341--359},
+  year    = {1997},
+  doi     = {10.1023/A:1008202821328}
+}
+
+@article{hansen2001cmaes,
+  author  = {Hansen, Nikolaus and Ostermeier, Andreas},
+  title   = {Completely derandomized self-adaptation in evolution
+             strategies},
+  journal = {Evolutionary Computation},
+  volume  = {9},
+  number  = {2},
+  pages   = {159--195},
+  year    = {2001},
+  doi     = {10.1162/106365601750190398}
+}
+
 % --- Multi-objective references ---------------------------------------------
 
 @article{deb2002nsga2,
@@ -110,12 +243,123 @@
   doi     = {10.1109/4235.996017}
 }
 
+@article{deb2014nsga3,
+  author  = {Deb, Kalyanmoy and Jain, Himanshu},
+  title   = {An evolutionary many-objective optimization algorithm using
+             reference-point-based nondominated sorting approach,
+             part {I}: solving problems with box constraints},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {18},
+  number  = {4},
+  pages   = {577--601},
+  year    = {2014},
+  doi     = {10.1109/TEVC.2013.2281535}
+}
+
+@article{knowles2006parego,
+  author  = {Knowles, Joshua},
+  title   = {{ParEGO}: A hybrid algorithm with on-line landscape
+             approximation for expensive multiobjective optimization
+             problems},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {10},
+  number  = {1},
+  pages   = {50--66},
+  year    = {2006},
+  doi     = {10.1109/TEVC.2005.851274}
+}
+
+@inproceedings{ozaki2020motpe,
+  author    = {Ozaki, Yoshihiko and Tanigaki, Yuki and Watanabe, Shuhei and
+               Onishi, Masaki},
+  title     = {Multiobjective tree-structured {P}arzen estimator for
+               computationally expensive optimization problems},
+  booktitle = {Proceedings of the 2020 Genetic and Evolutionary Computation
+               Conference ({GECCO})},
+  pages     = {533--541},
+  year      = {2020},
+  doi       = {10.1145/3377930.3389817}
+}
+
 @article{morales2022survey,
-  author  = {Morales-Hern{\'a}ndez, Alejandro and others},
-  title   = {A survey on multi-objective hyperparameter optimization in
-             machine learning},
-  journal = {arXiv preprint arXiv:2111.13755v3},
-  year    = {2022}
+  author  = {Morales-Hern{\'a}ndez, Alejandro and Van Nieuwenhuyse, Inneke
+             and Rojas Gonzalez, Sebastian},
+  title   = {A survey on multi-objective hyperparameter optimization
+             algorithms for machine learning},
+  journal = {Artificial Intelligence Review},
+  volume  = {56},
+  pages   = {8043--8093},
+  year    = {2023},
+  doi     = {10.1007/s10462-022-10359-2},
+  note    = {Earlier preprint: arXiv:2111.13755}
+}
+
+@article{blank2020pymoo,
+  author  = {Blank, Julian and Deb, Kalyanmoy},
+  title   = {{pymoo}: Multi-objective optimization in {P}ython},
+  journal = {IEEE Access},
+  volume  = {8},
+  pages   = {89497--89509},
+  year    = {2020},
+  doi     = {10.1109/ACCESS.2020.2990567}
+}
+
+% --- AutoML systems (contextual references) -------------------------------
+
+@inproceedings{feurer2015autosklearn,
+  author    = {Feurer, Matthias and Klein, Aaron and Eggensperger, Katharina
+               and Springenberg, Jost Tobias and Blum, Manuel and
+               Hutter, Frank},
+  title     = {Efficient and robust automated machine learning},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {28},
+  year      = {2015}
+}
+
+@article{wang2021flaml,
+  author  = {Wang, Chi and Wu, Qingyun and Weimer, Markus and Zhu, Erkang},
+  title   = {{FLAML}: A fast and lightweight {AutoML} library},
+  journal = {Proceedings of Machine Learning and Systems (MLSys)},
+  volume  = {3},
+  pages   = {434--447},
+  year    = {2021}
+}
+
+@article{erickson2020autogluon,
+  author  = {Erickson, Nick and Mueller, Jonas and Shirkov, Alexander and
+             Zhang, Hang and Larroy, Pedro and Li, Mu and Smola, Alexander},
+  title   = {{AutoGluon-Tabular}: Robust and accurate {AutoML} for
+             structured data},
+  journal = {arXiv preprint arXiv:2003.06505},
+  year    = {2020}
+}
+
+% --- OpenML / OpenML-CC18 benchmark suite ---------------------------------
+
+@article{vanschoren2014openml,
+  author  = {Vanschoren, Joaquin and van Rijn, Jan N. and Bischl, Bernd and
+             Torgo, Lu{\'i}s},
+  title   = {{OpenML}: networked science in machine learning},
+  journal = {ACM SIGKDD Explorations Newsletter},
+  volume  = {15},
+  number  = {2},
+  pages   = {49--60},
+  year    = {2014},
+  doi     = {10.1145/2641190.2641198}
+}
+
+@article{bischl2021openmlbenchmark,
+  author  = {Bischl, Bernd and Casalicchio, Giuseppe and Feurer, Matthias
+             and Gijsbers, Pieter and Hutter, Frank and Lang, Michel and
+             Mantovani, Rafael G. and van Rijn, Jan N. and Vanschoren,
+             Joaquin},
+  title   = {{OpenML} benchmarking suites},
+  journal = {Proceedings of the Neural Information Processing Systems
+             Track on Datasets and Benchmarks},
+  volume  = {1},
+  year    = {2021},
+  note    = {Defines {OpenML-CC18} (suite\_id = 99). Verify volume/pages
+             before submission. TODO}
 }
 
 % --- GBDT references --------------------------------------------------------
