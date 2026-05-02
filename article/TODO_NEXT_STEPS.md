@@ -120,6 +120,17 @@ v1 dataset. The 11 binary datasets remain the headline panel.
 > 4× project to ~3.7 days dedicated. Recommendation: run the full
 > 12 × 3 × 10 locally on the dedicated Mac. Reserve 30 replicas for
 > selected datasets only.
+>
+> **Article-track end-to-end smoke (Commit 23).** Real-data
+> validation of the full pipeline: DOE → FA → RSM → **true
+> N-objective NBI** → confirmation → conditional MBPA, on MAGIC +
+> XGBoost, n_replicas=1, q=2, simplex_lattice {2, 10}. All 7
+> stages succeeded; NBI residuals `max=1.6e-10, median=4.9e-12`;
+> MBPA fired on a `high_weight_concentration` trigger. Total wall
+> time ~86 s. See
+> `experiments/_v1_smoke/article_true_nbi_magic_smoke.{json,md}`.
+> The legacy weighted-sum scalarization was **not** invoked at any
+> stage of the smoke.
 
 8. **Run the v1 campaign.** Schedule
    `12 datasets x 3 algorithms x 10 replicas` on the chosen profile.

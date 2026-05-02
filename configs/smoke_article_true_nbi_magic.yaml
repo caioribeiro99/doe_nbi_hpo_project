@@ -1,0 +1,118 @@
+# Reduced article-track smoke config: DOE + true N-objective NBI on MAGIC.
+#
+# Status: SMOKE / sanity check, not a paper result. Validates the
+# article-track pipeline (DOE -> FA -> RSM -> true NBI -> confirmation
+# -> conditional MBPA) end-to-end on real cached data.
+#
+# Differences from the headline article config (article_3vrf_xgb_magic.yaml):
+# - n_replicas = 1
+# - q = 2 (FA factors / NBI objectives) to keep runtime small
+# - simplex_lattice {2, 10} -> 11 sub-problems
+# - the design uses the canonical Minitab CCDFC (88 runs) at full size;
+#   that fits comfortably under the 10-minute budget for MAGIC + XGBoost.
+
+schema_version: 1
+
+experiment:
+  name: "smoke_article_true_nbi_magic"
+  output_root: "experiments"
+  n_replicas: 1
+  seed_base: 42
+  deterministic: true
+
+dataset:
+  path: "data/source/magic/processed/magic.csv"
+  target: "class"
+
+model:
+  estimator: "xgboost.XGBClassifier"
+  fixed_kwargs:
+    eval_metric: "logloss"
+    verbosity: 0
+
+design:
+  kind: "external_csv"
+  external_path: "data/design/hyperparameter_design.csv"
+  metadata:
+    generator: "Minitab"
+    design_type: "ccd_face_centered"
+    n_factors: 7
+    n_runs: 88
+    n_center: 4
+    coding: "uncoded"
+  factors:
+    - {name: subsample,         lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bytree,  lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bylevel, lo: 0.05, hi: 1.00, type: float}
+    - {name: learning_rate,     lo: 0.01, hi: 0.30, type: float}
+    - {name: max_depth,         lo: 3,    hi: 18,   type: int}
+    - {name: gamma,             lo: 0.05, hi: 5.00, type: float}
+    - {name: n_estimators,      lo: 50,   hi: 700,  type: int}
+
+evaluation:
+  cv: {n_splits: 5, shuffle: true}
+  per_fold_metrics: true
+  raw_metrics:
+    - Accuracy_Mean
+    - Precision_Mean
+    - Recall_Mean
+    - Specificity_Mean
+    - Time_MeanFold
+
+factor_model:
+  mode: "fixed"
+  n_factors: 2
+  rotation: "varimax"
+  standardize: true
+  sign_orientation: "construct_avg"
+
+objectives:
+  convention: "minimize"
+  specs:
+    - {name: VRF1, source: "factor:1", direction: "maximize", role: "primary_nbi", group: "Quality"}
+    - {name: VRF2, source: "factor:2", direction: "minimize", role: "primary_nbi", group: "Cost"}
+
+surrogate:
+  family: "process_quadratic"
+  order: "quadratic"
+  coding: "uncoded"
+  backward_elimination: {alpha: 0.05, enforce_hierarchy: true}
+
+nbi:
+  weights:
+    method: "simplex_lattice"
+    q: 2
+    m: 10
+  feasibility: {}
+  solver: "slsqp"
+  n_starts: 4
+  anchor_source: "surrogate"
+  quasi_normal: "minus_phi_ones"
+
+selection:
+  rule: "distance_to_utopia"
+
+post_optimization:
+  enabled: "conditional"
+  trigger:
+    min_normalized_obj_range: 0.05
+    min_avg_pairwise_dist: 0.05
+    min_unique_nondominated: 5
+    max_weight_concentration_top1: 0.7
+  mbpa:
+    inner_design: {kind: "simplex_lattice", q: 2, m: 10}
+    inner_objectives:
+      - {name: GD, direction: minimize}
+      - {name: S,  direction: maximize}
+    elliptical_constraint:
+      center: "centroid"
+      radii: [0.30, 0.30]
+
+benchmarks:
+  enabled: []
+  budget: "fairness"
+  selection_rule: "max_accuracy"
+
+reporting:
+  paper_tables: false
+  multiobjective_metrics: [igd, spread, spacing_entropy, hypervolume]

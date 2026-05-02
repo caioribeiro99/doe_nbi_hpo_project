@@ -36,6 +36,24 @@ make repro-full      # = python -m doe_xgb.cli run --config configs/dissertation
 make tables          # regenerates aggregated tables under experiments/
 ```
 
+## End-to-end article-track smoke (Commit 23)
+
+A reduced article-track smoke is committed for sanity checks:
+
+```bash
+python scripts/run_article_true_nbi_magic_smoke.py
+```
+
+Single replica on MAGIC + XGBoost, q=2 NBI, simplex_lattice {2, 10}.
+Drives the full pipeline (DOE → FA → RSM → true N-objective NBI →
+confirmation → conditional MBPA), uses
+`evaluation.assert_metric_set_compatible_with_task` for the binary
+guardrail, and writes
+`experiments/_v1_smoke/article_true_nbi_magic_smoke.{json,md}` with
+per-stage timings, NBI residual statistics, and the MBPA decision.
+Total wall-clock ~86 s on Apple Silicon. The legacy weighted-sum
+scalarization is never invoked.
+
 ## What every replica writes
 
 ```

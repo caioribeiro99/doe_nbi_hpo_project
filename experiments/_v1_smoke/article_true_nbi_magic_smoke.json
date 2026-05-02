@@ -1,0 +1,179 @@
+{
+  "smoke": "article_true_nbi_magic",
+  "started_at": "2026-05-02T16:28:03",
+  "platform": "macOS-26.4.1-arm64-arm-64bit",
+  "python": "3.12.13",
+  "config_path": "configs/smoke_article_true_nbi_magic.yaml",
+  "resolved_dataset_id": "magic",
+  "n_replicas": 1,
+  "nbi_q": 2,
+  "nbi_m": 10,
+  "stages": [
+    {
+      "stage": "config",
+      "wall_seconds": 0.015,
+      "resolved_dataset_id": "magic"
+    },
+    {
+      "stage": "load_dataset",
+      "wall_seconds": 0.013,
+      "n_rows": 19020,
+      "n_features": 10,
+      "task_type": "binary"
+    },
+    {
+      "stage": "doe",
+      "wall_seconds": 84.281,
+      "n_design_rows": 88,
+      "doe_columns": [
+        "subsample",
+        "colsample_bytree",
+        "colsample_bylevel",
+        "learning_rate",
+        "max_depth",
+        "gamma",
+        "n_estimators",
+        "Accuracy_Mean",
+        "Precision_Mean",
+        "Recall_Mean",
+        "Specificity_Mean",
+        "Time_MeanFold"
+      ],
+      "binary_keys_present": true
+    },
+    {
+      "stage": "factor_model",
+      "wall_seconds": 0.007,
+      "n_factors": 2,
+      "loadings_shape": [
+        5,
+        2
+      ],
+      "explained_variance": [
+        0.6691,
+        0.1987
+      ],
+      "cumulative_variance": [
+        0.6691,
+        0.8678
+      ],
+      "construct_map": {
+        "Factor1": [
+          "Accuracy_Mean",
+          "Precision_Mean",
+          "Recall_Mean",
+          "Specificity_Mean"
+        ],
+        "Factor2": [
+          "Time_MeanFold"
+        ]
+      }
+    },
+    {
+      "stage": "rsm",
+      "wall_seconds": 0.017,
+      "models": [
+        {
+          "factor": "FACTOR1_SCORE",
+          "n_terms": 36,
+          "r2": 0.9613,
+          "r2_adj": 0.9352,
+          "rank": 36,
+          "condition_number": 94500600.43
+        },
+        {
+          "factor": "FACTOR2_SCORE",
+          "n_terms": 36,
+          "r2": 0.5922,
+          "r2_adj": 0.3178,
+          "rank": 36,
+          "condition_number": 94500600.43
+        }
+      ]
+    },
+    {
+      "stage": "nbi_core",
+      "wall_seconds": 0.568,
+      "n_subproblems": 11,
+      "n_weights": 11,
+      "max_residual_norm": 1.5921234064300628e-10,
+      "median_residual_norm": 4.922406748522946e-12,
+      "p95_residual_norm": 1.4757115111729668e-10,
+      "min_t": 1.2339687985883461e-10,
+      "max_t": 2.7266332371237043,
+      "n_success": 11,
+      "anchors_utopia": [
+        -4.9968,
+        -0.9189
+      ],
+      "anchors_pseudo_nadir": [
+        2.0816,
+        0.2836
+      ]
+    },
+    {
+      "stage": "confirmation",
+      "wall_seconds": 1.414,
+      "n_candidates_confirmed": 11,
+      "selection_rule": "distance_to_utopia",
+      "selection_distance": 0.1508786912195578,
+      "chosen_index": 2,
+      "chosen_metrics": {
+        "Accuracy_Mean": 0.801472134595163,
+        "Precision_Mean": 0.8944887679126378,
+        "Recall_Mean": 0.4940217093575626,
+        "Specificity_Mean": 0.96821288370645,
+        "Time_MeanFold": 0.022025958400627134
+      },
+      "chosen_hyperparameters": {
+        "subsample": 0.050000000015433116,
+        "colsample_bytree": 0.050000000002731054,
+        "colsample_bylevel": 1.0,
+        "learning_rate": 0.12395397725941233,
+        "max_depth": 18.0,
+        "gamma": 2.9774306210871577,
+        "n_estimators": 50.0
+      }
+    },
+    {
+      "stage": "mbpa",
+      "wall_seconds": 0.005,
+      "enabled": "conditional",
+      "triggered": true,
+      "frontier_diagnostics": {
+        "avg_pairwise_distance": 2.417526628312845,
+        "unique_nondominated": 11,
+        "weight_concentration": 1.0,
+        "curvature_score": 0.07032328228999524,
+        "spread": 0.7548443637208955,
+        "triggers": {
+          "low_obj_range": false,
+          "low_avg_pairwise_dist": false,
+          "few_unique_nondominated": false,
+          "high_weight_concentration": true,
+          "low_curvature": false,
+          "low_spread": false,
+          "any": true
+        }
+      },
+      "summary": {
+        "spec": {
+          "inner_simplex_q": 2,
+          "inner_simplex_m": 10,
+          "elliptical_radii": [
+            0.3,
+            0.3
+          ],
+          "elliptical_center": null,
+          "n_starts": 5,
+          "seed": 42
+        },
+        "n_feasible_inside_ellipse": 5,
+        "gd_at_refined": 0.5972608433640807,
+        "entropy_at_refined": 0.6107004997616887
+      }
+    }
+  ],
+  "ok": true,
+  "total_wall_seconds": 86.34
+}
