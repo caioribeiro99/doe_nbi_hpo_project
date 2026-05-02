@@ -75,6 +75,88 @@ def _cmd_smoke(_args: argparse.Namespace) -> int:
     return 0 if max(residuals) < 1e-2 else 1
 
 
+def _cmd_estimate_cost(args: argparse.Namespace) -> int:
+    from .cost_estimator import (
+        BenchmarkSpec,
+        CloudProfile,
+        LocalProfile,
+        calibrate,
+        estimate_cost,
+        get_preset,
+        list_presets,
+    )
+
+    if args.list_presets:
+        for name in list_presets():
+            print(name)
+        return 0
+
+    if args.preset:
+        spec = get_preset(args.preset)
+    else:
+        spec = BenchmarkSpec(
+            n_datasets=args.datasets,
+            n_algorithms=args.algorithms,
+            n_replicas=args.replicas,
+            n_folds=args.folds,
+            doe_evaluations=args.doe_evaluations,
+            nbi_candidates=args.nbi_candidates,
+            benchmark_evaluations=args.benchmark_evaluations,
+            n_optimization_methods=args.n_methods,
+            avg_seconds_per_fit=args.avg_seconds_per_fit,
+            overhead_factor=args.overhead_factor,
+        )
+
+    avg_sec = args.avg_seconds_per_fit
+    if args.calibrate:
+        cal = calibrate(output=args.calibration_output)
+        if args.algorithm in cal.timings_per_algorithm:
+            avg_sec = cal.timings_per_algorithm[args.algorithm]
+        elif cal.timings_per_algorithm:
+            avg_sec = max(cal.timings_per_algorithm.values())
+        if args.preset:
+            spec = BenchmarkSpec(
+                n_datasets=spec.n_datasets,
+                n_algorithms=spec.n_algorithms,
+                n_replicas=spec.n_replicas,
+                n_folds=spec.n_folds,
+                doe_evaluations=spec.doe_evaluations,
+                nbi_candidates=spec.nbi_candidates,
+                benchmark_evaluations=spec.benchmark_evaluations,
+                n_optimization_methods=spec.n_optimization_methods,
+                avg_seconds_per_fit=avg_sec,
+                overhead_factor=spec.overhead_factor,
+            )
+
+    local = LocalProfile(
+        max_workers_when_idle=args.max_workers_when_idle,
+        max_workers_while_working=args.max_workers_while_working,
+        hours_idle_per_day=args.hours_idle_per_day,
+        hours_working_per_day=args.hours_working_per_day,
+        reserve_cores_for_user=args.reserve_cores_for_user,
+        efficiency_factor=args.local_efficiency_factor,
+        model_n_jobs=args.model_n_jobs,
+        checkpoint_frequency_replicas=args.local_checkpoint_frequency,
+        warn_if_wall_days_above=args.warn_if_wall_days_above,
+    )
+
+    cloud = CloudProfile(
+        workers=args.cloud_workers,
+        instance_hourly_price_per_worker_usd=args.cloud_price_per_hour,
+        efficiency_factor=args.cloud_efficiency_factor,
+        max_concurrent_jobs=args.max_concurrent_jobs,
+        checkpoint_frequency_replicas=args.cloud_checkpoint_frequency,
+    )
+
+    estimate = estimate_cost(spec, local=local, cloud=cloud)
+    out = estimate.to_dict()
+    print(json.dumps(out, indent=2))
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    return 0
+
+
 def _cmd_info(_args: argparse.Namespace) -> int:
     print(
         "doe-xgb (article track)\n"
@@ -104,6 +186,58 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     p_info = sub.add_parser("info", help="Print branch / methodology pointers.")
     p_info.set_defaults(func=_cmd_info)
+
+    p_cost = sub.add_parser(
+        "estimate-cost",
+        help="Estimate experiment cost (local + cloud); does NOT run the benchmark.",
+    )
+    p_cost.add_argument("--list-presets", action="store_true")
+    p_cost.add_argument("--preset", type=str, default=None)
+    p_cost.add_argument("--datasets", type=int, default=1)
+    p_cost.add_argument("--algorithms", type=int, default=1)
+    p_cost.add_argument("--replicas", type=int, default=30)
+    p_cost.add_argument("--folds", type=int, default=5)
+    p_cost.add_argument("--doe-evaluations", type=int, default=88)
+    p_cost.add_argument("--nbi-candidates", type=int, default=50)
+    p_cost.add_argument("--benchmark-evaluations", type=int, default=138)
+    p_cost.add_argument("--n-methods", type=int, default=4)
+    p_cost.add_argument("--avg-seconds-per-fit", type=float, default=0.5)
+    p_cost.add_argument("--overhead-factor", type=float, default=1.10)
+    # Local
+    p_cost.add_argument("--max-workers-when-idle", type=int, default=8)
+    p_cost.add_argument("--max-workers-while-working", type=int, default=2)
+    p_cost.add_argument("--hours-idle-per-day", type=float, default=10.0)
+    p_cost.add_argument("--hours-working-per-day", type=float, default=6.0)
+    p_cost.add_argument("--reserve-cores-for-user", type=int, default=2)
+    p_cost.add_argument("--local-efficiency-factor", type=float, default=0.70)
+    p_cost.add_argument("--model-n-jobs", type=int, default=1)
+    p_cost.add_argument("--local-checkpoint-frequency", type=int, default=5)
+    p_cost.add_argument("--warn-if-wall-days-above", type=float, default=14.0)
+    # Cloud
+    p_cost.add_argument("--cloud-workers", type=int, default=32)
+    p_cost.add_argument("--cloud-price-per-hour", type=float, default=0.10)
+    p_cost.add_argument("--cloud-efficiency-factor", type=float, default=0.85)
+    p_cost.add_argument("--max-concurrent-jobs", type=int, default=32)
+    p_cost.add_argument("--cloud-checkpoint-frequency", type=int, default=10)
+    # Calibration / output
+    p_cost.add_argument("--calibrate", action="store_true",
+                        help="Run a tiny synthetic fit per available algorithm to measure avg seconds per fit.")
+    p_cost.add_argument(
+        "--calibration-output",
+        type=Path,
+        default=None,
+        help="Path to write cost_estimate_calibration.json (only with --calibrate).",
+    )
+    p_cost.add_argument(
+        "--algorithm",
+        type=str,
+        default="xgboost",
+        choices=["xgboost", "lightgbm", "catboost", "histgb"],
+        help="Algorithm to use for the calibrated avg_seconds_per_fit.",
+    )
+    p_cost.add_argument("--output", type=Path, default=None,
+                        help="Path to write the JSON cost estimate.")
+    p_cost.set_defaults(func=_cmd_estimate_cost)
 
     args = parser.parse_args(argv)
     return int(args.func(args))
