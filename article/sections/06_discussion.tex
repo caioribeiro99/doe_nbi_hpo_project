@@ -1,0 +1,55 @@
+\section{Discussion}\label{sec:discussion}
+
+\todoblock{Defer the discussion until the v1 results are aggregated.
+Below is a checklist of points the discussion must engage with so that
+the article remains honest about scope and limitations.}
+
+\paragraph{Why true NBI matters in practice.} The dissertation
+implementation \citep{ribeiro2026dissertation} produced compelling
+cost-quality numbers using a weighted-sum scalarization that the
+post-defense audit reclassified as \emph{not NBI}.
+\todoblock{Compare cost-quality outcomes between the legacy
+weighted-sum and the article-track $N$-objective NBI on the same v1
+panel. If parity holds across most datasets but NBI dominates on
+non-convex fronts, that is the headline contribution.}
+
+\paragraph{When MBPA fires.}
+The conditional trigger fires only when the primary frontier is
+flat / compressed. \todoblock{Report the trigger frequency per
+dataset and per algorithm; confirm the 0.30 elliptical radius default
+or recommend an updated value.}
+
+\paragraph{When the framework over-engineers the problem.}
+Small datasets (Breast Cancer, German Credit) and high-separability
+ones (Mushroom) may collapse to nearly flat fronts at near-perfect
+quality; in that regime, classic random search with a tighter budget
+may be the right answer. \todoblock{Quantify and discuss.}
+
+\paragraph{Algorithm-specific findings.}
+\todoblock{Report any cases where the proposed method is markedly
+better / worse for CatBoost than for XGBoost / LightGBM; relate to
+CatBoost's ordered boosting and categorical handling.}
+
+\paragraph{Limitations.}
+The v1 panel is restricted to twelve public tabular datasets and ten
+replicas; statistical claims are necessarily within that scope. The
+calibration metrics (Brier, ECE) are reported but not optimized; the
+proposed method is tuning for quality and cost, and calibration is a
+secondary lens.
+\todoblock{Add limitations specific to the observed results --
+e.g., MBPA trigger rate, anchor convergence on certain datasets,
+sensitivity to the choice of factor count.}
+
+\paragraph{Threats to validity.}
+\todoblock{Discuss: (i) the same seed protocol yields tiny but
+non-zero non-determinism on \texttt{tree\_method=hist}; the article
+defaults to \texttt{exact} for the headline tables; (ii) the cost
+estimator over-estimates by the configured \texttt{overhead\_factor}
+of 1.10; (iii) the 51 / 66 NBI sub-problem grid may under-cover
+non-convex fronts in 4D+; the slow-marked test for $q{=}5$ runs only
+the centroid.}
+
+\paragraph{Implications for the doctoral 82-dataset benchmark.}
+\todoblock{Use the cost estimator to project from the v1 results to
+the doctoral scope. State explicitly that the present article is
+\emph{not} the doctoral benchmark.}

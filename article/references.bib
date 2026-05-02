@@ -1,0 +1,287 @@
+% =============================================================================
+% Bibliography for the article-track manuscript.
+% Some entries are placeholders; verify DOIs and pages before submission.
+% =============================================================================
+
+% --- Core methodological references -----------------------------------------
+
+@article{das1998nbi,
+  author  = {Das, Indraneel and Dennis, John E.},
+  title   = {Normal-boundary intersection: A new method for generating the
+             {P}areto surface in nonlinear multicriteria optimization
+             problems},
+  journal = {SIAM Journal on Optimization},
+  volume  = {8},
+  number  = {3},
+  pages   = {631--657},
+  year    = {1998},
+  doi     = {10.1137/S1052623496307510}
+}
+
+@article{pereira2025eaai,
+  author  = {Costa Pereira, Matheus and Tertuliano Ribeiro, Caio
+             and Amaury Mendes, Ron{\^a} Rinston and
+             da Silva Campos, Paulo Henrique and de Paiva, Anderson Paulo},
+  title   = {A hybrid multivariate normal boundary intersection approach
+             with post-optimization assisted by mixture design of experiments},
+  journal = {Engineering Applications of Artificial Intelligence},
+  volume  = {162},
+  pages   = {112510},
+  year    = {2025},
+  doi     = {10.1016/j.engappai.2025.112510}
+}
+
+@phdthesis{ribeiro2026dissertation,
+  author       = {Ribeiro, Caio Tertuliano},
+  title        = {{Meta-otimiza\c{c}\~{a}o dos Hiperpar\^{a}metros do Algoritmo
+                  XGBoost para classifica\c{c}\~{a}o bin\'{a}ria: uma
+                  integra\c{c}\~{a}o entre Planejamento de Experimentos e o
+                  M\'{e}todo da Interse\c{c}\~{a}o Normal \`{a} Fronteira}},
+  school       = {Universidade Federal de Itajub\'{a} (UNIFEI)},
+  year         = {2026},
+  type         = {Master's dissertation},
+  note         = {Code archived at
+                  \url{https://github.com/caioribeiro99/doe_nbi_hpo_project}
+                  tag \texttt{v0.1.0-dissertation}.}
+}
+
+% --- Hyperparameter optimization references ---------------------------------
+
+@article{bergstra2012random,
+  author  = {Bergstra, James and Bengio, Yoshua},
+  title   = {Random search for hyper-parameter optimization},
+  journal = {Journal of Machine Learning Research},
+  volume  = {13},
+  pages   = {281--305},
+  year    = {2012}
+}
+
+@inproceedings{bergstra2011tpe,
+  author    = {Bergstra, James and Bardenet, R{\'e}mi and Bengio, Yoshua
+               and K{\'e}gl, Bal{\'a}zs},
+  title     = {Algorithms for hyper-parameter optimization},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {24},
+  year      = {2011}
+}
+
+@article{shahriari2016bayesian,
+  author  = {Shahriari, Bobak and Swersky, Kevin and Wang, Ziyu and
+             Adams, Ryan P. and de Freitas, Nando},
+  title   = {Taking the human out of the loop: a review of {B}ayesian
+             optimization},
+  journal = {Proceedings of the IEEE},
+  volume  = {104},
+  number  = {1},
+  pages   = {148--175},
+  year    = {2016},
+  doi     = {10.1109/JPROC.2015.2494218}
+}
+
+@article{frazier2018tutorial,
+  author  = {Frazier, Peter I.},
+  title   = {A tutorial on {B}ayesian optimization},
+  journal = {arXiv preprint arXiv:1807.02811},
+  year    = {2018}
+}
+
+@article{probst2019tunability,
+  author  = {Probst, Philipp and Boulesteix, Anne-Laure and Bischl, Bernd},
+  title   = {Tunability: importance of hyperparameters of machine learning
+             algorithms},
+  journal = {Journal of Machine Learning Research},
+  volume  = {20},
+  number  = {53},
+  pages   = {1--32},
+  year    = {2019}
+}
+
+% --- Multi-objective references ---------------------------------------------
+
+@article{deb2002nsga2,
+  author  = {Deb, Kalyanmoy and Pratap, Amrit and Agarwal, Sameer and
+             Meyarivan, T.},
+  title   = {A fast and elitist multiobjective genetic algorithm: {NSGA-II}},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {6},
+  number  = {2},
+  pages   = {182--197},
+  year    = {2002},
+  doi     = {10.1109/4235.996017}
+}
+
+@article{morales2022survey,
+  author  = {Morales-Hern{\'a}ndez, Alejandro and others},
+  title   = {A survey on multi-objective hyperparameter optimization in
+             machine learning},
+  journal = {arXiv preprint arXiv:2111.13755v3},
+  year    = {2022}
+}
+
+% --- GBDT references --------------------------------------------------------
+
+@inproceedings{chen2016xgboost,
+  author    = {Chen, Tianqi and Guestrin, Carlos},
+  title     = {{XGBoost}: A scalable tree boosting system},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference
+               on Knowledge Discovery and Data Mining},
+  pages     = {785--794},
+  year      = {2016},
+  doi       = {10.1145/2939672.2939785}
+}
+
+@inproceedings{ke2017lightgbm,
+  author    = {Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng
+               and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
+  title     = {{LightGBM}: A highly efficient gradient boosting decision tree},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {30},
+  year      = {2017}
+}
+
+@inproceedings{prokhorenkova2018catboost,
+  author    = {Prokhorenkova, Liudmila and Gusev, Gleb and Vorobev, Aleksandr
+               and Dorogush, Anna Veronika and Gulin, Andrey},
+  title     = {{CatBoost}: unbiased boosting with categorical features},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {31},
+  year      = {2018}
+}
+
+@article{grinsztajn2022tree,
+  author  = {Grinsztajn, L{\'e}o and Oyallon, Edouard and Varoquaux, Ga{\"e}l},
+  title   = {Why do tree-based models still outperform deep learning on
+             typical tabular data?},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {35},
+  year    = {2022}
+}
+
+% --- DoE / RSM / Mixture references -----------------------------------------
+
+@book{montgomery2017doe,
+  author    = {Montgomery, Douglas C.},
+  title     = {Design and Analysis of Experiments},
+  publisher = {Wiley},
+  edition   = {9th},
+  year      = {2017}
+}
+
+@book{myers2016rsm,
+  author    = {Myers, Raymond H. and Montgomery, Douglas C.
+               and Anderson-Cook, Christine M.},
+  title     = {Response Surface Methodology: Process and Product
+               Optimization Using Designed Experiments},
+  publisher = {Wiley},
+  edition   = {4th},
+  year      = {2016}
+}
+
+@book{cornell2002mixture,
+  author    = {Cornell, John A.},
+  title     = {Experiments with Mixtures: Designs, Models, and the Analysis
+               of Mixture Data},
+  publisher = {Wiley},
+  edition   = {3rd},
+  year      = {2002}
+}
+
+@article{scheffe1958simplex,
+  author  = {Scheff{\'e}, Henry},
+  title   = {Experiments with mixtures},
+  journal = {Journal of the Royal Statistical Society: Series B
+             (Methodological)},
+  volume  = {20},
+  number  = {2},
+  pages   = {344--360},
+  year    = {1958}
+}
+
+@article{kaiser1958varimax,
+  author  = {Kaiser, Henry F.},
+  title   = {The varimax criterion for analytic rotation in factor analysis},
+  journal = {Psychometrika},
+  volume  = {23},
+  number  = {3},
+  pages   = {187--200},
+  year    = {1958},
+  doi     = {10.1007/BF02289233}
+}
+
+% --- Statistical comparison reference ----------------------------------------
+
+@article{demsar2006statistical,
+  author  = {Dem{\v{s}}ar, Janez},
+  title   = {Statistical comparisons of classifiers over multiple data sets},
+  journal = {Journal of Machine Learning Research},
+  volume  = {7},
+  pages   = {1--30},
+  year    = {2006}
+}
+
+% --- Calibration ------------------------------------------------------------
+
+@article{naeini2015calibration,
+  author  = {Naeini, Mahdi Pakdaman and Cooper, Gregory F. and
+             Hauskrecht, Milos},
+  title   = {Obtaining well calibrated probabilities using {B}ayesian
+             binning},
+  journal = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume  = {29},
+  number  = {1},
+  year    = {2015}
+}
+
+% --- Datasets (UCI / OpenML stubs; verify before submission) ----------------
+
+@misc{uci_magic,
+  title  = {{MAGIC} Gamma Telescope dataset},
+  author = {Bock, R. K.},
+  year   = {2004},
+  note   = {UCI Machine Learning Repository},
+  doi    = {10.24432/C52C8B}
+}
+
+@misc{uci_adult,
+  title  = {Adult / Census Income dataset},
+  author = {Becker, Barry and Kohavi, Ronny},
+  year   = {1996},
+  note   = {UCI Machine Learning Repository},
+  doi    = {10.24432/C5XW20}
+}
+
+@misc{uci_bank,
+  title  = {Bank Marketing dataset},
+  author = {Moro, S. and Cortez, P. and Rita, P.},
+  year   = {2014},
+  note   = {UCI Machine Learning Repository}
+}
+
+@misc{uci_credit_default,
+  title  = {Default of credit card clients dataset},
+  author = {Yeh, I-Cheng and Lien, Che-hui},
+  year   = {2009},
+  note   = {UCI Machine Learning Repository},
+  doi    = {10.1016/j.eswa.2007.12.020}
+}
+
+@misc{uci_dry_bean,
+  title  = {Dry Bean dataset},
+  author = {Koklu, Murat and Ozkan, Ilker Ali},
+  year   = {2020},
+  note   = {UCI Machine Learning Repository}
+}
+
+@misc{uci_phishing,
+  title  = {Phishing Websites dataset},
+  author = {Mohammad, Rami M. and Thabtah, Fadi and McCluskey, Lee},
+  year   = {2015},
+  note   = {UCI Machine Learning Repository}
+}
+
+@misc{uci_mushroom,
+  title  = {Mushroom dataset},
+  author = {Schlimmer, Jeff},
+  year   = {1987},
+  note   = {UCI Machine Learning Repository}
+}

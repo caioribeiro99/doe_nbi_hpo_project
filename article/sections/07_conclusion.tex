@@ -1,0 +1,28 @@
+\section{Conclusion}\label{sec:conclusion}
+
+We presented a post-dissertation methodological refinement and
+generalization of the DoE + RSM + Varimax + NBI framework for
+multi-objective hyperparameter tuning of GBDT models. The article-track
+implementation departs from the dissertation pipeline of
+\citep{ribeiro2026dissertation} in four substantive ways:
+(i) the optimizer is a true $N$-objective NBI rather than a
+weighted-sum scalarization; (ii) every objective carries an explicit
+direction, with FMSE wrapping for $\VRF$ targets; (iii) the surrogate
+fitting is design-aware, separating process-quadratic RSM from
+Scheff\'{e} mixture polynomials; and (iv) a conditional MBPA
+post-optimization stage refines weights when the primary frontier is
+weakly informative. The legacy weighted-sum solver is retained as an
+ablation baseline and is no longer named NBI in either the code base
+or the article text.
+
+\todoblock{Quantitative claims (CPU-hour reduction, predictive parity
+intervals, MBPA trigger rate, NBI residual percentiles) go here once
+the v1 campaign is aggregated. Avoid hyperbole; report medians and
+inter-quartile ranges, not single-replica winners.}
+
+\paragraph{Future work.} Three directions follow naturally:
+the doctoral 82-dataset benchmark; an extension to non-tree
+estimators with the same \texttt{ObjectiveSpec} layer
+(linear models, deep tabular networks); and a tighter coupling
+between the cost estimator and the orchestrator so that a campaign
+can self-tune its replica count to a wall-clock budget.

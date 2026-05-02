@@ -1,0 +1,99 @@
+\section{Introduction}\label{sec:introduction}
+
+Hyperparameter optimization (HPO) is the dominant lever between an
+out-of-the-box gradient-boosted decision tree (GBDT) implementation
+and a competitive deployed model
+\citep{probst2019tunability,bergstra2012random}. In tabular
+classification, where GBDT methods such as XGBoost
+\citep{chen2016xgboost}, LightGBM \citep{ke2017lightgbm}, and CatBoost
+\citep{prokhorenkova2018catboost} remain the leading family
+\citep{grinsztajn2022tree}, this lever simultaneously affects three
+deliverables a practitioner cares about: predictive quality, the
+wall-clock and energy cost of training, and the run-to-run stability
+of the resulting model. Treating HPO as a single-objective scalar
+search obscures these trade-offs and forces them to be re-discovered
+post hoc.
+
+A natural alternative is to formulate HPO as a multi-objective problem
+and to seek a set of compromise solutions on the Pareto frontier
+\citep{deb2002nsga2,morales2022survey}. Within this view, three
+methodological challenges interact: (i) deciding \emph{which}
+metrics enter the objective vector and \emph{in which direction} each
+should be optimized; (ii) producing a sample of high-quality candidates
+under a strict evaluation budget; and (iii) selecting a final
+configuration in a way that is auditable rather than ad hoc.
+
+The dissertation underlying this article \citep{ribeiro2026dissertation}
+addressed (i)--(iii) with a Design of Experiments (DoE) front end, a
+PCA + Varimax factor reduction of the response space (the
+\emph{Varimax Rotated Factor Score} representation, $\VRF$), a
+quadratic Response Surface Methodology (RSM) surrogate, and a
+weighted-sum scalarization sweep over a $\beta$-grid that the
+dissertation labelled ``NBI''. The post-defense audit summarized in
+\texttt{docs/METHODOLOGY\_DECISIONS.md} of the companion repository
+identified that the implementation was, in fact, a normalized
+weighted-sum scalarization rather than the Das--Dennis Normal Boundary
+Intersection \citep{das1998nbi}. Independently, the peer-reviewed
+multivariate $\NBI$ formulation of \citet{pereira2025eaai} reframes
+the same building blocks (rotated factor scores; payoff matrix;
+mixture-based post-optimization on the simplex of weights) and
+demonstrates the value of a true sub-problem-based $\NBI$ when
+objectives are correlated.
+
+This article presents the post-dissertation methodological refinement
+of that pipeline as implemented on the
+\texttt{repo-publication-readiness} branch of the companion repository.
+The contributions are:
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{Explicit objective directions and FMSE wrapping.}
+        Every objective entering the optimization carries a required
+        direction (\textsc{minimize}, \textsc{maximize},
+        \textsc{target}) and an optional FMSE transform that converts
+        target-seeking objectives to a uniform minimization convention,
+        following Eqs.~21--22 of \citet{pereira2025eaai}.
+  \item \textbf{True $N$-objective NBI.} Anchors are computed by
+        per-objective surrogate optimization; the payoff matrix
+        $\bm{\Phi}$ and the quasi-normal direction
+        $\hat{\bm n} = -\bm{\Phi}\bm{1}/\|\bm{\Phi}\bm{1}\|$ are
+        first-class objects; each sub-problem
+        $\max\,t\;\text{s.t.}\;\hat{\bm F}(\bm x) = \bm F^{U} +
+        \bm{\Phi}\bm\beta + t\,\hat{\bm n}$ is solved with vector
+        equality constraints and SLSQP. The mathematical core is
+        dimension-agnostic, supporting $q\ge 2$ objectives with no
+        bi-objective hard-coding.
+  \item \textbf{Design-aware surrogate modeling.} Process-quadratic
+        RSM is used on factorial / central composite designs;
+        Scheff\'{e} canonical mixture polynomials are used on
+        simplex-lattice designs and the post-optimization stage. Cross
+        usage is guarded by a validator that warns or rejects
+        incompatible combinations.
+  \item \textbf{Conditional MBPA post-optimization.} A second stage
+        triggers only when the primary frontier diagnostics indicate a
+        flat or compressed front; the trigger decision is logged
+        regardless. When fired, it fits Scheff\'{e} mixture
+        surrogates of generalized distance to utopia and Shannon
+        entropy over the simplex of weights and refines $\bm w^{*}$
+        inside an elliptical interior constraint.
+  \item \textbf{Reproducibility and cost discipline.} A YAML config
+        layer (Pydantic v2) makes every run declarative; a calibrated
+        cost estimator predicts CPU-hours, wall-clock time, and cloud
+        spend before committing to a campaign; a CI pipeline runs the
+        $N$-objective NBI residual checks on every push.
+\end{itemize}
+
+The first article-track experiment, described in
+Section~\ref{sec:experimental-design}, evaluates the framework on
+twelve public tabular classification datasets, three GBDT algorithms,
+and ten independent replicas, against four established baselines and a
+legacy weighted-sum ablation. We deliberately defer the
+82-dataset doctoral benchmark to a follow-up paper.
+
+\paragraph{Outline.} Section~\ref{sec:related-work} surveys the
+relevant HPO literature and positions this work against
+\citet{pereira2025eaai} and \citet{ribeiro2026dissertation}.
+Section~\ref{sec:method} develops the article-track method.
+Section~\ref{sec:experimental-design} states the planned protocol.
+Section~\ref{sec:results} reports results
+\todoblock{after the v1 campaign runs}.
+Section~\ref{sec:discussion} interprets them and
+Section~\ref{sec:conclusion} closes.

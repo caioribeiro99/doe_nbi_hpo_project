@@ -1,0 +1,111 @@
+% =============================================================================
+% Article-track manuscript scaffold (first paper).
+%
+% Branch:        repo-publication-readiness
+% Status:        SCAFFOLD ONLY -- experimental results not yet inserted.
+% Methodology:   article-track (true N-objective NBI, VRF/FMSE, MBPA),
+%                NOT identical to the dissertation baseline. See
+%                ../docs/METHODOLOGY_DECISIONS.md and
+%                DISSERTATION_TO_ARTICLE_MAP.md.
+% Compile:       pdflatex main && bibtex main && pdflatex main && pdflatex main
+%
+% Notes
+% - Uses a portable preamble (article class + natbib + hyperref) so the
+%   scaffold compiles without journal-specific style files. Switch to a
+%   target template (Elsevier elsarticle, IEEE, Springer Nature) once the
+%   target venue is selected.
+% - Every section file contains explicit TODO blocks for places where
+%   results, citations, or experiment-dependent prose are still missing.
+% =============================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages -----------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[round]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,
+            urlcolor=blue!50!black]{hyperref}
+\usepackage{cleveref}
+\usepackage{listings}
+
+% --- Macros -------------------------------------------------------------------
+\newcommand{\todoblock}[1]{\par\noindent\fbox{\parbox{0.97\linewidth}{%
+  \textbf{TODO:} #1}}\par\smallskip}
+\newcommand{\NBI}{NBI}
+\newcommand{\VRF}{VRF}
+\newcommand{\MBPA}{MBPA}
+\newcommand{\CCDFC}{CCDFC}
+
+\graphicspath{{figures/}}
+
+% --- Title --------------------------------------------------------------------
+\title{Multi-objective Hyperparameter Optimization of\\
+       Gradient-Boosted Decision Trees via\\
+       Design of Experiments and True Normal Boundary Intersection\\
+       \small (working title)}
+
+\author{%
+  Caio Tertuliano Ribeiro\thanks{Federal University of Itajub\'{a} (UNIFEI).
+    Corresponding author: \texttt{caio.tertu99@gmail.com}.}\\
+  \textit{(co-authors TBD)}\\[0.4em]
+}
+\date{\today}
+
+% =============================================================================
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\noindent\textbf{Keywords:} multi-objective hyperparameter optimization,
+design of experiments, response surface methodology, normal boundary
+intersection, factor analysis, varimax rotation, mixture design,
+gradient-boosted decision trees, XGBoost, LightGBM, CatBoost.
+
+% --- Sections ----------------------------------------------------------------
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_method}
+\input{sections/04_experimental_design}
+\input{sections/05_results}
+\input{sections/06_discussion}
+\input{sections/07_conclusion}
+
+% --- Acknowledgements --------------------------------------------------------
+\section*{Acknowledgements}
+\todoblock{Add funding agencies, advisors, computational resources, and
+co-authors. Mention UNIFEI, FAPEMIG (BPD-01045-22 collaboration if
+applicable), and the GitHub artifact / CI infrastructure hosting the
+reproducibility bundle.}
+
+% --- Code/data availability ---------------------------------------------------
+\section*{Code and data availability}
+The article-track implementation, configuration files, and
+reproducibility manifests are openly available under the MIT license at
+\url{https://github.com/caioribeiro99/doe_nbi_hpo_project} on the
+\texttt{repo-publication-readiness} branch. The dissertation baseline is
+preserved on \texttt{main}, tagged \texttt{v0.1.0-dissertation}.
+Every replica writes a system-fingerprinted manifest and per-fold
+metrics; aggregation scripts regenerate the tables in
+Section~\ref{sec:results}.
+
+% --- Bibliography -------------------------------------------------------------
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

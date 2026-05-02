@@ -1,0 +1,104 @@
+\section{Results}\label{sec:results}
+
+\todoblock{This section is intentionally a scaffold. Insert results
+\emph{verbatim} from the aggregation CSVs once
+\texttt{configs/article\_3vrf\_xgb\_magic.yaml} (and its multi-dataset
+variant to be created) finishes running on the v1 panel of
+Section~\ref{sec:experimental-design}. Do not invent numbers.}
+
+\subsection{Dataset-level performance}
+\label{sec:res-performance}
+\begin{table}[t]
+  \centering
+  \caption{Predictive performance (mean $\pm$ standard deviation over
+  $R{=}10$ replicas) per (dataset, algorithm, method).
+  \textbf{TODO: insert after experiment runs.}}
+  \label{tab:performance}
+  \begin{tabular}{lllrrrrr}
+    \toprule
+    Dataset & Algorithm & Method & ROC-AUC & PR-AUC & F1 & Bal.\ Acc. & MCC \\
+    \midrule
+    \multicolumn{8}{c}{\textit{TODO: rows from
+       experiments/<dataset>/<design>/aggregated\_table.csv}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Computational cost}
+\label{sec:res-cost}
+\begin{table}[t]
+  \centering
+  \caption{Computational cost: mean time per fold, total optimization
+  time, and total wall-clock time. \textbf{TODO}.}
+  \label{tab:cost}
+  \begin{tabular}{lllrrr}
+    \toprule
+    Dataset & Algorithm & Method & Time/fold (s) & Opt.\ time (s) & Total time (s) \\
+    \midrule
+    \multicolumn{6}{c}{\textit{TODO}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Cross-dataset comparison}
+\label{sec:res-friedman}
+\todoblock{Insert Friedman test and Nemenyi critical-difference plot
+after running the panel. Discuss any rank inversions between the
+proposed method and TPE/BO. Cite \citet{demsar2006statistical}.}
+
+\subsection{NBI vs.\ legacy weighted-sum ablation}
+\label{sec:res-ablation}
+\todoblock{Side-by-side comparison: legacy
+\texttt{run\_nbi\_weighted\_sum} vs.\ true $N$-objective NBI. The
+expected outcome is that NBI produces more uniformly spaced points on
+the Pareto front, but the practical performance difference depends on
+front curvature; a synthetic confirmation already passes in
+\texttt{tests/methodology/test\_nbi\_core.py}.}
+
+\subsection{$N$-objective NBI residual diagnostics}
+\label{sec:res-nbi-residuals}
+\begin{table}[t]
+  \centering
+  \caption{NBI sub-problem residual norms across the $51$ $\beta$ /
+  $66$ $\beta$ grid for the $q{=}2$ / $q{=}3$ runs, per dataset.
+  \textbf{TODO}.}
+  \label{tab:nbi-residuals}
+  \begin{tabular}{lrrr}
+    \toprule
+    Dataset & $\max \|\text{residual}\|$ & median & $p_{95}$ \\
+    \midrule
+    \multicolumn{4}{c}{\textit{TODO}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Factor model and VRF interpretation}
+\label{sec:res-vrf}
+\todoblock{Insert per-dataset rotated loading tables (one row per raw
+metric, one column per VRF), with eigenvalues and cumulative
+variance. Highlight the construct each VRF maps to.}
+
+\subsection{MBPA post-optimization trigger summary}
+\label{sec:res-mbpa}
+\begin{table}[t]
+  \centering
+  \caption{Per-dataset MBPA trigger summary. ``Triggered'' = at least
+  one of the six diagnostics fired; ``Refined'' = a refined
+  $\bm w^{*}$ was recovered; ``Improved'' = the refined candidate
+  improved the selection metric over the primary $\bm w^{*}$.
+  \textbf{TODO}.}
+  \label{tab:mbpa}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Dataset & Replicas & Triggered & Refined & Improved \\
+    \midrule
+    \multicolumn{5}{c}{\textit{TODO}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Reproducibility artifact summary}
+\label{sec:res-artifacts}
+\todoblock{Insert artifact count, total storage, hash of the canonical
+design, and the GitHub release tag (\texttt{v0.3.0-articlev1}) once
+the campaign is archived.}

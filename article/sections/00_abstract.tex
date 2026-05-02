@@ -1,0 +1,28 @@
+% Abstract: tight, claim-light. Numbers go in only after the v1
+% experiment runs. Until then, keep methodological framing.
+Hyperparameter tuning of gradient-boosted decision trees is inherently
+multi-objective: predictive quality must be balanced against
+computational cost and, in practice, against robustness across data
+splits. We present a design-aware framework that integrates a Design of
+Experiments (DoE) phase, design-aware response surface modeling
+(process quadratic on factorial and central composite designs;
+Scheff\'{e} canonical mixture polynomials on simplex weight designs), a
+flexible factor-analysis layer (PCA with Varimax rotation, configurable
+between automatic, fixed, manual-construct, and disabled modes), and a
+true \emph{$N$-objective} Normal Boundary Intersection (NBI) routine
+implementing the Das--Dennis sub-problem with explicit anchors, payoff
+matrix, quasi-normal direction, and equality constraints rather than a
+weighted-sum scalarization. A conditional Mixture-Based Performance
+Assessment (MBPA) post-optimization stage refines weights when the
+primary frontier is flat or weakly informative. We instantiate the
+framework on the
+$12{\times}3{\times}10$ benchmark introduced in
+Section~\ref{sec:experimental-design} (twelve public tabular datasets,
+three GBDT families, ten replicas under matched evaluation budgets) and
+position it as a methodological refinement and generalization of the
+dissertation pipeline of \citep{ribeiro2026dissertation}, anchored in
+the multivariate NBI/MBPA formulation of \citep{pereira2025eaai}.
+\todoblock{Insert quantitative claims (median CPU-hour reduction,
+predictive parity bands, MBPA trigger rates) once the v1 experiment is
+aggregated; write each claim verbatim from the result CSVs to avoid
+drift.}

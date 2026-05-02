@@ -1,0 +1,160 @@
+\section{Method}\label{sec:method}
+
+The article-track pipeline has six stages. Each stage corresponds to a
+self-contained module in the companion repository (the module name is
+indicated parenthetically below).
+
+\subsection{Stage 1 -- Design of Experiments}
+\label{sec:method-doe}
+A user-supplied or library-generated experimental design
+(\texttt{doe\_xgb.design}) covers the hyperparameter space. The
+canonical artifact is the Minitab face-centered central composite
+design ($\CCDFC$) of the dissertation, with $k{=}7$ XGBoost
+hyperparameters, $n{=}88$ runs and four center points; the
+\texttt{DesignProvider} also generates fractional factorial,
+Box--Behnken, Latin hypercube, Sobol, and simplex-lattice designs
+in pure NumPy. Each artifact carries matrix diagnostics (rank,
+condition number, coverage of the coded box) and a SHA-256 of the
+source CSV so reviewers can replay it byte-for-byte.
+
+\subsection{Stage 2 -- Cross-validated evaluation}
+\label{sec:method-cv}
+Each design row is evaluated under stratified $k$-fold CV
+(default $k{=}5$); per-fold metrics are persisted in a long-format
+CSV. Quality metrics include accuracy, precision, recall, specificity,
+F1, ROC-AUC, PR-AUC, balanced accuracy, MCC, Brier score, and
+expected calibration error (ECE). Wall-clock cost is the mean
+fit-plus-predict time per fold. The single source of truth for
+hyperparameter naming and types is \texttt{doe\_xgb.config}.
+
+\subsection{Stage 3 -- Factor model with Varimax rotation}
+\label{sec:method-fa}
+The article-track factor model
+(\texttt{doe\_xgb.factor\_model}) supports four modes:
+\textsc{auto} (Kaiser eigenvalue $>1$ \emph{or} cumulative variance
+threshold), \textsc{fixed} (explicit number of factors -- the
+article default for the headline run is three),
+\textsc{manual} (user-declared constructs such as
+Quality / Cost / Robustness), and \textsc{none}
+(no FA; raw metrics flow through unchanged). All modes return
+loadings, factor scores, eigenvalues, explained variance,
+communalities, the rotation matrix, the construct map, and a KMO
+estimate where defined.
+
+\subsection{Stage 4 -- Objective specification}
+\label{sec:method-objectives}
+Every objective entering the optimization is declared through an
+\texttt{ObjectiveSpec} (\texttt{doe\_xgb.objectives}) with required
+fields \texttt{direction}
+$\in \{\textsc{minimize},\textsc{maximize},\textsc{target}\}$,
+\texttt{transform}
+$\in \{\textsc{raw},\textsc{zscore},\textsc{log1p},\textsc{factor\_score},\textsc{fmse},\textsc{custom}\}$,
+\texttt{role}
+$\in \{\textsc{primary\_nbi},\textsc{post\_optimization},\textsc{reporting},\textsc{constraint}\}$,
+and optional \texttt{target}, \texttt{weight}, \texttt{group},
+\texttt{bounds}, and \texttt{normalization}.
+A canonicalizer maps every spec to a minimization callable. For
+\textsc{target} / FMSE objectives we use Eq.~21 of
+\citet{pereira2025eaai}:
+\begin{equation}
+  f^{\text{FMSE}}_i(\bm x) \;=\; \bigl(\hat F_i(\bm x) - T_i\bigr)^{2}
+                                  \;+\;\sigma^{2}_{\hat F_i},
+  \label{eq:fmse}
+\end{equation}
+where $T_i$ is the target value (e.g., the per-objective surrogate
+optimum) and $\sigma^{2}_{\hat F_i}$ is the factor-variance term
+implied by the loadings $\bm L$ of stage 3. The article-track
+default for $\VRF$ objectives is \textsc{target} + FMSE; raw ML
+metrics (e.g., \emph{Time\_MeanFold}, \emph{Accuracy\_Mean}) use
+\textsc{raw} with explicit \textsc{minimize} / \textsc{maximize}.
+
+\subsection{Stage 5 -- Surrogate fitting}
+\label{sec:method-surrogate}
+For process variables (CCDFC, Box--Behnken, factorial), we fit a
+full quadratic RSM with strong-hierarchy backward elimination at
+$\alpha{=}0.05$ (\texttt{ProcessQuadraticRSM}). For mixture variables
+on the simplex (used by the post-optimization stage of
+Section~\ref{sec:method-mbpa}), we fit a Scheff\'{e} canonical
+mixture polynomial of order linear / quadratic / special cubic / cubic
+(\texttt{MixtureScheffeModel}). Backward elimination is intentionally
+disabled for Scheff\'{e} models because the canonical interpretation
+depends on the full term set. A
+\texttt{validate\_for\_model} routine warns or rejects incompatible
+design/family combinations (mixture model on CCDFC; process quadratic
+on simplex; quadratic on Latin hypercube).
+
+\subsection{Stage 6 -- True $N$-objective NBI}
+\label{sec:method-nbi}
+Let $\hat{\bm F}(\bm x) = (\hat F_1(\bm x),\dots,\hat F_q(\bm x))$ be
+the canonicalized minimization surrogates. We compute per-objective
+anchors $\bm x^{*}_j = \arg\min_{\bm x\in\Omega} \hat F_j(\bm x)$ and
+evaluate every objective at every anchor to obtain the payoff matrix
+$\bm{\Phi}^{\text{full}}_{ij} = \hat F_i(\bm x^{*}_j)$. The utopia
+point is its diagonal,
+$\bm F^{U}_i = \hat F_i(\bm x^{*}_i)$, and the CHIM matrix is
+$\bm{\Phi} = \bm{\Phi}^{\text{full}} - \bm F^{U}\bm{1}^{\top}$. The
+quasi-normal direction defaults to the Das--Dennis convention,
+\begin{equation}
+  \hat{\bm n} \;=\; \dfrac{-\bm{\Phi}\,\bm{1}}{\|\bm{\Phi}\,\bm{1}\|},
+  \label{eq:nhat}
+\end{equation}
+with a Gram--Schmidt orthogonal-complement variant available as a
+diagnostic. For a weight vector $\bm\beta$ on the simplex the
+sub-problem is
+\begin{equation}
+  \begin{aligned}
+    \max_{\bm x \in \Omega,\, t \ge 0} \quad & t \\
+    \text{s.t.}\quad & \hat{\bm F}(\bm x) - \bm F^{U}
+       - \bm{\Phi}\bm\beta - t\,\hat{\bm n} = \bm 0,
+  \end{aligned}
+  \label{eq:nbi-subproblem}
+\end{equation}
+solved as $q$ scalar equality constraints and $\bm x$ box bounds via
+SLSQP with multistart. Weight vectors come from a Scheff\'{e}
+simplex-lattice $\{q,m\}$ (default $m{=}50$ for $q{=}2$, $m{=}10$ for
+$q{=}3$, giving 51 and 66 sub-problems respectively). The residual
+$\|\hat{\bm F}(\bm x^{*}(\bm\beta)) - \bm F^{U} - \bm{\Phi}\bm\beta -
+t\,\hat{\bm n}\|$ is reported for every sub-problem so reviewers can
+audit constraint satisfaction.
+
+\paragraph{Methodology pin.} The $N$-objective generality is
+verified by automated tests for $q\in\{2,3,4,5\}$ on synthetic
+quadratics with closed-form anchors; residual norms remain below
+$10^{-3}$ across the entire test matrix.
+
+\subsection{Stage 7 -- Conditional MBPA post-optimization}
+\label{sec:method-mbpa}
+A flat or compressed primary frontier reduces the practical value of
+$\NBI$. We compute six diagnostics on the front -- normalized
+objective range, average pairwise distance, count of unique
+non-dominated points, weight concentration, curvature score, spread
+$\Delta$ -- and trigger MBPA when any one fails its threshold
+(\texttt{doe\_xgb.diagnostics}). When triggered
+(\texttt{doe\_xgb.post\_optimization}) we fit Scheff\'{e} canonical
+mixture surrogates over the simplex of weights for the
+generalized distance to utopia
+\citep[Eq.~29]{pereira2025eaai} and the Shannon entropy
+$S(\bm w) = -\sum_i w_i \ln w_i$, then minimize $\mathrm{GD}(\bm w) -
+S(\bm w)$ inside an elliptical interior constraint that excludes
+vertex weights. Default radii are $0.30$, matching the EAAI
+recommendation. When MBPA is skipped we still write
+\texttt{frontier\_quality.json} so the decision is auditable.
+
+\subsection{Final selection}
+\label{sec:method-selection}
+A pluggable selection rule (\texttt{doe\_xgb.selection}) chooses the
+final candidate. The article-track default is
+\textsc{distance\_to\_utopia}; \textsc{knee},
+\textsc{utility}, \textsc{lexicographic}, and \textsc{topsis} are
+available. Benchmarks retain \textsc{max\_accuracy} so the
+dissertation tables remain comparable. The full Pareto front is
+always persisted regardless of the selection rule.
+
+\subsection{Legacy weighted-sum ablation}
+\label{sec:method-legacy}
+The dissertation-era weighted-sum scalarization
+(\texttt{doe\_xgb.scalarization.run\_nbi\_weighted\_sum}) is preserved
+verbatim and exposed as an ablation baseline. It is never referred to
+as NBI in the article text or in the article-track code; the
+discrepancy is documented in
+\texttt{docs/METHODOLOGY\_DECISIONS.md} D1.

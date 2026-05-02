@@ -1,0 +1,134 @@
+\section{Experimental design}\label{sec:experimental-design}
+
+\subsection{Datasets}
+\label{sec:exp-datasets}
+We evaluate the framework on twelve public tabular classification
+datasets selected to span dataset size, target class balance,
+feature-type mix, and application domain. The panel and the rationale
+for each entry are detailed in \texttt{EXPERIMENT\_PLAN\_V1.md}; the
+summary appears in Table~\ref{tab:datasets}.
+\todoblock{Replace this paragraph with the final dataset table once
+licences and downloader scripts are validated. The current panel is
+exploratory; final inclusion is conditional on a successful preflight
+check via \texttt{doe-xgb estimate-cost} and the loaders to be added in
+\texttt{scripts/fetch\_*\_dataset.py}.}
+
+\begin{table}[t]
+  \centering
+  \caption{Planned panel of twelve datasets for the article-track v1
+  experiment. ``Cat.'' = categorical-heavy; ``Imb.'' = noticeable class
+  imbalance.}
+  \label{tab:datasets}
+  \begin{tabular}{rlllrrll}
+    \toprule
+    \# & Dataset & Source & Task & Rows & Feats & Cat. / Imb. & Role \\
+    \midrule
+    1  & MAGIC Gamma Telescope        & UCI    & binary     & 19{,}020 & 10  & no  / mild & dissertation continuity \\
+    2  & Breast Cancer Wisc.\ Diag.   & UCI / sklearn & binary & 569 & 30 & no / mild & small classical \\
+    3  & Pima Indians Diabetes        & UCI / OpenML & binary & 768 & 8 & no / mild & small medical \\
+    4  & Spambase                     & UCI    & binary     & 4{,}601 & 57  & no  / mild & classical ML \\
+    5  & Adult / Census Income        & UCI    & binary     & 48{,}842 & 14 & yes / yes & CatBoost showcase \\
+    6  & Bank Marketing               & UCI    & binary     & 45{,}211 & 16 & yes / yes & business \\
+    7  & Default of Credit Card       & UCI    & binary     & 30{,}000 & 23 & no  / yes & finance \\
+    8  & German Credit                & UCI    & binary     & 1{,}000  & 20 & yes / mild & credit-risk \\
+    9  & Wine Quality (binarised)     & UCI    & binary     & 6{,}497  & 11 & no  / mild & sensitivity \\
+   10  & Dry Bean                     & UCI    & multiclass &13{,}611  & 16 & no  / mild & multiclass test \\
+   11  & Mushroom                     & UCI    & binary     & 8{,}124  & 22 & yes / no   & categorical \\
+   12  & Phishing Websites            & UCI    & binary     & 11{,}055 & 30 & yes / no   & security app. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Algorithms}
+\label{sec:exp-algorithms}
+We compare three GBDT families: XGBoost \citep{chen2016xgboost},
+LightGBM \citep{ke2017lightgbm}, and CatBoost
+\citep{prokhorenkova2018catboost}. The proposed method and every
+baseline tune the same per-algorithm hyperparameter list under the
+same bounds, listed in Table~\ref{tab:hpo-spaces}.
+\todoblock{Confirm the LightGBM / CatBoost search spaces. Initial
+plan: keep the seven-factor XGBoost space for parity with the
+dissertation, and use analogues for LightGBM (\texttt{num\_leaves},
+\texttt{min\_data\_in\_leaf}) and CatBoost (\texttt{depth},
+\texttt{l2\_leaf\_reg}).}
+
+\begin{table}[t]
+  \centering
+  \caption{Per-algorithm hyperparameter search spaces (tentative).}
+  \label{tab:hpo-spaces}
+  \begin{tabular}{lll}
+    \toprule
+    Algorithm & Hyperparameter & Range \\
+    \midrule
+    \multirow{7}{*}{XGBoost}
+      & \texttt{subsample}         & $[0.05, 1.00]$ \\
+      & \texttt{colsample\_bytree} & $[0.05, 1.00]$ \\
+      & \texttt{colsample\_bylevel}& $[0.05, 1.00]$ \\
+      & \texttt{learning\_rate}    & $[0.01, 0.30]$ \\
+      & \texttt{max\_depth}        & $\{3,\dots,18\}$ \\
+      & \texttt{gamma}             & $[0.05, 5.00]$ \\
+      & \texttt{n\_estimators}     & $\{50,\dots,700\}$ \\
+    \midrule
+    \multirow{7}{*}{LightGBM} & \multicolumn{2}{l}{\todoblock{fill in.}}\\
+    \midrule
+    \multirow{7}{*}{CatBoost} & \multicolumn{2}{l}{\todoblock{fill in.}}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Optimization protocol}
+\label{sec:exp-protocol}
+\paragraph{Replicas and CV.} Each (dataset, algorithm) cell is
+repeated for $R{=}10$ independent replicas; each replica fits a
+stratified 5-fold cross-validation. Replica seeds are derived from a
+single \texttt{seed\_base} (default $42$) so the protocol can be
+re-played byte-for-byte. A subset of datasets where the v1 results
+look interesting may be re-run at $R{=}30$ for a tighter confidence
+interval before submission.
+
+\paragraph{Methods.} Five HPO strategies under matched evaluation
+budget: (i) the proposed DoE + true $N$-objective NBI; (ii) coarse
+grid search; (iii) random search; (iv) Bayesian optimization
+(scikit-optimize \texttt{BayesSearchCV}); (v) tree-structured Parzen
+estimator (Hyperopt). A sixth ablation track runs the legacy
+weighted-sum scalarization to quantify the methodological correction.
+
+\paragraph{Budget.} The shared budget is the dissertation default
+$B = \mathrm{DOE\_RUNS} + \mathrm{NBI\_EVAL\_K} = 88 + 50 = 138$
+configurations, each evaluated under the same 5-fold CV. Benchmarks
+are passed \texttt{--budget 0} (auto-fairness) so they receive the
+same number of objective evaluations.
+
+\paragraph{Quality metrics.} ROC-AUC, PR-AUC, F1 (binary) /
+F1-macro (multiclass), balanced accuracy, MCC. Calibration metrics
+where probability outputs are well-defined: Brier score and ECE.
+
+\paragraph{Cost metrics.} Mean fit-plus-predict time per fold; total
+optimization time; total wall-clock time per replica.
+
+\paragraph{Statistical analysis.}
+Paired comparisons within each dataset
+(non-parametric \emph{Wilcoxon} or paired \emph{t} after
+log-transform); cross-dataset comparison via Friedman test followed
+by Nemenyi post-hoc with critical-difference plots, following
+\citet{demsar2006statistical}. All $p$-values use Holm--Bonferroni
+correction within each family of comparisons.
+
+\paragraph{Cost discipline.}
+Before launch, \texttt{doe-xgb estimate-cost --preset
+article\_v1\_12\_datasets\_3\_algorithms\_10\_replicas} produces an
+authoritative wall-clock and dollar-cost estimate. The campaign is
+gated by a sign-off on this estimate to avoid burning compute on
+mis-scoped runs.
+
+\paragraph{Determinism.}
+Headline tables use \texttt{tree\_method=exact} and
+\texttt{n\_jobs=1} (article-track default); the determinism cost is
+documented in \texttt{docs/METHODOLOGY\_DECISIONS.md} D13.
+
+\paragraph{Reproducibility.}
+Every replica writes a system-fingerprinted manifest, the full
+Pareto front, the NBI sub-problem residuals, the MBPA trigger
+diagnostics, and a long-format per-fold metric CSV. Aggregation
+scripts regenerate Tables~\ref{tab:performance}--\ref{tab:cost} of
+Section~\ref{sec:results}.

@@ -1,0 +1,52 @@
+\section{Related work}\label{sec:related-work}
+
+\subsection{Hyperparameter optimization for GBDT}
+Random search \citep{bergstra2012random}, Bayesian optimization
+\citep{shahriari2016bayesian,frazier2018tutorial}, and tree-structured
+Parzen estimators \citep{bergstra2011tpe} are the dominant baselines
+for HPO of tabular classifiers. They are the four reference
+optimizers used in the dissertation pipeline
+\citep{ribeiro2026dissertation} and remain the four reference
+benchmarks here.
+\todoblock{Tighten this paragraph after a literature pass selects
+exactly which BO and TPE variants to compare against (Optuna,
+scikit-optimize, Hyperopt). Currently we plan: scikit-optimize
+\texttt{BayesSearchCV} and Hyperopt TPE, matching the dissertation.}
+
+\subsection{Multi-objective HPO}
+\citet{morales2022survey} survey multi-objective HPO; recurring
+patterns include scalarization with rotating weights, NSGA-II-style
+evolutionary search \citep{deb2002nsga2}, and decomposition along the
+Pareto frontier. Within the DoE/RSM tradition, multi-objective
+problems are commonly attacked with Normal Boundary Intersection
+\citep{das1998nbi}, which generates evenly spaced points on the
+Pareto front of nonlinear MOO problems and is well-defined for
+arbitrary $q$ objectives.
+
+\subsection{Multivariate NBI with factor scores}
+The closest methodological reference for the article-track is
+\citet{pereira2025eaai}, who replace the original responses with
+Varimax-rotated factor scores ($\VRF$), wrap each $\VRF$ in an FMSE
+target-seeking loss, and solve the resulting NBI sub-problem under a
+spherical region constraint. They further introduce a
+mixture-design-based post-optimization that fits Scheff\'{e}
+canonical polynomials over the simplex of NBI weights and refines
+$\bm w^{*}$ by minimizing a generalized distance to utopia subject to
+an elliptical interior constraint and an entropy preference.
+
+\subsection{This work in context}
+Relative to \citep{pereira2025eaai}, we (a) port the framework to HPO
+of GBDT models with explicit hyperparameter box constraints rather
+than a hyperspherical region; (b) keep the FMSE wrapping for $\VRF$
+objectives but support a parallel direct-objective mode for raw ML
+metrics with explicit directions; (c) make the NBI sub-problem the
+\emph{actual} solver in the implementation rather than only a
+mathematical reference. Relative to
+\citep{ribeiro2026dissertation}, we replace the legacy weighted-sum
+scalarization with the true $N$-objective NBI, generalize the
+2-VRF / 3-VRF collapse to a configurable factor model
+(\textsc{auto}/\textsc{fixed}/\textsc{manual}/\textsc{none}), make
+RSM design-aware (separating process-quadratic from Scheff\'{e}
+mixture models), and add the conditional MBPA stage. The legacy
+weighted-sum solver is preserved as an explicit ablation baseline and
+is never referred to as NBI in the article-track code or text.
