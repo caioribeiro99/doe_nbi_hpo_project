@@ -38,6 +38,41 @@ IMPORTER = REPO / "scripts" / "import_openml_cc18.py"
 INTERNAL_PANEL_CSV = (
     REPO / "benchmarks" / "doctoral" / "internal_smoke_panel" / "datasets.csv"
 )
+METHOD_MATRIX_CSV = CC18_DIR / "method_matrix.csv"
+EXECUTION_POLICY_CSV = CC18_DIR / "execution_policy.csv"
+PAREGO_SUBSET_CSV = CC18_DIR / "parego_subset.csv"
+
+
+METHOD_MATRIX_REQUIRED_COLUMNS = (
+    "method_id",
+    "method_family",
+    "primary_or_ablation",
+    "objective_mode",
+    "implementation",
+    "package",
+    "full_cc18",
+    "subset_only",
+    "budget_unit",
+    "budget_equivalence_rule",
+    "supports_multiclass",
+    "supports_categorical_native",
+    "notes",
+)
+
+EXECUTION_POLICY_REQUIRED_COLUMNS = (
+    "method_id",
+    "execution_tier",
+    "run_scope",
+    "replica_policy",
+    "stage0",
+    "stage1_topup_to_005",
+    "stage2_topup_to_010",
+    "stage3_topup_to_030",
+    "requires_manual_signoff_before_stage3",
+    "notes",
+)
+
+EXPECTED_PAREGO_SUBSET_SIZE = 48
 
 
 EXPECTED_N_TASKS = 72
@@ -275,3 +310,249 @@ def test_importer_validate_only_accepts_committed_tasks_csv() -> None:
     )
     assert res.returncode == 0, (res.stdout, res.stderr)
     assert "72" in res.stdout
+
+
+# ---------------------------------------------------------------------------
+# method_matrix.csv (Commit 27 freeze)
+# ---------------------------------------------------------------------------
+
+
+def _bool(v: str) -> bool:
+    if v.strip().lower() in {"true", "false"}:
+        return v.strip().lower() == "true"
+    raise AssertionError(f"non-boolean: {v!r}")
+
+
+def _load_method_matrix() -> list[dict[str, str]]:
+    with METHOD_MATRIX_CSV.open() as f:
+        return list(csv.DictReader(f))
+
+
+def _load_execution_policy() -> list[dict[str, str]]:
+    with EXECUTION_POLICY_CSV.open() as f:
+        return list(csv.DictReader(f))
+
+
+def test_method_matrix_csv_parses() -> None:
+    rows = _load_method_matrix()
+    assert len(rows) >= 13
+
+
+def test_method_matrix_csv_has_required_columns() -> None:
+    rows = _load_method_matrix()
+    cols = set(rows[0].keys())
+    missing = [c for c in METHOD_MATRIX_REQUIRED_COLUMNS if c not in cols]
+    assert not missing, f"missing columns: {missing}"
+
+
+def test_method_matrix_method_ids_are_unique() -> None:
+    rows = _load_method_matrix()
+    ids = [r["method_id"] for r in rows]
+    assert len(ids) == len(set(ids))
+
+
+def test_method_matrix_full_and_subset_are_booleans() -> None:
+    rows = _load_method_matrix()
+    for r in rows:
+        _bool(r["full_cc18"])
+        _bool(r["subset_only"])
+
+
+def test_method_matrix_no_method_is_both_full_and_subset() -> None:
+    rows = _load_method_matrix()
+    for r in rows:
+        if _bool(r["full_cc18"]) and _bool(r["subset_only"]):
+            raise AssertionError(
+                f"{r['method_id']!r} is both full_cc18 and subset_only"
+            )
+
+
+def test_method_matrix_literature_only_is_not_full_cc18() -> None:
+    rows = _load_method_matrix()
+    for r in rows:
+        if r["primary_or_ablation"] == "literature_only":
+            assert not _bool(r["full_cc18"]), r["method_id"]
+            assert not _bool(r["subset_only"]), r["method_id"]
+
+
+def test_method_matrix_benchmarked_methods_have_budget_rule() -> None:
+    rows = _load_method_matrix()
+    for r in rows:
+        if r["primary_or_ablation"] == "literature_only":
+            continue
+        assert r["budget_equivalence_rule"], r["method_id"]
+        assert r["budget_equivalence_rule"] != "not_in_comparison", (
+            f"{r['method_id']!r} is benchmarked but its budget rule "
+            "is 'not_in_comparison'"
+        )
+
+
+def test_method_matrix_freeze_decisions_applied() -> None:
+    """Commit 27 freeze: rename hyperband_or_asha -> asha; FLAML stays
+    literature_only."""
+    rows = _load_method_matrix()
+    by_id = {r["method_id"]: r for r in rows}
+    assert "asha" in by_id
+    assert "hyperband_or_asha" not in by_id
+    assert by_id["flaml_optional"]["primary_or_ablation"] == "literature_only"
+
+
+# ---------------------------------------------------------------------------
+# execution_policy.csv
+# ---------------------------------------------------------------------------
+
+
+def test_execution_policy_csv_parses() -> None:
+    rows = _load_execution_policy()
+    assert rows
+
+
+def test_execution_policy_csv_has_required_columns() -> None:
+    rows = _load_execution_policy()
+    cols = set(rows[0].keys())
+    missing = [c for c in EXECUTION_POLICY_REQUIRED_COLUMNS if c not in cols]
+    assert not missing, f"missing columns: {missing}"
+
+
+def test_execution_policy_covers_every_method_in_matrix() -> None:
+    mm_ids = {r["method_id"] for r in _load_method_matrix()}
+    ep_ids = {r["method_id"] for r in _load_execution_policy()}
+    missing = mm_ids - ep_ids
+    extra = ep_ids - mm_ids
+    assert not missing, f"execution_policy missing rows for: {missing}"
+    assert not extra, f"execution_policy has extra rows for: {extra}"
+
+
+def test_execution_policy_benchmarked_methods_have_at_least_one_stage_true() -> None:
+    mm_by = {r["method_id"]: r for r in _load_method_matrix()}
+    for r in _load_execution_policy():
+        mid = r["method_id"]
+        if mm_by[mid]["primary_or_ablation"] == "literature_only":
+            continue
+        flags = [_bool(r[s]) for s in (
+            "stage0", "stage1_topup_to_005",
+            "stage2_topup_to_010", "stage3_topup_to_030",
+        )]
+        assert any(flags), f"{mid!r} has no stage enabled"
+
+
+def test_execution_policy_literature_only_methods_run_no_stage() -> None:
+    mm_by = {r["method_id"]: r for r in _load_method_matrix()}
+    for r in _load_execution_policy():
+        mid = r["method_id"]
+        if mm_by[mid]["primary_or_ablation"] != "literature_only":
+            continue
+        for s in ("stage0", "stage1_topup_to_005",
+                  "stage2_topup_to_010", "stage3_topup_to_030"):
+            assert not _bool(r[s]), f"{mid!r} runs stage {s}"
+        assert r["run_scope"] == "not_in_comparison"
+
+
+def test_execution_policy_run_scope_values_are_valid() -> None:
+    valid = {"full_cc18", "parego_subset", "not_in_comparison"}
+    for r in _load_execution_policy():
+        assert r["run_scope"] in valid, (r["method_id"], r["run_scope"])
+
+
+# ---------------------------------------------------------------------------
+# parego_subset.csv
+# ---------------------------------------------------------------------------
+
+
+def test_parego_subset_csv_size_matches_rule() -> None:
+    with PAREGO_SUBSET_CSV.open() as f:
+        rows = list(csv.DictReader(f))
+    assert len(rows) == EXPECTED_PAREGO_SUBSET_SIZE
+
+
+def test_parego_subset_task_ids_are_subset_of_tasks_csv() -> None:
+    with PAREGO_SUBSET_CSV.open() as f:
+        sub_ids = {int(r["openml_task_id"]) for r in csv.DictReader(f)}
+    with TASKS_CSV.open() as f:
+        all_ids = {int(r["openml_task_id"]) for r in csv.DictReader(f)}
+    assert sub_ids <= all_ids
+    assert len(sub_ids) == EXPECTED_PAREGO_SUBSET_SIZE
+
+
+def test_parego_subset_obeys_selection_rule() -> None:
+    """imbalance >= 5 OR n_classes >= 5 OR (categorical > 0 AND
+    5000 <= n_rows <= 50000)."""
+    with TASKS_CSV.open() as f:
+        all_rows = {int(r["openml_task_id"]): r for r in csv.DictReader(f)}
+    with PAREGO_SUBSET_CSV.open() as f:
+        for r in csv.DictReader(f):
+            tid = int(r["openml_task_id"])
+            t = all_rows[tid]
+            imb = float(t["class_imbalance_ratio"]) if t["class_imbalance_ratio"] else None
+            n_cls = int(t["n_classes"]) if t["n_classes"] else None
+            cat = int(t["categorical_feature_count"] or "0")
+            n_rows_v = int(t["n_rows"]) if t["n_rows"] else None
+            ok = (
+                (imb is not None and imb >= 5.0)
+                or (n_cls is not None and n_cls >= 5)
+                or (cat > 0 and n_rows_v is not None
+                    and 5000 <= n_rows_v <= 50000)
+            )
+            assert ok, f"task {tid} in subset but does not match rule"
+
+
+# ---------------------------------------------------------------------------
+# Job-count projection
+# ---------------------------------------------------------------------------
+
+
+def _stage_replicas() -> dict[str, int]:
+    return {
+        "stage0": 1,
+        "stage1_topup_to_005": 4,
+        "stage2_topup_to_010": 5,
+        "stage3_topup_to_030": 20,
+    }
+
+
+def _run_scope_size(scope: str) -> int:
+    if scope == "full_cc18":
+        return EXPECTED_N_TASKS
+    if scope == "parego_subset":
+        return EXPECTED_PAREGO_SUBSET_SIZE
+    return 0
+
+
+def _projected_jobs() -> dict[str, int]:
+    reps = _stage_replicas()
+    totals = {s: 0 for s in reps}
+    for r in _load_execution_policy():
+        nt = _run_scope_size(r["run_scope"])
+        for s in reps:
+            if _bool(r[s]):
+                totals[s] += nt * EXPECTED_N_ALGORITHMS * reps[s]
+    return totals
+
+
+def test_stage_job_counts_match_projection_doc() -> None:
+    totals = _projected_jobs()
+    assert totals["stage0"] == 2_304
+    assert totals["stage1_topup_to_005"] == 9_216
+    assert totals["stage2_topup_to_010"] == 13_680
+    assert totals["stage3_topup_to_030"] == 54_720
+
+
+def test_cumulative_job_count_at_stage3_matches_projection_doc() -> None:
+    totals = _projected_jobs()
+    cum = sum(totals.values())
+    assert cum == 79_920
+
+
+def test_full_cc18_method_count_matches_documented_partition() -> None:
+    rows = _load_method_matrix()
+    n_full = sum(1 for r in rows if _bool(r["full_cc18"]))
+    n_subset = sum(1 for r in rows if _bool(r["subset_only"]))
+    n_literature = sum(
+        1 for r in rows if r["primary_or_ablation"] == "literature_only"
+    )
+    # The matrix partitions into exactly these three buckets (the literature
+    # bucket has both flags false; the other two are mutually exclusive).
+    assert n_full == 12
+    assert n_subset == 1
+    assert n_literature == 3
+    assert n_full + n_subset + n_literature == len(rows)

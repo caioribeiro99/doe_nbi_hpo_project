@@ -97,6 +97,16 @@ hardcodes method names. Table~\ref{tab:methods} summarizes the
 matrix. Methods carry a \emph{primary / subset / ablation /
 literature\_only} status and an \emph{objective mode} flag (single-
 versus multi-objective).
+Per-method execution intensity follows a pre-registered
+execution-tier policy
+(\texttt{benchmarks/doctoral/openml\_cc18/execution\_policy.csv} and
+\texttt{execution\_tiers.md}): expensive methods (multi-fidelity,
+multi-objective evolutionary, the proposed method, and ablations)
+are gated through the four staged top-ups, and the final
+top-up to 30 replicas requires an explicit cost sign-off based on
+the observed stage-2 wall-clock. The campaign therefore degrades
+gracefully to a stage-2 (10-replica) snapshot if the projected
+stage-3 wall-clock proves prohibitive.
 
 \begin{table}[t]
   \centering
@@ -119,7 +129,7 @@ versus multi-objective).
     \texttt{random\_search}               & classical        & primary    & single & \citep{bergstra2012random} \\
     \texttt{tpe\_optuna}                  & classical        & primary    & single & \citep{bergstra2011tpe,akiba2019optuna} \\
     \texttt{smac3}                        & SMAC             & primary    & single & \citep{hutter2011smac,lindauer2022smac3} \\
-    \texttt{hyperband\_or\_asha}          & multi-fidelity   & primary    & single & \citep{li2017hyperband,li2020asha} \\
+    \texttt{asha}                          & multi-fidelity   & primary    & single & \citep{li2017hyperband,li2020asha} \\
     \texttt{bohb}                         & multi-fidelity   & primary    & single & \citep{falkner2018bohb} \\
     \texttt{dehb}                         & multi-fidelity   & primary    & single & \citep{awad2021dehb} \\
     \texttt{nsga2}                        & evolutionary MOO & primary    & multi  & \citep{deb2002nsga2,blank2020pymoo} \\

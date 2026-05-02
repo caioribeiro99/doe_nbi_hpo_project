@@ -51,14 +51,19 @@ the exact total is computed at shard-generation time from
 hardcoded. The methods themselves are listed in
 `docs/COMPARATIVE_PROTOCOL.md`.
 
-**Protocol freeze gate.** The next operational step is *not* to run a
-12-dataset campaign; it is to (i) resolve the open items at the bottom
-of `docs/COMPARATIVE_PROTOCOL.md` (FLAML inclusion, ASHA vs Hyperband,
-ParEGO subset, TODO references), then (ii) run
-`scripts/generate_cc18_job_shards.py` (planned), driven by the frozen
-`method_matrix.csv`, to materialize the SQLite shards under
-`jobs/doctoral/openml_cc18/shards/`. The method list must be frozen
-before any SQLite shards are committed.
+**Protocol freeze gate (cleared in Commit 27).** The four open
+items from Commit 26 are resolved: FLAML stays `literature_only`,
+ASHA was chosen over Hyperband (and the `method_id` was renamed),
+the ParEGO subset is frozen at 48 of 72 tasks
+(`benchmarks/doctoral/openml_cc18/parego_subset.csv`), and the
+two remaining TODO references do not block shard generation.
+
+The next operational step is to run
+`scripts/generate_cc18_job_shards.py` (planned), driven by the
+frozen pair `method_matrix.csv` + `execution_policy.csv` plus
+`parego_subset.csv`, to materialize the SQLite shards under
+`jobs/doctoral/openml_cc18/shards/`. No method list is hardcoded
+in that script.
 
 The CC18 task / dataset registry lives at
 `benchmarks/doctoral/openml_cc18/{tasks.csv, datasets.csv,

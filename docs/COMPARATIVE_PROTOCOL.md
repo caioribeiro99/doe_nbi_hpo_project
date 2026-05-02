@@ -70,7 +70,7 @@ OpenML task-defined folds if available), so every method spends the
 same number of fold-fits per replica. This matches the dissertation
 default and is the same `B` used by the legacy weighted-sum ablation.
 
-Multi-fidelity methods (`hyperband_or_asha`, `bohb`, `dehb`) cannot
+Multi-fidelity methods (`asha`, `bohb`, `dehb`) cannot
 be capped by configuration count without distorting their schedule.
 Their fairness rule is
 
@@ -130,19 +130,87 @@ toggleable per algorithm and is logged in the per-replica manifest).
 - Which methods run on the full 72 tasks vs the defined subset.
 - The stage at which each method enters the campaign.
 
-## What this protocol leaves open (TODO before shard freeze)
+## Frozen in Commit 27
 
-1. Decide whether FLAML is included as a single-algorithm GBDT
-   baseline or kept as literature-only.
-2. Pick exactly one of `hyperband_or_asha` for the multi-fidelity
-   slot — both are listed but only one will run, to control the
-   benchmark blast radius. ASHA is recommended for parallelism on the
-   dedicated Mac.
-3. Choose the ParEGO subset definition: imbalanced + multiclass +
-   categorical-heavy tasks (recommended) or a fully random sample of
-   ~12–18 tasks.
-4. Settle the verified DOI / pages / venue for any reference still
-   carrying a `TODO` marker in `article/references.bib`.
+All four open items from Commit 26 are resolved:
+
+1. **FLAML — frozen as `literature_only`.** Rationale: FLAML mixes
+   algorithm selection / pipeline behavior with HPO; the doctoral
+   benchmark compares fixed GBDT-family algorithms under common
+   search spaces. FLAML may be revisited as a systems-level baseline
+   after publication, but it does not block CC18 job generation.
+2. **ASHA over Hyperband.** The `method_id` was renamed
+   `hyperband_or_asha` → `asha`; the implementation tag is
+   `asha_via_optuna` and the budget unit is `fidelity_units`
+   (boosting iterations / `n_estimators`). Hyperband remains the
+   methodological family reference in
+   `article/sections/02_related_work.tex` and in this document.
+3. **ParEGO subset frozen.** Rule: include CC18 task if
+   `class_imbalance_ratio >= 5` OR `n_classes >= 5` OR
+   (`categorical_feature_count > 0` AND
+   `5000 <= n_rows <= 50000`). Applied against the committed
+   `tasks.csv`, this selects **48 of 72 tasks** (15 binary + 33
+   multiclass). The frozen subset is materialized at
+   `benchmarks/doctoral/openml_cc18/parego_subset.csv`.
+4. **TODO references.** `bischl2021openmlbenchmark` and
+   `rapin2018nevergrad` still carry explicit TODO markers in
+   `article/references.bib`. They are not load-bearing for shard
+   generation and will be settled at proof stage; the protocol does
+   not block on them.
+
+## Execution-tier policy (Commit 27)
+
+The frozen comparative protocol pairs the method matrix with a
+per-method execution-tier policy that gates how aggressively each
+method runs across the four staged top-ups. The policy is stored as
+`benchmarks/doctoral/openml_cc18/execution_policy.csv` and is
+documented in `benchmarks/doctoral/openml_cc18/execution_tiers.md`.
+The shard generator MUST consult both files when materializing the
+SQLite job matrix; method names MUST NOT be hardcoded.
+
+The five tiers gate the campaign as follows:
+
+- Tier 0 — controls (`default_gbdt`, `random_search`): every stage
+  unconditional.
+- Tier 1 — single-objective primary baselines (`tpe_optuna`,
+  `smac3`): every stage; stage 3 (top-up to 30 replicas) requires
+  manual sign-off.
+- Tier 2 — expensive primary methods (`asha`, `bohb`, `dehb`,
+  `nsga2`, `motpe`, `doe_rsm_vrf_true_nbi`): every stage; stage 3
+  requires manual sign-off.
+- Tier 3 — subset-only methods (`parego` on the 48-task subset):
+  every stage; stage 3 requires manual sign-off.
+- Tier 4 — ablations (`doe_rsm_vrf_true_nbi_no_mbpa`,
+  `legacy_weighted_sum_scalarization`): join at stage 2; stage 3
+  requires manual sign-off.
+- Tier ∞ — literature-only (`flaml_optional`,
+  `auto_sklearn_context`, `autogluon_context`): never enter the
+  job matrix.
+
+The projected job count under this policy is **2,304** at stage 0,
+**11,520** through stage 1, **25,200** through stage 2, and
+**79,920** through stage 3 — see
+`benchmarks/doctoral/openml_cc18/job_count_projection.md` for the
+breakdown and the dedicated-Mac wall-clock estimates.
+
+## Shard-generation contract
+
+The next operational commit implements
+`scripts/generate_cc18_job_shards.py`, which reads:
+
+- `benchmarks/doctoral/openml_cc18/method_matrix.csv` — methods,
+  budget rules, scope flags;
+- `benchmarks/doctoral/openml_cc18/execution_policy.csv` — per-method
+  per-stage gating, manual sign-off requirements;
+- `benchmarks/doctoral/openml_cc18/parego_subset.csv` — explicit
+  task-id list for subset-only methods;
+- `benchmarks/doctoral/openml_cc18/tasks.csv` — the 72 OpenML
+  task IDs;
+- `jobs/doctoral/openml_cc18/schema.sql` — the `cc18_jobs` schema.
+
+No method names, scope rules, or stage-gating logic may be
+hardcoded in the generator. If the CSVs disagree with this
+narrative document, the CSVs win.
 
 ## What this commit deliberately does NOT do
 

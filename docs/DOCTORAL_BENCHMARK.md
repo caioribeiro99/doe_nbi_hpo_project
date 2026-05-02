@@ -134,23 +134,30 @@ AutoGluon) are cited as context, not benchmarked, with FLAML
 optionally promoted to a baseline once the open items at the bottom
 of `docs/COMPARATIVE_PROTOCOL.md` are resolved.
 
-## Next operational step
+## Next operational step (Commit 27 freeze cleared)
 
-The next operational step is **not** "run the 12-dataset campaign";
-it is:
+The protocol is frozen. The next operational step is to implement
+`scripts/generate_cc18_job_shards.py`, driven by:
 
-1. Resolve the open items in `docs/COMPARATIVE_PROTOCOL.md` (FLAML
-   inclusion, ASHA vs Hyperband, ParEGO subset, TODO references in
-   `article/references.bib`).
-2. Freeze `benchmarks/doctoral/openml_cc18/method_matrix.csv`.
-3. Implement `scripts/generate_cc18_job_shards.py` (Commit 27 plan)
-   to materialize SQLite shards under
-   `jobs/doctoral/openml_cc18/shards/`, driven by the frozen CSV.
-4. Profile a single CC18 task at `R=1` per (task, algorithm, method)
-   to re-anchor the wall-clock estimates above.
+- `benchmarks/doctoral/openml_cc18/method_matrix.csv`
+  (frozen 16-row method matrix);
+- `benchmarks/doctoral/openml_cc18/execution_policy.csv`
+  (per-method per-stage gating, manual sign-off flag);
+- `benchmarks/doctoral/openml_cc18/parego_subset.csv`
+  (48 ParEGO subset task IDs);
+- `benchmarks/doctoral/openml_cc18/tasks.csv` (72 CC18 tasks);
+- `jobs/doctoral/openml_cc18/schema.sql` (`cc18_jobs` schema).
 
-The method list must be frozen before any SQLite shards are
-committed.
+**No method names, scope rules, or stage-gating logic may be
+hardcoded in the shard generator.** Projected job counts under the
+frozen policy: 2,304 at stage 0; 11,520 through stage 1; 25,200
+through stage 2; 79,920 through stage 3. See
+`benchmarks/doctoral/openml_cc18/job_count_projection.md` for the
+wall-clock projection (~6.7 / ~33 / ~74 / ~235 dedicated-Mac days
+at efficiency 0.75, scaling roughly inversely with efficiency).
+Stage 3 is gated by manual sign-off for every tier 1+ method, so
+the campaign can ship a stage-2 (10-replica) snapshot if the
+stage-3 cost is judged unacceptable.
 
 ## What this commit does NOT do
 

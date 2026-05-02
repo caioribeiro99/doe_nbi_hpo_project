@@ -18,13 +18,18 @@
 > `benchmarks/doctoral/openml_cc18/method_matrix.csv`; see
 > `docs/COMPARATIVE_PROTOCOL.md` and `docs/DOCTORAL_BENCHMARK.md`.
 >
-> **Next operational step is not "run the 12-dataset campaign".** It
-> is: (i) resolve the open items at the bottom of
-> `docs/COMPARATIVE_PROTOCOL.md`, (ii) freeze
-> `method_matrix.csv`, (iii) generate SQLite shards driven by the
-> CSV via `scripts/generate_cc18_job_shards.py` (planned for the
-> next commit). The method list must be frozen before any SQLite
-> shards are committed.
+> **Protocol freeze gate cleared in Commit 27.** FLAML stays
+> `literature_only`; ASHA was chosen over Hyperband; the ParEGO
+> subset is frozen at 48 of 72 tasks
+> (`benchmarks/doctoral/openml_cc18/parego_subset.csv`); the
+> per-method execution-tier policy lives at
+> `benchmarks/doctoral/openml_cc18/execution_policy.csv` and
+> `execution_tiers.md`. **Next operational step:** implement
+> `scripts/generate_cc18_job_shards.py`, driven by
+> `method_matrix.csv` + `execution_policy.csv` +
+> `parego_subset.csv` + `tasks.csv` against
+> `jobs/doctoral/openml_cc18/schema.sql`. No method list is
+> hardcoded in that script.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

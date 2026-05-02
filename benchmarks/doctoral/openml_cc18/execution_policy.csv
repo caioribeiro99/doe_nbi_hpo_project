@@ -1,0 +1,17 @@
+method_id,execution_tier,run_scope,replica_policy,stage0,stage1_topup_to_005,stage2_topup_to_010,stage3_topup_to_030,requires_manual_signoff_before_stage3,notes
+default_gbdt,tier0,full_cc18,full_30,true,true,true,true,false,Cheap control. No HPO. Runs at every stage without manual sign-off.
+random_search,tier0,full_cc18,full_30,true,true,true,true,false,Cheap classical baseline.
+tpe_optuna,tier1,full_cc18,full_30,true,true,true,true,true,Headline single-objective baseline.
+smac3,tier1,full_cc18,full_30,true,true,true,true,true,Headline SMAC-family baseline.
+asha,tier2,full_cc18,full_30,true,true,true,true,true,Multi-fidelity slot. Frozen choice over Hyperband (Commit 27).
+bohb,tier2,full_cc18,full_30,true,true,true,true,true,Multi-fidelity TPE+Hyperband.
+dehb,tier2,full_cc18,full_30,true,true,true,true,true,Multi-fidelity DE+Hyperband.
+nsga2,tier2,full_cc18,full_30,true,true,true,true,true,Evolutionary MOO baseline.
+motpe,tier2,full_cc18,full_30,true,true,true,true,true,Multi-objective TPE.
+doe_rsm_vrf_true_nbi,tier2,full_cc18,full_30,true,true,true,true,true,Proposed method. Headline.
+parego,tier3,parego_subset,full_30,true,true,true,true,true,Subset-only; subset frozen by parego_subset.csv.
+doe_rsm_vrf_true_nbi_no_mbpa,tier4,full_cc18,ablation_join_stage2,false,false,true,true,true,Ablation joins at stage2.
+legacy_weighted_sum_scalarization,tier4,full_cc18,ablation_join_stage2,false,false,true,true,true,Ablation joins at stage2.
+flaml_optional,tier_inf,not_in_comparison,none,false,false,false,false,false,Literature-only. Excluded from jobs.
+auto_sklearn_context,tier_inf,not_in_comparison,none,false,false,false,false,false,Literature-only. Excluded from jobs.
+autogluon_context,tier_inf,not_in_comparison,none,false,false,false,false,false,Literature-only. Excluded from jobs.

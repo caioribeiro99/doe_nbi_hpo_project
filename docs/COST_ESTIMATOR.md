@@ -247,17 +247,18 @@ dedicated machine.
 
 ### Provisional OpenML-CC18 72 × 3 × R estimates (Commit 25, primary)
 
-> **Note (Commit 26).** The estimates below cover one method per
-> (task, algorithm) cell. The CC18 doctoral campaign runs a
-> comparative protocol of multiple HPO baselines plus the proposed
-> method (see `docs/COMPARATIVE_PROTOCOL.md` and
-> `benchmarks/doctoral/openml_cc18/method_matrix.csv`); the
-> headline wall-clock therefore scales roughly linearly with the
-> number of methods that run on the full 72 tasks. Multiply the rows
-> below by the count of `full_cc18=true` rows in `method_matrix.csv`
-> (after protocol freeze) to project the campaign-level wall-clock.
-> Methods with subset-only coverage (currently ParEGO) contribute
-> proportionally less than a full-coverage row.
+> **Note (Commit 26, refined in Commit 27).** The estimates below
+> cover one method per (task, algorithm) cell. The frozen CC18
+> protocol runs **12 full-CC18 methods** plus **1 subset-only
+> method** (ParEGO on 48 of 72 tasks); see
+> `benchmarks/doctoral/openml_cc18/job_count_projection.md` for the
+> per-stage job count and the dedicated-Mac wall-clock projection
+> under the execution-tier policy. At full intensity, the
+> 30-replica campaign is ~207 dedicated-Mac days at efficiency 0.85
+> — the policy gates stage 3 (top-up to 30 replicas) behind a
+> manual sign-off for every tier 1+ method, so the campaign can ship
+> a stage-2 (10-replica) snapshot at ~65 days if the stage-3 cost
+> is judged unacceptable.
 
 Anchored on the v1 mean per-pair 5-fold runtime
 (~0.75 s; full table in

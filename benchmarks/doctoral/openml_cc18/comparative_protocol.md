@@ -22,7 +22,7 @@ this directory. If those three documents disagree, the CSV wins.
 | `random_search` | classical | primary | single-obj | yes |
 | `tpe_optuna` | classical | primary | single-obj | yes |
 | `smac3` | SMAC | primary | single-obj | yes |
-| `hyperband_or_asha` | multi-fidelity | primary | single-obj | yes |
+| `asha` | multi-fidelity | primary | single-obj | yes |
 | `bohb` | multi-fidelity | primary | single-obj | yes |
 | `dehb` | multi-fidelity | primary | single-obj | yes |
 | `nsga2` | evolutionary MOO | primary | multi-obj | yes |
@@ -35,21 +35,23 @@ this directory. If those three documents disagree, the CSV wins.
 | `auto_sklearn_context` | AutoML context | literature-only | n/a | no |
 | `autogluon_context` | AutoML context | literature-only | n/a | no |
 
-## ParEGO CC18 subset (proposed default)
+## ParEGO CC18 subset (frozen in Commit 27)
 
-Until protocol freeze, the ParEGO subset is **proposed** as the union
-of:
+The ParEGO subset is **frozen** as the union of:
 
 1. CC18 tasks with `class_imbalance_ratio >= 5.0` (high-imbalance);
 2. CC18 multiclass tasks with `n_classes >= 5` (high-class-count);
 3. CC18 tasks with `categorical_feature_count > 0` and
-   `n_rows <= 30000` (medium-size mixed-type, where ParEGO's
+   `5000 <= n_rows <= 50000` (medium-size mixed-type, where ParEGO's
    Tchebycheff scalarization is most informative).
 
-The exact list is computed at shard-generation time from `tasks.csv`
-columns; the freeze step records the chosen subset as a JSON file
-alongside the shard SQLite. This is intentionally not committed
-ahead of time so the subset reflects the current `tasks.csv`.
+Applied against the committed `tasks.csv`, this rule selects
+**48 of 72 tasks** (15 binary + 33 multiclass; 27 satisfy the
+high-class-count clause, 19 the imbalance clause, 6 the
+categorical mid-size clause; clauses can overlap). The frozen list
+of `openml_task_id` values lives at
+`benchmarks/doctoral/openml_cc18/parego_subset.csv` and is the
+authoritative source consumed by the shard generator.
 
 ## Headline job count
 
@@ -90,25 +92,29 @@ receive label-encoded ints by default; native categorical handling
 is exposed but disabled in the headline run for cross-method parity.
 This decision is logged per replica in the manifest.
 
-## Frozen versus open
-
-**Frozen (this commit):**
+## Frozen (Commit 27 freeze gate cleared)
 
 - Method list and family assignment.
 - Primary / ablation / subset / literature-only labels.
 - Budget equivalence rule (formula).
 - Multiclass + categorical handling defaults.
+- Multi-fidelity slot: **ASHA** (renamed `method_id` from
+  `hyperband_or_asha`).
+- FLAML stays **literature_only**.
+- ParEGO subset rule and the 48-task subset (`parego_subset.csv`).
+- Per-method execution tier and per-stage gating
+  (`execution_policy.csv` + `execution_tiers.md`).
 
-**Open (must be resolved before shard generation):**
-
-- ParEGO subset: imbalanced + multiclass + categorical (recommended)
-  vs random sample.
-- Multi-fidelity slot: ASHA (recommended) or Hyperband.
-- FLAML inclusion as a single-algorithm GBDT baseline.
-- TODO references in `article/references.bib`.
+The two TODO references in `article/references.bib`
+(`bischl2021openmlbenchmark`, `rapin2018nevergrad`) remain unverified
+but do not block shard generation; they will be resolved at proof
+stage.
 
 ## Forward link
 
-Once the items above are resolved, the next commit generates the
-SQLite shard files under `shards/` from this CSV. No method names
-are hardcoded in the shard generator.
+The next commit generates the SQLite shard files under `shards/`
+from `method_matrix.csv` + `execution_policy.csv` +
+`parego_subset.csv` + `tasks.csv`, against the
+`jobs/doctoral/openml_cc18/schema.sql` schema. No method names,
+scope rules, or stage-gating logic are hardcoded in the shard
+generator.
