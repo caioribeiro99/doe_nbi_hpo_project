@@ -26,6 +26,11 @@ data/design/*
 !data/source/CHECKSUMS.txt
 !data/source/AVAILABILITY_CHECK.md
 !data/source/dataset_registry.json
+# Per-dataset manifest.json is versioned; payloads stay ignored.
+!data/source/*/
+data/source/*/raw/
+data/source/*/processed/
+!data/source/*/manifest.json
 !data/design/.gitkeep
 !data/design/hyperparameter_design.csv
 !data/design/hyperparameter_design.csv.metadata.json

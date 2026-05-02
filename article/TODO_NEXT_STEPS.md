@@ -14,11 +14,18 @@ next.
    one loader per dataset returning `(X, y, metadata)`. Loaders read
    from `data/source/<id>/` if cached and otherwise raise
    `DatasetUnavailableError` with the canonical URL.
-3. **Download scripts (next step).** Per-dataset
-   `scripts/fetch_<dataset>_dataset.py` will download, verify
-   SHA-256, and write the normalized form expected by the loader.
-   The MAGIC downloader is the existing template. Update
-   `data/source/CHECKSUMS.txt` as each is validated.
+3. **Download scripts.** Done in Commit 16. Per-dataset
+   `scripts/fetch_<dataset>_dataset.py` for the eleven non-sklearn
+   datasets, plus a shared helper at `scripts/_dataset_fetch_base.py`
+   and a downloader utility module at
+   `src/doe_xgb/datasets/download.py`. Each script writes raw +
+   processed + manifest, and the aggregated checksums land in
+   `data/source/CHECKSUMS.txt`. The CLI helpers
+   `doe-xgb datasets fetch [--all] [--force]` and
+   `doe-xgb datasets verify-checksums` wrap the per-dataset scripts.
+   Real dataset payloads are gitignored; only manifests / checksums
+   are versioned (after the first authoritative run on the user's
+   machine).
 
 ## Phase B — sizing
 

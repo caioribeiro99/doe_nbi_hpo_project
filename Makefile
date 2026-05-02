@@ -55,8 +55,11 @@ format:
 	$(PY) -m ruff format src tests scripts
 	$(PY) -m ruff check --fix src tests scripts
 
-data:
-	$(PY) scripts/fetch_magic_dataset.py
+data data-v1:
+	$(PY) -m doe_xgb.cli datasets fetch --all
+
+data-checksums:
+	$(PY) -m doe_xgb.cli datasets verify-checksums
 
 repro-mini:
 	$(PY) -m doe_xgb.cli run --config configs/reduced_repro.yaml

@@ -116,6 +116,43 @@ def _cmd_datasets(args: argparse.Namespace) -> int:
         print(json.dumps(asdict(meta), indent=2, default=str))
         return 0
 
+    if args.dataset_action == "fetch":
+        import subprocess
+
+        ids = list_dataset_ids() if args.all else [args.dataset_id]
+        if not args.all and not args.dataset_id:
+            raise SystemExit("fetch requires --dataset-id or --all")
+        runs: list[dict] = []
+        repo_root = Path(__file__).resolve().parents[2]
+        for did in ids:
+            if did == "breast_cancer":
+                runs.append({"id": did, "status": "skipped", "reason": "sklearn-bundled"})
+                continue
+            script = repo_root / "scripts" / f"fetch_{did}_dataset.py"
+            if not script.exists():
+                runs.append({"id": did, "status": "missing_script", "reason": str(script)})
+                continue
+            cmd = [sys.executable, str(script)]
+            if args.force:
+                cmd.append("--force")
+            res = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            runs.append({
+                "id": did,
+                "status": "ok" if res.returncode == 0 else "failed",
+                "returncode": res.returncode,
+                "stdout_tail": res.stdout.splitlines()[-3:],
+                "stderr_tail": res.stderr.splitlines()[-3:],
+            })
+        print(json.dumps({"runs": runs}, indent=2))
+        return 0 if all(r["status"] in ("ok", "skipped") for r in runs) else 1
+
+    if args.dataset_action == "verify-checksums":
+        from .datasets.download import verify_checksums
+
+        report = verify_checksums(args.dataset_id)
+        print(json.dumps(report, indent=2))
+        return 0 if all(report.values()) else 1
+
     if args.dataset_action == "smoke":
         ids = list_dataset_ids() if args.all else [args.dataset_id]
         if not args.all and not args.dataset_id:
@@ -272,6 +309,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     p_ds_smk = ds_sub.add_parser("smoke", help="Load one or all datasets to verify shapes.")
     p_ds_smk.add_argument("--dataset-id", type=str, default=None)
     p_ds_smk.add_argument("--all", action="store_true")
+    p_ds_fch = ds_sub.add_parser("fetch", help="Run the per-dataset downloader scripts.")
+    p_ds_fch.add_argument("--dataset-id", type=str, default=None)
+    p_ds_fch.add_argument("--all", action="store_true")
+    p_ds_fch.add_argument("--force", action="store_true")
+    p_ds_ver = ds_sub.add_parser("verify-checksums", help="Verify on-disk checksums against manifests.")
+    p_ds_ver.add_argument("--dataset-id", type=str, default=None)
     p_ds.set_defaults(func=_cmd_datasets)
 
     p_cost = sub.add_parser(

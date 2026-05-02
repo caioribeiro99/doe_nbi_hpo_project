@@ -22,3 +22,22 @@ The downloader:
 If the upstream UCI mirror changes, update `CHECKSUMS.txt` and the
 expected SHA-256 in `scripts/fetch_magic_dataset.py` after manually
 validating the new file.
+
+## Article-track v1 panel
+
+Eleven non-sklearn datasets are fetched by per-dataset scripts under
+`scripts/fetch_<id>_dataset.py`. Each script writes:
+
+- `data/source/<id>/raw/<original-file>`
+- `data/source/<id>/processed/<id>.csv`
+- `data/source/<id>/manifest.json` (SHA-256 + byte size for every file)
+
+The aggregated checksums live in `CHECKSUMS.txt`, segmented per dataset
+with `# >>> <id>` ... `# <<< <id>` markers. The
+`doe-xgb datasets fetch --all` and `doe-xgb datasets verify-checksums`
+CLI helpers wrap these scripts. The `breast_cancer` entry is bundled
+with scikit-learn and does not need a fetch step.
+
+Real dataset payloads are **not** committed; only manifests, the
+aggregated checksum file, and the README/availability documents are
+versioned.

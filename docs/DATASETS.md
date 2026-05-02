@@ -49,6 +49,61 @@ computational burden, license note, citation key, v1 inclusion flag,
 fallback id, and free-form notes. See
 `src/doe_xgb/datasets/metadata.py` for the dataclass.
 
+## Downloaders
+
+Each non-sklearn entry has a downloader script under `scripts/`:
+
+| ID | Script | Source kind |
+|---|---|---|
+| `magic` | `scripts/fetch_magic_dataset.py` | UCI .data |
+| `pima_diabetes` | `scripts/fetch_pima_diabetes_dataset.py` | OpenML id 37 |
+| `spambase` | `scripts/fetch_spambase_dataset.py` | UCI .data |
+| `adult` | `scripts/fetch_adult_dataset.py` | UCI .data |
+| `bank_marketing` | `scripts/fetch_bank_marketing_dataset.py` | UCI ZIP -> CSV |
+| `credit_card_default` | `scripts/fetch_credit_card_default_dataset.py` | UCI XLS (OpenML 42477 fallback) |
+| `german_credit` | `scripts/fetch_german_credit_dataset.py` | UCI .data |
+| `wine_quality` | `scripts/fetch_wine_quality_dataset.py` | UCI .csv (red+white merged, binarised) |
+| `dry_bean` | `scripts/fetch_dry_bean_dataset.py` | UCI ZIP -> XLSX -> CSV |
+| `mushroom` | `scripts/fetch_mushroom_dataset.py` | UCI .data |
+| `phishing` | `scripts/fetch_phishing_dataset.py` | UCI ARFF -> CSV |
+
+`breast_cancer` does **not** have a downloader because it ships with
+`scikit-learn` (`sklearn.datasets.load_breast_cancer`).
+
+### One-shot
+
+```bash
+make data            # = doe-xgb datasets fetch --all
+make data-checksums  # = doe-xgb datasets verify-checksums
+```
+
+### Single dataset
+
+```bash
+python scripts/fetch_magic_dataset.py            # respects manifest
+python scripts/fetch_magic_dataset.py --force    # re-download
+python scripts/fetch_magic_dataset.py --no-network  # process raw only
+```
+
+### Idempotence and checksums
+
+Each script writes:
+
+```
+data/source/<id>/raw/<original-file>
+data/source/<id>/processed/<id>.csv
+data/source/<id>/manifest.json
+```
+
+The manifest lists every file with SHA-256 + byte size. The same hashes
+are mirrored into `data/source/CHECKSUMS.txt`, segmented by dataset id
+(`# >>> <id>` ... `# <<< <id>` markers). Re-running a downloader whose
+manifest matches the on-disk files is a no-op; pass `--force` to
+re-download.
+
+`doe-xgb datasets verify-checksums [--dataset-id <id>]` re-hashes every
+file referenced in the manifests and reports True/False per dataset.
+
 ## Loaders
 
 Each `load_*` function under `src/doe_xgb/datasets/loaders.py` returns
