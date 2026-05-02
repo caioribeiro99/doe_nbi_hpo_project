@@ -1,0 +1,1985 @@
+{
+  "profile": "v1_full_dataset_5fold",
+  "started_at": "2026-05-02T16:13:49",
+  "platform": "macOS-26.4.1-arm64-arm-64bit",
+  "python": "3.12.13",
+  "package_versions": {
+    "xgboost": "3.2.0",
+    "lightgbm": "4.6.0",
+    "catboost": "1.2.10",
+    "sklearn": "1.8.0"
+  },
+  "n_splits": 5,
+  "seed": 42,
+  "max_rows": 0,
+  "params": {
+    "xgboost": {
+      "n_estimators": 100,
+      "max_depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "colsample_bylevel": 0.8,
+      "gamma": 0.1,
+      "tree_method": "hist"
+    },
+    "lightgbm": {
+      "n_estimators": 100,
+      "num_leaves": 31,
+      "max_depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "min_child_samples": 5,
+      "verbose": -1
+    },
+    "catboost": {
+      "iterations": 100,
+      "depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.8,
+      "rsm": 0.8,
+      "min_data_in_leaf": 5,
+      "thread_count": 1,
+      "verbose": false,
+      "allow_writing_files": false,
+      "bootstrap_type": "Bernoulli"
+    }
+  },
+  "results": [
+    {
+      "dataset_id": "magic",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 19020,
+      "n_features": 10,
+      "categorical_columns_count": 0,
+      "n_rows_used": 19020,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 12332,
+        "1": 6688
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8759726603575183,
+        "Precision_Mean": 0.8859485125728318,
+        "Recall_Mean": 0.7429712908336157,
+        "Specificity_Mean": 0.9481023311441771,
+        "Time_MeanFold": 0.0539946915996552
+      },
+      "fold_times_seconds": [
+        0.0723,
+        0.05,
+        0.0493,
+        0.0482,
+        0.0501
+      ],
+      "total_runtime_seconds": 0.29943537500003004,
+      "mean_fold_runtime_seconds": 0.0539946915996552
+    },
+    {
+      "dataset_id": "magic",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 19020,
+      "n_features": 10,
+      "categorical_columns_count": 0,
+      "n_rows_used": 19020,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 12332,
+        "1": 6688
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8748159831756046,
+        "Precision_Mean": 0.8852894161908523,
+        "Recall_Mean": 0.739981083410755,
+        "Specificity_Mean": 0.9479398950164886,
+        "Time_MeanFold": 0.05341539159926469
+      },
+      "fold_times_seconds": [
+        0.0565,
+        0.0522,
+        0.0528,
+        0.0526,
+        0.0531
+      ],
+      "total_runtime_seconds": 0.285352792001504,
+      "mean_fold_runtime_seconds": 0.05341539159926469
+    },
+    {
+      "dataset_id": "magic",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 19020,
+      "n_features": 10,
+      "categorical_columns_count": 0,
+      "n_rows_used": 19020,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 12332,
+        "1": 6688
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8677181913774975,
+        "Precision_Mean": 0.8832023311028963,
+        "Recall_Mean": 0.7188988130175649,
+        "Specificity_Mean": 0.9484266773971164,
+        "Time_MeanFold": 0.11305523319970234
+      },
+      "fold_times_seconds": [
+        0.1731,
+        0.1069,
+        0.0908,
+        0.0914,
+        0.103
+      ],
+      "total_runtime_seconds": 0.5850713749969145,
+      "mean_fold_runtime_seconds": 0.11305523319970234
+    },
+    {
+      "dataset_id": "breast_cancer",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 569,
+      "n_features": 30,
+      "categorical_columns_count": 0,
+      "n_rows_used": 569,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 357,
+        "0": 212
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.95960254618848,
+        "Precision_Mean": 0.9725032679738563,
+        "Recall_Mean": 0.9636150234741784,
+        "Specificity_Mean": 0.9528239202657807,
+        "Time_MeanFold": 0.017156258199975127
+      },
+      "fold_times_seconds": [
+        0.0176,
+        0.0165,
+        0.0165,
+        0.0175,
+        0.0177
+      ],
+      "total_runtime_seconds": 0.13092270800189,
+      "mean_fold_runtime_seconds": 0.017156258199975127
+    },
+    {
+      "dataset_id": "breast_cancer",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 569,
+      "n_features": 30,
+      "categorical_columns_count": 0,
+      "n_rows_used": 569,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 357,
+        "0": 212
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9666045645086166,
+        "Precision_Mean": 0.9646232095770972,
+        "Recall_Mean": 0.9832159624413146,
+        "Specificity_Mean": 0.9387596899224807,
+        "Time_MeanFold": 0.016039666600408963
+      },
+      "fold_times_seconds": [
+        0.0171,
+        0.0157,
+        0.0157,
+        0.0156,
+        0.0161
+      ],
+      "total_runtime_seconds": 0.09088075000181561,
+      "mean_fold_runtime_seconds": 0.016039666600408963
+    },
+    {
+      "dataset_id": "breast_cancer",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 569,
+      "n_features": 30,
+      "categorical_columns_count": 0,
+      "n_rows_used": 569,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 357,
+        "0": 212
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9683744760130415,
+        "Precision_Mean": 0.9705847953216373,
+        "Recall_Mean": 0.9804381846635369,
+        "Specificity_Mean": 0.9481727574750831,
+        "Time_MeanFold": 0.0971875581992208
+      },
+      "fold_times_seconds": [
+        0.1001,
+        0.0982,
+        0.0969,
+        0.0949,
+        0.0959
+      ],
+      "total_runtime_seconds": 0.49684924999746727,
+      "mean_fold_runtime_seconds": 0.0971875581992208
+    },
+    {
+      "dataset_id": "pima_diabetes",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 768,
+      "n_features": 8,
+      "categorical_columns_count": 0,
+      "n_rows_used": 768,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 500,
+        "1": 268
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7603683897801545,
+        "Precision_Mean": 0.674867715078631,
+        "Recall_Mean": 0.6043326345213138,
+        "Specificity_Mean": 0.844,
+        "Time_MeanFold": 0.007126566198712681
+      },
+      "fold_times_seconds": [
+        0.0073,
+        0.0072,
+        0.0069,
+        0.0071,
+        0.0071
+      ],
+      "total_runtime_seconds": 0.04481083300197497,
+      "mean_fold_runtime_seconds": 0.007126566198712681
+    },
+    {
+      "dataset_id": "pima_diabetes",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 768,
+      "n_features": 8,
+      "categorical_columns_count": 0,
+      "n_rows_used": 768,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 500,
+        "1": 268
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7603768780239368,
+        "Precision_Mean": 0.6667458614224739,
+        "Recall_Mean": 0.6343815513626835,
+        "Specificity_Mean": 0.8280000000000001,
+        "Time_MeanFold": 0.0062831663992255924
+      },
+      "fold_times_seconds": [
+        0.0062,
+        0.0057,
+        0.0063,
+        0.0069,
+        0.0064
+      ],
+      "total_runtime_seconds": 0.03857150000112597,
+      "mean_fold_runtime_seconds": 0.0062831663992255924
+    },
+    {
+      "dataset_id": "pima_diabetes",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 768,
+      "n_features": 8,
+      "categorical_columns_count": 0,
+      "n_rows_used": 768,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 500,
+        "1": 268
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7577540106951872,
+        "Precision_Mean": 0.6841924483784949,
+        "Recall_Mean": 0.5746331236897275,
+        "Specificity_Mean": 0.8560000000000001,
+        "Time_MeanFold": 0.014940141600527567
+      },
+      "fold_times_seconds": [
+        0.0154,
+        0.0151,
+        0.0146,
+        0.0147,
+        0.0149
+      ],
+      "total_runtime_seconds": 0.08257441599926096,
+      "mean_fold_runtime_seconds": 0.014940141600527567
+    },
+    {
+      "dataset_id": "spambase",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 4601,
+      "n_features": 57,
+      "categorical_columns_count": 0,
+      "n_rows_used": 4601,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 2788,
+        "1": 1813
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9493605721569184,
+        "Precision_Mean": 0.9454317475092701,
+        "Recall_Mean": 0.9249851604949546,
+        "Specificity_Mean": 0.9652072353815564,
+        "Time_MeanFold": 0.05298784140031785
+      },
+      "fold_times_seconds": [
+        0.0526,
+        0.0543,
+        0.0529,
+        0.0524,
+        0.0527
+      ],
+      "total_runtime_seconds": 0.28293287500127917,
+      "mean_fold_runtime_seconds": 0.05298784140031785
+    },
+    {
+      "dataset_id": "spambase",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 4601,
+      "n_features": 57,
+      "categorical_columns_count": 0,
+      "n_rows_used": 4601,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 2788,
+        "1": 1813
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9500115658782986,
+        "Precision_Mean": 0.9470383690518636,
+        "Recall_Mean": 0.9249805944934021,
+        "Specificity_Mean": 0.9662837911752025,
+        "Time_MeanFold": 0.03613379180023912
+      },
+      "fold_times_seconds": [
+        0.0362,
+        0.0358,
+        0.037,
+        0.0358,
+        0.0359
+      ],
+      "total_runtime_seconds": 0.19645433299956494,
+      "mean_fold_runtime_seconds": 0.03613379180023912
+    },
+    {
+      "dataset_id": "spambase",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 4601,
+      "n_features": 57,
+      "categorical_columns_count": 0,
+      "n_rows_used": 4601,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 2788,
+        "1": 1813
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9474031062644572,
+        "Precision_Mean": 0.9466283412668517,
+        "Recall_Mean": 0.9183614142428809,
+        "Specificity_Mean": 0.9662837911752025,
+        "Time_MeanFold": 0.21278547500041894
+      },
+      "fold_times_seconds": [
+        0.2189,
+        0.2069,
+        0.2231,
+        0.2075,
+        0.2075
+      ],
+      "total_runtime_seconds": 1.0802788340006373,
+      "mean_fold_runtime_seconds": 0.21278547500041894
+    },
+    {
+      "dataset_id": "adult",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30162,
+      "n_features": 14,
+      "categorical_columns_count": 8,
+      "n_rows_used": 30162,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 22654,
+        "1": 7508
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8658576656857664,
+        "Precision_Mean": 0.7901013909819257,
+        "Recall_Mean": 0.6279958057256104,
+        "Specificity_Mean": 0.9446898116141782,
+        "Time_MeanFold": 0.06385640020016581
+      },
+      "fold_times_seconds": [
+        0.0636,
+        0.0632,
+        0.0634,
+        0.0641,
+        0.065
+      ],
+      "total_runtime_seconds": 0.36163520800255355,
+      "mean_fold_runtime_seconds": 0.06385640020016581
+    },
+    {
+      "dataset_id": "adult",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30162,
+      "n_features": 14,
+      "categorical_columns_count": 8,
+      "n_rows_used": 30162,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 22654,
+        "1": 7508
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8661892581517833,
+        "Precision_Mean": 0.7916544196611272,
+        "Recall_Mean": 0.6279955395914486,
+        "Specificity_Mean": 0.9451313711819923,
+        "Time_MeanFold": 0.08167475840018597
+      },
+      "fold_times_seconds": [
+        0.0834,
+        0.0814,
+        0.0814,
+        0.0814,
+        0.0808
+      ],
+      "total_runtime_seconds": 0.44949287500276114,
+      "mean_fold_runtime_seconds": 0.08167475840018597
+    },
+    {
+      "dataset_id": "adult",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30162,
+      "n_features": 14,
+      "categorical_columns_count": 8,
+      "n_rows_used": 30162,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 22654,
+        "1": 7508
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_native_categorical",
+      "metrics": {
+        "Accuracy_Mean": 0.8589616030928038,
+        "Precision_Mean": 0.7740279005393342,
+        "Recall_Mean": 0.6121457421639013,
+        "Specificity_Mean": 0.9407610656634235,
+        "Time_MeanFold": 0.5115048331994331
+      },
+      "fold_times_seconds": [
+        0.5176,
+        0.526,
+        0.4942,
+        0.5035,
+        0.5162
+      ],
+      "total_runtime_seconds": 2.589978375002829,
+      "mean_fold_runtime_seconds": 0.5115048331994331
+    },
+    {
+      "dataset_id": "bank_marketing",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30488,
+      "n_features": 20,
+      "categorical_columns_count": 10,
+      "n_rows_used": 30488,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 26629,
+        "1": 3859
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9078326861040058,
+        "Precision_Mean": 0.6690810912156421,
+        "Recall_Mean": 0.5382260438297616,
+        "Specificity_Mean": 0.9613954469085133,
+        "Time_MeanFold": 0.07599268300036784
+      },
+      "fold_times_seconds": [
+        0.0732,
+        0.0715,
+        0.0797,
+        0.0824,
+        0.0732
+      ],
+      "total_runtime_seconds": 0.44278895799652673,
+      "mean_fold_runtime_seconds": 0.07599268300036784
+    },
+    {
+      "dataset_id": "bank_marketing",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30488,
+      "n_features": 20,
+      "categorical_columns_count": 10,
+      "n_rows_used": 30488,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 26629,
+        "1": 3859
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9077670800682505,
+        "Precision_Mean": 0.6679615259416181,
+        "Recall_Mean": 0.5397801119601084,
+        "Specificity_Mean": 0.961095012684695,
+        "Time_MeanFold": 0.0859682166010316
+      },
+      "fold_times_seconds": [
+        0.0847,
+        0.0843,
+        0.0825,
+        0.0848,
+        0.0935
+      ],
+      "total_runtime_seconds": 0.49062524999681045,
+      "mean_fold_runtime_seconds": 0.0859682166010316
+    },
+    {
+      "dataset_id": "bank_marketing",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30488,
+      "n_features": 20,
+      "categorical_columns_count": 10,
+      "n_rows_used": 30488,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 26629,
+        "1": 3859
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_native_categorical",
+      "metrics": {
+        "Accuracy_Mean": 0.9066190981666082,
+        "Precision_Mean": 0.6703184166468105,
+        "Recall_Mean": 0.5164583375335174,
+        "Specificity_Mean": 0.9631603172672284,
+        "Time_MeanFold": 1.1506653334006842
+      },
+      "fold_times_seconds": [
+        1.1465,
+        1.1538,
+        1.1631,
+        1.1285,
+        1.1615
+      ],
+      "total_runtime_seconds": 5.8063592500002414,
+      "mean_fold_runtime_seconds": 1.1506653334006842
+    },
+    {
+      "dataset_id": "credit_card_default",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30000,
+      "n_features": 23,
+      "categorical_columns_count": 0,
+      "n_rows_used": 30000,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 23364,
+        "1": 6636
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8213333333333332,
+        "Precision_Mean": 0.6744299384269636,
+        "Recall_Mean": 0.37191100498451984,
+        "Specificity_Mean": 0.948981351263012,
+        "Time_MeanFold": 0.09632789160023095
+      },
+      "fold_times_seconds": [
+        0.0979,
+        0.0959,
+        0.0953,
+        0.097,
+        0.0956
+      ],
+      "total_runtime_seconds": 0.5173988329988788,
+      "mean_fold_runtime_seconds": 0.09632789160023095
+    },
+    {
+      "dataset_id": "credit_card_default",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30000,
+      "n_features": 23,
+      "categorical_columns_count": 0,
+      "n_rows_used": 30000,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 23364,
+        "1": 6636
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8203333333333334,
+        "Precision_Mean": 0.6718634253645488,
+        "Recall_Mean": 0.36724006046794566,
+        "Specificity_Mean": 0.949024131999918,
+        "Time_MeanFold": 0.11174108360064565
+      },
+      "fold_times_seconds": [
+        0.1247,
+        0.1079,
+        0.1082,
+        0.1087,
+        0.1092
+      ],
+      "total_runtime_seconds": 0.592493584001204,
+      "mean_fold_runtime_seconds": 0.11174108360064565
+    },
+    {
+      "dataset_id": "credit_card_default",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 30000,
+      "n_features": 23,
+      "categorical_columns_count": 0,
+      "n_rows_used": 30000,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 23364,
+        "1": 6636
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.8207666666666666,
+        "Precision_Mean": 0.6749361500989499,
+        "Recall_Mean": 0.3661849356733641,
+        "Specificity_Mean": 0.9498801681328765,
+        "Time_MeanFold": 0.3516633500010357
+      },
+      "fold_times_seconds": [
+        0.3461,
+        0.3441,
+        0.348,
+        0.3489,
+        0.3712
+      ],
+      "total_runtime_seconds": 1.792627958002413,
+      "mean_fold_runtime_seconds": 0.3516633500010357
+    },
+    {
+      "dataset_id": "german_credit",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 1000,
+      "n_features": 20,
+      "categorical_columns_count": 13,
+      "n_rows_used": 1000,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 700,
+        "1": 300
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.775,
+        "Precision_Mean": 0.6731949554737909,
+        "Recall_Mean": 0.4866666666666667,
+        "Specificity_Mean": 0.8985714285714286,
+        "Time_MeanFold": 0.007596683401061455
+      },
+      "fold_times_seconds": [
+        0.0079,
+        0.0076,
+        0.0075,
+        0.0076,
+        0.0074
+      ],
+      "total_runtime_seconds": 0.04963920800219057,
+      "mean_fold_runtime_seconds": 0.007596683401061455
+    },
+    {
+      "dataset_id": "german_credit",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 1000,
+      "n_features": 20,
+      "categorical_columns_count": 13,
+      "n_rows_used": 1000,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 700,
+        "1": 300
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.773,
+        "Precision_Mean": 0.6613163849968704,
+        "Recall_Mean": 0.5066666666666666,
+        "Specificity_Mean": 0.8871428571428572,
+        "Time_MeanFold": 0.007489875199826202
+      },
+      "fold_times_seconds": [
+        0.0076,
+        0.0077,
+        0.0074,
+        0.0074,
+        0.0074
+      ],
+      "total_runtime_seconds": 0.04699066700050025,
+      "mean_fold_runtime_seconds": 0.007489875199826202
+    },
+    {
+      "dataset_id": "german_credit",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 1000,
+      "n_features": 20,
+      "categorical_columns_count": 13,
+      "n_rows_used": 1000,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 700,
+        "1": 300
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_native_categorical",
+      "metrics": {
+        "Accuracy_Mean": 0.744,
+        "Precision_Mean": 0.6148858516448942,
+        "Recall_Mean": 0.3866666666666667,
+        "Specificity_Mean": 0.8971428571428571,
+        "Time_MeanFold": 0.08403715020103845
+      },
+      "fold_times_seconds": [
+        0.0838,
+        0.0832,
+        0.0845,
+        0.0837,
+        0.0849
+      ],
+      "total_runtime_seconds": 0.4295557919977,
+      "mean_fold_runtime_seconds": 0.08403715020103845
+    },
+    {
+      "dataset_id": "wine_quality",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 6497,
+      "n_features": 12,
+      "categorical_columns_count": 0,
+      "n_rows_used": 6497,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 4113,
+        "0": 2384
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7849769645289276,
+        "Precision_Mean": 0.8119412844606286,
+        "Recall_Mean": 0.8597109264367205,
+        "Specificity_Mean": 0.656054119761112,
+        "Time_MeanFold": 0.021877849999873432
+      },
+      "fold_times_seconds": [
+        0.0218,
+        0.0217,
+        0.0216,
+        0.0222,
+        0.022
+      ],
+      "total_runtime_seconds": 0.12223687499863445,
+      "mean_fold_runtime_seconds": 0.021877849999873432
+    },
+    {
+      "dataset_id": "wine_quality",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 6497,
+      "n_features": 12,
+      "categorical_columns_count": 0,
+      "n_rows_used": 6497,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 4113,
+        "0": 2384
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7772825250192457,
+        "Precision_Mean": 0.8041870759335396,
+        "Recall_Mean": 0.8572804971426713,
+        "Specificity_Mean": 0.6392826312915103,
+        "Time_MeanFold": 0.021433541798614897
+      },
+      "fold_times_seconds": [
+        0.0218,
+        0.0213,
+        0.0217,
+        0.0213,
+        0.0211
+      ],
+      "total_runtime_seconds": 0.11762762500075041,
+      "mean_fold_runtime_seconds": 0.021433541798614897
+    },
+    {
+      "dataset_id": "wine_quality",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 6497,
+      "n_features": 12,
+      "categorical_columns_count": 0,
+      "n_rows_used": 6497,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 4113,
+        "0": 2384
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.7662011014389767,
+        "Precision_Mean": 0.7930643707611191,
+        "Recall_Mean": 0.8536350010199467,
+        "Specificity_Mean": 0.6153638814016172,
+        "Time_MeanFold": 0.0468075584001781
+      },
+      "fold_times_seconds": [
+        0.0473,
+        0.0472,
+        0.0465,
+        0.0466,
+        0.0463
+      ],
+      "total_runtime_seconds": 0.2447909160000563,
+      "mean_fold_runtime_seconds": 0.0468075584001781
+    },
+    {
+      "dataset_id": "dry_bean",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "multiclass",
+      "n_rows_full": 13611,
+      "n_features": 16,
+      "categorical_columns_count": 0,
+      "n_rows_used": 13611,
+      "row_capped": false,
+      "class_distribution": {
+        "3": 3546,
+        "6": 2636,
+        "5": 2027,
+        "4": 1928,
+        "2": 1630,
+        "0": 1322,
+        "1": 522
+      },
+      "n_classes": 7,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9285878074032861,
+        "F1Macro_Mean": 0.9399519688112061,
+        "BalancedAccuracy_Mean": 0.9384013766164239,
+        "MCC_Mean": 0.913648458545296,
+        "ROCAUC_OVR_Mean": 0.9956052622859101,
+        "PRAUC_OVR_Mean": 0.982879858357444,
+        "BrierMC_Mean": 0.10292244131572133,
+        "ECE_Mean": 0.010951002346392636,
+        "Time_MeanFold": 0.2760164831990551
+      },
+      "fold_times_seconds": [
+        0.2749,
+        0.2765,
+        0.2745,
+        0.2732,
+        0.281
+      ],
+      "total_runtime_seconds": 1.4291838749995804,
+      "mean_fold_runtime_seconds": 0.2760164831990551
+    },
+    {
+      "dataset_id": "dry_bean",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "multiclass",
+      "n_rows_full": 13611,
+      "n_features": 16,
+      "categorical_columns_count": 0,
+      "n_rows_used": 13611,
+      "row_capped": false,
+      "class_distribution": {
+        "3": 3546,
+        "6": 2636,
+        "5": 2027,
+        "4": 1928,
+        "2": 1630,
+        "0": 1322,
+        "1": 522
+      },
+      "n_classes": 7,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9288083954600145,
+        "F1Macro_Mean": 0.9401185261958241,
+        "BalancedAccuracy_Mean": 0.9389032395978983,
+        "MCC_Mean": 0.9139140062697371,
+        "ROCAUC_OVR_Mean": 0.9955356436184379,
+        "PRAUC_OVR_Mean": 0.9825002575128872,
+        "BrierMC_Mean": 0.10366188494359516,
+        "ECE_Mean": 0.016496005122302603,
+        "Time_MeanFold": 0.2776586583997414
+      },
+      "fold_times_seconds": [
+        0.2761,
+        0.2703,
+        0.2729,
+        0.2864,
+        0.2826
+      ],
+      "total_runtime_seconds": 1.435931583000638,
+      "mean_fold_runtime_seconds": 0.2776586583997414
+    },
+    {
+      "dataset_id": "dry_bean",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "multiclass",
+      "n_rows_full": 13611,
+      "n_features": 16,
+      "categorical_columns_count": 0,
+      "n_rows_used": 13611,
+      "row_capped": false,
+      "class_distribution": {
+        "3": 3546,
+        "6": 2636,
+        "5": 2027,
+        "4": 1928,
+        "2": 1630,
+        "0": 1322,
+        "1": 522
+      },
+      "n_classes": 7,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9245470119694993,
+        "F1Macro_Mean": 0.935590233433359,
+        "BalancedAccuracy_Mean": 0.9337916374490188,
+        "MCC_Mean": 0.9087818731801001,
+        "ROCAUC_OVR_Mean": 0.9949763312029118,
+        "PRAUC_OVR_Mean": 0.9795769004160813,
+        "BrierMC_Mean": 0.11159127217044566,
+        "ECE_Mean": 0.019257540063364574,
+        "Time_MeanFold": 0.5444390666008985
+      },
+      "fold_times_seconds": [
+        0.5482,
+        0.5462,
+        0.5471,
+        0.5411,
+        0.5396
+      ],
+      "total_runtime_seconds": 2.7681019580013526,
+      "mean_fold_runtime_seconds": 0.5444390666008985
+    },
+    {
+      "dataset_id": "mushroom",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 8124,
+      "n_features": 22,
+      "categorical_columns_count": 22,
+      "n_rows_used": 8124,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 4208,
+        "1": 3916
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 1.0,
+        "Precision_Mean": 1.0,
+        "Recall_Mean": 1.0,
+        "Specificity_Mean": 1.0,
+        "Time_MeanFold": 0.022170792001270458
+      },
+      "fold_times_seconds": [
+        0.0222,
+        0.022,
+        0.0221,
+        0.0223,
+        0.0222
+      ],
+      "total_runtime_seconds": 0.131249874997593,
+      "mean_fold_runtime_seconds": 0.022170792001270458
+    },
+    {
+      "dataset_id": "mushroom",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 8124,
+      "n_features": 22,
+      "categorical_columns_count": 22,
+      "n_rows_used": 8124,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 4208,
+        "1": 3916
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 1.0,
+        "Precision_Mean": 1.0,
+        "Recall_Mean": 1.0,
+        "Specificity_Mean": 1.0,
+        "Time_MeanFold": 0.024213533400325105
+      },
+      "fold_times_seconds": [
+        0.0245,
+        0.0242,
+        0.0239,
+        0.0241,
+        0.0243
+      ],
+      "total_runtime_seconds": 0.1399927500024205,
+      "mean_fold_runtime_seconds": 0.024213533400325105
+    },
+    {
+      "dataset_id": "mushroom",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 8124,
+      "n_features": 22,
+      "categorical_columns_count": 22,
+      "n_rows_used": 8124,
+      "row_capped": false,
+      "class_distribution": {
+        "0": 4208,
+        "1": 3916
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_native_categorical",
+      "metrics": {
+        "Accuracy_Mean": 0.9996306934444865,
+        "Precision_Mean": 1.0,
+        "Recall_Mean": 0.9992337164750958,
+        "Specificity_Mean": 1.0,
+        "Time_MeanFold": 0.462418166801217
+      },
+      "fold_times_seconds": [
+        0.4315,
+        0.4374,
+        0.4819,
+        0.4948,
+        0.4665
+      ],
+      "total_runtime_seconds": 2.327197165999678,
+      "mean_fold_runtime_seconds": 0.462418166801217
+    },
+    {
+      "dataset_id": "phishing",
+      "algorithm": "xgboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 11055,
+      "n_features": 30,
+      "categorical_columns_count": 0,
+      "n_rows_used": 11055,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 6157,
+        "0": 4898
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9527815468113975,
+        "Precision_Mean": 0.948326246786929,
+        "Recall_Mean": 0.9680036555645817,
+        "Specificity_Mean": 0.9336459527631277,
+        "Time_MeanFold": 0.03500517520078574
+      },
+      "fold_times_seconds": [
+        0.0352,
+        0.0351,
+        0.0354,
+        0.0348,
+        0.0345
+      ],
+      "total_runtime_seconds": 0.19539595899914275,
+      "mean_fold_runtime_seconds": 0.03500517520078574
+    },
+    {
+      "dataset_id": "phishing",
+      "algorithm": "lightgbm",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 11055,
+      "n_features": 30,
+      "categorical_columns_count": 0,
+      "n_rows_used": 11055,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 6157,
+        "0": 4898
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9528720036182723,
+        "Precision_Mean": 0.9477803376895011,
+        "Recall_Mean": 0.9688160032493908,
+        "Specificity_Mean": 0.9328294177732379,
+        "Time_MeanFold": 0.042330666599445975
+      },
+      "fold_times_seconds": [
+        0.0429,
+        0.0416,
+        0.043,
+        0.0425,
+        0.0418
+      ],
+      "total_runtime_seconds": 0.2300582919997396,
+      "mean_fold_runtime_seconds": 0.042330666599445975
+    },
+    {
+      "dataset_id": "phishing",
+      "algorithm": "catboost",
+      "ok": true,
+      "warnings": [],
+      "task_type": "binary",
+      "n_rows_full": 11055,
+      "n_features": 30,
+      "categorical_columns_count": 0,
+      "n_rows_used": 11055,
+      "row_capped": false,
+      "class_distribution": {
+        "1": 6157,
+        "0": 4898
+      },
+      "n_classes": 2,
+      "preprocessing_mode": "catboost_fallback_encoded_int_codes",
+      "metrics": {
+        "Accuracy_Mean": 0.9528720036182723,
+        "Precision_Mean": 0.947328090311799,
+        "Recall_Mean": 0.9693031481110278,
+        "Specificity_Mean": 0.9322173813345562,
+        "Time_MeanFold": 0.13569316679931945
+      },
+      "fold_times_seconds": [
+        0.1436,
+        0.1468,
+        0.1296,
+        0.1292,
+        0.1293
+      ],
+      "total_runtime_seconds": 0.7011424589982198,
+      "mean_fold_runtime_seconds": 0.13569316679931945
+    }
+  ],
+  "n_pairs_ok": 36,
+  "n_failures": 0,
+  "fastest_slowest": {
+    "fastest": [
+      {
+        "pair": "pima_diabetes/lightgbm",
+        "seconds": 0.039
+      },
+      {
+        "pair": "pima_diabetes/xgboost",
+        "seconds": 0.045
+      },
+      {
+        "pair": "german_credit/lightgbm",
+        "seconds": 0.047
+      }
+    ],
+    "slowest": [
+      {
+        "pair": "adult/catboost",
+        "seconds": 2.59
+      },
+      {
+        "pair": "dry_bean/catboost",
+        "seconds": 2.768
+      },
+      {
+        "pair": "bank_marketing/catboost",
+        "seconds": 5.806
+      }
+    ]
+  },
+  "projections": [
+    {
+      "label": "article_v1_12x3x10",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 1.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 51.8,
+      "total_cpu_days": 2.16,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 0.88,
+        "dedicated_mac_10w_24h_eff065": 0.33,
+        "dedicated_mac_10w_24h_eff070": 0.31,
+        "dedicated_mac_10w_24h_eff075": 0.29,
+        "two_macs_combined_16w_24h_eff065": 0.21,
+        "two_macs_combined_16w_24h_eff070": 0.19,
+        "two_macs_combined_16w_24h_eff075": 0.18
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 1.9,
+        "wall_days": 0.08,
+        "cost_usd": 6.09
+      }
+    },
+    {
+      "label": "article_v1_12x3x30",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 1.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 155.4,
+      "total_cpu_days": 6.48,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 2.64,
+        "dedicated_mac_10w_24h_eff065": 1.0,
+        "dedicated_mac_10w_24h_eff070": 0.93,
+        "dedicated_mac_10w_24h_eff075": 0.86,
+        "two_macs_combined_16w_24h_eff065": 0.62,
+        "two_macs_combined_16w_24h_eff070": 0.58,
+        "two_macs_combined_16w_24h_eff075": 0.54
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 5.71,
+        "wall_days": 0.24,
+        "cost_usd": 18.28
+      }
+    },
+    {
+      "label": "article_v1_11binx3x10",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 1.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 41.0,
+      "total_cpu_days": 1.71,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 0.7,
+        "dedicated_mac_10w_24h_eff065": 0.26,
+        "dedicated_mac_10w_24h_eff070": 0.24,
+        "dedicated_mac_10w_24h_eff075": 0.23,
+        "two_macs_combined_16w_24h_eff065": 0.16,
+        "two_macs_combined_16w_24h_eff070": 0.15,
+        "two_macs_combined_16w_24h_eff075": 0.14
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 1.51,
+        "wall_days": 0.06,
+        "cost_usd": 4.82
+      }
+    },
+    {
+      "label": "article_v1_11binx3x30",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 1.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 123.0,
+      "total_cpu_days": 5.13,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 2.09,
+        "dedicated_mac_10w_24h_eff065": 0.79,
+        "dedicated_mac_10w_24h_eff070": 0.73,
+        "dedicated_mac_10w_24h_eff075": 0.68,
+        "two_macs_combined_16w_24h_eff065": 0.49,
+        "two_macs_combined_16w_24h_eff070": 0.46,
+        "two_macs_combined_16w_24h_eff075": 0.43
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 4.52,
+        "wall_days": 0.19,
+        "cost_usd": 14.47
+      }
+    },
+    {
+      "label": "thesis_82x3x10",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 1.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 354.0,
+      "total_cpu_days": 14.75,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 6.02,
+        "dedicated_mac_10w_24h_eff065": 2.27,
+        "dedicated_mac_10w_24h_eff070": 2.11,
+        "dedicated_mac_10w_24h_eff075": 1.97,
+        "two_macs_combined_16w_24h_eff065": 1.42,
+        "two_macs_combined_16w_24h_eff070": 1.32,
+        "two_macs_combined_16w_24h_eff075": 1.23
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 13.01,
+        "wall_days": 0.54,
+        "cost_usd": 41.64
+      }
+    },
+    {
+      "label": "thesis_82x3x30",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 1.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 1061.9,
+      "total_cpu_days": 44.25,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 18.06,
+        "dedicated_mac_10w_24h_eff065": 6.81,
+        "dedicated_mac_10w_24h_eff070": 6.32,
+        "dedicated_mac_10w_24h_eff075": 5.9,
+        "two_macs_combined_16w_24h_eff065": 4.25,
+        "two_macs_combined_16w_24h_eff070": 3.95,
+        "two_macs_combined_16w_24h_eff075": 3.69
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 39.04,
+        "wall_days": 1.63,
+        "cost_usd": 124.93
+      }
+    },
+    {
+      "label": "article_v1_12x3x10",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 2.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 103.6,
+      "total_cpu_days": 4.32,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 1.76,
+        "dedicated_mac_10w_24h_eff065": 0.66,
+        "dedicated_mac_10w_24h_eff070": 0.62,
+        "dedicated_mac_10w_24h_eff075": 0.58,
+        "two_macs_combined_16w_24h_eff065": 0.42,
+        "two_macs_combined_16w_24h_eff070": 0.39,
+        "two_macs_combined_16w_24h_eff075": 0.36
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 3.81,
+        "wall_days": 0.16,
+        "cost_usd": 12.19
+      }
+    },
+    {
+      "label": "article_v1_12x3x30",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 2.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 310.8,
+      "total_cpu_days": 12.95,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 5.29,
+        "dedicated_mac_10w_24h_eff065": 1.99,
+        "dedicated_mac_10w_24h_eff070": 1.85,
+        "dedicated_mac_10w_24h_eff075": 1.73,
+        "two_macs_combined_16w_24h_eff065": 1.25,
+        "two_macs_combined_16w_24h_eff070": 1.16,
+        "two_macs_combined_16w_24h_eff075": 1.08
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 11.43,
+        "wall_days": 0.48,
+        "cost_usd": 36.57
+      }
+    },
+    {
+      "label": "article_v1_11binx3x10",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 2.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 82.0,
+      "total_cpu_days": 3.42,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 1.39,
+        "dedicated_mac_10w_24h_eff065": 0.53,
+        "dedicated_mac_10w_24h_eff070": 0.49,
+        "dedicated_mac_10w_24h_eff075": 0.46,
+        "two_macs_combined_16w_24h_eff065": 0.33,
+        "two_macs_combined_16w_24h_eff070": 0.31,
+        "two_macs_combined_16w_24h_eff075": 0.28
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 3.02,
+        "wall_days": 0.13,
+        "cost_usd": 9.65
+      }
+    },
+    {
+      "label": "article_v1_11binx3x30",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 2.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 246.0,
+      "total_cpu_days": 10.25,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 4.18,
+        "dedicated_mac_10w_24h_eff065": 1.58,
+        "dedicated_mac_10w_24h_eff070": 1.46,
+        "dedicated_mac_10w_24h_eff075": 1.37,
+        "two_macs_combined_16w_24h_eff065": 0.99,
+        "two_macs_combined_16w_24h_eff070": 0.92,
+        "two_macs_combined_16w_24h_eff075": 0.85
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 9.05,
+        "wall_days": 0.38,
+        "cost_usd": 28.94
+      }
+    },
+    {
+      "label": "thesis_82x3x10",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 2.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 707.9,
+      "total_cpu_days": 29.5,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 12.04,
+        "dedicated_mac_10w_24h_eff065": 4.54,
+        "dedicated_mac_10w_24h_eff070": 4.21,
+        "dedicated_mac_10w_24h_eff075": 3.93,
+        "two_macs_combined_16w_24h_eff065": 2.84,
+        "two_macs_combined_16w_24h_eff070": 2.63,
+        "two_macs_combined_16w_24h_eff075": 2.46
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 26.03,
+        "wall_days": 1.08,
+        "cost_usd": 83.29
+      }
+    },
+    {
+      "label": "thesis_82x3x30",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 2.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 2123.8,
+      "total_cpu_days": 88.49,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 36.12,
+        "dedicated_mac_10w_24h_eff065": 13.61,
+        "dedicated_mac_10w_24h_eff070": 12.64,
+        "dedicated_mac_10w_24h_eff075": 11.8,
+        "two_macs_combined_16w_24h_eff065": 8.51,
+        "two_macs_combined_16w_24h_eff070": 7.9,
+        "two_macs_combined_16w_24h_eff075": 7.37
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 78.08,
+        "wall_days": 3.25,
+        "cost_usd": 249.86
+      }
+    },
+    {
+      "label": "article_v1_12x3x10",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 4.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 207.2,
+      "total_cpu_days": 8.63,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 3.52,
+        "dedicated_mac_10w_24h_eff065": 1.33,
+        "dedicated_mac_10w_24h_eff070": 1.23,
+        "dedicated_mac_10w_24h_eff075": 1.15,
+        "two_macs_combined_16w_24h_eff065": 0.83,
+        "two_macs_combined_16w_24h_eff070": 0.77,
+        "two_macs_combined_16w_24h_eff075": 0.72
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 7.62,
+        "wall_days": 0.32,
+        "cost_usd": 24.38
+      }
+    },
+    {
+      "label": "article_v1_12x3x30",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 4.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 621.6,
+      "total_cpu_days": 25.9,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 10.57,
+        "dedicated_mac_10w_24h_eff065": 3.98,
+        "dedicated_mac_10w_24h_eff070": 3.7,
+        "dedicated_mac_10w_24h_eff075": 3.45,
+        "two_macs_combined_16w_24h_eff065": 2.49,
+        "two_macs_combined_16w_24h_eff070": 2.31,
+        "two_macs_combined_16w_24h_eff075": 2.16
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 22.85,
+        "wall_days": 0.95,
+        "cost_usd": 73.13
+      }
+    },
+    {
+      "label": "article_v1_11binx3x10",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 4.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 164.0,
+      "total_cpu_days": 6.83,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 2.79,
+        "dedicated_mac_10w_24h_eff065": 1.05,
+        "dedicated_mac_10w_24h_eff070": 0.98,
+        "dedicated_mac_10w_24h_eff075": 0.91,
+        "two_macs_combined_16w_24h_eff065": 0.66,
+        "two_macs_combined_16w_24h_eff070": 0.61,
+        "two_macs_combined_16w_24h_eff075": 0.57
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 6.03,
+        "wall_days": 0.25,
+        "cost_usd": 19.3
+      }
+    },
+    {
+      "label": "article_v1_11binx3x30",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 4.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 492.0,
+      "total_cpu_days": 20.5,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 8.37,
+        "dedicated_mac_10w_24h_eff065": 3.15,
+        "dedicated_mac_10w_24h_eff070": 2.93,
+        "dedicated_mac_10w_24h_eff075": 2.73,
+        "two_macs_combined_16w_24h_eff065": 1.97,
+        "two_macs_combined_16w_24h_eff070": 1.83,
+        "two_macs_combined_16w_24h_eff075": 1.71
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 18.09,
+        "wall_days": 0.75,
+        "cost_usd": 57.89
+      }
+    },
+    {
+      "label": "thesis_82x3x10",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 4.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 1415.9,
+      "total_cpu_days": 59.0,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 24.08,
+        "dedicated_mac_10w_24h_eff065": 9.08,
+        "dedicated_mac_10w_24h_eff070": 8.43,
+        "dedicated_mac_10w_24h_eff075": 7.87,
+        "two_macs_combined_16w_24h_eff065": 5.67,
+        "two_macs_combined_16w_24h_eff070": 5.27,
+        "two_macs_combined_16w_24h_eff075": 4.92
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 52.05,
+        "wall_days": 2.17,
+        "cost_usd": 166.58
+      }
+    },
+    {
+      "label": "thesis_82x3x30",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 4.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 4247.7,
+      "total_cpu_days": 176.99,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 72.24,
+        "dedicated_mac_10w_24h_eff065": 27.23,
+        "dedicated_mac_10w_24h_eff070": 25.28,
+        "dedicated_mac_10w_24h_eff075": 23.6,
+        "two_macs_combined_16w_24h_eff065": 17.02,
+        "two_macs_combined_16w_24h_eff070": 15.8,
+        "two_macs_combined_16w_24h_eff075": 14.75
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 156.16,
+        "wall_days": 6.51,
+        "cost_usd": 499.73
+      }
+    },
+    {
+      "label": "article_v1_12x3x10",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 8.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 414.4,
+      "total_cpu_days": 17.27,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 7.05,
+        "dedicated_mac_10w_24h_eff065": 2.66,
+        "dedicated_mac_10w_24h_eff070": 2.47,
+        "dedicated_mac_10w_24h_eff075": 2.3,
+        "two_macs_combined_16w_24h_eff065": 1.66,
+        "two_macs_combined_16w_24h_eff070": 1.54,
+        "two_macs_combined_16w_24h_eff075": 1.44
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 15.24,
+        "wall_days": 0.63,
+        "cost_usd": 48.75
+      }
+    },
+    {
+      "label": "article_v1_12x3x30",
+      "n_datasets": 12,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 8.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 1243.2,
+      "total_cpu_days": 51.8,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 21.14,
+        "dedicated_mac_10w_24h_eff065": 7.97,
+        "dedicated_mac_10w_24h_eff070": 7.4,
+        "dedicated_mac_10w_24h_eff075": 6.91,
+        "two_macs_combined_16w_24h_eff065": 4.98,
+        "two_macs_combined_16w_24h_eff070": 4.63,
+        "two_macs_combined_16w_24h_eff075": 4.32
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 45.71,
+        "wall_days": 1.9,
+        "cost_usd": 146.26
+      }
+    },
+    {
+      "label": "article_v1_11binx3x10",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 8.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 328.0,
+      "total_cpu_days": 13.67,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 5.58,
+        "dedicated_mac_10w_24h_eff065": 2.1,
+        "dedicated_mac_10w_24h_eff070": 1.95,
+        "dedicated_mac_10w_24h_eff075": 1.82,
+        "two_macs_combined_16w_24h_eff065": 1.31,
+        "two_macs_combined_16w_24h_eff070": 1.22,
+        "two_macs_combined_16w_24h_eff075": 1.14
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 12.06,
+        "wall_days": 0.5,
+        "cost_usd": 38.59
+      }
+    },
+    {
+      "label": "article_v1_11binx3x30",
+      "n_datasets": 11,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 8.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 984.1,
+      "total_cpu_days": 41.0,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 16.74,
+        "dedicated_mac_10w_24h_eff065": 6.31,
+        "dedicated_mac_10w_24h_eff070": 5.86,
+        "dedicated_mac_10w_24h_eff075": 5.47,
+        "two_macs_combined_16w_24h_eff065": 3.94,
+        "two_macs_combined_16w_24h_eff070": 3.66,
+        "two_macs_combined_16w_24h_eff075": 3.42
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 36.18,
+        "wall_days": 1.51,
+        "cost_usd": 115.78
+      }
+    },
+    {
+      "label": "thesis_82x3x10",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 10,
+      "multiplier": 8.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 2831.8,
+      "total_cpu_days": 117.99,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 48.16,
+        "dedicated_mac_10w_24h_eff065": 18.15,
+        "dedicated_mac_10w_24h_eff070": 16.86,
+        "dedicated_mac_10w_24h_eff075": 15.73,
+        "two_macs_combined_16w_24h_eff065": 11.35,
+        "two_macs_combined_16w_24h_eff070": 10.53,
+        "two_macs_combined_16w_24h_eff075": 9.83
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 104.11,
+        "wall_days": 4.34,
+        "cost_usd": 333.15
+      }
+    },
+    {
+      "label": "thesis_82x3x30",
+      "n_datasets": 82,
+      "n_algorithms": 3,
+      "n_replicas": 30,
+      "multiplier": 8.0,
+      "evals_per_replica_per_pair": 690,
+      "total_cpu_hours": 8495.4,
+      "total_cpu_days": 353.97,
+      "local_wall_days": {
+        "caio_mac_only_6w_14h_eff070": 144.48,
+        "dedicated_mac_10w_24h_eff065": 54.46,
+        "dedicated_mac_10w_24h_eff070": 50.57,
+        "dedicated_mac_10w_24h_eff075": 47.2,
+        "two_macs_combined_16w_24h_eff065": 34.04,
+        "two_macs_combined_16w_24h_eff070": 31.6,
+        "two_macs_combined_16w_24h_eff075": 29.5
+      },
+      "cloud_32w_010_eff085": {
+        "workers": 32,
+        "instance_hourly_price_per_worker_usd": 0.1,
+        "efficiency": 0.85,
+        "wall_hours": 312.33,
+        "wall_days": 13.01,
+        "cost_usd": 999.46
+      }
+    }
+  ],
+  "recommendation": "At the realistic 4x inflation, the headline 12x3x10 panel projects to ~1.23 days on a dedicated Mac and ~0.32 days / $24.38 on a 32-worker $0.10/h cloud. 30 replicas at the same 4x inflation multiplies CPU-hours to ~621.6h, dedicated-Mac wall days ~3.7. The 82-dataset doctoral panel at 10 replicas projects to ~8.43 days on a dedicated Mac (~2.17 cloud days, $166.58) under the same per-pair-mean assumption; do not start it locally past 1 replica. Recommendation: run the full 12x3x10 article v1 locally on the dedicated Mac. Reserve 30 replicas for *selected* datasets, not the panel. Run the doctoral 82-dataset benchmark at 1 replica locally first as a sizing check before scaling out to cloud."
+}

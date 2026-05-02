@@ -30,3 +30,78 @@ b1ef93de71f97714d3d7d4f58fc9f718da7bbc8ac8a150eff2778616a8097b12  spambase/raw/s
 39cf7031e033816455a2846f276d70c5d6315c39fcef2aca25a1fcbb71317c5e  spambase/processed/spambase.csv
 # <<< spambase
 
+# >>> magic
+# generated_at: 2026-05-02T19:08:43+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/magic/magic04.data
+# openml_id: 1120
+e9314b7ebd4b4b59a3b3d65f7316663963777b16a46786877651dbbaa640b36a  magic/raw/magic04.data
+3f1c8d063f1a93c8674772615ad09765f2af7c72ac7ac8775661467cf38aedc7  magic/processed/magic.csv
+# <<< magic
+
+# >>> adult
+# generated_at: 2026-05-02T19:08:53+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data
+# openml_id: 1590
+5b00264637dbfec36bdeaab5676b0b309ff9eb788d63554ca0a249491c86603d  adult/raw/adult.data
+e7d28d16bbc9461d7074d11125b35f794bdfcb0139dd9225aa3853f412def11c  adult/processed/adult.csv
+# <<< adult
+
+# >>> bank_marketing
+# generated_at: 2026-05-02T19:08:56+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip
+# openml_id: 1461
+d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3  bank_marketing/raw/.DS_Store
+dd756f74ad4c737e61cea10e81faeffa653774e148eafea9851ebaf258956eb0  bank_marketing/raw/.Rhistory
+ba73ce065915631181920868d96cf742163ef205eab9c7e58ce0d9fbe92cdddd  bank_marketing/raw/._.DS_Store
+249bc22b44253172df334e15cf23387ee2a0b2f8faaeba560637f889d41b2c00  bank_marketing/raw/._bank-additional
+74adfc578bf77a7ff4bb1ba4a9f8709d9e3c6907342959c2c8416847e0afb4d8  bank_marketing/raw/bank-additional-full.csv
+10045462a4c026f858dffa159370c4270510230c1fc63c6c91ca51bba4b3df26  bank_marketing/raw/bank-additional-names.txt
+7e59cf650004d65d1c9d6b08553bad2ee9a9ad70d594f536e3c584ee6ed5df50  bank_marketing/raw/bank-additional.csv
+a607b5edab6c6c75ce09c39142a77702c38123bd5aa7ae89a63503bbe17d65cd  bank_marketing/raw/bank-additional.zip
+911c109d58464a4eeab5ef6c520ec7d971d798380908dba517aca3c9bcdcc9df  bank_marketing/processed/bank_marketing.csv
+# <<< bank_marketing
+
+# >>> wine_quality
+# generated_at: 2026-05-02T19:09:21+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv
+# openml_id: 287
+4a402cf041b025d4566d954c3b9ba8635a3a8a01e039005d97d6a710278cf05e  wine_quality/raw/winequality-red.csv
+76c3f809815c17c07212622f776311faeb31e87610d52c26d87d6e361b169836  wine_quality/raw/winequality-white.csv
+537b985002e3bbb0e8760b190d5a87783e902b501b1081c2f3f397e0a5076dff  wine_quality/processed/wine_quality.csv
+# <<< wine_quality
+
+# >>> dry_bean
+# generated_at: 2026-05-02T19:09:30+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/00602/DryBeanDataset.zip
+# openml_id: 43466
+0a64eff5be87f48c3dbbfc0a12a56c5d5b5167ef8e61cd45d69b3e7c7130c06f  dry_bean/raw/DryBeanDataset.zip
+b2a4a76a2aedfb8ed415adfc1bfc70b5f202cb00cb72e500766e364c14834014  dry_bean/raw/Dry_Bean_Dataset.arff
+20413356adbeda9da589738cceb9387787970d8cfb41049f3b48c960c05b274d  dry_bean/raw/Dry_Bean_Dataset.txt
+a9efa69741c6c5d95167c962a13da23a456f7e940402a5add12639790e01f714  dry_bean/raw/Dry_Bean_Dataset.xlsx
+a427b53eafd5bf50af0798873311f2103c46d0576371dae8fa6c4853480bf3ca  dry_bean/processed/dry_bean.csv
+# <<< dry_bean
+
+# >>> mushroom
+# generated_at: 2026-05-02T19:09:33+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data
+# openml_id: 24
+e65d082030501a3ebcbcd7c9f7c71aa9d28fdfff463bf4cf4716a3fe13ac360e  mushroom/raw/agaricus-lepiota.data
+7204d38399e2c7c84d85e7a2019081724bb943613e82be5d3523156cfbcf9f64  mushroom/processed/mushroom.csv
+# <<< mushroom
+
+# >>> phishing
+# generated_at: 2026-05-02T19:09:36+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/00327/Training%20Dataset.arff
+# openml_id: 4534
+3bcf93b1612306537ee2737751f1bac185b2a77886ab376644c3bf0c7f7cb3e6  phishing/raw/Training Dataset.arff
+685e9fbdbe08c8b23fdb82e06cf5e154a8516e93f7b07f8a67328f17f86d0d72  phishing/processed/phishing.csv
+# <<< phishing
+
+# >>> credit_card_default
+# generated_at: 2026-05-02T19:10:31+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default%20of%20credit%20card%20clients.xls
+# openml_id: 42477
+30c6be3abd8dcfd3e6096c828bad8c2f011238620f5369220bd60cfc82700933  credit_card_default/raw/default_of_credit_card_clients.xls
+24f5ce1ac9963ffa6c89866a634376c0b6c4d5e895d1a05b93b805193f6ca338  credit_card_default/processed/credit_card_default.csv
+# <<< credit_card_default
+

@@ -1,0 +1,38 @@
+{
+  "dataset_id": "dry_bean",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00602/DryBeanDataset.zip",
+  "openml_id": 43466,
+  "target_column": "Class",
+  "target_transform": "label_encode",
+  "notes": "Multiclass (7 classes); 'Class' kept as string for label encoding at load time.",
+  "raw_files": [
+    {
+      "path": "dry_bean/raw/DryBeanDataset.zip",
+      "sha256": "0a64eff5be87f48c3dbbfc0a12a56c5d5b5167ef8e61cd45d69b3e7c7130c06f",
+      "size_bytes": 4738776
+    },
+    {
+      "path": "dry_bean/raw/Dry_Bean_Dataset.arff",
+      "sha256": "b2a4a76a2aedfb8ed415adfc1bfc70b5f202cb00cb72e500766e364c14834014",
+      "size_bytes": 3813205
+    },
+    {
+      "path": "dry_bean/raw/Dry_Bean_Dataset.txt",
+      "sha256": "20413356adbeda9da589738cceb9387787970d8cfb41049f3b48c960c05b274d",
+      "size_bytes": 3339
+    },
+    {
+      "path": "dry_bean/raw/Dry_Bean_Dataset.xlsx",
+      "sha256": "a9efa69741c6c5d95167c962a13da23a456f7e940402a5add12639790e01f714",
+      "size_bytes": 3043341
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "dry_bean/processed/dry_bean.csv",
+      "sha256": "a427b53eafd5bf50af0798873311f2103c46d0576371dae8fa6c4853480bf3ca",
+      "size_bytes": 3814125
+    }
+  ],
+  "generated_at": "2026-05-02T19:09:30+00:00"
+}

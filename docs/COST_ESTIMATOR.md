@@ -163,6 +163,50 @@ python scripts/article_v1_sizing.py
 
 This script does not run the experiment.
 
+## Article v1 full-dataset runtime profile (Commit 22)
+
+A real 5-fold CV pass over the full data on every (dataset, algorithm)
+pair lives at
+`experiments/_runtime_profile/v1_full_dataset_5fold_profile.{json,md}`.
+Headlines (Apple Silicon Mac, single safe HP point per algorithm,
+`n_jobs=1` / `thread_count=1`):
+
+- 36 / 36 pairs OK; 0 failures.
+- Fastest pair: `pima_diabetes / lightgbm` ≈ 0.04 s.
+- Slowest pair: `bank_marketing / catboost` ≈ 5.8 s (native categorical
+  on a 30k-row mixed-type dataset).
+- Sum of measured per-pair times across the panel: ~26 s.
+
+### Projections at the realistic 4× inflation multiplier
+
+| Scope | Replicas | Total CPU-h | Dedicated Mac (eff 0.70) | Cloud 32w eff 0.85 | Cloud cost |
+|---|---:|---:|---:|---:|---:|
+| article v1 (12 × 3) | 10 | **207** | **1.23 d** | 0.32 d | **$24** |
+| article v1 (12 × 3) | 30 | 622 | 3.70 d | 0.95 d | $73 |
+| article v1 (11 binary × 3) | 10 | 164 | 0.98 d | 0.25 d | $19 |
+| article v1 (11 binary × 3) | 30 | 492 | 2.93 d | 0.75 d | $58 |
+| thesis 82 × 3 | 10 | 1,416 | 8.43 d | 2.17 d | $167 |
+| thesis 82 × 3 | 30 | 4,248 | **25.3 d** | 6.51 d | **$500** |
+
+The thesis projections scale by the *mean* per-pair time of our v1
+panel (we have no measurements for the other 70 datasets). They are
+order-of-magnitude estimates, not commitments.
+
+### Recommendation
+
+Run the full **12 × 3 × 10** article v1 locally on the dedicated Mac.
+Reserve 30 replicas for *selected* datasets, not the whole panel. For
+the doctoral 82-dataset benchmark, run **1 replica locally first** as
+a sizing check before scaling out to cloud.
+
+Re-run the profiler with:
+
+```bash
+python scripts/profile_v1_full_dataset_runtime.py
+```
+
+The profiler does not run DOE / RSM / NBI / MBPA.
+
 ## Caveats
 
 The estimator is intentionally conservative:

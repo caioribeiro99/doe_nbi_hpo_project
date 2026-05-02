@@ -1,0 +1,28 @@
+{
+  "dataset_id": "wine_quality",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv",
+  "openml_id": 287,
+  "target_column": "quality",
+  "target_transform": "binary_quality_ge_6",
+  "notes": "Red+white merged with is_red flag; binary target_high_quality = (quality >= 6).",
+  "raw_files": [
+    {
+      "path": "wine_quality/raw/winequality-red.csv",
+      "sha256": "4a402cf041b025d4566d954c3b9ba8635a3a8a01e039005d97d6a710278cf05e",
+      "size_bytes": 84199
+    },
+    {
+      "path": "wine_quality/raw/winequality-white.csv",
+      "sha256": "76c3f809815c17c07212622f776311faeb31e87610d52c26d87d6e361b169836",
+      "size_bytes": 264426
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "wine_quality/processed/wine_quality.csv",
+      "sha256": "537b985002e3bbb0e8760b190d5a87783e902b501b1081c2f3f397e0a5076dff",
+      "size_bytes": 405256
+    }
+  ],
+  "generated_at": "2026-05-02T19:09:21+00:00"
+}

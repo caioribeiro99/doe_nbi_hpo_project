@@ -1,0 +1,23 @@
+{
+  "dataset_id": "mushroom",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data",
+  "openml_id": 24,
+  "target_column": "class",
+  "target_transform": "binary_p",
+  "notes": "22 categorical features kept as strings; 'class' is 'p'/'e' (mapped at load time).",
+  "raw_files": [
+    {
+      "path": "mushroom/raw/agaricus-lepiota.data",
+      "sha256": "e65d082030501a3ebcbcd7c9f7c71aa9d28fdfff463bf4cf4716a3fe13ac360e",
+      "size_bytes": 373704
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "mushroom/processed/mushroom.csv",
+      "sha256": "7204d38399e2c7c84d85e7a2019081724bb943613e82be5d3523156cfbcf9f64",
+      "size_bytes": 374004
+    }
+  ],
+  "generated_at": "2026-05-02T19:09:33+00:00"
+}

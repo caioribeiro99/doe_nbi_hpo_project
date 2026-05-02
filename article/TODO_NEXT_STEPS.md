@@ -111,6 +111,16 @@ v1 dataset. The 11 binary datasets remain the headline panel.
 
 ## Phase D — full v1 campaign
 
+> **Sizing update (Commit 22).** The full-dataset 5-fold runtime
+> profile at
+> `experiments/_runtime_profile/v1_full_dataset_5fold_profile.{json,md}`
+> projects the headline 12 × 3 × 10 panel at **~1.2 days dedicated
+> Mac (eff 0.70)** under the 4× realistic inflation multiplier, or
+> **~7.5 h / $24 on the 32-worker $0.10/h cloud**. 30 replicas at
+> 4× project to ~3.7 days dedicated. Recommendation: run the full
+> 12 × 3 × 10 locally on the dedicated Mac. Reserve 30 replicas for
+> selected datasets only.
+
 8. **Run the v1 campaign.** Schedule
    `12 datasets x 3 algorithms x 10 replicas` on the chosen profile.
    Use the cost-estimator batching plan to checkpoint every

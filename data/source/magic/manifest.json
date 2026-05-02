@@ -1,0 +1,23 @@
+{
+  "dataset_id": "magic",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/magic/magic04.data",
+  "openml_id": 1120,
+  "target_column": "class",
+  "target_transform": "map:{g:0,h:1}",
+  "notes": "Targets {g,h} mapped to {0,1}.",
+  "raw_files": [
+    {
+      "path": "magic/raw/magic04.data",
+      "sha256": "e9314b7ebd4b4b59a3b3d65f7316663963777b16a46786877651dbbaa640b36a",
+      "size_bytes": 1477391
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "magic/processed/magic.csv",
+      "sha256": "3f1c8d063f1a93c8674772615ad09765f2af7c72ac7ac8775661467cf38aedc7",
+      "size_bytes": 1478049
+    }
+  ],
+  "generated_at": "2026-05-02T19:08:43+00:00"
+}

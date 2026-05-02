@@ -180,8 +180,12 @@ def load_adult() -> LoadedDataset:
                 df = pd.read_csv(path, na_values="?")
             df = df.dropna()
             target_col = meta.target_column or "income"
-            y = (df[target_col].astype(str).str.strip().str.replace(".", "", regex=False)
-                 .map({">50K": 1, "<=50K": 0}).astype(int))
+            raw_y = df[target_col]
+            if pd.api.types.is_numeric_dtype(raw_y):
+                y = raw_y.astype(int)
+            else:
+                y = (raw_y.astype(str).str.strip().str.replace(".", "", regex=False)
+                     .map({">50K": 1, "<=50K": 0}).astype(int))
             X = df.drop(columns=[target_col])
             return _attach(meta, X, y)
     raise _missing(meta, candidates[0])
@@ -198,9 +202,19 @@ def load_bank_marketing() -> LoadedDataset:
     ]
     for path in candidates:
         if path.exists():
-            df = pd.read_csv(path, sep=";")
+            # The downloader-produced processed CSV is comma-separated and
+            # already maps the target to {0,1}; the raw UCI CSV is
+            # semicolon-separated with target 'yes'/'no'.
+            with path.open("r", encoding="utf-8", errors="ignore") as f:
+                first_line = f.readline()
+            sep = ";" if first_line.count(";") > first_line.count(",") else ","
+            df = pd.read_csv(path, sep=sep)
             target_col = meta.target_column or "y"
-            y = (df[target_col].astype(str).str.lower().map({"yes": 1, "no": 0}).astype(int))
+            raw_y = df[target_col]
+            if pd.api.types.is_numeric_dtype(raw_y):
+                y = raw_y.astype(int)
+            else:
+                y = (raw_y.astype(str).str.lower().map({"yes": 1, "no": 0}).astype(int))
             X = df.drop(columns=[target_col])
             X = X[~X.eq("unknown").any(axis=1)]
             y = y.loc[X.index]

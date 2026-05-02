@@ -1,0 +1,23 @@
+{
+  "dataset_id": "credit_card_default",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default%20of%20credit%20card%20clients.xls",
+  "openml_id": 42477,
+  "target_column": "default_payment_next_month",
+  "target_transform": null,
+  "notes": "UCI XLS or OpenML id 42477 fallback; ID column dropped.",
+  "raw_files": [
+    {
+      "path": "credit_card_default/raw/default_of_credit_card_clients.xls",
+      "sha256": "30c6be3abd8dcfd3e6096c828bad8c2f011238620f5369220bd60cfc82700933",
+      "size_bytes": 5539328
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "credit_card_default/processed/credit_card_default.csv",
+      "sha256": "24f5ce1ac9963ffa6c89866a634376c0b6c4d5e895d1a05b93b805193f6ca338",
+      "size_bytes": 2698207
+    }
+  ],
+  "generated_at": "2026-05-02T19:10:31+00:00"
+}

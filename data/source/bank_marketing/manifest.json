@@ -1,0 +1,58 @@
+{
+  "dataset_id": "bank_marketing",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip",
+  "openml_id": 1461,
+  "target_column": "y",
+  "target_transform": "binary_yes",
+  "notes": "Uses bank-additional-full; categoricals preserved; y mapped to {0,1}.",
+  "raw_files": [
+    {
+      "path": "bank_marketing/raw/.DS_Store",
+      "sha256": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3",
+      "size_bytes": 6148
+    },
+    {
+      "path": "bank_marketing/raw/.Rhistory",
+      "sha256": "dd756f74ad4c737e61cea10e81faeffa653774e148eafea9851ebaf258956eb0",
+      "size_bytes": 3943
+    },
+    {
+      "path": "bank_marketing/raw/._.DS_Store",
+      "sha256": "ba73ce065915631181920868d96cf742163ef205eab9c7e58ce0d9fbe92cdddd",
+      "size_bytes": 82
+    },
+    {
+      "path": "bank_marketing/raw/._bank-additional",
+      "sha256": "249bc22b44253172df334e15cf23387ee2a0b2f8faaeba560637f889d41b2c00",
+      "size_bytes": 205
+    },
+    {
+      "path": "bank_marketing/raw/bank-additional-full.csv",
+      "sha256": "74adfc578bf77a7ff4bb1ba4a9f8709d9e3c6907342959c2c8416847e0afb4d8",
+      "size_bytes": 5834924
+    },
+    {
+      "path": "bank_marketing/raw/bank-additional-names.txt",
+      "sha256": "10045462a4c026f858dffa159370c4270510230c1fc63c6c91ca51bba4b3df26",
+      "size_bytes": 5458
+    },
+    {
+      "path": "bank_marketing/raw/bank-additional.csv",
+      "sha256": "7e59cf650004d65d1c9d6b08553bad2ee9a9ad70d594f536e3c584ee6ed5df50",
+      "size_bytes": 583898
+    },
+    {
+      "path": "bank_marketing/raw/bank-additional.zip",
+      "sha256": "a607b5edab6c6c75ce09c39142a77702c38123bd5aa7ae89a63503bbe17d65cd",
+      "size_bytes": 444572
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "bank_marketing/processed/bank_marketing.csv",
+      "sha256": "911c109d58464a4eeab5ef6c520ec7d971d798380908dba517aca3c9bcdcc9df",
+      "size_bytes": 4866213
+    }
+  ],
+  "generated_at": "2026-05-02T19:08:56+00:00"
+}

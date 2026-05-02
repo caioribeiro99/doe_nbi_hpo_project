@@ -39,6 +39,9 @@ def process(raw_dir: Path, processed_dir: Path) -> list[Path]:
     rename = {
         "default payment next month": "default_payment_next_month",
         "default.payment.next.month": "default_payment_next_month",
+        # OpenML id 42477 ships features 'x1'..'x23' and target 'y'.
+        "y": "default_payment_next_month",
+        "Y": "default_payment_next_month",
     }
     for old, new in rename.items():
         if old in df.columns:

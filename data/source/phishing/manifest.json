@@ -1,0 +1,23 @@
+{
+  "dataset_id": "phishing",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/00327/Training%20Dataset.arff",
+  "openml_id": 4534,
+  "target_column": "Result",
+  "target_transform": "map:{-1:0,1:1}",
+  "notes": "ARFF source converted to CSV; values in {-1, 0, 1} preserved.",
+  "raw_files": [
+    {
+      "path": "phishing/raw/Training Dataset.arff",
+      "sha256": "3bcf93b1612306537ee2737751f1bac185b2a77886ab376644c3bf0c7f7cb3e6",
+      "size_bytes": 800920
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "phishing/processed/phishing.csv",
+      "sha256": "685e9fbdbe08c8b23fdb82e06cf5e154a8516e93f7b07f8a67328f17f86d0d72",
+      "size_bytes": 789147
+    }
+  ],
+  "generated_at": "2026-05-02T19:09:36+00:00"
+}

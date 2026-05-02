@@ -1,0 +1,23 @@
+{
+  "dataset_id": "adult",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data",
+  "openml_id": 1590,
+  "target_column": "income",
+  "target_transform": "binary>50K",
+  "notes": "'?' rows dropped; income mapped to {0,1}; categoricals preserved as strings.",
+  "raw_files": [
+    {
+      "path": "adult/raw/adult.data",
+      "sha256": "5b00264637dbfec36bdeaab5676b0b309ff9eb788d63554ca0a249491c86603d",
+      "size_bytes": 3974305
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "adult/processed/adult.csv",
+      "sha256": "e7d28d16bbc9461d7074d11125b35f794bdfcb0139dd9225aa3853f412def11c",
+      "size_bytes": 3184900
+    }
+  ],
+  "generated_at": "2026-05-02T19:08:53+00:00"
+}
