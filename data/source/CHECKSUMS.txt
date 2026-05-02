@@ -1,0 +1,8 @@
+# SHA-256 checksums for canonical datasets used by the article-track configs.
+# Update this file after manually validating a new upstream version.
+#
+# Format: <sha256>  <filename>
+
+# Placeholder SHA-256 for UCI MAGIC's magic04.data; populate with the
+# real hash after the first verified download (`make data`).
+0000000000000000000000000000000000000000000000000000000000000000  magic.csv
