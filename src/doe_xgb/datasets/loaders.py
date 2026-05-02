@@ -72,6 +72,8 @@ def load_magic() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["magic"]
     candidates = [
+        _data_root() / "magic" / "processed" / "magic.csv",
+        _data_root() / "magic" / "raw" / "magic04.data",
         _data_root() / "telescope2.xlsx",
         _data_root() / "magic.csv",
         _data_root() / "magic" / "magic.csv",
@@ -114,6 +116,8 @@ def load_pima_diabetes() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["pima_diabetes"]
     candidates = [
+        _data_root() / "pima_diabetes" / "processed" / "pima_diabetes.csv",
+        _data_root() / "pima_diabetes" / "raw" / "pima_openml_37.csv",
         _data_root() / "pima_diabetes" / "diabetes.csv",
         _data_root() / "pima_diabetes" / "pima.csv",
     ]
@@ -135,6 +139,8 @@ def load_spambase() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["spambase"]
     candidates = [
+        _data_root() / "spambase" / "processed" / "spambase.csv",
+        _data_root() / "spambase" / "raw" / "spambase.data",
         _data_root() / "spambase" / "spambase.data",
         _data_root() / "spambase" / "spambase.csv",
     ]
@@ -154,6 +160,8 @@ def load_adult() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["adult"]
     candidates = [
+        _data_root() / "adult" / "processed" / "adult.csv",
+        _data_root() / "adult" / "raw" / "adult.data",
         _data_root() / "adult" / "adult.csv",
         _data_root() / "adult" / "adult.data",
     ]
@@ -183,6 +191,8 @@ def load_bank_marketing() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["bank_marketing"]
     candidates = [
+        _data_root() / "bank_marketing" / "processed" / "bank_marketing.csv",
+        _data_root() / "bank_marketing" / "raw" / "bank-additional-full.csv",
         _data_root() / "bank" / "bank-additional-full.csv",
         _data_root() / "bank_marketing" / "bank-additional-full.csv",
     ]
@@ -202,6 +212,7 @@ def load_credit_card_default() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["credit_card_default"]
     candidates = [
+        _data_root() / "credit_card_default" / "processed" / "credit_card_default.csv",
         _data_root() / "credit_card_default.csv",
         _data_root() / "credit_card_default" / "credit_card_default.csv",
         _data_root() / "credit_card_default" / "default of credit card clients.csv",
@@ -225,6 +236,8 @@ def load_german_credit() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["german_credit"]
     candidates = [
+        _data_root() / "german_credit" / "processed" / "german_credit.csv",
+        _data_root() / "german_credit" / "raw" / "german.data",
         _data_root() / "german_credit" / "german.data",
         _data_root() / "german_credit" / "german.csv",
     ]
@@ -236,7 +249,17 @@ def load_german_credit() -> LoadedDataset:
             else:
                 df = pd.read_csv(path)
             target_col = meta.target_column or "risk"
-            y = (df[target_col].astype(int).map({1: 0, 2: 1, 0: 0}).fillna(0).astype(int))
+            raw_y = df[target_col]
+            # Some processed CSVs already store the binarised {0,1}; the
+            # raw .data file uses {1,2}.
+            if raw_y.dtype == object:
+                y = raw_y.map({"good": 0, "bad": 1, "1": 0, "2": 1, "0": 0}).fillna(0).astype(int)
+            else:
+                y_int = raw_y.astype(int)
+                if set(y_int.unique()) <= {1, 2}:
+                    y = y_int.map({1: 0, 2: 1}).astype(int)
+                else:
+                    y = y_int.astype(int)
             X = df.drop(columns=[target_col])
             return _attach(meta, X, y)
     raise _missing(meta, candidates[0])
@@ -245,8 +268,21 @@ def load_german_credit() -> LoadedDataset:
 def load_wine_quality() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["wine_quality"]
-    red = _data_root() / "wine_quality" / "winequality-red.csv"
-    white = _data_root() / "wine_quality" / "winequality-white.csv"
+    processed = _data_root() / "wine_quality" / "processed" / "wine_quality.csv"
+    if processed.exists():
+        df = pd.read_csv(processed)
+        if "target_high_quality" in df.columns:
+            y = df["target_high_quality"].astype(int)
+            X = df.drop(columns=["target_high_quality", "quality"], errors="ignore")
+        else:
+            y = (df.get("quality", pd.Series(dtype=int)) >= 6).astype(int)
+            X = df.drop(columns=["quality"], errors="ignore")
+        return _attach(meta, X, y)
+    red = _data_root() / "wine_quality" / "raw" / "winequality-red.csv"
+    white = _data_root() / "wine_quality" / "raw" / "winequality-white.csv"
+    if not (red.exists() or white.exists()):
+        red = _data_root() / "wine_quality" / "winequality-red.csv"
+        white = _data_root() / "wine_quality" / "winequality-white.csv"
     if red.exists() or white.exists():
         frames = []
         if red.exists():
@@ -265,6 +301,8 @@ def load_dry_bean() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["dry_bean"]
     candidates = [
+        _data_root() / "dry_bean" / "processed" / "dry_bean.csv",
+        _data_root() / "dry_bean" / "raw" / "Dry_Bean_Dataset.xlsx",
         _data_root() / "dry_bean" / "Dry_Bean_Dataset.xlsx",
         _data_root() / "dry_bean" / "dry_bean.csv",
     ]
@@ -288,6 +326,8 @@ def load_mushroom() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["mushroom"]
     candidates = [
+        _data_root() / "mushroom" / "processed" / "mushroom.csv",
+        _data_root() / "mushroom" / "raw" / "agaricus-lepiota.data",
         _data_root() / "mushroom" / "agaricus-lepiota.data",
         _data_root() / "mushroom" / "mushroom.csv",
     ]
@@ -309,6 +349,8 @@ def load_phishing() -> LoadedDataset:
     pd = _ensure_pandas()
     meta = REGISTRY["phishing"]
     candidates = [
+        _data_root() / "phishing" / "processed" / "phishing.csv",
+        _data_root() / "phishing" / "raw" / "Training Dataset.arff",
         _data_root() / "phishing" / "phishing.csv",
         _data_root() / "phishing" / "Training Dataset.arff",
     ]

@@ -1,0 +1,23 @@
+{
+  "dataset_id": "spambase",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data",
+  "openml_id": 44,
+  "target_column": "is_spam",
+  "target_transform": null,
+  "notes": "57 numeric features renamed feat_0..feat_56; target 'is_spam'.",
+  "raw_files": [
+    {
+      "path": "spambase/raw/spambase.data",
+      "sha256": "b1ef93de71f97714d3d7d4f58fc9f718da7bbc8ac8a150eff2778616a8097b12",
+      "size_bytes": 702942
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "spambase/processed/spambase.csv",
+      "sha256": "39cf7031e033816455a2846f276d70c5d6315c39fcef2aca25a1fcbb71317c5e",
+      "size_bytes": 1106859
+    }
+  ],
+  "generated_at": "2026-05-02T18:44:20+00:00"
+}

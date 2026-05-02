@@ -23,6 +23,11 @@ catboost_info/
 experiments/_cost_calibration/*
 !experiments/_cost_calibration/*.json
 !experiments/_cost_calibration/*.md
+# Article-track smoke outputs are versioned (small JSON only).
+!experiments/_v1_smoke/
+experiments/_v1_smoke/*
+!experiments/_v1_smoke/*.json
+!experiments/_v1_smoke/*.md
 
 # Data (keep folder structure)
 data/source/*

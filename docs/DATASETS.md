@@ -104,6 +104,31 @@ re-download.
 `doe-xgb datasets verify-checksums [--dataset-id <id>]` re-hashes every
 file referenced in the manifests and reports True/False per dataset.
 
+## Tiny binary smoke (Commit 20)
+
+`scripts/run_v1_binary_smoke.py` exercises the load -> evaluate path
+end-to-end on the three small fetched datasets (`german_credit`,
+`pima_diabetes`, `spambase`), runs `evaluate_xgb_cv` once each at a
+single safe hyperparameter point with 2-fold CV, and asserts that
+the dissertation-era binary keys are populated. Total runtime is
+~1.3 seconds on Apple Silicon at `--max-rows 1000`.
+
+```bash
+python scripts/fetch_german_credit_dataset.py
+python scripts/fetch_pima_diabetes_dataset.py
+python scripts/fetch_spambase_dataset.py
+python -m doe_xgb.cli datasets verify-checksums --dataset-id german_credit
+python -m doe_xgb.cli datasets verify-checksums --dataset-id pima_diabetes
+python -m doe_xgb.cli datasets verify-checksums --dataset-id spambase
+python scripts/run_v1_binary_smoke.py --max-rows 1000
+```
+
+The smoke script writes `experiments/_v1_smoke/binary_smoke_output.json`
+and fails fast if any dataset returns multiclass metrics or any of
+`Accuracy_Mean / Precision_Mean / Recall_Mean / Specificity_Mean` is
+missing. It does **not** run DOE / RSM / NBI / MBPA, and it does
+**not** load Dry Bean.
+
 ## Loaders
 
 Each `load_*` function under `src/doe_xgb/datasets/loaders.py` returns

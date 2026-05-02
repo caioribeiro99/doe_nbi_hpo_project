@@ -1,0 +1,23 @@
+{
+  "dataset_id": "pima_diabetes",
+  "source_url": null,
+  "openml_id": 37,
+  "target_column": "class",
+  "target_transform": "binary",
+  "notes": "OpenML id 37 (UCI original retracted).",
+  "raw_files": [
+    {
+      "path": "pima_diabetes/raw/pima_openml_37.csv",
+      "sha256": "c82fe0831fc83705287c407c198fc53917a3a20fce6c9ffbe9d2dc6fb6514713",
+      "size_bytes": 23238
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "pima_diabetes/processed/pima_diabetes.csv",
+      "sha256": "c82fe0831fc83705287c407c198fc53917a3a20fce6c9ffbe9d2dc6fb6514713",
+      "size_bytes": 23238
+    }
+  ],
+  "generated_at": "2026-05-02T18:44:16+00:00"
+}

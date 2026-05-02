@@ -82,19 +82,27 @@ Decision unchanged: **Option B -- Dry Bean is the secondary multiclass
 stress test reported in the appendix/supplementary**, not a headline
 v1 dataset. The 11 binary datasets remain the headline panel.
 
-## Phase C — small smoke run
+## Phase C — small smoke run [v1 binary smoke landed in Commit 20]
 
-6. **Single-dataset smoke.** Re-run the existing tests; then run
-   `doe-xgb run --config configs/article_3vrf_xgb_magic.yaml` (after
-   the orchestrator follow-up branch lands) for `n_replicas=2` on
-   MAGIC only. Confirm:
-   - manifest written;
-   - NBI residuals < 1e-3 across all sub-problems;
-   - MBPA decision recorded;
-   - per-fold metrics CSV has the expected columns.
-7. **Three-algorithm smoke.** Repeat on a tiny synthetic dataset
-   spanning XGBoost / LightGBM / CatBoost to confirm the loader
-   abstractions work uniformly.
+6. **Tiny binary smoke (DONE).** `scripts/run_v1_binary_smoke.py`
+   loads `german_credit`, `pima_diabetes`, and `spambase` (and
+   optionally Breast Cancer); runs `evaluate_xgb_cv` at a single
+   safe hyperparameter point with 2-fold CV; asserts the
+   dissertation-era binary keys are populated; writes
+   `experiments/_v1_smoke/binary_smoke_output.json`. Total runtime
+   ~1.3 s. Does **not** run DOE / RSM / NBI / MBPA.
+7. **Three-algorithm smoke (next).** Re-run the same datasets at
+   the same hyperparameter point with each of XGBoost / LightGBM /
+   CatBoost to confirm the loader / metric path is uniform across
+   the three GBDT families.
+8. **Single-dataset DOE+NBI smoke (later).** Once the orchestrator
+   wrapper lands, run `doe-xgb run --config configs/article_3vrf_xgb_magic.yaml`
+   on MAGIC at `n_replicas=2` and confirm NBI residuals < 1e-3,
+   MBPA decision recorded, per-fold metrics CSV has the expected
+   columns.
+9. **Dry Bean appendix smoke (later).** After 7 and 8 pass, run
+   `configs/article_3vrf_dry_bean.yaml` at `n_replicas=1` with
+   XGBoost only.
 
 ## Phase D — full v1 campaign
 

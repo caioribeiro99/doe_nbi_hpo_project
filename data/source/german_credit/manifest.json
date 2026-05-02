@@ -1,0 +1,23 @@
+{
+  "dataset_id": "german_credit",
+  "source_url": "https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data",
+  "openml_id": 31,
+  "target_column": "risk",
+  "target_transform": "binary_bad",
+  "notes": "risk={1->0, 2->1}; categoricals kept as strings.",
+  "raw_files": [
+    {
+      "path": "german_credit/raw/german.data",
+      "sha256": "b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871",
+      "size_bytes": 79793
+    }
+  ],
+  "processed_files": [
+    {
+      "path": "german_credit/processed/german_credit.csv",
+      "sha256": "163637c792856b0703cc2364e857b980906cea6e3b6b60b4aa9582a43525eb00",
+      "size_bytes": 80071
+    }
+  ],
+  "generated_at": "2026-05-02T18:44:03+00:00"
+}

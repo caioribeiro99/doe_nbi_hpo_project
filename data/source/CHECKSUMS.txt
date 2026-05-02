@@ -6,3 +6,27 @@
 # Placeholder SHA-256 for UCI MAGIC's magic04.data; populate with the
 # real hash after the first verified download (`make data`).
 0000000000000000000000000000000000000000000000000000000000000000  magic.csv
+
+# >>> german_credit
+# generated_at: 2026-05-02T18:44:03+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data
+# openml_id: 31
+b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871  german_credit/raw/german.data
+163637c792856b0703cc2364e857b980906cea6e3b6b60b4aa9582a43525eb00  german_credit/processed/german_credit.csv
+# <<< german_credit
+
+# >>> pima_diabetes
+# generated_at: 2026-05-02T18:44:16+00:00
+# openml_id: 37
+c82fe0831fc83705287c407c198fc53917a3a20fce6c9ffbe9d2dc6fb6514713  pima_diabetes/raw/pima_openml_37.csv
+c82fe0831fc83705287c407c198fc53917a3a20fce6c9ffbe9d2dc6fb6514713  pima_diabetes/processed/pima_diabetes.csv
+# <<< pima_diabetes
+
+# >>> spambase
+# generated_at: 2026-05-02T18:44:20+00:00
+# source_url: https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data
+# openml_id: 44
+b1ef93de71f97714d3d7d4f58fc9f718da7bbc8ac8a150eff2778616a8097b12  spambase/raw/spambase.data
+39cf7031e033816455a2846f276d70c5d6315c39fcef2aca25a1fcbb71317c5e  spambase/processed/spambase.csv
+# <<< spambase
+
