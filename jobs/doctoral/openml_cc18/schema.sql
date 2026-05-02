@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS cc18_jobs (
     assigned_worker   TEXT    NULL,
     retry_count       INTEGER NOT NULL DEFAULT 0,
     last_error        TEXT    NULL,
+    notes             TEXT    NULL,
     started_at        TEXT    NULL,
     finished_at       TEXT    NULL,
     runtime_seconds   REAL    NULL,

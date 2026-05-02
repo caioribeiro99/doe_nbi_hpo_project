@@ -58,12 +58,24 @@ the ParEGO subset is frozen at 48 of 72 tasks
 (`benchmarks/doctoral/openml_cc18/parego_subset.csv`), and the
 two remaining TODO references do not block shard generation.
 
-The next operational step is to run
-`scripts/generate_cc18_job_shards.py` (planned), driven by the
-frozen pair `method_matrix.csv` + `execution_policy.csv` plus
-`parego_subset.csv`, to materialize the SQLite shards under
-`jobs/doctoral/openml_cc18/shards/`. No method list is hardcoded
-in that script.
+**SQLite shards (Commit 28).** `scripts/generate_cc18_job_shards.py`
+materializes the deterministic job queues at
+`jobs/doctoral/openml_cc18/shards/<stage>/shard_NN.sqlite` (40 files
+total: 4 stages × 10 shards) by reading
+`method_matrix.csv` + `execution_policy.csv` + `parego_subset.csv`
++ `tasks.csv` against `schema.sql`. No method list is hardcoded.
+Total rows: **79,920** (2,304 / 9,216 / 13,680 / 54,720 by stage).
+The shard files are committed to the repository so the dedicated
+Mac can fetch them by `git pull` rather than regenerate. Re-run
+the generator after any edit to the four CSVs:
+
+```bash
+python scripts/generate_cc18_job_shards.py --shards 10 --force
+```
+
+The runner that actually claims jobs and trains models is **not**
+part of Commit 28; it lands after the method-adapter capability
+audit.
 
 The CC18 task / dataset registry lives at
 `benchmarks/doctoral/openml_cc18/{tasks.csv, datasets.csv,

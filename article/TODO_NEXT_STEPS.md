@@ -24,12 +24,17 @@
 > (`benchmarks/doctoral/openml_cc18/parego_subset.csv`); the
 > per-method execution-tier policy lives at
 > `benchmarks/doctoral/openml_cc18/execution_policy.csv` and
-> `execution_tiers.md`. **Next operational step:** implement
-> `scripts/generate_cc18_job_shards.py`, driven by
-> `method_matrix.csv` + `execution_policy.csv` +
-> `parego_subset.csv` + `tasks.csv` against
-> `jobs/doctoral/openml_cc18/schema.sql`. No method list is
-> hardcoded in that script.
+> `execution_tiers.md`.
+>
+> **SQLite shards landed in Commit 28.**
+> `scripts/generate_cc18_job_shards.py` materializes 40 deterministic
+> shard files at
+> `jobs/doctoral/openml_cc18/shards/<stage>/shard_NN.sqlite`,
+> totalling 79,920 jobs (2,304 / 9,216 / 13,680 / 54,720 by stage).
+> The shards are committed to the repository so the dedicated Mac
+> fetches them by `git pull`. **Next operational step:**
+> method-adapter capability audit + local runner skeleton (Commit
+> 29). No benchmark runs yet.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

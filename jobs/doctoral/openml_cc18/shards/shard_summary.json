@@ -1,0 +1,245 @@
+{
+  "ablation_rows": 10800,
+  "dry_run": false,
+  "generated_at": "2026-05-02T22:07:11Z",
+  "literature_rows": 0,
+  "n_shards_per_stage": 10,
+  "panel_version": "cc18_v1",
+  "parego_rows": 4320,
+  "rows_by_algorithm": {
+    "catboost": 26640,
+    "lightgbm": 26640,
+    "xgboost": 26640
+  },
+  "rows_by_method": {
+    "asha": 6480,
+    "bohb": 6480,
+    "default_gbdt": 6480,
+    "dehb": 6480,
+    "doe_rsm_vrf_true_nbi": 6480,
+    "doe_rsm_vrf_true_nbi_no_mbpa": 5400,
+    "legacy_weighted_sum_scalarization": 5400,
+    "motpe": 6480,
+    "nsga2": 6480,
+    "parego": 4320,
+    "random_search": 6480,
+    "smac3": 6480,
+    "tpe_optuna": 6480
+  },
+  "rows_by_shard": [
+    {
+      "rows": 219,
+      "shard_id": 0,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 230,
+      "shard_id": 1,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 223,
+      "shard_id": 2,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 235,
+      "shard_id": 3,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 226,
+      "shard_id": 4,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 226,
+      "shard_id": 5,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 228,
+      "shard_id": 6,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 270,
+      "shard_id": 7,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 237,
+      "shard_id": 8,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 210,
+      "shard_id": 9,
+      "stage": "stage0_replica_001"
+    },
+    {
+      "rows": 876,
+      "shard_id": 0,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 920,
+      "shard_id": 1,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 892,
+      "shard_id": 2,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 940,
+      "shard_id": 3,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 904,
+      "shard_id": 4,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 904,
+      "shard_id": 5,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 912,
+      "shard_id": 6,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 1080,
+      "shard_id": 7,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 948,
+      "shard_id": 8,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 840,
+      "shard_id": 9,
+      "stage": "stage1_topup_to_005"
+    },
+    {
+      "rows": 1305,
+      "shard_id": 0,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1370,
+      "shard_id": 1,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1325,
+      "shard_id": 2,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1395,
+      "shard_id": 3,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1340,
+      "shard_id": 4,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1340,
+      "shard_id": 5,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1350,
+      "shard_id": 6,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1600,
+      "shard_id": 7,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1405,
+      "shard_id": 8,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 1250,
+      "shard_id": 9,
+      "stage": "stage2_topup_to_010"
+    },
+    {
+      "rows": 5220,
+      "shard_id": 0,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5480,
+      "shard_id": 1,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5300,
+      "shard_id": 2,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5580,
+      "shard_id": 3,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5360,
+      "shard_id": 4,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5360,
+      "shard_id": 5,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5400,
+      "shard_id": 6,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 6400,
+      "shard_id": 7,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5620,
+      "shard_id": 8,
+      "stage": "stage3_topup_to_030"
+    },
+    {
+      "rows": 5000,
+      "shard_id": 9,
+      "stage": "stage3_topup_to_030"
+    }
+  ],
+  "rows_by_stage": {
+    "stage0_replica_001": 2304,
+    "stage1_topup_to_005": 9216,
+    "stage2_topup_to_010": 13680,
+    "stage3_topup_to_030": 54720
+  },
+  "stage3_signoff_rows": 46080,
+  "stages": [
+    "stage0_replica_001",
+    "stage1_topup_to_005",
+    "stage2_topup_to_010",
+    "stage3_topup_to_030"
+  ],
+  "total_rows": 79920
+}

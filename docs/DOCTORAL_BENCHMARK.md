@@ -134,10 +134,13 @@ AutoGluon) are cited as context, not benchmarked, with FLAML
 optionally promoted to a baseline once the open items at the bottom
 of `docs/COMPARATIVE_PROTOCOL.md` are resolved.
 
-## Next operational step (Commit 27 freeze cleared)
+## SQLite shards landed in Commit 28
 
-The protocol is frozen. The next operational step is to implement
-`scripts/generate_cc18_job_shards.py`, driven by:
+The deterministic SQLite job queues are materialized under
+`jobs/doctoral/openml_cc18/shards/<stage>/shard_NN.sqlite`:
+40 files (4 stages × 10 shards), 79,920 rows total
+(2,304 / 9,216 / 13,680 / 54,720 by stage). The
+`scripts/generate_cc18_job_shards.py` generator is driven by:
 
 - `benchmarks/doctoral/openml_cc18/method_matrix.csv`
   (frozen 16-row method matrix);
@@ -148,16 +151,21 @@ The protocol is frozen. The next operational step is to implement
 - `benchmarks/doctoral/openml_cc18/tasks.csv` (72 CC18 tasks);
 - `jobs/doctoral/openml_cc18/schema.sql` (`cc18_jobs` schema).
 
-**No method names, scope rules, or stage-gating logic may be
-hardcoded in the shard generator.** Projected job counts under the
-frozen policy: 2,304 at stage 0; 11,520 through stage 1; 25,200
-through stage 2; 79,920 through stage 3. See
-`benchmarks/doctoral/openml_cc18/job_count_projection.md` for the
-wall-clock projection (~6.7 / ~33 / ~74 / ~235 dedicated-Mac days
-at efficiency 0.75, scaling roughly inversely with efficiency).
-Stage 3 is gated by manual sign-off for every tier 1+ method, so
-the campaign can ship a stage-2 (10-replica) snapshot if the
-stage-3 cost is judged unacceptable.
+**No method names, scope rules, or stage-gating logic are hardcoded
+in the shard generator.** The generated shard counts match the
+projection in `benchmarks/doctoral/openml_cc18/job_count_projection.md`:
+2,304 at stage 0; 11,520 through stage 1; 25,200 through stage 2;
+79,920 through stage 3. Stage 3 jobs of every tier-1+ method carry
+the `requires_manual_signoff_before_stage3` note in
+`cc18_jobs.notes`, so the runner can ship a stage-2 (10-replica)
+snapshot if the stage-3 cost is judged unacceptable.
+
+The next operational step is the **method-adapter capability
+audit**: a per-method dry-run that imports the implementation
+package, exercises a one-cell smoke job, and reports which methods
+are actually executable on the dedicated Mac before stage 0
+starts. The runner that claims jobs and trains models lands after
+that audit.
 
 ## What this commit does NOT do
 
