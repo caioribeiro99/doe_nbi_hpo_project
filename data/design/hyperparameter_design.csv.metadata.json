@@ -1,0 +1,41 @@
+{
+  "filename": "hyperparameter_design.csv",
+  "sha256": "5a9f47e4e6b7c870855f4235aca701b4bb0e90a3a94e1e36c5ff8eba9836a6c5",
+  "generator": "Minitab",
+  "design_type": "ccd_face_centered",
+  "design_kind_alias": ["CCDFC", "CCFCD", "Face-Centered Central Composite Design"],
+  "n_factors": 7,
+  "n_runs": 88,
+  "n_center": 4,
+  "alpha_axial": 1.0,
+  "factor_names": [
+    "subsample",
+    "colsample_bytree",
+    "colsample_bylevel",
+    "learning_rate",
+    "max_depth",
+    "gamma",
+    "n_estimators"
+  ],
+  "factor_bounds": {
+    "subsample":         {"lo": 0.05, "hi": 1.00, "type": "float"},
+    "colsample_bytree":  {"lo": 0.05, "hi": 1.00, "type": "float"},
+    "colsample_bylevel": {"lo": 0.05, "hi": 1.00, "type": "float"},
+    "learning_rate":     {"lo": 0.01, "hi": 0.30, "type": "float"},
+    "max_depth":         {"lo": 3,    "hi": 18,   "type": "int"},
+    "gamma":             {"lo": 0.05, "hi": 5.00, "type": "float"},
+    "n_estimators":      {"lo": 50,   "hi": 700,  "type": "int"}
+  },
+  "csv_format": {
+    "separator": ";",
+    "decimal": ",",
+    "header_columns": ["StdOrder", "RunOrder", "PtType", "Blocks", "<factors...>"],
+    "encoding": "utf-8"
+  },
+  "notes": [
+    "Generated in Minitab as a face-centered fractional CCD covering 7 XGBoost hyperparameters.",
+    "PtType column follows Minitab convention: 1=corner, -1=axial, 0=center.",
+    "Values are stored in uncoded (natural) units. The DesignProvider encodes them to [-1, 1] using the bounds above.",
+    "This design is the canonical artifact used by the dissertation (tag v0.1.0-dissertation) and the article-track configurations on repo-publication-readiness."
+  ]
+}

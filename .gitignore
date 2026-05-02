@@ -22,7 +22,12 @@ runs/
 data/source/*
 data/design/*
 !data/source/.gitkeep
+!data/source/README.md
+!data/source/CHECKSUMS.txt
 !data/design/.gitkeep
+!data/design/hyperparameter_design.csv
+!data/design/hyperparameter_design.csv.metadata.json
+!data/design/README.md
 
 # macOS files
 **/.DS_Store
