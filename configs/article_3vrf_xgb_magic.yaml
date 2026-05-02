@@ -1,0 +1,111 @@
+# Article-track headline config: 3-VRF NBI on UCI MAGIC.
+# Coded units, surrogate-anchored utopia, FMSE on each VRF, conditional MBPA.
+# This is the configuration intended to back the future A1 paper tables.
+
+schema_version: 1
+
+experiment:
+  name: "article_3vrf_xgb_magic"
+  output_root: "experiments"
+  n_replicas: 30
+  seed_base: 42
+  deterministic: true
+
+dataset:
+  path: "data/source/telescope2.xlsx"
+  target: "y"
+  target_map: {g: 0, h: 1}
+
+model:
+  estimator: "xgboost.XGBClassifier"
+  fixed_kwargs:
+    eval_metric: "logloss"
+    verbosity: 0
+
+design:
+  kind: "external_csv"
+  external_path: "data/design/hyperparameter_design.csv"
+  metadata:
+    generator: "Minitab"
+    design_type: "ccd_face_centered"
+    n_factors: 7
+    n_runs: 88
+    n_center: 4
+    coding: "coded"
+  factors:
+    - {name: subsample,         lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bytree,  lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bylevel, lo: 0.05, hi: 1.00, type: float}
+    - {name: learning_rate,     lo: 0.01, hi: 0.30, type: float}
+    - {name: max_depth,         lo: 3,    hi: 18,   type: int}
+    - {name: gamma,             lo: 0.05, hi: 5.00, type: float}
+    - {name: n_estimators,      lo: 50,   hi: 700,  type: int}
+
+evaluation:
+  cv: {n_splits: 5, shuffle: true}
+  per_fold_metrics: true
+  raw_metrics:
+    - Accuracy_Mean
+    - Precision_Mean
+    - Recall_Mean
+    - Specificity_Mean
+    - Time_MeanFold
+
+factor_model:
+  mode: "fixed"
+  n_factors: 3
+  rotation: "varimax"
+  standardize: true
+  sign_orientation: "construct_avg"
+
+objectives:
+  convention: "minimize"
+  specs:
+    - {name: VRF1, source: "factor:1", direction: "target", transform: "fmse", target: 0.0, role: "primary_nbi", group: "Quality"}
+    - {name: VRF2, source: "factor:2", direction: "target", transform: "fmse", target: 0.0, role: "primary_nbi", group: "Cost"}
+    - {name: VRF3, source: "factor:3", direction: "target", transform: "fmse", target: 0.0, role: "primary_nbi", group: "Robustness"}
+
+surrogate:
+  family: "process_quadratic"
+  order: "quadratic"
+  coding: "coded"
+  backward_elimination: {alpha: 0.05, enforce_hierarchy: true}
+
+nbi:
+  weights:
+    method: "simplex_lattice"
+    q: 3
+    m: 10           # 66 NBI subproblems
+  feasibility: {}
+  solver: "slsqp"
+  n_starts: 10
+  anchor_source: "surrogate"
+  quasi_normal: "minus_phi_ones"
+
+selection:
+  rule: "distance_to_utopia"
+
+post_optimization:
+  enabled: "conditional"
+  trigger:
+    min_normalized_obj_range: 0.05
+    min_avg_pairwise_dist: 0.05
+    min_unique_nondominated: 5
+    max_weight_concentration_top1: 0.7
+  mbpa:
+    inner_design: {kind: "simplex_lattice", q: 3, m: 10}
+    inner_objectives:
+      - {name: GD, direction: minimize}
+      - {name: S,  direction: maximize}
+    elliptical_constraint:
+      center: "centroid"
+      radii: [0.30, 0.30, 0.30]
+
+benchmarks:
+  enabled: [coarse_grid, random, bayes, hyperopt_tpe]
+  budget: "fairness"
+  selection_rule: "max_accuracy"
+
+reporting:
+  paper_tables: true
+  multiobjective_metrics: [igd, spread, spacing_entropy, hypervolume, mahalanobis]

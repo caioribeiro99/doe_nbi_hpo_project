@@ -1,0 +1,72 @@
+# Forced MBPA post-optimization demo for paper figures.
+# Same as the headline article config but post_optimization.enabled = "always".
+
+schema_version: 1
+
+experiment:
+  name: "article_postopt_demo"
+  output_root: "experiments"
+  n_replicas: 5
+  seed_base: 42
+  deterministic: true
+
+dataset:
+  path: "data/source/telescope2.xlsx"
+  target: "y"
+  target_map: {g: 0, h: 1}
+
+model:
+  estimator: "xgboost.XGBClassifier"
+  fixed_kwargs:
+    eval_metric: "logloss"
+
+design:
+  kind: "external_csv"
+  external_path: "data/design/hyperparameter_design.csv"
+  metadata: {generator: "Minitab", design_type: "ccd_face_centered", coding: "coded"}
+  factors:
+    - {name: subsample,         lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bytree,  lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bylevel, lo: 0.05, hi: 1.00, type: float}
+    - {name: learning_rate,     lo: 0.01, hi: 0.30, type: float}
+    - {name: max_depth,         lo: 3,    hi: 18,   type: int}
+    - {name: gamma,             lo: 0.05, hi: 5.00, type: float}
+    - {name: n_estimators,      lo: 50,   hi: 700,  type: int}
+
+evaluation:
+  cv: {n_splits: 5, shuffle: true}
+  per_fold_metrics: true
+
+factor_model: {mode: fixed, n_factors: 3, rotation: varimax}
+
+objectives:
+  convention: "minimize"
+  specs:
+    - {name: VRF1, source: "factor:1", direction: target, transform: fmse, target: 0.0, role: primary_nbi}
+    - {name: VRF2, source: "factor:2", direction: target, transform: fmse, target: 0.0, role: primary_nbi}
+    - {name: VRF3, source: "factor:3", direction: target, transform: fmse, target: 0.0, role: primary_nbi}
+
+surrogate: {family: process_quadratic, order: quadratic, coding: coded}
+
+nbi:
+  weights: {method: simplex_lattice, q: 3, m: 10}
+  feasibility: {}
+  solver: slsqp
+  n_starts: 10
+  anchor_source: surrogate
+
+selection: {rule: distance_to_utopia}
+
+post_optimization:
+  enabled: "always"
+  mbpa:
+    inner_design: {kind: simplex_lattice, q: 3, m: 10}
+    inner_objectives:
+      - {name: GD, direction: minimize}
+      - {name: S,  direction: maximize}
+    elliptical_constraint: {center: centroid, radii: [0.30, 0.30, 0.30]}
+
+benchmarks:
+  enabled: []
+  budget: "fairness"
+  selection_rule: "max_accuracy"

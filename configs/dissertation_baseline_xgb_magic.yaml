@@ -1,0 +1,90 @@
+# Dissertation-parity config (q=2 quality vs cost).
+# Reproduces the headline dissertation behavior on the article-track CLI:
+# uncoded RSM, 2-VRF collapsed quality, distance-to-utopia selection.
+# Use only for historical comparison; the article track defaults to q=3.
+
+schema_version: 1
+
+experiment:
+  name: "dissertation_baseline_xgb_magic"
+  output_root: "experiments"
+  n_replicas: 30
+  seed_base: 42
+  deterministic: true
+
+dataset:
+  path: "data/source/telescope2.xlsx"
+  target: "y"
+  target_map: {g: 0, h: 1}
+
+model:
+  estimator: "xgboost.XGBClassifier"
+  fixed_kwargs:
+    eval_metric: "logloss"
+    verbosity: 0
+
+design:
+  kind: "external_csv"
+  external_path: "data/design/hyperparameter_design.csv"
+  metadata:
+    generator: "Minitab"
+    design_type: "ccd_face_centered"
+    n_factors: 7
+    n_runs: 88
+    n_center: 4
+    coding: "uncoded"
+  factors:
+    - {name: subsample,         lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bytree,  lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bylevel, lo: 0.05, hi: 1.00, type: float}
+    - {name: learning_rate,     lo: 0.01, hi: 0.30, type: float}
+    - {name: max_depth,         lo: 3,    hi: 18,   type: int}
+    - {name: gamma,             lo: 0.05, hi: 5.00, type: float}
+    - {name: n_estimators,      lo: 50,   hi: 700,  type: int}
+
+evaluation:
+  cv: {n_splits: 5, shuffle: true}
+  per_fold_metrics: true
+
+factor_model:
+  mode: "fixed"
+  n_factors: 2
+  rotation: "varimax"
+  standardize: true
+  sign_orientation: "construct_avg"
+
+objectives:
+  convention: "minimize"
+  specs:
+    - {name: Score_Quality, source: "factor:1", direction: "maximize", transform: "factor_score", role: "primary_nbi", group: "Quality"}
+    - {name: Score_Cost,    source: "factor:2", direction: "minimize", transform: "factor_score", role: "primary_nbi", group: "Cost"}
+
+surrogate:
+  family: "process_quadratic"
+  order: "quadratic"
+  coding: "uncoded"   # dissertation parity
+  backward_elimination: {alpha: 0.05, enforce_hierarchy: true}
+
+nbi:
+  weights:
+    method: "simplex_lattice"
+    q: 2
+    m: 50           # delta = 0.02 (dissertation default)
+  feasibility: {}
+  solver: "slsqp"
+  n_starts: 10
+  anchor_source: "observed"
+
+selection:
+  rule: "distance_to_utopia"
+
+post_optimization:
+  enabled: "never"
+
+benchmarks:
+  enabled: [coarse_grid, random, bayes, hyperopt_tpe]
+  budget: "fairness"
+  selection_rule: "max_accuracy"
+
+reporting:
+  paper_tables: true

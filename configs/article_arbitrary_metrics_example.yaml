@@ -1,0 +1,79 @@
+# Direct-objective example: arbitrary ML metrics with explicit directions.
+# Demonstrates the framework path that does not need factor analysis.
+
+schema_version: 1
+
+experiment:
+  name: "article_arbitrary_metrics_example"
+  output_root: "experiments"
+  n_replicas: 5
+  seed_base: 42
+  deterministic: true
+
+dataset:
+  path: "data/source/telescope2.xlsx"
+  target: "y"
+  target_map: {g: 0, h: 1}
+
+model:
+  estimator: "xgboost.XGBClassifier"
+  fixed_kwargs:
+    eval_metric: "logloss"
+    verbosity: 0
+
+design:
+  kind: "external_csv"
+  external_path: "data/design/hyperparameter_design.csv"
+  metadata:
+    generator: "Minitab"
+    design_type: "ccd_face_centered"
+    coding: "coded"
+  factors:
+    - {name: subsample,         lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bytree,  lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bylevel, lo: 0.05, hi: 1.00, type: float}
+    - {name: learning_rate,     lo: 0.01, hi: 0.30, type: float}
+    - {name: max_depth,         lo: 3,    hi: 18,   type: int}
+    - {name: gamma,             lo: 0.05, hi: 5.00, type: float}
+    - {name: n_estimators,      lo: 50,   hi: 700,  type: int}
+
+evaluation:
+  cv: {n_splits: 5, shuffle: true}
+  per_fold_metrics: true
+
+factor_model:
+  mode: "none"
+
+objectives:
+  convention: "minimize"
+  specs:
+    - {name: Accuracy_Mean,    source: "raw:Accuracy_Mean",    direction: "maximize", role: "primary_nbi"}
+    - {name: Time_MeanFold,    source: "raw:Time_MeanFold",    direction: "minimize", role: "primary_nbi"}
+    - {name: Specificity_Mean, source: "raw:Specificity_Mean", direction: "maximize", role: "reporting"}
+
+surrogate:
+  family: "process_quadratic"
+  order: "quadratic"
+  coding: "coded"
+  backward_elimination: {alpha: 0.05, enforce_hierarchy: true}
+
+nbi:
+  weights: {method: simplex_lattice, q: 2, m: 50}
+  feasibility: {}
+  solver: "slsqp"
+  n_starts: 10
+  anchor_source: "surrogate"
+
+selection:
+  rule: "distance_to_utopia"
+
+post_optimization:
+  enabled: "conditional"
+
+benchmarks:
+  enabled: [random, hyperopt_tpe]
+  budget: "fairness"
+  selection_rule: "max_accuracy"
+
+reporting:
+  paper_tables: false
