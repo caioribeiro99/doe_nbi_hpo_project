@@ -1,0 +1,15 @@
+{
+  "batch_id": "batch_04_stage0_shard00_only",
+  "description": "Operational test of one real worker shard (committed in Commit 28). Smaller scope than full stage 0; meant as a pre-stage-0 dry run.",
+  "expected_runner_flags": [
+    "--stage",
+    "stage0_replica_001",
+    "--max-jobs",
+    "10"
+  ],
+  "source_shard": "jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite",
+  "stage": "stage0_replica_001",
+  "task_kind": "stage0_shard",
+  "uses_openml": true,
+  "warning": "The runner must always operate on a copy of this shard (e.g., shutil.copy to a tmp path) so the committed file is never mutated."
+}

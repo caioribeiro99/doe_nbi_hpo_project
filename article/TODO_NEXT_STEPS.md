@@ -45,13 +45,22 @@
 > `doe_rsm_vrf_true_nbi`); the rest stay `stub_only` /
 > `dispatch_only`. The runner now supports `--canary-only --train
 > --synthetic-task` to exercise the four adapters on a synthetic
-> binary task on a temp-copied shard. The default is still
-> `--no-train`; `--train` requires `--canary-only`; stage-3
-> sign-off guardrail still applies. **Next operational step:**
-> Commit 31 — prepare the dedicated Mac environment (install
-> `[gbdt,hpo_baselines,doctoral,dev]` extras, refresh the
-> capability audit there, run the synthetic canary, post the audit
-> JSON/MD as the gate before stage 0). No CC18 task download yet.
+> binary task on a temp-copied shard.
+>
+> **Reduced-execution batches landed in Commit 31.** The dedicated
+> Mac walks through five pre-stage-0 batches before any full stage
+> runs: `batch_00_synthetic_canary` →
+> `batch_01_cc18_tiny_3_tasks` (3 tasks) →
+> `batch_02_cc18_small_12_tasks` (12 tasks) →
+> `batch_03_cc18_representative_18_tasks` (18 tasks) →
+> `batch_04_stage0_shard00_only`. Manifests at
+> `benchmarks/doctoral/openml_cc18/batches/`; deterministic
+> selection from `tasks.csv` via `scripts/create_cc18_batches.py`;
+> shard filtering via `scripts/filter_cc18_shard_for_batch.py`
+> (read-only on the source). **Next operational step:** Commit 32
+> — prepare the dedicated Mac and run `batch_00_synthetic_canary`
+> only. Commit 33 runs `batch_01_cc18_tiny_3_tasks`. No full
+> stage 0 yet.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

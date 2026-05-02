@@ -1,0 +1,13 @@
+openml_task_id,openml_dataset_id,dataset_name,task_type,n_rows,n_features,n_classes,categorical_feature_count,class_imbalance_ratio
+12,12,mfeat-factors,multiclass,2000,216,10,0,1.0
+16,16,mfeat-karhunen,multiclass,2000,64,10,0,1.0
+53,54,vehicle,multiclass,846,18,4,0,1.0955
+3022,307,vowel,multiclass,990,12,11,2,1.0
+3573,554,mnist_784,multiclass,70000,784,10,0,1.2477
+3903,1050,pc3,binary,1563,37,2,0,8.7688
+3913,1063,kc2,binary,522,21,2,0,3.8785
+10101,1464,blood-transfusion-service-center,binary,748,4,2,0,3.2022
+14965,1461,bank-marketing,binary,45211,16,2,9,7.5481
+125920,23381,dresses-sales,binary,500,12,2,11,1.381
+146820,40983,wilt,binary,4839,5,2,0,17.5402
+167141,40701,churn,binary,5000,20,2,4,6.0721

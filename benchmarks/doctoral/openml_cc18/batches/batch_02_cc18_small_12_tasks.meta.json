@@ -1,0 +1,20 @@
+{
+  "batch_seed": 20260502,
+  "description": "12 CC18 tasks; stratified across task_type, categorical, size, balance",
+  "n_tasks": 12,
+  "selection_rule": "stratified sample with seed=BATCH_SEED+12 and quota: binary_numeric_small=2, binary_numeric_medium=1, binary_categorical=2, binary_imbalanced=1, multiclass_small=2, multiclass_medium=1, multiclass_high_n_classes=2, any_large=1",
+  "task_ids": [
+    12,
+    16,
+    53,
+    3022,
+    3573,
+    3903,
+    3913,
+    10101,
+    14965,
+    125920,
+    146820,
+    167141
+  ]
+}

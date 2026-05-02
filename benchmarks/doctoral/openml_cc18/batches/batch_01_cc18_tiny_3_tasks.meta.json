@@ -1,0 +1,11 @@
+{
+  "batch_seed": 20260502,
+  "description": "3 CC18 tasks: small binary numeric, small categorical, small multiclass",
+  "n_tasks": 3,
+  "selection_rule": "deterministic: smallest-rows-first within each clause; 1) binary numeric balanced (imb<2.5) rows<=1500; 2) binary categorical (>=5 cat features) rows<=1500; 3) multiclass classes>=3 rows<=1500",
+  "task_ids": [
+    9946,
+    125920,
+    11
+  ]
+}

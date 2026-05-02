@@ -137,9 +137,21 @@ python scripts/audit_method_capabilities.py
 Stage 3 is locked: the runner refuses to claim any job carrying the
 `requires_manual_signoff_before_stage3` note unless
 `jobs/doctoral/openml_cc18/stage3_signoff.json` exists. Neither
-Commit 29 nor Commit 30 creates that file. **Stage 0 must not
-start** until the canary on the dedicated Mac reports
-all-green with the four canary methods marked `success`.
+Commit 29 nor Commit 30 creates that file.
+
+## Reduced-execution batches (Commit 31)
+
+Before stage 0 runs, the dedicated Mac walks through five
+pre-stage-0 batches manifested under
+`benchmarks/doctoral/openml_cc18/batches/`. Use
+`scripts/filter_cc18_shard_for_batch.py` to derive a batch shard
+from a committed shard (the source is opened read-only via SQLite
+URI mode, so the committed shards under `shards/` are never
+mutated). Output goes under `jobs/doctoral/openml_cc18/batch_shards/`
+or a tmp directory.
+
+**Stage 0 must not start** until batches A→E land green sign-off
+artifacts.
 
 ## Task-based vs dataset-based identity
 

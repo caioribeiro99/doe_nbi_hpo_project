@@ -1,0 +1,4 @@
+openml_task_id,openml_dataset_id,dataset_name,task_type,n_rows,n_features,n_classes,categorical_feature_count,class_imbalance_ratio
+9946,1510,wdbc,binary,569,30,2,0,1.684
+125920,23381,dresses-sales,binary,500,12,2,11,1.381
+11,11,balance-scale,multiclass,625,4,3,0,5.8776

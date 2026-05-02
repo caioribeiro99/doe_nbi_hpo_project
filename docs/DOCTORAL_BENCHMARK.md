@@ -235,6 +235,40 @@ The other 9 adapters (`smac3`, `asha`, `bohb`, `dehb`, `nsga2`,
 `legacy_weighted_sum_scalarization`) remain `stub_only` /
 `dispatch_only` and are wired in later commits.
 
+## Reduced-execution batches (Commit 31)
+
+Before any full-stage run, the dedicated Mac walks through a
+deterministic ladder of pre-stage-0 batches. The batch manifests
+live under `benchmarks/doctoral/openml_cc18/batches/` and are
+generated reproducibly from `tasks.csv` by
+`scripts/create_cc18_batches.py`:
+
+| step | batch | scope |
+|---|---|---|
+| A | `batch_00_synthetic_canary` | 4 canary methods on synthetic binary; no OpenML data |
+| B | `batch_01_cc18_tiny_3_tasks` | 3 real CC18 tasks (small binary numeric, small categorical, small multiclass) |
+| C | `batch_02_cc18_small_12_tasks` | 12 real CC18 tasks; stratified pilot |
+| D | `batch_03_cc18_representative_18_tasks` | 18 real CC18 tasks; broader coverage |
+| E | `batch_04_stage0_shard00_only` | one existing stage-0 shard from Commit 28 |
+| F | full stage 0 | 2,304 jobs across the 10 stage-0 shards |
+| G | top-up to stages 1 / 2 / 3 | gated by manual sign-off (`execution_tiers.md`) |
+
+A→D are pre-stage-0 pilots that validate the adapters, the OpenML
+loader, and the runner. E is an operational dry run on the smallest
+real worker shard. F and G follow only after each prior step lands
+a green sign-off artifact. Each batch CSV ships a `.meta.json`
+sidecar with the selection rule and the deterministic seed so the
+chosen task IDs are reproducible from `tasks.csv`. To filter an
+existing SQLite shard down to a batch's task IDs without ever
+mutating the source:
+
+```bash
+python scripts/filter_cc18_shard_for_batch.py \
+    --source jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite \
+    --batch-file benchmarks/doctoral/openml_cc18/batches/batch_01_cc18_tiny_3_tasks.csv \
+    --out jobs/doctoral/openml_cc18/batch_shards/batch_01_shard_00.sqlite
+```
+
 ## What this commit does NOT do
 
 - Does **not** download CC18 dataset payloads (only OpenML metadata).
