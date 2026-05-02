@@ -278,11 +278,26 @@ dissertation-era four keys; the
 held in the registry as a *secondary multiclass stress test* until the
 multiclass FA / NBI response set is validated end-to-end.
 
-**Guardrail.** A new
-`evaluation.assert_metric_set_compatible_with_task` raises
-`MultiClassNotConfiguredError` when a multiclass task is paired with
-the binary FA / NBI response defaults, so headline tables can never
-silently mix binary and multiclass response sets.
+**Guardrail.**
+- `evaluation.assert_metric_set_compatible_with_task(dataset_id, task,
+  fa_metrics)` raises `MultiClassNotConfiguredError` when a multiclass
+  task is paired with the binary FA / NBI response defaults.
+- `doe_xgb.datasets.validate_task_metric_compatibility(config, ...)`
+  (Commit 19) is the YAML-aware wrapper. It resolves the dataset id
+  from a parsed `ExperimentConfig` (via `experiment.name` or
+  `dataset.path`), looks up the task type from
+  `doe_xgb.datasets.REGISTRY`, and applies the underlying
+  assertion. Future orchestrators must call this helper after dataset
+  resolution and before stage 1 of FA / NBI so headline tables
+  cannot silently mix binary and multiclass response sets.
+
+**Multiclass appendix config.** `configs/article_3vrf_dry_bean.yaml`
+ships the multiclass response set
+(`F1Macro_Mean`, `BalancedAccuracy_Mean`, `MCC_Mean`,
+`ROCAUC_OVR_Mean`, `PRAUC_OVR_Mean`, `BrierMC_Mean`, `ECE_Mean`,
+`Time_MeanFold`) with explicit per-objective directions and XGBoost
+`multi:softprob` / `num_class=7`. It is intended for the appendix /
+supplementary multiclass case study only.
 
 ## D14 — Mixture model basis is not ordinary RSM
 

@@ -1,0 +1,140 @@
+# Article-track multiclass appendix config: 3-VRF NBI on UCI Dry Bean (7 classes).
+#
+# Status: APPENDIX / SUPPLEMENTARY -- not a headline v1 result.
+# The headline v1 tables use the 11 binary datasets of the panel; Dry Bean
+# enters the appendix only after a real Dry Bean smoke run validates the
+# end-to-end multiclass FA / NBI pipeline. See
+# docs/METHODOLOGY_DECISIONS.md D15 and article/EXPERIMENT_PLAN_V1.md.
+#
+# Differences from the binary headline config (configs/article_3vrf_xgb_magic.yaml):
+# - dataset points at the Dry Bean processed CSV produced by
+#   scripts/fetch_dry_bean_dataset.py (data/source/dry_bean/processed/dry_bean.csv);
+# - evaluation.raw_metrics carries the eight multiclass response keys;
+# - objectives include explicit-direction reporting metrics (max for quality;
+#   min for Brier / ECE / Time) so any downstream reporter that consumes the
+#   metric set can audit the directions without inferring them.
+
+schema_version: 1
+
+experiment:
+  name: "article_3vrf_dry_bean_appendix"
+  output_root: "experiments"
+  n_replicas: 5            # appendix-scale; not a headline 30-replica run
+  seed_base: 42
+  deterministic: true
+
+dataset:
+  path: "data/source/dry_bean/processed/dry_bean.csv"
+  target: "Class"
+
+model:
+  estimator: "xgboost.XGBClassifier"
+  fixed_kwargs:
+    eval_metric: "mlogloss"
+    objective: "multi:softprob"
+    num_class: 7
+    verbosity: 0
+
+design:
+  kind: "external_csv"
+  external_path: "data/design/hyperparameter_design.csv"
+  metadata:
+    generator: "Minitab"
+    design_type: "ccd_face_centered"
+    n_factors: 7
+    n_runs: 88
+    n_center: 4
+    coding: "coded"
+  factors:
+    - {name: subsample,         lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bytree,  lo: 0.05, hi: 1.00, type: float}
+    - {name: colsample_bylevel, lo: 0.05, hi: 1.00, type: float}
+    - {name: learning_rate,     lo: 0.01, hi: 0.30, type: float}
+    - {name: max_depth,         lo: 3,    hi: 18,   type: int}
+    - {name: gamma,             lo: 0.05, hi: 5.00, type: float}
+    - {name: n_estimators,      lo: 50,   hi: 700,  type: int}
+
+evaluation:
+  cv: {n_splits: 5, shuffle: true}
+  per_fold_metrics: true
+  raw_metrics:
+    - F1Macro_Mean
+    - BalancedAccuracy_Mean
+    - MCC_Mean
+    - ROCAUC_OVR_Mean
+    - PRAUC_OVR_Mean
+    - BrierMC_Mean
+    - ECE_Mean
+    - Time_MeanFold
+
+factor_model:
+  mode: "fixed"
+  n_factors: 3
+  rotation: "varimax"
+  standardize: true
+  sign_orientation: "construct_avg"
+
+objectives:
+  convention: "minimize"
+  specs:
+    # Primary VRFs go through the FA layer; FMSE on each so the canonical
+    # NBI objective is "minimize squared distance to per-objective optimum".
+    - {name: VRF1, source: "factor:1", direction: "target", transform: "fmse", target: 0.0, role: "primary_nbi", group: "Quality"}
+    - {name: VRF2, source: "factor:2", direction: "target", transform: "fmse", target: 0.0, role: "primary_nbi", group: "Cost"}
+    - {name: VRF3, source: "factor:3", direction: "target", transform: "fmse", target: 0.0, role: "primary_nbi", group: "Robustness"}
+
+    # Reporting-only objectives: explicit directions so reviewers can audit
+    # them directly. Maximize quality metrics; minimize Brier / ECE / Time.
+    - {name: F1Macro_Mean,         source: "raw:F1Macro_Mean",         direction: "maximize", role: "reporting"}
+    - {name: BalancedAccuracy_Mean,source: "raw:BalancedAccuracy_Mean",direction: "maximize", role: "reporting"}
+    - {name: MCC_Mean,             source: "raw:MCC_Mean",             direction: "maximize", role: "reporting"}
+    - {name: ROCAUC_OVR_Mean,      source: "raw:ROCAUC_OVR_Mean",      direction: "maximize", role: "reporting"}
+    - {name: PRAUC_OVR_Mean,       source: "raw:PRAUC_OVR_Mean",       direction: "maximize", role: "reporting"}
+    - {name: BrierMC_Mean,         source: "raw:BrierMC_Mean",         direction: "minimize", role: "reporting"}
+    - {name: ECE_Mean,             source: "raw:ECE_Mean",             direction: "minimize", role: "reporting"}
+    - {name: Time_MeanFold,        source: "raw:Time_MeanFold",        direction: "minimize", role: "reporting"}
+
+surrogate:
+  family: "process_quadratic"
+  order: "quadratic"
+  coding: "coded"
+  backward_elimination: {alpha: 0.05, enforce_hierarchy: true}
+
+nbi:
+  weights:
+    method: "simplex_lattice"
+    q: 3
+    m: 10
+  feasibility: {}
+  solver: "slsqp"
+  n_starts: 10
+  anchor_source: "surrogate"
+  quasi_normal: "minus_phi_ones"
+
+selection:
+  rule: "distance_to_utopia"
+
+post_optimization:
+  enabled: "conditional"
+  trigger:
+    min_normalized_obj_range: 0.05
+    min_avg_pairwise_dist: 0.05
+    min_unique_nondominated: 5
+    max_weight_concentration_top1: 0.7
+  mbpa:
+    inner_design: {kind: "simplex_lattice", q: 3, m: 10}
+    inner_objectives:
+      - {name: GD, direction: minimize}
+      - {name: S,  direction: maximize}
+    elliptical_constraint:
+      center: "centroid"
+      radii: [0.30, 0.30, 0.30]
+
+benchmarks:
+  enabled: [coarse_grid, random, bayes, hyperopt_tpe]
+  budget: "fairness"
+  selection_rule: "max_quality"   # multiclass headline metric: F1Macro_Mean (canonical-min => argmin)
+
+reporting:
+  paper_tables: true
+  multiobjective_metrics: [igd, spread, spacing_entropy, hypervolume, mahalanobis]

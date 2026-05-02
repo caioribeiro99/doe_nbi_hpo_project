@@ -72,9 +72,27 @@ Multiclass evaluator (Commit 18):
   guardrail that refuses to start an FA / NBI run on Dry Bean with the
   binary response defaults.
 
-Dry Bean enters the appendix tables only after a multiclass YAML
-config (article track) ships that explicitly selects the eight
-multiclass response columns above for FA / NBI.
+Multiclass config + guardrail (Commit 19):
+
+- `configs/article_3vrf_dry_bean.yaml` ships the appendix config
+  with the eight response keys, explicit per-objective directions,
+  and XGBoost `multi:softprob` / `num_class=7`.
+- `doe_xgb.datasets.validate_task_metric_compatibility(config, ...)`
+  is the orchestrator-side wrapper around
+  `assert_metric_set_compatible_with_task`. It resolves the dataset
+  id from `experiment.name` or `dataset.path`, then applies the
+  task / metric-set check.
+
+Dry Bean enters the appendix tables only after the contributor:
+
+1. Runs `python scripts/fetch_dry_bean_dataset.py` to populate
+   `data/source/dry_bean/processed/dry_bean.csv`.
+2. Runs a binary smoke first (2 binary datasets × 3 GBDT × 1
+   replica) to validate the orchestrator on the headline path.
+3. Then runs a Dry Bean appendix smoke (1 replica, XGBoost only)
+   using `configs/article_3vrf_dry_bean.yaml`.
+
+The headline v1 tables remain the **11 binary datasets**.
 
 ## Per-dataset metric coverage
 

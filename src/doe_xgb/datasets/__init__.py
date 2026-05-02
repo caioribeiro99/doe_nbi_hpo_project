@@ -12,6 +12,7 @@ from .availability import (
     check_dataset,
     write_availability_report,
 )
+from .guardrails import MultiClassNotConfiguredError, validate_task_metric_compatibility
 from .loaders import (
     DatasetUnavailableError,
     load,
@@ -36,6 +37,7 @@ __all__ = [
     "DatasetMetadata",
     "DatasetUnavailableError",
     "LoadedDataset",
+    "MultiClassNotConfiguredError",
     "REGISTRY",
     "V1_INCLUDED",
     "check_all",
@@ -43,6 +45,7 @@ __all__ = [
     "get_metadata",
     "list_dataset_ids",
     "load",
+    "validate_task_metric_compatibility",
     "load_adult",
     "load_bank_marketing",
     "load_breast_cancer",

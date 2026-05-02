@@ -47,34 +47,38 @@ next.
    headline panel**. Drop to 5 replicas only selectively on the
    heaviest datasets if real-world inflation exceeds 8×.
 
-### Dry Bean (multiclass) -- multiclass evaluator landed in Commit 18
+### Dry Bean (multiclass) -- config + guardrail landed in Commit 19
 
-The blocker reported in Commit 17 is resolved:
+The configuration gap reported in Commit 18 is now closed:
 
-- `src/doe_xgb/metrics.py` now ships `compute_multiclass_metrics`,
-  `compute_classification_metrics`, and `aggregate_metric_dicts`.
-- `src/doe_xgb/evaluation.py::evaluate_xgb_cv` auto-detects the task
-  type and uses `predict_proba` for probability-based multiclass
-  metrics.
-- `evaluation.assert_metric_set_compatible_with_task` is the
-  orchestrator-side guardrail that refuses to start an FA / NBI run
-  on a multiclass dataset unless the multiclass response set
-  (`F1Macro_Mean`, `BalancedAccuracy_Mean`, `MCC_Mean`,
-  `ROCAUC_OVR_Mean`, `PRAUC_OVR_Mean`, `BrierMC_Mean`, `ECE_Mean`,
-  `Time_MeanFold`) is explicitly configured.
+- `configs/article_3vrf_dry_bean.yaml` ships the multiclass
+  appendix config: 8 response keys (`F1Macro_Mean`,
+  `BalancedAccuracy_Mean`, `MCC_Mean`, `ROCAUC_OVR_Mean`,
+  `PRAUC_OVR_Mean`, `BrierMC_Mean`, `ECE_Mean`, `Time_MeanFold`),
+  explicit objective directions (maximize quality / probability;
+  minimize Brier / ECE / Time), and XGBoost `multi:softprob` /
+  `num_class=7`.
+- `src/doe_xgb/datasets/guardrails.py::validate_task_metric_compatibility(config, ...)`
+  resolves the dataset id from a YAML config and applies the
+  Commit 18 assertion. It raises `MultiClassNotConfiguredError`
+  for Dry Bean + binary defaults; passes for binary configs and for
+  Dry Bean + the multiclass response set.
+- The future orchestrator should call this helper after dataset
+  resolution and before stage 1 of FA / NBI. Until that orchestrator
+  lands, the helper is exercised by unit tests and can be invoked
+  manually inside `scripts/run_replica.py`.
 
-Open follow-up before Dry Bean enters the v1 *appendix* tables:
+Remaining items before a real Dry Bean smoke:
 
-1. Add a multiclass article-track YAML config that points
-   `factor_model.metrics` and `objectives.specs` at the multiclass
-   response keys above.
-2. Wire the orchestrator to call
-   `assert_metric_set_compatible_with_task` before stage 1 of the
-   pipeline.
-3. Run a Dry Bean smoke (1 replica, 1 algorithm) and confirm the FA /
-   NBI stages accept the eight multiclass response columns.
+1. Run the Dry Bean downloader once on the contributor's machine:
+   `python scripts/fetch_dry_bean_dataset.py`. The downloader already
+   exists; the actual fetch is local-only and not committed.
+2. Run a tiny **binary** smoke first (2 binary datasets × 3 GBDT × 1
+   replica) to validate the orchestrator on the headline path.
+3. Then run a Dry Bean appendix smoke (1 replica, XGBoost only) using
+   `configs/article_3vrf_dry_bean.yaml`.
 
-Decision unchanged: **Option B -- Dry Bean is a secondary multiclass
+Decision unchanged: **Option B -- Dry Bean is the secondary multiclass
 stress test reported in the appendix/supplementary**, not a headline
 v1 dataset. The 11 binary datasets remain the headline panel.
 
