@@ -1,0 +1,250 @@
+{
+  "batch_id": "batch_00_synthetic_canary",
+  "capability_audit": {
+    "dispatch_only": [
+      "doe_rsm_vrf_true_nbi_no_mbpa",
+      "legacy_weighted_sum_scalarization"
+    ],
+    "missing_packages": [],
+    "n_benchmarked": 13,
+    "smoke_ready": [
+      "default_gbdt",
+      "random_search",
+      "tpe_optuna",
+      "doe_rsm_vrf_true_nbi"
+    ],
+    "stub_only": [
+      "smac3",
+      "asha",
+      "bohb",
+      "dehb",
+      "nsga2",
+      "motpe",
+      "parego"
+    ]
+  },
+  "cells": [
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8033333333333333,
+        "precision": 0.8167293233082706,
+        "recall": 0.8012820512820513,
+        "specificity": 0.8055555555555556
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/99257488ce6e28fa/manifest.json",
+      "method": "default_gbdt",
+      "runtime_seconds": 0.05445529199982957,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7333333333333334,
+        "precision": 0.7286585365853658,
+        "recall": 0.7466666666666666,
+        "specificity": 0.72
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/20583f80ac4c9b55/manifest.json",
+      "method": "default_gbdt",
+      "runtime_seconds": 0.007909124999969208,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.77,
+        "precision": 0.7693661971830985,
+        "recall": 0.7922077922077921,
+        "specificity": 0.7465753424657534
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/0fcd3faa9f978abe/manifest.json",
+      "method": "default_gbdt",
+      "runtime_seconds": 0.013478415999998106,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7733333333333334,
+        "precision": 0.7625223613595706,
+        "recall": 0.8116883116883117,
+        "specificity": 0.7328767123287672
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/106daac40cedd991/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "runtime_seconds": 0.37521337499993024,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7233333333333334,
+        "precision": 0.7350738716858936,
+        "recall": 0.6985585585585585,
+        "specificity": 0.7486842105263158
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/035d18d644e263b4/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "runtime_seconds": 0.4523447500000657,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7866666666666666,
+        "precision": 0.8047870404077175,
+        "recall": 0.7779391660970609,
+        "specificity": 0.7964642724916697
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/28e68cd5e9f0de30/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "runtime_seconds": 0.09938016599994626,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.76,
+        "precision": 0.7585528566541224,
+        "recall": 0.7683333333333333,
+        "specificity": 0.7518018018018018
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/0c9557b08936b5b5/manifest.json",
+      "method": "random_search",
+      "runtime_seconds": 0.3208070000000589,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7766666666666666,
+        "precision": 0.7885171790235082,
+        "recall": 0.7697368421052632,
+        "specificity": 0.7837837837837838
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/284a1029b1f09e0c/manifest.json",
+      "method": "random_search",
+      "runtime_seconds": 0.04719258299996909,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7633333333333333,
+        "precision": 0.7593406593406593,
+        "recall": 0.7922077922077921,
+        "specificity": 0.7328767123287672
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/0dd3a866ec4f0ee0/manifest.json",
+      "method": "random_search",
+      "runtime_seconds": 0.05002329200010536,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7666666666666666,
+        "precision": 0.7690789473684211,
+        "recall": 0.7792207792207793,
+        "specificity": 0.7534246575342466
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/17e2e333cc39b0a6/manifest.json",
+      "method": "tpe_optuna",
+      "runtime_seconds": 0.2502361249999012,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8066666666666666,
+        "precision": 0.7881578947368422,
+        "recall": 0.7989648033126294,
+        "specificity": 0.8138117283950617
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/17df4780efbd7bc3/manifest.json",
+      "method": "tpe_optuna",
+      "runtime_seconds": 0.04428341600009844,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.64,
+        "precision": 0.6425000000000001,
+        "recall": 0.7278481012658228,
+        "specificity": 0.5422535211267606
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_00_synthetic_canary/0b7a54c9b11fa2ca/manifest.json",
+      "method": "tpe_optuna",
+      "runtime_seconds": 0.08148112499998206,
+      "status": "success"
+    }
+  ],
+  "git_sha": "9658ab21ffc7e2ca6d73177ebfe3b60604941eab",
+  "manifest_path": "benchmarks/doctoral/openml_cc18/batches/batch_00_synthetic_canary.json",
+  "n_cells_expected": 12,
+  "n_cells_failed": 0,
+  "n_cells_in_temp_shard": 12,
+  "n_cells_pending": 0,
+  "n_cells_success": 12,
+  "package_versions": {
+    "catboost": "1.2.10",
+    "dehb": "0.1.2",
+    "lightgbm": "4.6.0",
+    "openml": "0.15.1",
+    "optuna": "4.8.0",
+    "pymoo": "0.6.1.6",
+    "scikit-learn": null,
+    "smac": "2.4.0",
+    "xgboost": "3.2.0"
+  },
+  "platform": {
+    "hostname": "Factored-LWCTW4633L",
+    "machine": "arm64",
+    "python_executable": "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/bin/python",
+    "python_version": "3.12.13",
+    "uname": "macOS-26.4.1-arm64-arm-64bit"
+  },
+  "run_timestamp": "2026-05-03T02:20:17Z",
+  "runner_command": [
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/bin/python",
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/scripts/cc18_runner.py",
+    "--shard",
+    "/var/folders/lm/1_jq3_6j2k1d13pz46lgscwm0000gn/T/cc18_batch00_0y98gw9z/shard_00.sqlite",
+    "--canary-only",
+    "--train",
+    "--synthetic-task",
+    "--max-evaluations",
+    "5",
+    "--n-folds",
+    "2",
+    "--max-jobs",
+    "12",
+    "--output-root",
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/experiments/_batch_runs/batch_00_synthetic_canary"
+  ],
+  "runtime_seconds": 3.025068582999893,
+  "source_shard": "jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite",
+  "source_shard_md5_after": "91e7a861ea73daf82694029d6c590e54",
+  "source_shard_md5_before": "91e7a861ea73daf82694029d6c590e54",
+  "source_shard_unchanged": true,
+  "stage3_signoff_path": "jobs/doctoral/openml_cc18/stage3_signoff.json",
+  "stage3_signoff_present": false,
+  "subprocess_returncode": 0,
+  "subprocess_stderr_tail": "ture names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n",
+  "subprocess_stdout_tail": "{\n  \"shard\": \"/var/folders/lm/1_jq3_6j2k1d13pz46lgscwm0000gn/T/cc18_batch00_0y98gw9z/shard_00.sqlite\",\n  \"stage_filter\": null,\n  \"worker_id\": \"local_dev_runner\",\n  \"dry_run\": false,\n  \"no_train\": false,\n  \"canary_only\": true,\n  \"synthetic_task\": true,\n  \"signoff_file\": \"/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/jobs/doctoral/openml_cc18/stage3_signoff.json\",\n  \"signoff_ok\": false,\n  \"n_inspected\": 12,\n  \"n_success\": 12,\n  \"n_failed\": 0,\n  \"ran_at\": \"2026-05-03T02:20:17Z\"\n}\ninspected 12 jobs; success=12  failed=0  dry_run=False  signoff_ok=False\n  would_train: 12\n",
+  "temp_shard": "/var/folders/lm/1_jq3_6j2k1d13pz46lgscwm0000gn/T/cc18_batch00_0y98gw9z/shard_00.sqlite"
+}

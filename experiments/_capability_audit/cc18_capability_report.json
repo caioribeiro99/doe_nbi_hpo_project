@@ -15,64 +15,44 @@
     "legacy_weighted_sum_scalarization"
   ],
   "adapters_missing": [],
-  "blockers_before_stage0": [
-    "default_gbdt: missing lightgbm,catboost",
-    "tpe_optuna: missing optuna",
-    "smac3: missing smac",
-    "asha: missing optuna",
-    "bohb: missing smac",
-    "dehb: missing dehb",
-    "nsga2: missing pymoo",
-    "motpe: missing optuna",
-    "parego: missing smac,pymoo"
-  ],
+  "blockers_before_stage0": [],
   "dispatch_only": [
     "doe_rsm_vrf_true_nbi_no_mbpa",
     "legacy_weighted_sum_scalarization"
   ],
   "full_ready": [],
-  "generated_at": "2026-05-02T22:33:38Z",
+  "generated_at": "2026-05-03T02:20:13Z",
   "literature_only": [
     "flaml_optional",
     "auto_sklearn_context",
     "autogluon_context"
   ],
-  "missing_packages_overall": [
-    "catboost",
-    "dehb",
-    "lightgbm",
-    "optuna",
-    "pymoo",
-    "smac"
-  ],
+  "missing_packages_overall": [],
   "n_benchmarked": 13,
   "n_literature_only": 3,
   "n_methods_in_matrix": 16,
   "package_versions": {
-    "catboost": null,
-    "dehb": null,
+    "catboost": "1.2.10",
+    "dehb": "0.1.2",
     "doe_xgb": "0.2.0.dev0",
     "joblib": "1.5.3",
-    "lightgbm": null,
-    "optuna": null,
-    "pymoo": null,
-    "scipy": "1.13.1",
-    "smac": null,
-    "xgboost": "2.1.4"
+    "lightgbm": "4.6.0",
+    "optuna": "4.8.0",
+    "pymoo": "0.6.1.6",
+    "scipy": "1.17.1",
+    "smac": "2.4.0",
+    "xgboost": "3.2.0"
   },
   "per_method": [
     {
       "adapter_import_ok": true,
       "method_id": "default_gbdt",
-      "missing_packages": [
-        "lightgbm",
-        "catboost"
-      ],
+      "missing_packages": [],
       "notes": "No search; one fit per CV split with library defaults. Smoke-ready (Commit 30) \u2014 runs end-to-end on synthetic and CC18 tasks once the GBDT library for the target algorithm is installed.",
       "package_versions": {
-        "catboost": null,
-        "lightgbm": null,
-        "xgboost": "2.1.4"
+        "catboost": "1.2.10",
+        "lightgbm": "4.6.0",
+        "xgboost": "3.2.0"
       },
       "required_packages": [
         "xgboost",
@@ -93,7 +73,7 @@
       "notes": "Bergstra & Bengio 2012. Smoke-ready (Commit 30) over the canary search space; the full per-algorithm search space lives in configs/cc18/<algorithm>/random_search/<task>.yaml and is wired in by the runner via ctx.config_path.",
       "package_versions": {
         "joblib": "1.5.3",
-        "scipy": "1.13.1"
+        "scipy": "1.17.1"
       },
       "required_packages": [
         "scipy",
@@ -109,12 +89,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "tpe_optuna",
-      "missing_packages": [
-        "optuna"
-      ],
+      "missing_packages": [],
       "notes": "Akiba et al. 2019. Default-prior TPESampler. Smoke-ready (Commit 30) over the canary search space; raises ImportError(clear message) when Optuna is not installed.",
       "package_versions": {
-        "optuna": null
+        "optuna": "4.8.0"
       },
       "required_packages": [
         "optuna"
@@ -129,12 +107,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "smac3",
-      "missing_packages": [
-        "smac"
-      ],
+      "missing_packages": [],
       "notes": "Lindauer et al. 2022. RF surrogate with intensification. Native categorical handling via SMAC categorical hyperparameter type.",
       "package_versions": {
-        "smac": null
+        "smac": "2.4.0"
       },
       "required_packages": [
         "smac"
@@ -149,12 +125,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "asha",
-      "missing_packages": [
-        "optuna"
-      ],
+      "missing_packages": [],
       "notes": "Li et al. 2017/2020. Fidelity dimension = boosting iterations (n_estimators). Frozen choice over Hyperband in Commit 27.",
       "package_versions": {
-        "optuna": null
+        "optuna": "4.8.0"
       },
       "required_packages": [
         "optuna"
@@ -169,12 +143,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "bohb",
-      "missing_packages": [
-        "smac"
-      ],
+      "missing_packages": [],
       "notes": "Falkner et al. 2018. Implementation route: SMAC3 multi-fidelity facade. The hpbandster reference implementation is not actively maintained for Python 3.12 and is intentionally NOT a required package. Manual review may be needed before stage 0.",
       "package_versions": {
-        "smac": null
+        "smac": "2.4.0"
       },
       "required_packages": [
         "smac"
@@ -189,12 +161,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "dehb",
-      "missing_packages": [
-        "dehb"
-      ],
+      "missing_packages": [],
       "notes": "Awad, Mallik & Hutter 2021. DE inner loop on a Hyperband schedule.",
       "package_versions": {
-        "dehb": null
+        "dehb": "0.1.2"
       },
       "required_packages": [
         "dehb"
@@ -209,12 +179,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "nsga2",
-      "missing_packages": [
-        "pymoo"
-      ],
+      "missing_packages": [],
       "notes": "Deb et al. 2002. Reference evolutionary multi-objective baseline.",
       "package_versions": {
-        "pymoo": null
+        "pymoo": "0.6.1.6"
       },
       "required_packages": [
         "pymoo"
@@ -229,12 +197,10 @@
     {
       "adapter_import_ok": true,
       "method_id": "motpe",
-      "missing_packages": [
-        "optuna"
-      ],
+      "missing_packages": [],
       "notes": "Ozaki et al. 2020. Optuna MOTPESampler.",
       "package_versions": {
-        "optuna": null
+        "optuna": "4.8.0"
       },
       "required_packages": [
         "optuna"
@@ -249,14 +215,11 @@
     {
       "adapter_import_ok": true,
       "method_id": "parego",
-      "missing_packages": [
-        "smac",
-        "pymoo"
-      ],
+      "missing_packages": [],
       "notes": "Knowles 2006. Subset-only (48 of 72 CC18 tasks); the subset is frozen by benchmarks/doctoral/openml_cc18/parego_subset.csv.",
       "package_versions": {
-        "pymoo": null,
-        "smac": null
+        "pymoo": "0.6.1.6",
+        "smac": "2.4.0"
       },
       "required_packages": [
         "smac",
@@ -326,7 +289,7 @@
   ],
   "platform": {
     "machine": "arm64",
-    "python": "3.9.6",
+    "python": "3.12.13",
     "system": "Darwin"
   },
   "smoke_ready": [
