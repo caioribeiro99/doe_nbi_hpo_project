@@ -304,6 +304,37 @@ stage-3 sign-off file was NOT created. The artifact is committed
 gate artifact above shows `n_cells_failed == 0` and
 `source_shard_unchanged == true`.
 
+## Result handoff protocol (Commit 35)
+
+`docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac
+publishes results back to the personal Mac (and to any future
+worker):
+
+- committed shards under `jobs/doctoral/openml_cc18/shards/` are
+  immutable job-queue templates;
+- execution SQLite files live under `runs/cc18/<run_id>/` and are
+  gitignored, alongside per-cell fold metrics, fitted models,
+  `catboost_info`, and OpenML payload caches;
+- small JSON/MD summaries land under
+  `experiments/_stage_runs/<run_id>_summary.{json,md}` and are
+  committed — that is the only handoff that crosses Git;
+- large bundles ship out-of-band, referenced in the summary by
+  SHA-256 / size / archive path.
+
+Two scripts implement the protocol:
+
+- `scripts/create_cc18_run_dir.py` — copies committed shards into
+  `runs/cc18/<run_id>/shards/<stage>/` with an `.execution.sqlite`
+  suffix and writes `run_manifest.json` (source MD5s, host, git SHA);
+- `scripts/export_cc18_run_summary.py` — reads the execution SQLites
+  and emits the committed JSON/MD summary, re-checking each
+  committed source shard against its recorded MD5 to surface drift.
+
+batch_02 onward must use this protocol; batch_00 / batch_01 can
+keep their existing temp-shard pattern, but their gate artifacts
+(`experiments/_batch_runs/`) are conceptually a special case of
+this protocol where the "run dir" was a `tempfile.mkdtemp()`.
+
 ## What this commit does NOT do
 
 - Does **not** download CC18 dataset payloads (only OpenML metadata).

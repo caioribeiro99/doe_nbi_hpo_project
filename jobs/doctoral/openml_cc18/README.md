@@ -139,6 +139,24 @@ Stage 3 is locked: the runner refuses to claim any job carrying the
 `jobs/doctoral/openml_cc18/stage3_signoff.json` exists. Neither
 Commit 29 nor Commit 30 creates that file.
 
+## Result handoff protocol (Commit 35)
+
+The committed shards under `shards/` are *immutable job-queue
+templates*. From batch_02 onward, every worker materializes a
+gitignored execution copy under `runs/cc18/<run_id>/shards/<stage>/`
+via `scripts/create_cc18_run_dir.py`, runs against those copies,
+and publishes a small JSON/MD summary under
+`experiments/_stage_runs/<run_id>_summary.{json,md}` via
+`scripts/export_cc18_run_summary.py`. The summary verifies that
+each source shard's MD5 still matches the value recorded in the
+run-dir's `run_manifest.json`; mismatches surface as
+`source_shards_unchanged: false` and stop downstream promotion.
+See `docs/RESULT_HANDOFF_PROTOCOL.md` for the full contract.
+
+batch_00 and batch_01 used a slimmer temp-shard pattern; their
+artifacts at `experiments/_batch_runs/batch_0X_..._latest.{json,md}`
+are conceptually a specialization of the same protocol.
+
 ## Reduced-execution batches (Commit 31)
 
 Before stage 0 runs, the dedicated Mac walks through five

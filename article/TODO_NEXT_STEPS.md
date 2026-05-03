@@ -61,10 +61,23 @@
 > stage-0 shard to a temp path, prunes to the 12-cell canary
 > slice, and runs the canary via `cc18_runner.py`. Artifacts at
 > `experiments/_batch_runs/batch_00_synthetic_canary_latest.{json,md}`
-> are committed only when produced on the dedicated Mac. **Next
-> operational step:** Commit 33 — only after the dedicated-Mac
-> batch_00 gate is green, run `batch_01_cc18_tiny_3_tasks` (3
-> real OpenML-CC18 tasks).
+> are committed only when produced on the dedicated Mac.
+>
+> **Dedicated Mac batch_01 ran green in Commit 34** (36/36 cells,
+> source shards unchanged, OpenML payloads cached under the
+> gitignored `data/source/openml_cc18/`).
+>
+> **Result handoff protocol formalized in Commit 35**
+> (`docs/RESULT_HANDOFF_PROTOCOL.md`). Committed SQLite shards stay
+> immutable; execution copies live under `runs/cc18/<run_id>/` and
+> are gitignored; small JSON/MD summaries under
+> `experiments/_stage_runs/` are the only artifact that crosses
+> Git. Two helper scripts implement the protocol:
+> `scripts/create_cc18_run_dir.py` and
+> `scripts/export_cc18_run_summary.py`. **Next operational step:**
+> only after this protocol is in place, Commit 36 prepares /
+> runs `batch_02_cc18_small_12_tasks` (12 real OpenML-CC18 tasks)
+> using the new run-dir + summary flow.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

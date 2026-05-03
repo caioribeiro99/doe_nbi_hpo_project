@@ -15,7 +15,14 @@ build/
 
 # Outputs
 experiments/*
+# CC18 result handoff (Commit 35). The `runs/` tree holds local
+# mutable execution state: copied .execution.sqlite shards, per-cell
+# fold metrics, fitted models, and per-machine archives. Nothing
+# under runs/ is ever committed; cross-machine handoff happens via
+# the small JSON/MD summaries under experiments/_stage_runs/. See
+# docs/RESULT_HANDOFF_PROTOCOL.md for the full contract.
 runs/
+runs/cc18/
 *.log
 catboost_info/
 # Article-track cost calibration artifacts are versioned.
@@ -45,6 +52,15 @@ experiments/_capability_audit/*
 experiments/_batch_runs/*
 !experiments/_batch_runs/*.json
 !experiments/_batch_runs/*.md
+# CC18 stage-run summaries (Commit 35). Only the small JSON/MD files
+# are committed: `_stage_runs/<run_id>_summary.{json,md}` ship the
+# cross-machine handoff. Execution SQLite, fitted models, fold CSVs,
+# catboost_info, and large logs stay under `runs/` and are never
+# committed (see docs/RESULT_HANDOFF_PROTOCOL.md).
+!experiments/_stage_runs/
+experiments/_stage_runs/*
+!experiments/_stage_runs/*.json
+!experiments/_stage_runs/*.md
 
 # Data (keep folder structure)
 data/source/*
