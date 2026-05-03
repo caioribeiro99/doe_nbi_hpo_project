@@ -244,18 +244,28 @@ def test_execution_sqlite_files_are_gitignored() -> None:
 
 
 def test_stage_runs_summary_jsonmd_are_committed_but_other_files_are_not() -> None:
+    """The batch_02 summary JSON/MD pair are allowlisted under
+    ``experiments/_stage_runs/`` while every other path under that
+    directory stays ignored. ``--no-index`` is needed because the
+    summary files are tracked once batch_02 lands; without it
+    ``git check-ignore`` silently skips tracked paths."""
     res = subprocess.run(
-        ["git", "check-ignore", "-v",
+        ["git", "check-ignore", "--no-index", "-v",
          "experiments/_stage_runs/batch_02_cc18_small_12_tasks_latest_summary.json",
          "experiments/_stage_runs/batch_02_cc18_small_12_tasks_latest_summary.md",
          "experiments/_stage_runs/batch_02_cc18_small_12_tasks_latest/"
          "extras.bin"],
         cwd=REPO, capture_output=True, text=True, check=False,
     )
-    assert res.returncode == 0
+    assert res.returncode == 0, (res.stdout, res.stderr)
     assert "summary.json" in res.stdout
     assert "summary.md" in res.stdout
     assert "extras.bin" in res.stdout
+    # summary.{json,md} match the negation rule (allowed); extras.bin
+    # matches the positive rule (ignored).
+    assert "!experiments/_stage_runs/*.json" in res.stdout
+    assert "!experiments/_stage_runs/*.md" in res.stdout
+    assert "experiments/_stage_runs/*\t" in res.stdout
 
 
 # ---------------------------------------------------------------------------
