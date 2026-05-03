@@ -59,6 +59,13 @@ data/design/*
 data/source/*/raw/
 data/source/*/processed/
 !data/source/*/manifest.json
+# OpenML-CC18 raw-payload cache (Commit 34, batch_01).
+# Per-task pickle payloads, per-task manifests, and the OpenML library
+# cache subdirectory all stay gitignored on every machine. Do NOT
+# commit anything under this tree; the gate artifact under
+# experiments/_batch_runs/ records the SHA-256 of each payload so
+# reproducibility is captured without shipping the raw bytes.
+data/source/openml_cc18/
 !data/design/.gitkeep
 !data/design/hyperparameter_design.csv
 !data/design/hyperparameter_design.csv.metadata.json

@@ -1,0 +1,1057 @@
+{
+  "batch_00_gate": {
+    "age_days": 0.017560098020833335,
+    "git_sha": "9658ab21ffc7e2ca6d73177ebfe3b60604941eab",
+    "n_cells_expected": 12,
+    "n_cells_failed": 0,
+    "n_cells_success": 12,
+    "run_timestamp": "2026-05-03T02:20:17Z",
+    "source_shard_unchanged": true
+  },
+  "batch_csv": "benchmarks/doctoral/openml_cc18/batches/batch_01_cc18_tiny_3_tasks.csv",
+  "batch_id": "batch_01_cc18_tiny_3_tasks",
+  "capability_audit": {
+    "dispatch_only": [
+      "doe_rsm_vrf_true_nbi_no_mbpa",
+      "legacy_weighted_sum_scalarization"
+    ],
+    "missing_packages": [],
+    "n_benchmarked": 13,
+    "smoke_ready": [
+      "default_gbdt",
+      "random_search",
+      "tpe_optuna",
+      "doe_rsm_vrf_true_nbi"
+    ],
+    "stub_only": [
+      "smac3",
+      "asha",
+      "bohb",
+      "dehb",
+      "nsga2",
+      "motpe",
+      "parego"
+    ]
+  },
+  "cells": [
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9039895142131564,
+        "balanced_accuracy": 0.6539351851851851,
+        "brier_multiclass": 0.19335484743193876,
+        "ece_multiclass": 0.1482438432586599,
+        "f1_macro": 0.6283180040946015,
+        "mcc": 0.8305705692852872,
+        "pr_auc_ovr_macro": 0.713514807705534,
+        "roc_auc_ovr_macro": 0.9132446949714579
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/2be9fae099e6fdf8/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.018491042000277957,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8751894404849676,
+        "balanced_accuracy": 0.6501851851851852,
+        "brier_multiclass": 0.18806918852858115,
+        "ece_multiclass": 0.05144309224633474,
+        "f1_macro": 0.6423093848497143,
+        "mcc": 0.7768503716158788,
+        "pr_auc_ovr_macro": 0.7100507756406751,
+        "roc_auc_ovr_macro": 0.9025455747511035
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/e5c020836aa2d40a/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.020145875000253,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8447868026542148,
+        "balanced_accuracy": 0.6226851851851851,
+        "brier_multiclass": 0.20929970280113833,
+        "ece_multiclass": 0.05971486250429481,
+        "f1_macro": 0.6110609856299511,
+        "mcc": 0.722278072432299,
+        "pr_auc_ovr_macro": 0.6979129033331316,
+        "roc_auc_ovr_macro": 0.8934946952975799
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/29c800328310f4b5/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.02118008400020699,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8959715736872287,
+        "balanced_accuracy": 0.6536574074074073,
+        "brier_multiclass": 0.16155020614298354,
+        "ece_multiclass": 0.08374551974903598,
+        "f1_macro": 0.6375824222255768,
+        "mcc": 0.8150394919649679,
+        "pr_auc_ovr_macro": 0.7242529732971151,
+        "roc_auc_ovr_macro": 0.9263246126647569
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/88ff698716898736/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.11930733400004101,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9056023183419349,
+        "balanced_accuracy": 0.6721759259259259,
+        "brier_multiclass": 0.1717820019156645,
+        "ece_multiclass": 0.11613230014188407,
+        "f1_macro": 0.6653472780462774,
+        "mcc": 0.8330182559206041,
+        "pr_auc_ovr_macro": 0.724866634246346,
+        "roc_auc_ovr_macro": 0.9019752898899533
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/4f502f864cb1c59e/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.13445074999981443,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9007997460473499,
+        "balanced_accuracy": 0.6631944444444444,
+        "brier_multiclass": 0.17630974506100905,
+        "ece_multiclass": 0.09929484409561876,
+        "f1_macro": 0.6489297145880699,
+        "mcc": 0.8241491179151965,
+        "pr_auc_ovr_macro": 0.7167412034938571,
+        "roc_auc_ovr_macro": 0.8951419609592686
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/700f9906e3d25322/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.14192550000007031,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9071895224051774,
+        "balanced_accuracy": 0.65625,
+        "brier_multiclass": 0.16277918192961413,
+        "ece_multiclass": 0.12305540731711741,
+        "f1_macro": 0.6305192195114676,
+        "mcc": 0.8364987657849509,
+        "pr_auc_ovr_macro": 0.730410802496297,
+        "roc_auc_ovr_macro": 0.9161062592292561
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/c6db31ff66fb0e79/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.08617866599979607,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9056074383550422,
+        "balanced_accuracy": 0.6724537037037037,
+        "brier_multiclass": 0.16738683174947377,
+        "ece_multiclass": 0.10317902767818048,
+        "f1_macro": 0.6630970925973787,
+        "mcc": 0.8325511427408899,
+        "pr_auc_ovr_macro": 0.7259875333333827,
+        "roc_auc_ovr_macro": 0.9086835452800998
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/69119d142ad2e5e3/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.12459287499996208,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8943894896370934,
+        "balanced_accuracy": 0.6698611111111111,
+        "brier_multiclass": 0.16779182831440786,
+        "ece_multiclass": 0.06135014531122429,
+        "f1_macro": 0.6642453753853621,
+        "mcc": 0.812055137882989,
+        "pr_auc_ovr_macro": 0.7210381098131867,
+        "roc_auc_ovr_macro": 0.9141808317809921
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/6d99117f7174e4aa/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.07595687499997439,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8975792578028999,
+        "balanced_accuracy": 0.6606018518518518,
+        "brier_multiclass": 0.15717834367232988,
+        "ece_multiclass": 0.0769249212879641,
+        "f1_macro": 0.648823734768126,
+        "mcc": 0.8178178941708245,
+        "pr_auc_ovr_macro": 0.724680902683135,
+        "roc_auc_ovr_macro": 0.9277123723558018
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/4089fba4da2a677b/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.09332899999981237,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9055971983288278,
+        "balanced_accuracy": 0.6779629629629629,
+        "brier_multiclass": 0.1654137677666616,
+        "ece_multiclass": 0.10201170741028831,
+        "f1_macro": 0.6753580200675688,
+        "mcc": 0.8328274454698967,
+        "pr_auc_ovr_macro": 0.7307559149880403,
+        "roc_auc_ovr_macro": 0.9101255341880341
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/b39d2aa7e8d25aa8/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.096614375000172,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8863971491767019,
+        "balanced_accuracy": 0.6585648148148149,
+        "brier_multiclass": 0.18855594844892892,
+        "ece_multiclass": 0.08188642678592983,
+        "f1_macro": 0.6475910739645874,
+        "mcc": 0.7973109374492959,
+        "pr_auc_ovr_macro": 0.7152714995062468,
+        "roc_auc_ovr_macro": 0.8933088162875823
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/44d02db924007cdc/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 11,
+      "runtime_seconds": 0.0842206659999647,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.95606622189276,
+        "precision": 0.9561595582635186,
+        "recall": 0.9245283018867925,
+        "specificity": 0.9747818718222334
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/99257488ce6e28fa/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.339013375000377,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9472819372374599,
+        "precision": 0.9461538461538461,
+        "recall": 0.9103773584905661,
+        "specificity": 0.9691795869688029
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/e0c744655c411cc9/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.020636000000195054,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9525450951321967,
+        "precision": 0.9513518659558263,
+        "recall": 0.9198113207547169,
+        "specificity": 0.9719728830581884
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/b5ccd8ab2bc56c08/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.03223516599973664,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9648443291326909,
+        "precision": 0.9706815341728348,
+        "recall": 0.9339622641509434,
+        "specificity": 0.9831774527650492
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/63bf2bb9c0ca7971/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 2.523690583000189,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9613417346182358,
+        "precision": 0.9657692307692307,
+        "recall": 0.929245283018868,
+        "specificity": 0.9803841566756637
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/3896c77b6d750fbb/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.14191687499987893,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9648566839634297,
+        "precision": 0.9660194174757282,
+        "recall": 0.9386792452830188,
+        "specificity": 0.9803998493503232
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/f6b62756f7d36c0a/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.17216512499999226,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9631022979985174,
+        "precision": 0.9613984316654219,
+        "recall": 0.9386792452830188,
+        "specificity": 0.9776065532609377
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/b1cc9a94dd32eb50/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 1.7742315000000417,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9648628613787991,
+        "precision": 0.9751960784313725,
+        "recall": 0.929245283018868,
+        "specificity": 0.9860021342037537
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/cf1abc3bcfc2b38d/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.11746408300041367,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9648628613787991,
+        "precision": 0.957244008714597,
+        "recall": 0.9481132075471699,
+        "specificity": 0.9747818718222334
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/f1164f63571f6eaf/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.10479870799963464,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9666048925129727,
+        "precision": 0.975393127548049,
+        "recall": 0.9339622641509434,
+        "specificity": 0.9859864415290942
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/f6d412d82b15c7e4/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 1.6468048330002603,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.966611069928342,
+        "precision": 0.9707310108509424,
+        "recall": 0.9386792452830188,
+        "specificity": 0.9831931454397087
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/291a54022df42963/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.5200353750001341,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9666234247590808,
+        "precision": 0.9706834189986675,
+        "recall": 0.9386792452830188,
+        "specificity": 0.9832088381143682
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/2b8015302b815502/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.08525374999999258,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5760000000000001,
+        "precision": 0.49519338251732614,
+        "recall": 0.3142857142857143,
+        "specificity": 0.7655172413793103
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/0845a3a5d46e308f/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.14155158399989887,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.592,
+        "precision": 0.5144300144300145,
+        "recall": 0.43333333333333335,
+        "specificity": 0.7068965517241379
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/c468fbe0a6673436/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.011736624999684864,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.558,
+        "precision": 0.46574074074074073,
+        "recall": 0.35714285714285715,
+        "specificity": 0.7034482758620689
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/c7077cc4c39f4fb8/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.018334000000322703,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.618,
+        "precision": 0.6108108108108108,
+        "recall": 0.2523809523809524,
+        "specificity": 0.8827586206896552
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/5902bcb0fcb5f674/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.2069576250000864,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.604,
+        "precision": 0.5463389656938045,
+        "recall": 0.4,
+        "specificity": 0.7517241379310344
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/338e5a0371e07953/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.06709104199990179,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.594,
+        "precision": 0.5244762288477034,
+        "recall": 0.35238095238095235,
+        "specificity": 0.7689655172413793
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/d3021d787dc76580/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.1264166250002745,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5640000000000001,
+        "precision": 0.474292858259103,
+        "recall": 0.3619047619047619,
+        "specificity": 0.710344827586207
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/51842ab3be44c0b5/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.14744195899993429,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.576,
+        "precision": 0.49719495091164095,
+        "recall": 0.36190476190476195,
+        "specificity": 0.7310344827586207
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/9871c907d6dce0c4/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.056274542000210204,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.594,
+        "precision": 0.5211161387631975,
+        "recall": 0.40476190476190477,
+        "specificity": 0.7310344827586207
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/2dd34e572404986f/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.06397000000015396,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.57,
+        "precision": 0.484256329113924,
+        "recall": 0.3666666666666667,
+        "specificity": 0.7172413793103448
+      },
+      "algorithm": "catboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/b5fcaecd7c5149f3/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.1492848339999,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.59,
+        "precision": 0.5162451984635084,
+        "recall": 0.3904761904761905,
+        "specificity": 0.7344827586206897
+      },
+      "algorithm": "lightgbm",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/7af8525ed5e11259/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.046693041999787965,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5680000000000001,
+        "precision": 0.4820661958177538,
+        "recall": 0.3904761904761905,
+        "specificity": 0.696551724137931
+      },
+      "algorithm": "xgboost",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_01_cc18_tiny_3_tasks/e9aa418722565d8e/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.07260029200006102,
+      "status": "success"
+    }
+  ],
+  "git_sha": "fd36601d3894d57dea25e90cc7c12e304cb76aa0",
+  "n_cells_expected": 36,
+  "n_cells_failed": 0,
+  "n_cells_in_temp_shard": 36,
+  "n_cells_pending": 0,
+  "n_cells_success": 36,
+  "openml_cache_root": "data/source/openml_cc18",
+  "openml_payloads_committed": false,
+  "package_versions": {
+    "catboost": "1.2.10",
+    "dehb": "0.1.2",
+    "lightgbm": "4.6.0",
+    "numpy": "1.26.4",
+    "openml": "0.15.1",
+    "optuna": "4.8.0",
+    "pandas": "3.0.2",
+    "pymoo": "0.6.1.6",
+    "scikit-learn": "1.8.0",
+    "smac": "2.4.0",
+    "xgboost": "3.2.0"
+  },
+  "platform": {
+    "hostname": "Factored-LWCTW4633L",
+    "machine": "arm64",
+    "python_executable": "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/bin/python",
+    "python_version": "3.12.13",
+    "uname": "macOS-26.4.1-arm64-arm-64bit"
+  },
+  "run_timestamp": "2026-05-03T02:45:45Z",
+  "runner_command": [
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/bin/python",
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/scripts/cc18_runner.py",
+    "--shard",
+    "/var/folders/lm/1_jq3_6j2k1d13pz46lgscwm0000gn/T/cc18_batch01_g5qtus1u/shard_batch_01.sqlite",
+    "--canary-only",
+    "--train",
+    "--max-evaluations",
+    "5",
+    "--n-folds",
+    "2",
+    "--max-jobs",
+    "36",
+    "--output-root",
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/experiments/_batch_runs/batch_01_cc18_tiny_3_tasks",
+    "--openml-cache-root",
+    "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/data/source/openml_cc18"
+  ],
+  "runtime_seconds": 10.773932250000144,
+  "shard_contributions": {
+    "shard_00.sqlite": 8,
+    "shard_01.sqlite": 4,
+    "shard_02.sqlite": 4,
+    "shard_03.sqlite": 4,
+    "shard_04.sqlite": 4,
+    "shard_05.sqlite": 4,
+    "shard_06.sqlite": 0,
+    "shard_07.sqlite": 0,
+    "shard_08.sqlite": 4,
+    "shard_09.sqlite": 4
+  },
+  "shards_dir": "jobs/doctoral/openml_cc18/shards/stage0_replica_001",
+  "shards_unchanged_after_download": true,
+  "source_shard_md5_after": {
+    "shard_00.sqlite": "91e7a861ea73daf82694029d6c590e54",
+    "shard_01.sqlite": "b94e71ccb24d5d184c3346d336c2691d",
+    "shard_02.sqlite": "38e0208538432577d82840d356ca039d",
+    "shard_03.sqlite": "198c30f36e040c18af674eb6510ccd1d",
+    "shard_04.sqlite": "c5eb54e008f90abf7a3e47e7f4a22584",
+    "shard_05.sqlite": "ff9d67f50910ba1753602a5eac16905c",
+    "shard_06.sqlite": "4f6d062e42e4df8b72c82803fec1b814",
+    "shard_07.sqlite": "83fb2d1e840aff2376ee70959d1961dd",
+    "shard_08.sqlite": "711d28b2ce61381a4b72e24a90b107af",
+    "shard_09.sqlite": "f2c5f528ad680b0c4c670b8bdc11bde7"
+  },
+  "source_shard_md5_before": {
+    "shard_00.sqlite": "91e7a861ea73daf82694029d6c590e54",
+    "shard_01.sqlite": "b94e71ccb24d5d184c3346d336c2691d",
+    "shard_02.sqlite": "38e0208538432577d82840d356ca039d",
+    "shard_03.sqlite": "198c30f36e040c18af674eb6510ccd1d",
+    "shard_04.sqlite": "c5eb54e008f90abf7a3e47e7f4a22584",
+    "shard_05.sqlite": "ff9d67f50910ba1753602a5eac16905c",
+    "shard_06.sqlite": "4f6d062e42e4df8b72c82803fec1b814",
+    "shard_07.sqlite": "83fb2d1e840aff2376ee70959d1961dd",
+    "shard_08.sqlite": "711d28b2ce61381a4b72e24a90b107af",
+    "shard_09.sqlite": "f2c5f528ad680b0c4c670b8bdc11bde7"
+  },
+  "source_shards_unchanged": true,
+  "stage3_signoff_path": "jobs/doctoral/openml_cc18/stage3_signoff.json",
+  "stage3_signoff_present": false,
+  "subprocess_returncode": 0,
+  "subprocess_stderr_tail": "assifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n",
+  "subprocess_stdout_tail": "{\n  \"shard\": \"/var/folders/lm/1_jq3_6j2k1d13pz46lgscwm0000gn/T/cc18_batch01_g5qtus1u/shard_batch_01.sqlite\",\n  \"stage_filter\": null,\n  \"worker_id\": \"local_dev_runner\",\n  \"dry_run\": false,\n  \"no_train\": false,\n  \"canary_only\": true,\n  \"synthetic_task\": false,\n  \"signoff_file\": \"/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/jobs/doctoral/openml_cc18/stage3_signoff.json\",\n  \"signoff_ok\": false,\n  \"n_inspected\": 36,\n  \"n_success\": 36,\n  \"n_failed\": 0,\n  \"ran_at\": \"2026-05-03T02:45:45Z\"\n}\ninspected 36 jobs; success=36  failed=0  dry_run=False  signoff_ok=False\n  would_train: 36\n",
+  "task_ids": [
+    9946,
+    125920,
+    11
+  ],
+  "task_metadata": [
+    {
+      "cache_dir": "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/data/source/openml_cc18/9946",
+      "categorical_columns": [],
+      "class_distribution": {
+        "1": 357,
+        "2": 212
+      },
+      "dataset_id": 1510,
+      "dataset_name": "wdbc",
+      "n_categorical_columns": 0,
+      "n_classes": 2,
+      "n_features": 30,
+      "n_rows": 569,
+      "payload_sha256": "c6a6f5bd7a195165acb4a18dfaa96a23886193b14681fa692a8f16ea3aeb3eb3",
+      "target_name": "Class",
+      "task_id": 9946,
+      "task_type": "binary"
+    },
+    {
+      "cache_dir": "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/data/source/openml_cc18/125920",
+      "categorical_columns": [
+        "V2",
+        "V3",
+        "V5",
+        "V6",
+        "V7",
+        "V8",
+        "V9",
+        "V10",
+        "V11",
+        "V12",
+        "V13"
+      ],
+      "class_distribution": {
+        "1": 290,
+        "2": 210
+      },
+      "dataset_id": 23381,
+      "dataset_name": "dresses-sales",
+      "n_categorical_columns": 11,
+      "n_classes": 2,
+      "n_features": 156,
+      "n_rows": 500,
+      "payload_sha256": "7e3aece639740dd3d6230682a2f22a6bba9bd9f894c81cbdcd292626665be77c",
+      "target_name": "Class",
+      "task_id": 125920,
+      "task_type": "binary"
+    },
+    {
+      "cache_dir": "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/data/source/openml_cc18/11",
+      "categorical_columns": [],
+      "class_distribution": {
+        "B": 49,
+        "L": 288,
+        "R": 288
+      },
+      "dataset_id": 11,
+      "dataset_name": "balance-scale",
+      "n_categorical_columns": 0,
+      "n_classes": 3,
+      "n_features": 4,
+      "n_rows": 625,
+      "payload_sha256": "64d1c2175950fb638c150df32f56d2b6a650f0cfedbaedc001636ff6a178894a",
+      "target_name": "class",
+      "task_id": 11,
+      "task_type": "multiclass"
+    }
+  ],
+  "temp_shard": "/var/folders/lm/1_jq3_6j2k1d13pz46lgscwm0000gn/T/cc18_batch01_g5qtus1u/shard_batch_01.sqlite"
+}

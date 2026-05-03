@@ -31,8 +31,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib
-import importlib.metadata as importlib_metadata
 import json
 import platform
 import shutil
@@ -48,6 +46,8 @@ REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+
+from doe_xgb._versions import collect_package_versions  # noqa: E402
 
 DEFAULT_MANIFEST = REPO / "benchmarks/doctoral/openml_cc18/batches/batch_00_synthetic_canary.json"
 DEFAULT_SOURCE_SHARD = REPO / "jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite"
@@ -83,17 +83,13 @@ def _git_sha() -> str:
 
 
 def _pkg_versions(names: tuple[str, ...]) -> dict[str, str | None]:
-    out: dict[str, str | None] = {}
-    for n in names:
-        try:
-            importlib.import_module(n)
-            try:
-                out[n] = importlib_metadata.version(n)
-            except importlib_metadata.PackageNotFoundError:
-                out[n] = "imported (version unknown)"
-        except Exception:  # noqa: BLE001
-            out[n] = None
-    return out
+    """Map distribution names to versions (or ``None`` if unresolved).
+
+    Delegates to :func:`doe_xgb._versions.collect_package_versions`,
+    which handles distribution-vs-import name mismatches such as
+    ``scikit-learn`` ↔ ``sklearn``.
+    """
+    return collect_package_versions(names)
 
 
 def _platform() -> dict[str, str]:

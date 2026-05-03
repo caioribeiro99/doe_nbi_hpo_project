@@ -209,28 +209,39 @@ def dispatch_decision(row: sqlite3.Row, *, signoff_ok: bool, train: bool,
 
 def _execute_canary_job(row: sqlite3.Row, *, max_evaluations: int,
                         n_folds: int, output_root: Path,
-                        synthetic_task: bool, seed_base: int) -> dict:
+                        synthetic_task: bool, seed_base: int,
+                        openml_cache_root: Path | None = None) -> dict:
     """Run one canary job. Caller is responsible for DB status
     transitions; this returns a manifest dict on success."""
     from doe_xgb.methods.canary import (
         MethodRunContext,
+        TaskData,
         make_synthetic_binary_task,
     )
 
     method = row["method"]
-    if not synthetic_task:
-        # Real CC18 tasks require an OpenML loader, which is intentionally
-        # not wired in Commit 30. The runner refuses to fabricate data
-        # silently.
-        raise RuntimeError(
-            "Commit 30 canary executes only against synthetic tasks. "
-            "Pass --synthetic-task to opt in; CC18 task loading lands in "
-            "a later commit."
+    if synthetic_task:
+        task = make_synthetic_binary_task(
+            n_samples=300, n_features=6,
+            seed=int(seed_base) + int(row["openml_task_id"]),
         )
-    task = make_synthetic_binary_task(
-        n_samples=300, n_features=6,
-        seed=int(seed_base) + int(row["openml_task_id"]),
-    )
+        dataset_name = row["dataset_name"] or "synthetic"
+    else:
+        # Real CC18 task: load via the gitignored on-disk cache.
+        from doe_xgb.datasets.openml_cc18_loader import load_cc18_task
+
+        payload = load_cc18_task(
+            int(row["openml_task_id"]),
+            cache_root=openml_cache_root,
+        )
+        task = TaskData(
+            X=payload.X,
+            y=payload.y,
+            task_type=payload.task_type,
+            n_classes=payload.n_classes,
+            feature_names=payload.feature_names,
+        )
+        dataset_name = payload.dataset_name
     ctx = MethodRunContext(
         method_id=method,
         algorithm=row["algorithm"],
@@ -241,7 +252,7 @@ def _execute_canary_job(row: sqlite3.Row, *, max_evaluations: int,
         output_dir=output_root / row["job_id"],
         config_path=None,
         task_id=int(row["openml_task_id"]),
-        dataset_name=row["dataset_name"] or "synthetic",
+        dataset_name=dataset_name,
     )
     ctx.output_dir.mkdir(parents=True, exist_ok=True)
     adapter = get_adapter(method)
@@ -268,7 +279,8 @@ def run(*, shard: Path, max_jobs: int, dry_run: bool,
         stage: str | None, worker_id: str, no_train: bool,
         canary_only: bool, signoff_file: Path,
         max_evaluations: int, n_folds: int,
-        output_root: Path, synthetic_task: bool, seed_base: int) -> dict:
+        output_root: Path, synthetic_task: bool, seed_base: int,
+        openml_cache_root: Path | None = None) -> dict:
     if not no_train and not canary_only:
         raise SystemExit(
             "--train requires --canary-only. Refusing to run a "
@@ -310,6 +322,7 @@ def run(*, shard: Path, max_jobs: int, dry_run: bool,
                     output_root=output_root,
                     synthetic_task=synthetic_task,
                     seed_base=seed_base,
+                    openml_cache_root=openml_cache_root,
                 )
                 mark_success(cx, row["job_id"], time.perf_counter() - t0)
                 successes += 1
@@ -377,14 +390,18 @@ def main(argv: list[str] | None = None) -> int:
                              f"{CANARY_METHODS}")
     parser.add_argument("--synthetic-task", action="store_true",
                         help="feed the canary on a synthetic binary task; "
-                             "Commit 30 supports only this path. CC18 task "
-                             "loading lands in a later commit.")
+                             "without this flag the runner loads real "
+                             "OpenML CC18 task data via the gitignored "
+                             "cache under data/source/openml_cc18/.")
     parser.add_argument("--max-evaluations", type=int, default=5)
     parser.add_argument("--n-folds", type=int, default=2)
     parser.add_argument("--seed-base", type=int, default=42)
     parser.add_argument("--output-root", type=Path,
                         default=DEFAULT_CANARY_OUTPUT_ROOT)
     parser.add_argument("--signoff-file", type=Path, default=DEFAULT_SIGNOFF)
+    parser.add_argument("--openml-cache-root", type=Path, default=None,
+                        help="root directory for the OpenML payload cache "
+                             "(default: data/source/openml_cc18/).")
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -402,6 +419,7 @@ def main(argv: list[str] | None = None) -> int:
         output_root=args.output_root,
         synthetic_task=args.synthetic_task,
         seed_base=args.seed_base,
+        openml_cache_root=args.openml_cache_root,
     )
     print(json.dumps({k: v for k, v in summary.items() if k != "decisions"},
                      indent=2))
