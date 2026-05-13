@@ -154,6 +154,20 @@ mutated. The gate artifact at
 is committed only when produced on the dedicated Mac. Batch 01
 is blocked until that artifact shows zero failures.
 
+**Heavy-task policy (Commit 38).** batch_03 (Commit 37) exposed
+a runtime tail: 92 % of its CPU went to 8 Devnagari-Script cells
+(task 167121, 92 000 × 1 024 × 46 classes). To stop that pattern
+from blocking full stage 0, Commit 38 splits CC18 into three
+lanes — `standard` (57 tasks), `heavy` (13 tasks), `extreme` (2
+tasks: `letter`, `Devnagari-Script`). Per-lane budgets live in
+`benchmarks/doctoral/openml_cc18/runtime_guardrails.yaml`,
+per-task assignments in
+`benchmarks/doctoral/openml_cc18/heavy_task_policy.csv`. The
+`src/doe_xgb/runtime_guardrails.py` helper is the runtime API
+every CC18 runner from Commit 38 onward consults. Extreme tasks
+are deferred unless `--include-extreme-tasks` is set. See
+`docs/HEAVY_TASK_POLICY.md`.
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

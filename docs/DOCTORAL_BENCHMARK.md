@@ -304,6 +304,32 @@ stage-3 sign-off file was NOT created. The artifact is committed
 gate artifact above shows `n_cells_failed == 0` and
 `source_shard_unchanged == true`.
 
+## Heavy-task policy (Commit 38)
+
+batch_03 (Commit 37) ran 216 / 216 cells green but spent ~92 % of
+its 56 710 s runner CPU on 8 cells of `Devnagari-Script` (task
+167121, 92 000 × 1 024 × 46 classes). To prevent that pattern
+from blocking full stage 0, Commit 38 introduces a three-lane
+heavy-task policy:
+
+- `benchmarks/doctoral/openml_cc18/runtime_guardrails.yaml` —
+  per-lane defaults (timeouts, max_evaluations, include-by-
+  default flag);
+- `benchmarks/doctoral/openml_cc18/heavy_task_policy.csv` —
+  per-task lane assignment (57 standard / 13 heavy / 2 extreme);
+- `scripts/build_cc18_heavy_task_policy.py` regenerates both from
+  `tasks.csv` + the latest batch summaries;
+- `src/doe_xgb/runtime_guardrails.py` exposes the runtime API
+  (`get_task_lane`, `get_timeout_seconds`,
+  `get_effective_max_evaluations`, `should_defer_task`).
+
+batch_04 onward MUST consult the policy. Extreme tasks (currently
+`Devnagari-Script`, `letter`) are deferred unless the caller
+passes `--include-extreme-tasks`. Full stage 0 splits into a
+standard / heavy / extreme pass, each with its own published
+stage-run summary. See `docs/HEAVY_TASK_POLICY.md` for the
+contract.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac

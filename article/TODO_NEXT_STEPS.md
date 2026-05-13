@@ -67,6 +67,25 @@
 > source shards unchanged, OpenML payloads cached under the
 > gitignored `data/source/openml_cc18/`).
 >
+> **Heavy-task policy + runtime guardrails in Commit 38**
+> (`docs/HEAVY_TASK_POLICY.md`). batch_03 ran 216 / 216 cells
+> green but spent ~92 % of 56 710 s of runner CPU on 8
+> Devnagari-Script cells (task 167121, 92 000 × 1 024 × 46
+> classes). To stop that pattern from blocking full stage 0,
+> Commit 38 splits CC18 into three lanes — 57 standard, 13
+> heavy, 2 extreme (`letter`, `Devnagari-Script`). Per-lane
+> defaults live in
+> `benchmarks/doctoral/openml_cc18/runtime_guardrails.yaml`;
+> per-task assignments in
+> `benchmarks/doctoral/openml_cc18/heavy_task_policy.csv` (built
+> reproducibly by `scripts/build_cc18_heavy_task_policy.py`).
+> `src/doe_xgb/runtime_guardrails.py` is the runtime API every
+> CC18 runner from Commit 38 onward consults. Extreme tasks are
+> deferred unless the runner is invoked with
+> `--include-extreme-tasks`. Full stage 0 splits into separate
+> standard / heavy / extreme passes, each publishing its own
+> stage-run summary.
+>
 > **Result handoff protocol formalized in Commit 35**
 > (`docs/RESULT_HANDOFF_PROTOCOL.md`). Committed SQLite shards stay
 > immutable; execution copies live under `runs/cc18/<run_id>/` and
@@ -75,9 +94,12 @@
 > Git. Two helper scripts implement the protocol:
 > `scripts/create_cc18_run_dir.py` and
 > `scripts/export_cc18_run_summary.py`. **Next operational step:**
-> only after this protocol is in place, Commit 36 prepares /
-> runs `batch_02_cc18_small_12_tasks` (12 real OpenML-CC18 tasks)
-> using the new run-dir + summary flow.
+> only after Commit 38's heavy-task policy is in place, Commit 39
+> prepares / runs `batch_04_stage0_shard00_only` (a single
+> existing stage-0 shard) through both the result handoff
+> protocol and the new runtime guardrails. Devnagari-Script and
+> letter stay deferred in that batch (extreme lane);
+> `--include-extreme-tasks` enables them on a dedicated worker.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

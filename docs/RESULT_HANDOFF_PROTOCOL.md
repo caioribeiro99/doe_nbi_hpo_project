@@ -211,6 +211,26 @@ fitted models stay on the publishing machine; pull them through
 the archive URI in the summary if the reader needs the raw
 artifacts.
 
+## Heavy-task policy interaction (Commit 38)
+
+From Commit 38 onward, every CC18 runner also consults the
+heavy-task policy at `benchmarks/doctoral/openml_cc18/{runtime_guardrails.yaml,
+heavy_task_policy.csv}` via `src/doe_xgb/runtime_guardrails.py`.
+The interaction with the handoff protocol is additive:
+
+- the policy determines whether a task is deferred (extreme lane)
+  or runs with a lane-specific timeout / max_evaluations cap;
+- deferred tasks appear in the stage-run summary as
+  `n_skipped` cells with `last_error = "deferred_extreme_lane"`
+  (or surface in a top-level `deferred_extreme_tasks` field);
+- the rest of the protocol — `runs/cc18/<run_id>/` for execution
+  state, `experiments/_stage_runs/<run_id>_summary.{json,md}`
+  for the cross-machine handoff, run_manifest.json for source
+  MD5s — is unchanged.
+
+See `docs/HEAVY_TASK_POLICY.md` for the lane definitions and the
+classification rules.
+
 ## Refusal rules
 
 - A worker MUST NOT pass a path under `jobs/doctoral/openml_cc18/shards/`

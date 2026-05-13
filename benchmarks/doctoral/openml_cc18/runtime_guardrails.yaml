@@ -1,0 +1,94 @@
+# Runtime guardrails for the OpenML-CC18 doctoral benchmark (Commit 38).
+#
+# This config is the *defaults source of truth* for the heavy-task
+# policy. Per-task overrides live in
+# `heavy_task_policy.csv` (one row per CC18 task; lanes assigned by
+# `scripts/build_cc18_heavy_task_policy.py`). The src/doe_xgb/
+# runtime_guardrails.py helper loads both files and answers:
+#
+#   - get_task_lane(task_id) -> "standard" | "heavy" | "extreme"
+#   - get_timeout_seconds(task_id, method, algorithm) -> float
+#   - get_effective_max_evaluations(task_id, requested) -> int
+#   - should_defer_task(task_id, include_extreme=False) -> bool
+#
+# Motivation: Commit 37 ran batch_03 successfully (216 / 216 cells)
+# but spent ~92 % of its 56,710 s runtime on the 8 Devnagari-Script
+# cells (task 167121, 92k × 1024 with 46 classes). Without lane
+# separation, full stage 0 would inherit the same skewed tail.
+#
+# See docs/HEAVY_TASK_POLICY.md for the narrative.
+
+schema_version: 1
+
+# Defaults per lane. Each lane is a flat set of knobs; the runner /
+# batch scripts pick the lane via runtime_guardrails.py and apply
+# the corresponding numbers. Per-task overrides in
+# heavy_task_policy.csv beat these defaults when set explicitly.
+
+lanes:
+  standard:
+    # Standard tasks: small / well-behaved CC18 panel members.
+    # Tight budget per cell so the gate cadence stays predictable.
+    timeout_seconds_per_cell: 1800            # 30 min
+    default_max_evaluations: 5
+    gate_max_evaluations: 5
+    stage0_max_evaluations: 5
+    include_by_default: true
+    requires_manual_review_before_full_stage0: false
+    notes: >-
+      72 - len(heavy) - len(extreme) tasks. These run with the
+      same budget already used by batches 00 -> 03.
+
+  heavy:
+    # Heavy lane: large row counts, high feature dimensions, or
+    # many classes. Tasks here are expected to consume noticeably
+    # more CPU than the standard panel but still fit inside a
+    # supervised batch window. Stage 0 keeps them in the same
+    # pipeline but a longer timeout protects the worker.
+    timeout_seconds_per_cell: 7200            # 2 h
+    default_max_evaluations: 5
+    gate_max_evaluations: 3                   # gates cap the budget
+    stage0_max_evaluations: 5
+    include_by_default: true
+    requires_manual_review_before_full_stage0: false
+    notes: >-
+      Per Commit 37, mnist_784 (1.5 ks max cell runtime) and
+      Internet-Advertisements (heavy by feature count) sit here.
+      A timeout in this lane is recorded as failed_timeout and
+      surfaces in the stage-run summary.
+
+  extreme:
+    # Extreme lane: do NOT run by default. Devnagari-Script
+    # produced 11 ks cells in batch_03; if we let extreme tasks
+    # mix with the standard / heavy lanes in stage 0, the wall-
+    # clock dominates and the worker is unavailable for hours.
+    # Stage 0 schedules these on a separate dedicated pass; until
+    # then, every runner refuses to dispatch them unless the
+    # caller passes --include-extreme-tasks.
+    timeout_seconds_per_cell: 14400           # 4 h
+    default_max_evaluations: 5
+    gate_max_evaluations: 1                   # gates run a single config
+    stage0_max_evaluations: 1                 # full stage 0 still defers
+    include_by_default: false                 # MUST be explicit
+    requires_manual_review_before_full_stage0: true
+    notes: >-
+      Devnagari-Script (92k x 1024 x 46) is the canonical
+      example. Anything that exceeded 3600 s in any cell of
+      batch_02 / batch_03 lands here, plus metadata extremes
+      flagged by build_cc18_heavy_task_policy.py.
+
+# What to do when a cell exceeds its lane's timeout. The runner
+# converts the worker subprocess into a `failed_timeout` cell so
+# the gate artifact records the event without contaminating the
+# success / failed counts of unrelated cells. ``failed_timeout``
+# is still a member of `failed` in summary aggregates.
+disposition_on_timeout: failed_timeout
+
+# Pointer to the per-task overrides file. The helper uses this to
+# locate the CSV when the caller does not pass an explicit path.
+policy_csv: benchmarks/doctoral/openml_cc18/heavy_task_policy.csv
+
+# How the runner reads the YAML default for the include-extreme
+# flag. Set this to `true` only on a worker that is dedicated to
+# the extreme lane (e.g. a long-running off-hours job).
+include_extreme_tasks_default: false

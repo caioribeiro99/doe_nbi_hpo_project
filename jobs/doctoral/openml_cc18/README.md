@@ -139,6 +139,20 @@ Stage 3 is locked: the runner refuses to claim any job carrying the
 `jobs/doctoral/openml_cc18/stage3_signoff.json` exists. Neither
 Commit 29 nor Commit 30 creates that file.
 
+## Heavy-task policy (Commit 38)
+
+CC18 tasks are now split into three lanes (`standard`, `heavy`,
+`extreme`) via
+`benchmarks/doctoral/openml_cc18/{runtime_guardrails.yaml,
+heavy_task_policy.csv}`. Per-lane budgets enforce timeouts and
+max_evaluations caps; extreme tasks (`Devnagari-Script`,
+`letter`) are deferred unless the runner is invoked with
+`--include-extreme-tasks`. batch_04 onward MUST consult the
+policy via `src/doe_xgb/runtime_guardrails.py`. Full stage 0
+splits into a standard / heavy / extreme pass, each with its own
+stage-run summary under `experiments/_stage_runs/`. See
+`docs/HEAVY_TASK_POLICY.md`.
+
 ## Result handoff protocol (Commit 35)
 
 The committed shards under `shards/` are *immutable job-queue
