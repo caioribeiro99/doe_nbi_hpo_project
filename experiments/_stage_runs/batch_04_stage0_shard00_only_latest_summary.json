@@ -1,0 +1,3973 @@
+{
+  "archive_path": null,
+  "archive_sha256": null,
+  "archive_size_bytes": null,
+  "batch_03_gate": {
+    "age_days": 11.700962098576388,
+    "exported_at": "2026-05-04T04:29:26Z",
+    "n_cells_expected": 216,
+    "n_cells_failed": 0,
+    "n_cells_pending": 0,
+    "n_cells_success": 216,
+    "run_id": "batch_03_cc18_representative_18_tasks_latest",
+    "source_git_sha": "87e3526727ba11564e716a4207ca4aabd1a05349",
+    "source_shards_unchanged": true,
+    "stage3_signoff_present": false
+  },
+  "batch_id": "batch_04_stage0_shard00_only",
+  "capability_audit": {
+    "dispatch_only": [
+      "doe_rsm_vrf_true_nbi_no_mbpa",
+      "legacy_weighted_sum_scalarization"
+    ],
+    "missing_packages": [],
+    "n_benchmarked": 13,
+    "smoke_ready": [
+      "default_gbdt",
+      "random_search",
+      "tpe_optuna",
+      "doe_rsm_vrf_true_nbi"
+    ],
+    "stub_only": [
+      "smac3",
+      "asha",
+      "bohb",
+      "dehb",
+      "nsga2",
+      "motpe",
+      "parego"
+    ]
+  },
+  "cells": [
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "8e215d77013688c3",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 3,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "b0f682bec1a0dffa",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 3,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9915519399249061,
+        "precision": 0.992149432909343,
+        "recall": 0.9901729532775693,
+        "specificity": 0.9928086273496173
+      },
+      "algorithm": "lightgbm",
+      "job_id": "e64ac0936c37b915",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/e64ac0936c37b915/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3,
+      "runtime_seconds": 0.031498916912823915,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "4ceadfd107a48352",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 3,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9877972465581977,
+        "precision": 0.9882730680189615,
+        "recall": 0.9862436785079562,
+        "specificity": 0.989211505047459
+      },
+      "algorithm": "lightgbm",
+      "job_id": "fbe2b87330dfbb59",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/fbe2b87330dfbb59/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3,
+      "runtime_seconds": 0.22186245815828443,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "b7e27d04be617eda",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 3,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "16cc043fb4387faf",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 3,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9934292866082604,
+        "precision": 0.9960575996666927,
+        "recall": 0.9901729532775693,
+        "specificity": 0.9964043136748086
+      },
+      "algorithm": "lightgbm",
+      "job_id": "d80e53a311854568",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/d80e53a311854568/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3,
+      "runtime_seconds": 0.16523116710595787,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "61189f0a73946695",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 3,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9931163954943679,
+        "precision": 0.9973561061192251,
+        "recall": 0.988207887026274,
+        "specificity": 0.9976033544421947
+      },
+      "algorithm": "lightgbm",
+      "job_id": "8d9a981ecf4dddd6",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/8d9a981ecf4dddd6/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3,
+      "runtime_seconds": 0.17878945800475776,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "7e1b2deff69543f1",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "38bde32f86ffa97c",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "c96bd4bb8731c1ad",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "default_gbdt",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "f90b062e7688e30a",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "5ffe9c28129b69a3",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "7c966fc45506fa59",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "cd41fe5e31410a03",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "75ce6814dc508c6f",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "0c9557b08936b5b5",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "random_search",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "e6f3348d961a27ac",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "406d33b0e95b995b",
+      "last_error": "deferred_extreme_lane",
+      "manifest": null,
+      "method": "tpe_optuna",
+      "metric_keys": [],
+      "openml_task_id": 6,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "c243ed8b3570dc6f",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "6b2a0c51485db14b",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.928,
+        "balanced_accuracy": 0.928,
+        "brier_multiclass": 0.20978296201368624,
+        "ece_multiclass": 0.26947810616330387,
+        "f1_macro": 0.9280551770777579,
+        "mcc": 0.9200766664814009,
+        "pr_auc_ovr_macro": 0.9753126986007293,
+        "roc_auc_ovr_macro": 0.9960833333333334
+      },
+      "algorithm": "catboost",
+      "job_id": "9b3b64ae7c32325a",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/9b3b64ae7c32325a/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 16,
+      "runtime_seconds": 5.053391291992739,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "88a5595ba07cc574",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9359999999999999,
+        "balanced_accuracy": 0.9359999999999999,
+        "brier_multiclass": 0.13314867086265259,
+        "ece_multiclass": 0.1413236546000638,
+        "f1_macro": 0.9361092348212325,
+        "mcc": 0.929031878724097,
+        "pr_auc_ovr_macro": 0.9796027515028112,
+        "roc_auc_ovr_macro": 0.9966144444444445
+      },
+      "algorithm": "catboost",
+      "job_id": "106daac40cedd991",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/106daac40cedd991/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 16,
+      "runtime_seconds": 41.94645595899783,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "8875f16a5be96636",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "9ee3a85fa054c1b0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "c7e9bc7407231b2a",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9444999999999999,
+        "balanced_accuracy": 0.9444999999999999,
+        "brier_multiclass": 0.12072773813808083,
+        "ece_multiclass": 0.1369568341883072,
+        "f1_macro": 0.944496778029851,
+        "mcc": 0.9384131863097027,
+        "pr_auc_ovr_macro": 0.9840851399136302,
+        "roc_auc_ovr_macro": 0.997415
+      },
+      "algorithm": "catboost",
+      "job_id": "a8b987a3397bd32a",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/a8b987a3397bd32a/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 16,
+      "runtime_seconds": 28.130582500016317,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "92174aa7cac25f82",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 16,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.939,
+        "balanced_accuracy": 0.939,
+        "brier_multiclass": 0.12062101186575852,
+        "ece_multiclass": 0.11781240938966733,
+        "f1_macro": 0.9390295309825939,
+        "mcc": 0.9323206456792719,
+        "pr_auc_ovr_macro": 0.9814425636185464,
+        "roc_auc_ovr_macro": 0.9970305555555556
+      },
+      "algorithm": "catboost",
+      "job_id": "17e2e333cc39b0a6",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/17e2e333cc39b0a6/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 16,
+      "runtime_seconds": 25.479998416965827,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "e19bbb46ea0aacbc",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 23,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "3f89904c6c05a444",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 23,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5349638295675772,
+        "balanced_accuracy": 0.5056333386127233,
+        "brier_multiclass": 0.5797646778180605,
+        "ece_multiclass": 0.11799510821233833,
+        "f1_macro": 0.5075724995960709,
+        "mcc": 0.27297025043789,
+        "pr_auc_ovr_macro": 0.5554449437753327,
+        "roc_auc_ovr_macro": 0.7167202658007474
+      },
+      "algorithm": "lightgbm",
+      "job_id": "b5c46dc096fc596b",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b5c46dc096fc596b/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 23,
+      "runtime_seconds": 0.05299591715447605,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "e116c47a8e2bc6c8",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 23,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5485369594714176,
+        "balanced_accuracy": 0.5191487410555098,
+        "brier_multiclass": 0.5540448263651014,
+        "ece_multiclass": 0.08151442824254693,
+        "f1_macro": 0.5208922357232932,
+        "mcc": 0.2963182682869458,
+        "pr_auc_ovr_macro": 0.5661311895746711,
+        "roc_auc_ovr_macro": 0.7265802953354982
+      },
+      "algorithm": "lightgbm",
+      "job_id": "2db70b0f795c1ab9",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/2db70b0f795c1ab9/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 23,
+      "runtime_seconds": 0.32735412498004735,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "71f0f41dbb76c84b",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 23,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "fce77d05ac20c3cb",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 23,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5376756902247655,
+        "balanced_accuracy": 0.5077694619793808,
+        "brier_multiclass": 0.5739305297261945,
+        "ece_multiclass": 0.08626544990109052,
+        "f1_macro": 0.5095889720748795,
+        "mcc": 0.2772108395565024,
+        "pr_auc_ovr_macro": 0.5517736729211162,
+        "roc_auc_ovr_macro": 0.7128340097936483
+      },
+      "algorithm": "lightgbm",
+      "job_id": "b313ae198be03210",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b313ae198be03210/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 23,
+      "runtime_seconds": 0.2409535839688033,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "4cf33fb4d8da570d",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 23,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5342835599669635,
+        "balanced_accuracy": 0.5051876778760492,
+        "brier_multiclass": 0.5759307984026502,
+        "ece_multiclass": 0.08592276883580238,
+        "f1_macro": 0.5068387462466504,
+        "mcc": 0.2725115966028707,
+        "pr_auc_ovr_macro": 0.5443851423263021,
+        "roc_auc_ovr_macro": 0.711031341758458
+      },
+      "algorithm": "lightgbm",
+      "job_id": "db743b6c00d1967c",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/db743b6c00d1967c/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 23,
+      "runtime_seconds": 0.27043900010176003,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "1aa5c73e713a2633",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 43,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "c1455c3493bbc2bd",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 43,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9467513179524971,
+        "precision": 0.9346063448981197,
+        "recall": 0.9299555091500739,
+        "specificity": 0.9576757532281206
+      },
+      "algorithm": "lightgbm",
+      "job_id": "55bceb0916c8b209",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/55bceb0916c8b209/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 43,
+      "runtime_seconds": 0.08989908313378692,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "77fe613707e548ec",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 43,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9513158740056309,
+        "precision": 0.9406661284407283,
+        "recall": 0.935473056020016,
+        "specificity": 0.9616212338593975
+      },
+      "algorithm": "lightgbm",
+      "job_id": "72078907aae86258",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/72078907aae86258/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 43,
+      "runtime_seconds": 0.6492975000292063,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "c550288837ff3e85",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 43,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "96eed96a4dd141ec",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 43,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9506635111388244,
+        "precision": 0.9396449871462136,
+        "recall": 0.9349211796403251,
+        "specificity": 0.9609038737446198
+      },
+      "algorithm": "lightgbm",
+      "job_id": "284a1029b1f09e0c",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/284a1029b1f09e0c/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 43,
+      "runtime_seconds": 0.5016915840096772,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "b7af2bdcc5d56bc0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 43,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9513154960981047,
+        "precision": 0.9378960463398515,
+        "recall": 0.938783705834678,
+        "specificity": 0.9594691535150646
+      },
+      "algorithm": "lightgbm",
+      "job_id": "82e6340233d23305",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/82e6340233d23305/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 43,
+      "runtime_seconds": 0.5169225421268493,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "f242ede048b750a3",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 53,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "bedcec711c4c0d94",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 53,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.75177304964539,
+        "balanced_accuracy": 0.7547915417226911,
+        "brier_multiclass": 0.3312971040115274,
+        "ece_multiclass": 0.09758932583505947,
+        "f1_macro": 0.7485264895724739,
+        "mcc": 0.6698445295157783,
+        "pr_auc_ovr_macro": 0.8056880026517963,
+        "roc_auc_ovr_macro": 0.9251346175461674
+      },
+      "algorithm": "lightgbm",
+      "job_id": "b44bf5377ff941a3",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b44bf5377ff941a3/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 53,
+      "runtime_seconds": 0.05653866706416011,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "b0026e404b40da54",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 53,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7647754137115839,
+        "balanced_accuracy": 0.7673758865558242,
+        "brier_multiclass": 0.3481450905519593,
+        "ece_multiclass": 0.12676328571553241,
+        "f1_macro": 0.7634345582801939,
+        "mcc": 0.6867421936023754,
+        "pr_auc_ovr_macro": 0.8029902118866874,
+        "roc_auc_ovr_macro": 0.9257808019283378
+      },
+      "algorithm": "lightgbm",
+      "job_id": "6fde1e6b89641d16",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/6fde1e6b89641d16/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 53,
+      "runtime_seconds": 0.4001313329208642,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "f8c56a1d3713865b",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 53,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "ff5baf86c80fe3f1",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 53,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7635933806146572,
+        "balanced_accuracy": 0.766491866766447,
+        "brier_multiclass": 0.38718997672551136,
+        "ece_multiclass": 0.17939642250074944,
+        "f1_macro": 0.7612888219367762,
+        "mcc": 0.6853293714339312,
+        "pr_auc_ovr_macro": 0.8114410738045015,
+        "roc_auc_ovr_macro": 0.9275449338389128
+      },
+      "algorithm": "lightgbm",
+      "job_id": "d9e9ef52683515e4",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/d9e9ef52683515e4/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 53,
+      "runtime_seconds": 0.28900875011458993,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "6a45834756cf03c0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 53,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7695035460992907,
+        "balanced_accuracy": 0.7717803299861462,
+        "brier_multiclass": 0.35267730124881247,
+        "ece_multiclass": 0.1394798469481065,
+        "f1_macro": 0.7676334498229049,
+        "mcc": 0.6937337168883346,
+        "pr_auc_ovr_macro": 0.8079223196312608,
+        "roc_auc_ovr_macro": 0.9267273243370395
+      },
+      "algorithm": "lightgbm",
+      "job_id": "28452681d8337925",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/28452681d8337925/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 53,
+      "runtime_seconds": 0.2898231251165271,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "ddafddb1397fb486",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "a82b5469d0c7d7d0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.1894843893653732,
+        "balanced_accuracy": 0.1892830484132015,
+        "brier_multiclass": 0.8838149183145148,
+        "ece_multiclass": 0.1793700701812999,
+        "f1_macro": 0.18942232936173578,
+        "mcc": 0.02533690218144296,
+        "pr_auc_ovr_macro": 0.20600979299253863,
+        "roc_auc_ovr_macro": 0.5512204655401399
+      },
+      "algorithm": "xgboost",
+      "job_id": "b90e6c80c47ab97f",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b90e6c80c47ab97f/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3560,
+      "runtime_seconds": 0.03646291699260473,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "853b5d8d7c065624",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.20953451467865641,
+        "balanced_accuracy": 0.20851806816719948,
+        "brier_multiclass": 0.8660037630226083,
+        "ece_multiclass": 0.14692664656472026,
+        "f1_macro": 0.20604377168979449,
+        "mcc": 0.050194533200274095,
+        "pr_auc_ovr_macro": 0.20861114342046,
+        "roc_auc_ovr_macro": 0.5646432929554228
+      },
+      "algorithm": "xgboost",
+      "job_id": "28e68cd5e9f0de30",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/28e68cd5e9f0de30/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3560,
+      "runtime_seconds": 0.2905229169409722,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "6de77b0b4232adfa",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "c81ddc74500f4560",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "65dae90e6387a147",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.21457538318157202,
+        "balanced_accuracy": 0.21359321928460379,
+        "brier_multiclass": 0.8833120938748588,
+        "ece_multiclass": 0.17405928945592353,
+        "f1_macro": 0.21379266652927373,
+        "mcc": 0.05475164250762546,
+        "pr_auc_ovr_macro": 0.21286314190510172,
+        "roc_auc_ovr_macro": 0.5666395260042139
+      },
+      "algorithm": "xgboost",
+      "job_id": "4a9025683382407e",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/4a9025683382407e/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3560,
+      "runtime_seconds": 0.1394668749999255,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "22fa2b82ee8a5e3b",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 3560,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.2032751476681654,
+        "balanced_accuracy": 0.20353935256217642,
+        "brier_multiclass": 0.9020156418937214,
+        "ece_multiclass": 0.20361852020051902,
+        "f1_macro": 0.2040333820190292,
+        "mcc": 0.043092377223908934,
+        "pr_auc_ovr_macro": 0.20464020696817956,
+        "roc_auc_ovr_macro": 0.5530517521914687
+      },
+      "algorithm": "xgboost",
+      "job_id": "8c6021a83a64e970",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/8c6021a83a64e970/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3560,
+      "runtime_seconds": 0.16579437511973083,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "352d0c2b1c8268ff",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "06d550399337d6c0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9654142857142858,
+        "balanced_accuracy": 0.9652107142469,
+        "brier_multiclass": 0.05256525456260111,
+        "ece_multiclass": 0.0138218224629366,
+        "f1_macro": 0.965160022580019,
+        "mcc": 0.9615638633676924,
+        "pr_auc_ovr_macro": 0.9934715247097972,
+        "roc_auc_ovr_macro": 0.9989778168232133
+      },
+      "algorithm": "lightgbm",
+      "job_id": "71306c119d5f5677",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/71306c119d5f5677/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3573,
+      "runtime_seconds": 27.91905204206705,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "8dbe89ab17983cf5",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9697714285714285,
+        "balanced_accuracy": 0.969595958189932,
+        "brier_multiclass": 0.045364516211561484,
+        "ece_multiclass": 0.0018455955031040161,
+        "f1_macro": 0.9695698185484116,
+        "mcc": 0.9664039660951282,
+        "pr_auc_ovr_macro": 0.9947718117941167,
+        "roc_auc_ovr_macro": 0.9992031213125111
+      },
+      "algorithm": "lightgbm",
+      "job_id": "6733683c6e18e233",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/6733683c6e18e233/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3573,
+      "runtime_seconds": 206.70411508413963,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "b497c5d33e9643dd",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "054857dd0516855a",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "0a753ac07224debc",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9747285714285714,
+        "balanced_accuracy": 0.9745886901490478,
+        "brier_multiclass": 0.04110393058924659,
+        "ece_multiclass": 0.014522581476633645,
+        "f1_macro": 0.9745647620445435,
+        "mcc": 0.9719142767721407,
+        "pr_auc_ovr_macro": 0.9958671069063001,
+        "roc_auc_ovr_macro": 0.9993599562375187
+      },
+      "algorithm": "lightgbm",
+      "job_id": "beac3339c643155a",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/beac3339c643155a/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3573,
+      "runtime_seconds": 93.39016716717742,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "fbda89e6eb957000",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 3573,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9737857142857143,
+        "balanced_accuracy": 0.9736449274649102,
+        "brier_multiclass": 0.041326739561654696,
+        "ece_multiclass": 0.012775375749933931,
+        "f1_macro": 0.9735997312880412,
+        "mcc": 0.9708664749690106,
+        "pr_auc_ovr_macro": 0.9958038308524348,
+        "roc_auc_ovr_macro": 0.9993554092064116
+      },
+      "algorithm": "lightgbm",
+      "job_id": "c9ff3326a39aca21",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/c9ff3326a39aca21/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 3573,
+      "runtime_seconds": 96.43688683398068,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "1507ff2d0231d54f",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "4af30c2c67ea54e7",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.891875783882556,
+        "precision": 0.4400921658986175,
+        "recall": 0.2,
+        "specificity": 0.9707804479559116
+      },
+      "algorithm": "lightgbm",
+      "job_id": "64551677e384fe79",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/64551677e384fe79/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3903,
+      "runtime_seconds": 0.04745062510482967,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "dae540ad3181d14b",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8976286222332834,
+        "precision": 0.4956521739130435,
+        "recall": 0.15,
+        "specificity": 0.9828917582127283
+      },
+      "algorithm": "lightgbm",
+      "job_id": "035d18d644e263b4",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/035d18d644e263b4/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3903,
+      "runtime_seconds": 0.721908625215292,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "df37a94bb496c54a",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "2a62f3edfb078c48",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "ccd3708a2d321fb3",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8905986488566366,
+        "precision": 0.43929597701149425,
+        "recall": 0.20625,
+        "specificity": 0.9686457279181958
+      },
+      "algorithm": "lightgbm",
+      "job_id": "8541bbd7e7dd4526",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/8541bbd7e7dd4526/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3903,
+      "runtime_seconds": 0.22436241689138114,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "550171aacb527ab7",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 3903,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8893157830966267,
+        "precision": 0.41699346405228754,
+        "recall": 0.20625,
+        "specificity": 0.9672161462461034
+      },
+      "algorithm": "lightgbm",
+      "job_id": "3c452bdca2c5d526",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/3c452bdca2c5d526/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3903,
+      "runtime_seconds": 0.2399100000038743,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "2427ebace1fa3ed6",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 3913,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "11fca471cf043231",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 3913,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8390804597701149,
+        "precision": 0.6446560196560196,
+        "recall": 0.4861984626135569,
+        "specificity": 0.9301491081382385
+      },
+      "algorithm": "lightgbm",
+      "job_id": "20583f80ac4c9b55",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/20583f80ac4c9b55/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3913,
+      "runtime_seconds": 0.013818749925121665,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "09b2c6c1bd29ce01",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 3913,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.842911877394636,
+        "precision": 0.6696428571428572,
+        "recall": 0.46733053808525504,
+        "specificity": 0.939787718320327
+      },
+      "algorithm": "lightgbm",
+      "job_id": "f3dd078ca27988c4",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/f3dd078ca27988c4/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3913,
+      "runtime_seconds": 0.08113341592252254,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "428929611e4d6e13",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 3913,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "942668d69236e1f9",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 3913,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8448275862068966,
+        "precision": 0.6546644844517184,
+        "recall": 0.5235849056603774,
+        "specificity": 0.9277452619843924
+      },
+      "algorithm": "lightgbm",
+      "job_id": "8fa305f94919ead6",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/8fa305f94919ead6/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3913,
+      "runtime_seconds": 0.06548266601748765,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "3a827239d6cf1461",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 3913,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8390804597701149,
+        "precision": 0.6305128205128205,
+        "recall": 0.5239343116701607,
+        "specificity": 0.9205104979561501
+      },
+      "algorithm": "lightgbm",
+      "job_id": "9d3b7e18e6a1a38d",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/9d3b7e18e6a1a38d/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 3913,
+      "runtime_seconds": 0.0594586250372231,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "999414d42e6d44b7",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 9910,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "fba1b3096c678020",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 9910,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7832560056858564,
+        "precision": 0.7933657540826129,
+        "recall": 0.811701081612586,
+        "specificity": 0.7495590362295834
+      },
+      "algorithm": "xgboost",
+      "job_id": "7e8af9656b7c184b",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/7e8af9656b7c184b/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9910,
+      "runtime_seconds": 1.042740540811792,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "dcd02f3c469e5731",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 9910,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7816540156361051,
+        "precision": 0.7878161389245855,
+        "recall": 0.8180924287118978,
+        "specificity": 0.7384813479109171
+      },
+      "algorithm": "xgboost",
+      "job_id": "3d834443694fd1ec",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/3d834443694fd1ec/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9910,
+      "runtime_seconds": 6.644007208058611,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "316cbeb32b908e94",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 9910,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "3bc058c1cf75cb97",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 9910,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7803238095238095,
+        "precision": 0.7899646166343122,
+        "recall": 0.8107177974434612,
+        "specificity": 0.744310888955825
+      },
+      "algorithm": "xgboost",
+      "job_id": "fe98447a34435490",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/fe98447a34435490/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9910,
+      "runtime_seconds": 1.9146642498672009,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "97a7e2597eb68e33",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 9910,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.7867213930348258,
+        "precision": 0.7970049284814349,
+        "recall": 0.8141592920353982,
+        "specificity": 0.7542142568335817
+      },
+      "algorithm": "xgboost",
+      "job_id": "8b9302ba9f388e31",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/8b9302ba9f388e31/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9910,
+      "runtime_seconds": 2.395165167050436,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "5f093a751f8b92d1",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 9946,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "0d9bfbd74b7c2d1f",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 9946,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.95606622189276,
+        "precision": 0.9561595582635186,
+        "recall": 0.9245283018867925,
+        "specificity": 0.9747818718222334
+      },
+      "algorithm": "catboost",
+      "job_id": "99257488ce6e28fa",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/99257488ce6e28fa/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 0.32308170897886157,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "decd184d5866faf5",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 9946,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9648443291326909,
+        "precision": 0.9706815341728348,
+        "recall": 0.9339622641509434,
+        "specificity": 0.9831774527650492
+      },
+      "algorithm": "catboost",
+      "job_id": "63bf2bb9c0ca7971",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/63bf2bb9c0ca7971/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 2.4520929160062224,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "64cd540a0b5fe92d",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 9946,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "6c749721934d7d1a",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 9946,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9631022979985174,
+        "precision": 0.9613984316654219,
+        "recall": 0.9386792452830188,
+        "specificity": 0.9776065532609377
+      },
+      "algorithm": "catboost",
+      "job_id": "b1cc9a94dd32eb50",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b1cc9a94dd32eb50/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 1.737667583161965,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "cf11e553b6892e6f",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 9946,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9666048925129727,
+        "precision": 0.975393127548049,
+        "recall": 0.9339622641509434,
+        "specificity": 0.9859864415290942
+      },
+      "algorithm": "catboost",
+      "job_id": "f6d412d82b15c7e4",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/f6d412d82b15c7e4/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9946,
+      "runtime_seconds": 1.6017787079326808,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "57e98676bd01aa00",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "1bd381c6c0b8c647",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9932184750733137,
+        "balanced_accuracy": 0.9846256381192268,
+        "brier_multiclass": 0.011409083857060277,
+        "ece_multiclass": 0.011588613549110765,
+        "f1_macro": 0.9883135206968521,
+        "mcc": 0.9897660484409336,
+        "pr_auc_ovr_macro": 0.9988727687076213,
+        "roc_auc_ovr_macro": 0.9998297828140684
+      },
+      "algorithm": "xgboost",
+      "job_id": "1faecd5ad3bb931d",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/1faecd5ad3bb931d/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 9960,
+      "runtime_seconds": 0.21807279204949737,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "a4fb30641ace3495",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9946847507331378,
+        "balanced_accuracy": 0.9876681852146674,
+        "brier_multiclass": 0.009270234874150358,
+        "ece_multiclass": 0.006156470375326711,
+        "f1_macro": 0.9914567443116593,
+        "mcc": 0.991979136157721,
+        "pr_auc_ovr_macro": 0.9993500092272886,
+        "roc_auc_ovr_macro": 0.9999182953182577
+      },
+      "algorithm": "xgboost",
+      "job_id": "829fb819aff3774f",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/829fb819aff3774f/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 9960,
+      "runtime_seconds": 1.2863176250830293,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "078e71d3890f708d",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "b1aa25db7fd39a08",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "31c76155f5acd3c7",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9945014662756598,
+        "balanced_accuracy": 0.9871012737617106,
+        "brier_multiclass": 0.00920201368033878,
+        "ece_multiclass": 0.0033471891192222054,
+        "f1_macro": 0.9904351099588995,
+        "mcc": 0.9917034546957527,
+        "pr_auc_ovr_macro": 0.9997819102787733,
+        "roc_auc_ovr_macro": 0.9999623114551734
+      },
+      "algorithm": "xgboost",
+      "job_id": "5840aacd6e52776c",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/5840aacd6e52776c/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 9960,
+      "runtime_seconds": 0.6482382081449032,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "9242acd85f4137f0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 9960,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9948680351906158,
+        "balanced_accuracy": 0.9884303803366186,
+        "brier_multiclass": 0.008849000436107781,
+        "ece_multiclass": 0.0034635690453290444,
+        "f1_macro": 0.9919215714423149,
+        "mcc": 0.9922550885669152,
+        "pr_auc_ovr_macro": 0.9995369719760014,
+        "roc_auc_ovr_macro": 0.999930957520156
+      },
+      "algorithm": "xgboost",
+      "job_id": "4de0763d9f3c7c78",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/4de0763d9f3c7c78/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 9960,
+      "runtime_seconds": 0.6655716251116246,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "537e787521f8ce2d",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 9976,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "4557601fca1558dd",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 9976,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8184615384615385,
+        "precision": 0.8234633269508812,
+        "recall": 0.8107692307692308,
+        "specificity": 0.8261538461538462
+      },
+      "algorithm": "catboost",
+      "job_id": "e6cf990962417b71",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/e6cf990962417b71/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9976,
+      "runtime_seconds": 2.7815693749580532,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "0940e37058720f83",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 9976,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.8176923076923077,
+        "precision": 0.817937866464914,
+        "recall": 0.8184615384615385,
+        "specificity": 0.8169230769230769
+      },
+      "algorithm": "catboost",
+      "job_id": "1902cc5f53dd6909",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/1902cc5f53dd6909/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9976,
+      "runtime_seconds": 22.644029582850635,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "0ed14277b1765d65",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 9976,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "9284815177e839c5",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 9976,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.833076923076923,
+        "precision": 0.8349541021227769,
+        "recall": 0.8307692307692307,
+        "specificity": 0.8353846153846154
+      },
+      "algorithm": "catboost",
+      "job_id": "37f33a8edd2fc12f",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/37f33a8edd2fc12f/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9976,
+      "runtime_seconds": 14.823572249850258,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "catboost",
+      "job_id": "c3f97fbeb8a8a782",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 9976,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.815,
+        "precision": 0.8129599279057171,
+        "recall": 0.8184615384615385,
+        "specificity": 0.8115384615384615
+      },
+      "algorithm": "catboost",
+      "job_id": "e65fe5888994d2ca",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/e65fe5888994d2ca/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 9976,
+      "runtime_seconds": 13.73797804187052,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "f6363fbf06f97e76",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 10093,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "514456bb9f830a3d",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 10093,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9825072886297377,
+        "precision": 0.9787679425837321,
+        "recall": 0.9819672131147541,
+        "specificity": 0.9829396325459318
+      },
+      "algorithm": "lightgbm",
+      "job_id": "283108144540b8f0",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/283108144540b8f0/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 10093,
+      "runtime_seconds": 0.019309750059619546,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "9b4848c448188b49",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 10093,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9919825072886297,
+        "precision": 0.9950546448087432,
+        "recall": 0.9868852459016393,
+        "specificity": 0.9960629921259843
+      },
+      "algorithm": "lightgbm",
+      "job_id": "5d60c4fdff7edcc2",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/5d60c4fdff7edcc2/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 10093,
+      "runtime_seconds": 0.12358641694299877,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "3b4ee5a91b0a407f",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 10093,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "0e2e061f7fde8e91",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 10093,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9919825072886297,
+        "precision": 0.9950546448087432,
+        "recall": 0.9868852459016393,
+        "specificity": 0.9960629921259843
+      },
+      "algorithm": "lightgbm",
+      "job_id": "e358e40b67303b7d",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/e358e40b67303b7d/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 10093,
+      "runtime_seconds": 0.08502175007015467,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "lightgbm",
+      "job_id": "94d7e0a2a7026472",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 10093,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9905247813411079,
+        "precision": 0.9917757800794736,
+        "recall": 0.9868852459016393,
+        "specificity": 0.9934383202099737
+      },
+      "algorithm": "lightgbm",
+      "job_id": "17df4780efbd7bc3",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/17df4780efbd7bc3/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 10093,
+      "runtime_seconds": 0.09507020795717835,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "8500bc5e2ec5e212",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "6cee4e0727c25c7a",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9765029688109861,
+        "balanced_accuracy": 0.9766314476399383,
+        "brier_multiclass": 0.036890841221661266,
+        "ece_multiclass": 0.024099147786475934,
+        "f1_macro": 0.976617698689294,
+        "mcc": 0.9717461912119323,
+        "pr_auc_ovr_macro": 0.9965508749011476,
+        "roc_auc_ovr_macro": 0.9992453317875024
+      },
+      "algorithm": "xgboost",
+      "job_id": "85e56e65649710b7",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/85e56e65649710b7/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 14970,
+      "runtime_seconds": 10.497556166956201,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "e48f42d454520ff3",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9836878496531516,
+        "balanced_accuracy": 0.9840163171848797,
+        "brier_multiclass": 0.025450239493591008,
+        "ece_multiclass": 0.01215553109025151,
+        "f1_macro": 0.9840424211521877,
+        "mcc": 0.980380494821348,
+        "pr_auc_ovr_macro": 0.9982420245119537,
+        "roc_auc_ovr_macro": 0.9996182808782639
+      },
+      "algorithm": "xgboost",
+      "job_id": "d5ad361264c7e6d2",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/d5ad361264c7e6d2/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 14970,
+      "runtime_seconds": 55.121364834019914,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "6c3c665393e50254",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "0a18087ef25d0011",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "a7eecb72bb1cf2b0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9846590439844103,
+        "balanced_accuracy": 0.984787635356932,
+        "brier_multiclass": 0.023048814969115858,
+        "ece_multiclass": 0.005622122090099067,
+        "f1_macro": 0.9847976561118565,
+        "mcc": 0.9815530347085524,
+        "pr_auc_ovr_macro": 0.998533193305226,
+        "roc_auc_ovr_macro": 0.9996844513311773
+      },
+      "algorithm": "xgboost",
+      "job_id": "775781b7e0376488",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/775781b7e0376488/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 14970,
+      "runtime_seconds": 26.9566964590922,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "4768ae24aa8c6066",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 14970,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9850473557878143,
+        "balanced_accuracy": 0.9852922947673701,
+        "brier_multiclass": 0.02238422976457643,
+        "ece_multiclass": 0.006012601428042642,
+        "f1_macro": 0.9852296568140307,
+        "mcc": 0.9820172681961434,
+        "pr_auc_ovr_macro": 0.9986799199047303,
+        "roc_auc_ovr_macro": 0.9997168456495976
+      },
+      "algorithm": "xgboost",
+      "job_id": "776a3c2b8613aa44",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/776a3c2b8613aa44/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 14970,
+      "runtime_seconds": 29.193849542178214,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "81523df25a898884",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 125920,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "6e6a5decdbf200c7",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 125920,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.558,
+        "precision": 0.46574074074074073,
+        "recall": 0.35714285714285715,
+        "specificity": 0.7034482758620689
+      },
+      "algorithm": "xgboost",
+      "job_id": "c7077cc4c39f4fb8",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/c7077cc4c39f4fb8/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.015745917102321982,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "23aae16034bf0902",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 125920,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.594,
+        "precision": 0.5244762288477034,
+        "recall": 0.35238095238095235,
+        "specificity": 0.7689655172413793
+      },
+      "algorithm": "xgboost",
+      "job_id": "d3021d787dc76580",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/d3021d787dc76580/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.12417337484657764,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "30b8c29c8382de78",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 125920,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "6ee0c2520f809bd0",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 125920,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.594,
+        "precision": 0.5211161387631975,
+        "recall": 0.40476190476190477,
+        "specificity": 0.7310344827586207
+      },
+      "algorithm": "xgboost",
+      "job_id": "2dd34e572404986f",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/2dd34e572404986f/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.06366491713561118,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "3f15ea9ce35fb269",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 125920,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5680000000000001,
+        "precision": 0.4820661958177538,
+        "recall": 0.3904761904761905,
+        "specificity": 0.696551724137931
+      },
+      "algorithm": "xgboost",
+      "job_id": "e9aa418722565d8e",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/e9aa418722565d8e/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 125920,
+      "runtime_seconds": 0.07262216694653034,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "b590da46dc966494",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "5f32e3b6b26cd51e",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9231481481481482,
+        "balanced_accuracy": 0.9218782496210147,
+        "brier_multiclass": 0.1178759636527272,
+        "ece_multiclass": 0.09479173092102564,
+        "f1_macro": 0.9234469405889352,
+        "mcc": 0.9124234454128041,
+        "pr_auc_ovr_macro": 0.9823706168244928,
+        "roc_auc_ovr_macro": 0.9970440427255751
+      },
+      "algorithm": "xgboost",
+      "job_id": "b5721a8abb581da2",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b5721a8abb581da2/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 146800,
+      "runtime_seconds": 0.9025347919669002,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "f241c10aa71a4c0a",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.961111111111111,
+        "balanced_accuracy": 0.960578738096846,
+        "brier_multiclass": 0.0705448219234499,
+        "ece_multiclass": 0.07136516416514363,
+        "f1_macro": 0.9606951508364583,
+        "mcc": 0.9556724071487264,
+        "pr_auc_ovr_macro": 0.9933216126056641,
+        "roc_auc_ovr_macro": 0.9989871488293309
+      },
+      "algorithm": "xgboost",
+      "job_id": "90dc8244dcb7a1ef",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/90dc8244dcb7a1ef/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 146800,
+      "runtime_seconds": 4.212168792029843,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "c5ed3c5a6e7b9511",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "cccc966431ede234",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "2aee8abc0aee617e",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9574074074074075,
+        "balanced_accuracy": 0.9565171848964008,
+        "brier_multiclass": 0.07524681417445434,
+        "ece_multiclass": 0.0627439596586757,
+        "f1_macro": 0.9565136454244236,
+        "mcc": 0.9514952474609175,
+        "pr_auc_ovr_macro": 0.992006238606799,
+        "roc_auc_ovr_macro": 0.998785941936223
+      },
+      "algorithm": "xgboost",
+      "job_id": "6785c5f3384e16f8",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/6785c5f3384e16f8/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 146800,
+      "runtime_seconds": 2.2597069579642266,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "3f221427e1e43be5",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 146800,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9638888888888888,
+        "balanced_accuracy": 0.9621644405926485,
+        "brier_multiclass": 0.06474975297893479,
+        "ece_multiclass": 0.06204014688178344,
+        "f1_macro": 0.9630647764168627,
+        "mcc": 0.9587772580146052,
+        "pr_auc_ovr_macro": 0.9941121546992251,
+        "roc_auc_ovr_macro": 0.9991082371978376
+      },
+      "algorithm": "xgboost",
+      "job_id": "0b7a54c9b11fa2ca",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/0b7a54c9b11fa2ca/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 146800,
+      "runtime_seconds": 1.9342784169130027,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "a2b01cec8dc53fd8",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "e47ca8a5d9564e8f",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9836746111192727,
+        "precision": 0.8822781232334652,
+        "recall": 0.804697592483852,
+        "specificity": 0.9938837920489296
+      },
+      "algorithm": "xgboost",
+      "job_id": "0fcd3faa9f978abe",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/0fcd3faa9f978abe/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 146820,
+      "runtime_seconds": 0.02402145811356604,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "e7510ec0cded1505",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9770614180437924,
+        "precision": 0.886762360446571,
+        "recall": 0.6590428655314151,
+        "specificity": 0.9951944080384447
+      },
+      "algorithm": "xgboost",
+      "job_id": "771722f80e995a8d",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/771722f80e995a8d/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 146820,
+      "runtime_seconds": 0.1653662919998169,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "f4ce5634d03a225c",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "159b5754797c2858",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "33492b3acf1b3174",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "parego",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9828477377784004,
+        "precision": 0.9083943756840953,
+        "recall": 0.7586611861421022,
+        "specificity": 0.9956312800349498
+      },
+      "algorithm": "xgboost",
+      "job_id": "0dd3a866ec4f0ee0",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/0dd3a866ec4f0ee0/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 146820,
+      "runtime_seconds": 0.08644212479703128,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "481f168fb12eb076",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 146820,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9822279030676566,
+        "precision": 0.8724807887487314,
+        "recall": 0.785525543159131,
+        "specificity": 0.9934469200524246
+      },
+      "algorithm": "xgboost",
+      "job_id": "b78ff0b2f88b426f",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/b78ff0b2f88b426f/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 146820,
+      "runtime_seconds": 0.09586745779961348,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "75e7c5ddc20e3fde",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 167120,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "3d57cabb47092c98",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 167120,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5160818106312293,
+        "precision": 0.518328463434661,
+        "recall": 0.5949278638661679,
+        "specificity": 0.4355880995342202
+      },
+      "algorithm": "xgboost",
+      "job_id": "113e8316c73752c6",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/113e8316c73752c6/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 167120,
+      "runtime_seconds": 0.48631566599942744,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "cfa804912a81c743",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 167120,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.520639534883721,
+        "precision": 0.5211862008860477,
+        "recall": 0.6307287599161495,
+        "specificity": 0.4082497587176367
+      },
+      "algorithm": "xgboost",
+      "job_id": "9e0b2e01f1285d12",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/9e0b2e01f1285d12/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 167120,
+      "runtime_seconds": 3.6472368338145316,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "72c9a9d1c66ee4ba",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 167120,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "474def39d463e225",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 167120,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5186980897009967,
+        "precision": 0.5198670263178635,
+        "recall": 0.6187266225492211,
+        "specificity": 0.4165792455205405
+      },
+      "algorithm": "xgboost",
+      "job_id": "ad28c9d1575c928e",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/ad28c9d1575c928e/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 167120,
+      "runtime_seconds": 0.9788210419937968,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "8d93912fa21e3780",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 167120,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.5142545681063122,
+        "precision": 0.5172669704260205,
+        "recall": 0.5760203871922398,
+        "specificity": 0.4511980193865134
+      },
+      "algorithm": "xgboost",
+      "job_id": "e1e75253a108cdf8",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/e1e75253a108cdf8/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "precision",
+        "recall",
+        "specificity"
+      ],
+      "openml_task_id": 167120,
+      "runtime_seconds": 1.1577833329793066,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "8af89d23ca3c5578",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "asha",
+      "metric_keys": [],
+      "openml_task_id": 167140,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "e8689acd7ed7b092",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "bohb",
+      "metric_keys": [],
+      "openml_task_id": 167140,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9573132454488387,
+        "balanced_accuracy": 0.9567082045621806,
+        "brier_multiclass": 0.0682870487445004,
+        "ece_multiclass": 0.026779498813740504,
+        "f1_macro": 0.9524278824776538,
+        "mcc": 0.9312007297908316,
+        "pr_auc_ovr_macro": 0.984029341381603,
+        "roc_auc_ovr_macro": 0.992966503845047
+      },
+      "algorithm": "xgboost",
+      "job_id": "723fad8c3f505860",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/723fad8c3f505860/manifest.json",
+      "method": "default_gbdt",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 167140,
+      "runtime_seconds": 0.21968224993906915,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "05443429ffcd83fd",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "dehb",
+      "metric_keys": [],
+      "openml_task_id": 167140,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9573132454488387,
+        "balanced_accuracy": 0.9583356656570505,
+        "brier_multiclass": 0.06594835401701438,
+        "ece_multiclass": 0.019371966810923878,
+        "f1_macro": 0.9525609627729955,
+        "mcc": 0.9314717206779666,
+        "pr_auc_ovr_macro": 0.9857890796326261,
+        "roc_auc_ovr_macro": 0.9939315369543849
+      },
+      "algorithm": "xgboost",
+      "job_id": "bc4d5b6a6bbd5ad8",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/bc4d5b6a6bbd5ad8/manifest.json",
+      "method": "doe_rsm_vrf_true_nbi",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 167140,
+      "runtime_seconds": 1.6823514578863978,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "fcaff72488577e61",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "motpe",
+      "metric_keys": [],
+      "openml_task_id": 167140,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "e74345a0608847e8",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "nsga2",
+      "metric_keys": [],
+      "openml_task_id": 167140,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.9588826114249843,
+        "balanced_accuracy": 0.9593421906275926,
+        "brier_multiclass": 0.06375642066020662,
+        "ece_multiclass": 0.011169212704848306,
+        "f1_macro": 0.9540302904132048,
+        "mcc": 0.9339505111045618,
+        "pr_auc_ovr_macro": 0.9851743924770915,
+        "roc_auc_ovr_macro": 0.9937164763219652
+      },
+      "algorithm": "xgboost",
+      "job_id": "64212469f9c1d9ee",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/64212469f9c1d9ee/manifest.json",
+      "method": "random_search",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 167140,
+      "runtime_seconds": 0.852521208813414,
+      "status": "success"
+    },
+    {
+      "aggregate_metrics": null,
+      "algorithm": "xgboost",
+      "job_id": "61ddaee644b3a354",
+      "last_error": "refused_not_in_canary_set",
+      "manifest": null,
+      "method": "smac3",
+      "metric_keys": [],
+      "openml_task_id": 167140,
+      "runtime_seconds": null,
+      "status": "skipped"
+    },
+    {
+      "aggregate_metrics": {
+        "accuracy": 0.960765850596359,
+        "balanced_accuracy": 0.9607940934933223,
+        "brier_multiclass": 0.0634482891673262,
+        "ece_multiclass": 0.012492186727197539,
+        "f1_macro": 0.9561779003943539,
+        "mcc": 0.936831375751207,
+        "pr_auc_ovr_macro": 0.9850286668797498,
+        "roc_auc_ovr_macro": 0.993873664007315
+      },
+      "algorithm": "xgboost",
+      "job_id": "de81741db4008f74",
+      "last_error": null,
+      "manifest": "experiments/_batch_runs/batch_04_stage0_shard00_only/de81741db4008f74/manifest.json",
+      "method": "tpe_optuna",
+      "metric_keys": [
+        "accuracy",
+        "balanced_accuracy",
+        "brier_multiclass",
+        "ece_multiclass",
+        "f1_macro",
+        "mcc",
+        "pr_auc_ovr_macro",
+        "roc_auc_ovr_macro"
+      ],
+      "openml_task_id": 167140,
+      "runtime_seconds": 0.9801647090353072,
+      "status": "success"
+    }
+  ],
+  "deferred_extreme_tasks": [
+    6
+  ],
+  "execution_shard": "runs/cc18/batch_04_stage0_shard00_only_latest/shards/stage0_replica_001/shard_00.execution.sqlite",
+  "execution_shards_committed": false,
+  "execution_suffix": ".execution.sqlite",
+  "exported_at": "2026-05-15T21:31:21Z",
+  "failures_grouped": [],
+  "finished_at_max": "2026-05-15T21:31:19.812Z",
+  "git_sha": "beb423d81b309de762d1559c4458b7fb935da5b2",
+  "guardrails_yaml_path": "benchmarks/doctoral/openml_cc18/runtime_guardrails.yaml",
+  "host": "Factored-LWCTW4633L",
+  "include_extreme_tasks": false,
+  "n_claimed": 0,
+  "n_failed": 0,
+  "n_failures_grouped": 0,
+  "n_jobs_deferred": 11,
+  "n_jobs_executed": 80,
+  "n_jobs_failed_other": 0,
+  "n_jobs_failed_timeout": 0,
+  "n_jobs_pending_after": 0,
+  "n_jobs_refused": 128,
+  "n_jobs_runnable_extreme_deferred": 11,
+  "n_jobs_runnable_heavy": 12,
+  "n_jobs_runnable_standard": 68,
+  "n_jobs_total_in_shard": 219,
+  "n_pending": 0,
+  "n_running": 0,
+  "n_shards": 1,
+  "n_skipped": 139,
+  "n_success": 80,
+  "n_total": 219,
+  "non_canary_methods_refused": [
+    "asha",
+    "bohb",
+    "dehb",
+    "motpe",
+    "nsga2",
+    "parego",
+    "smac3"
+  ],
+  "openml_cache_root": "data/source/openml_cc18",
+  "openml_payloads_committed": false,
+  "package_versions": {
+    "catboost": "1.2.10",
+    "dehb": "0.1.2",
+    "lightgbm": "4.6.0",
+    "numpy": "1.26.4",
+    "openml": "0.15.1",
+    "optuna": "4.8.0",
+    "pandas": "3.0.2",
+    "pymoo": "0.6.1.6",
+    "scikit-learn": "1.8.0",
+    "smac": "2.4.0",
+    "xgboost": "3.2.0"
+  },
+  "platform": {
+    "hostname": "Factored-LWCTW4633L",
+    "machine": "arm64",
+    "python_executable": "/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/bin/python",
+    "python_version": "3.12.13",
+    "uname": "macOS-26.4.1-arm64-arm-64bit"
+  },
+  "policy_csv_path": "benchmarks/doctoral/openml_cc18/heavy_task_policy.csv",
+  "policy_version": "47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36",
+  "protocol_doc": "docs/RESULT_HANDOFF_PROTOCOL.md",
+  "python": "3.12.13",
+  "run_dir": "runs/cc18/batch_04_stage0_shard00_only_latest",
+  "run_id": "batch_04_stage0_shard00_only_latest",
+  "run_manifest_path": "runs/cc18/batch_04_stage0_shard00_only_latest/run_manifest.json",
+  "runner_invocations": [
+    {
+      "lane": "heavy",
+      "max_evaluations": 3,
+      "n_cells_in_group": 12,
+      "returncode": 0,
+      "runtime_seconds": 443.8448612501379,
+      "stderr_tail": "assifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n",
+      "stdout_tail": "{\n  \"shard\": \"/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/runs/cc18/batch_04_stage0_shard00_only_latest/shards/stage0_replica_001/shard_00.execution.sqlite\",\n  \"stage_filter\": null,\n  \"worker_id\": \"local_dev_runner\",\n  \"dry_run\": false,\n  \"no_train\": false,\n  \"canary_only\": true,\n  \"synthetic_task\": false,\n  \"signoff_file\": \"/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/jobs/doctoral/openml_cc18/stage3_signoff.json\",\n  \"signoff_ok\": false,\n  \"n_inspected\": 12,\n  \"n_success\": 12,\n  \"n_failed\": 0,\n  \"ran_at\": \"2026-05-15T21:26:12Z\"\n}\ninspected 12 jobs; success=12  failed=0  dry_run=False  signoff_ok=False\n  would_train: 12\n",
+      "timed_out": false,
+      "timeout_seconds_for_group": 21600.0
+    },
+    {
+      "lane": "standard",
+      "max_evaluations": 5,
+      "n_cells_in_group": 68,
+      "returncode": 0,
+      "runtime_seconds": 306.89736316679046,
+      "stderr_tail": "assifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names\n  warnings.warn(\n",
+      "stdout_tail": "{\n  \"shard\": \"/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/runs/cc18/batch_04_stage0_shard00_only_latest/shards/stage0_replica_001/shard_00.execution.sqlite\",\n  \"stage_filter\": null,\n  \"worker_id\": \"local_dev_runner\",\n  \"dry_run\": false,\n  \"no_train\": false,\n  \"canary_only\": true,\n  \"synthetic_task\": false,\n  \"signoff_file\": \"/Users/caiotertulianoribeiro/Projects/doe_nbi_hpo_project/jobs/doctoral/openml_cc18/stage3_signoff.json\",\n  \"signoff_ok\": false,\n  \"n_inspected\": 68,\n  \"n_success\": 68,\n  \"n_failed\": 0,\n  \"ran_at\": \"2026-05-15T21:31:19Z\"\n}\ninspected 68 jobs; success=68  failed=0  dry_run=False  signoff_ok=False\n  would_train: 68\n",
+      "timed_out": false,
+      "timeout_seconds_for_group": 21600.0
+    }
+  ],
+  "runtime_n_recorded": 80,
+  "runtime_seconds_max": 206.70411508413963,
+  "runtime_seconds_runner_total": 748.3993305915501,
+  "runtime_seconds_total": 748.3993305915501,
+  "schema_version": 1,
+  "shards": [
+    {
+      "failures": [],
+      "finished_at_max": "2026-05-15T21:31:19.812Z",
+      "n_total": 219,
+      "runtime_max_seconds": 206.70411508413963,
+      "runtime_n_recorded": 80,
+      "runtime_total_seconds": 748.3993305915501,
+      "sha256": "7566b6bf9df47278cac7d56106cfe596b109d5217bcfe8052c84384d52793a8e",
+      "shard_path": "runs/cc18/batch_04_stage0_shard00_only_latest/shards/stage0_replica_001/shard_00.execution.sqlite",
+      "started_at_min": "2026-05-15T21:18:50.173Z",
+      "status_counts": {
+        "skipped": 139,
+        "success": 80
+      }
+    }
+  ],
+  "slowest_cells": [
+    {
+      "algorithm": "lightgbm",
+      "lane": "heavy",
+      "method": "doe_rsm_vrf_true_nbi",
+      "openml_task_id": 3573,
+      "runtime_seconds": 206.70411508413963
+    },
+    {
+      "algorithm": "lightgbm",
+      "lane": "heavy",
+      "method": "tpe_optuna",
+      "openml_task_id": 3573,
+      "runtime_seconds": 96.43688683398068
+    },
+    {
+      "algorithm": "lightgbm",
+      "lane": "heavy",
+      "method": "random_search",
+      "openml_task_id": 3573,
+      "runtime_seconds": 93.39016716717742
+    },
+    {
+      "algorithm": "xgboost",
+      "lane": "standard",
+      "method": "doe_rsm_vrf_true_nbi",
+      "openml_task_id": 14970,
+      "runtime_seconds": 55.121364834019914
+    },
+    {
+      "algorithm": "catboost",
+      "lane": "standard",
+      "method": "doe_rsm_vrf_true_nbi",
+      "openml_task_id": 16,
+      "runtime_seconds": 41.94645595899783
+    },
+    {
+      "algorithm": "xgboost",
+      "lane": "standard",
+      "method": "tpe_optuna",
+      "openml_task_id": 14970,
+      "runtime_seconds": 29.193849542178214
+    },
+    {
+      "algorithm": "catboost",
+      "lane": "standard",
+      "method": "random_search",
+      "openml_task_id": 16,
+      "runtime_seconds": 28.130582500016317
+    },
+    {
+      "algorithm": "lightgbm",
+      "lane": "heavy",
+      "method": "default_gbdt",
+      "openml_task_id": 3573,
+      "runtime_seconds": 27.91905204206705
+    }
+  ],
+  "source_drift": [],
+  "source_git_sha": "beb423d81b309de762d1559c4458b7fb935da5b2",
+  "source_md5_now": {
+    "shard_00.sqlite": "91e7a861ea73daf82694029d6c590e54"
+  },
+  "source_md5_recorded": {
+    "shard_00.sqlite": "91e7a861ea73daf82694029d6c590e54"
+  },
+  "source_shard": "jobs/doctoral/openml_cc18/shards/stage0_replica_001/shard_00.sqlite",
+  "source_shard_md5_after": {
+    "shard_00.sqlite": "91e7a861ea73daf82694029d6c590e54"
+  },
+  "source_shard_md5_before": {
+    "shard_00.sqlite": "91e7a861ea73daf82694029d6c590e54"
+  },
+  "source_shards_unchanged": true,
+  "stage": "stage0_replica_001",
+  "stage3_signoff_path": "jobs/doctoral/openml_cc18/stage3_signoff.json",
+  "stage3_signoff_present": false,
+  "started_at_min": "2026-05-15T21:18:50.173Z",
+  "status_counts": {
+    "skipped": 139,
+    "success": 80
+  },
+  "status_counts_extended": {
+    "claimed": 0,
+    "deferred_extreme_lane": 11,
+    "failed": 0,
+    "failed_timeout": 0,
+    "pending": 0,
+    "refused_not_in_canary_set": 128,
+    "running": 0,
+    "skipped": 139,
+    "success": 80
+  },
+  "task_lane_counts_in_shard": {
+    "extreme": 1,
+    "heavy": 3,
+    "standard": 17
+  }
+}
