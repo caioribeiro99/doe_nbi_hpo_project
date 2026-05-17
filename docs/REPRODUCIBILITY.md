@@ -168,6 +168,21 @@ every CC18 runner from Commit 38 onward consults. Extreme tasks
 are deferred unless `--include-extreme-tasks` is set. See
 `docs/HEAVY_TASK_POLICY.md`.
 
+**Stage 0 lane runs (Commits 40 → 42).** Per the heavy-task
+policy (Commit 38), full stage 0 splits into three independent
+passes. Standard lane (`stage0_standard_lane_latest_summary.json`,
+Commit 40) covered the 57 standard tasks × 4 canary methods × 3
+algorithms = 684 cells; heavy lane
+(`stage0_heavy_lane_latest_summary.json`, Commit 41) covered the
+13 heavy tasks × 4 × 3 = 156 cells. Commit 42 adds
+`scripts/run_stage0_extreme_lane.py` in PLANNING-ONLY mode (runs
+default to a dry-run plan; real execution is locked behind
+`--execute-extreme-lane`); see `docs/EXTREME_LANE_PLAN.md` for
+the Devnagari-Script runtime forecast and the max_evaluations
+tradeoff. Stage 0 replica 1 is not considered complete until all
+three lanes have green stage-run summaries pinned to the same
+`policy_version`.
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

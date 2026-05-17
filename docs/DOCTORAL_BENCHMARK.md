@@ -330,6 +330,29 @@ standard / heavy / extreme pass, each with its own published
 stage-run summary. See `docs/HEAVY_TASK_POLICY.md` for the
 contract.
 
+## Stage 0 lane progress (Commits 40 → 42)
+
+Per Commit 38's heavy-task policy, full stage 0 runs as three
+independent lanes:
+
+| lane | commit | runner | status |
+|---|---|---|---|
+| standard (57 tasks, 684 cells) | Commit 40 (`daae8ab`) | `scripts/run_stage0_standard_lane.py` | green |
+| heavy (13 tasks, 156 cells) | Commit 41 (`ddb657d`) | `scripts/run_stage0_heavy_lane.py` | green |
+| extreme (2 tasks, 24 cells) | Commit 42 (this commit) — **planning only** | `scripts/run_stage0_extreme_lane.py --dry-run` | planned_not_executed |
+
+All three lanes share the same `policy_version` SHA-256
+(`47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36`).
+The extreme lane stays in planning state until a later commit
+(Commit 43 at earliest) passes `--execute-extreme-lane` AFTER
+operator review of `docs/EXTREME_LANE_PLAN.md`. Stage 0 replica 1
+is considered complete only when all three lanes have green
+stage-run summaries with the same `policy_version`,
+`source_shards_unchanged: true`, and `stage3_signoff_present:
+false`. See `docs/EXTREME_LANE_PLAN.md` for the runtime forecast,
+the max_evaluations tradeoff (YAML default 1 vs 5 for parity
+with standard / heavy), and the promotion criteria.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac

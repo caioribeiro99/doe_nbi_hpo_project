@@ -118,6 +118,23 @@ stand. Every CC18 runner introduced from Commit 38 onward must:
    `failures_grouped` block with `last_error_sample:
    "failed_timeout"`.
 
+## Stage 0 progress (Commits 40 → 42)
+
+The stage 0 split materialized as expected. As of Commit 42:
+
+- **standard lane** ran in Commit 40 (`daae8ab`): 684 / 684 cells
+  green;
+- **heavy lane** ran in Commit 41 (`ddb657d`): 156 / 156 cells
+  green;
+- **extreme lane** is in planning state under Commit 42 via
+  `scripts/run_stage0_extreme_lane.py --dry-run`. See
+  `docs/EXTREME_LANE_PLAN.md` — actual execution is gated behind
+  `--execute-extreme-lane` and will land in a later commit only
+  after the plan is reviewed.
+
+All three lanes pin the same `policy_version` SHA-256 so the
+three stage-run summaries belong to the same replica.
+
 ## Stage 0 split
 
 Full stage 0 will no longer run as a single 2 304-job pass.

@@ -231,6 +231,30 @@ The interaction with the handoff protocol is additive:
 See `docs/HEAVY_TASK_POLICY.md` for the lane definitions and the
 classification rules.
 
+## Stage 0 lane summaries (Commits 40 → 42)
+
+Stage 0 publishes one summary per lane under
+`experiments/_stage_runs/`:
+
+- `stage0_standard_lane_latest_summary.{json,md}` — Commit 40;
+- `stage0_heavy_lane_latest_summary.{json,md}` — Commit 41;
+- `stage0_extreme_lane_plan_latest_summary.{json,md}` —
+  Commit 42 (planning-only; `execution_status =
+  "planned_not_executed"`);
+- `stage0_extreme_lane_latest_summary.{json,md}` — a later
+  commit, only after `docs/EXTREME_LANE_PLAN.md` is reviewed
+  and `--execute-extreme-lane` is passed.
+
+The dedicated planning summary keeps the same JSON layout used
+by the other lanes, with an extra top-level field
+`execution_status` ∈ {`planned_not_executed`, `executed`} so a
+reader can tell at a glance whether the extreme lane was
+actually run. Stage 0 replica 1 is *complete* only when all
+three lanes have green summaries pinned to the same
+`policy_version`, all carry `source_shards_unchanged: true`,
+all carry `stage3_signoff_present: false`, and the extreme
+summary's `execution_status` is `executed`.
+
 ## Refusal rules
 
 - A worker MUST NOT pass a path under `jobs/doctoral/openml_cc18/shards/`

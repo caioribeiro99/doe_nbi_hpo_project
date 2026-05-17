@@ -93,13 +93,27 @@
 > `experiments/_stage_runs/` are the only artifact that crosses
 > Git. Two helper scripts implement the protocol:
 > `scripts/create_cc18_run_dir.py` and
-> `scripts/export_cc18_run_summary.py`. **Next operational step:**
-> only after Commit 38's heavy-task policy is in place, Commit 39
-> prepares / runs `batch_04_stage0_shard00_only` (a single
-> existing stage-0 shard) through both the result handoff
-> protocol and the new runtime guardrails. Devnagari-Script and
-> letter stay deferred in that batch (extreme lane);
-> `--include-extreme-tasks` enables them on a dedicated worker.
+> `scripts/export_cc18_run_summary.py`.
+>
+> **Stage 0 progress (Commits 39 → 42).** Commit 39 ran
+> `batch_04_stage0_shard00_only` (operational dry run on one
+> committed shard; 80/80 canary cells green). Commit 40 ran
+> the standard-lane pass of stage 0 (684 / 684 green). Commit 41
+> ran the heavy-lane pass (156 / 156 green). Commit 42 is the
+> dedicated planning step for the extreme lane: it ships
+> `scripts/run_stage0_extreme_lane.py` in PLANNING-ONLY mode
+> (real execution is locked behind `--execute-extreme-lane`,
+> which Commit 42 does NOT pass) and publishes a dry-run plan at
+> `experiments/_stage_runs/stage0_extreme_lane_plan_latest_summary.{json,md}`
+> with `execution_status = "planned_not_executed"`. See
+> `docs/EXTREME_LANE_PLAN.md` for the runtime forecast (~15.7 h
+> on the dedicated Mac, dominated by Devnagari-Script), the
+> max_evaluations 1-vs-5 tradeoff, and the promotion criteria
+> for stage 0 replica 1 complete. **Next operational step:**
+> human review of `docs/EXTREME_LANE_PLAN.md`, followed by
+> Commit 43 (or later) actually invoking the extreme lane with
+> `--execute-extreme-lane`. Do NOT touch the extreme lane until
+> the plan has been read.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the
