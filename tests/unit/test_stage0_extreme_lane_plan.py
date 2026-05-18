@@ -190,13 +190,205 @@ def test_default_invocation_runs_planning_mode_not_execution(
     assert "--execute-extreme-lane" in res.stdout
 
 
-def test_execute_stage0_extreme_lane_is_a_stub() -> None:
-    """Real execution lands in Commit 43; for now the function
-    raises NotImplementedError."""
+def test_execute_path_skip_train_smoke(tmp_path: Path) -> None:
+    """Commit 43 added the real execute_stage0_extreme_lane entry
+    point. The skip_train smoke test runs the whole pre-flight,
+    run-dir, classification, and summary path without invoking
+    cc18_runner. Verifies the executed summary carries
+    execution_status='executed' and the per-task / per-algorithm /
+    per-method breakdowns."""
     from scripts.run_stage0_extreme_lane import execute_stage0_extreme_lane
 
-    with pytest.raises(NotImplementedError, match="Commit 43"):
-        execute_stage0_extreme_lane()
+    md5_before = _committed_shard_md5s()
+    summary = execute_stage0_extreme_lane(
+        shards_dir=SHARDS_DIR,
+        run_root=tmp_path / "runs",
+        out_root=tmp_path / "out",
+        stage_runs_dir=tmp_path / "stage_runs",
+        openml_cache_root=tmp_path / "cache",
+        standard_lane_summary=(
+            REPO / "experiments/_stage_runs"
+            / "stage0_standard_lane_latest_summary.json"
+        ),
+        heavy_lane_summary=(
+            REPO / "experiments/_stage_runs"
+            / "stage0_heavy_lane_latest_summary.json"
+        ),
+        plan_summary_path=(
+            REPO / "experiments/_stage_runs"
+            / "stage0_extreme_lane_plan_latest_summary.json"
+        ),
+        max_age_days=30,
+        skip_train=True,
+        run_id="test_exec_skip_train",
+    )
+    assert summary["execution_status"] == "executed"
+    assert summary["batch_id"] == "stage0_extreme_lane"
+    assert summary["lane"] == "extreme"
+    assert summary["n_source_shards"] == 10
+    assert summary["expected_extreme_canary_cells"] == 24
+    assert summary["n_jobs_executed"] == 0  # skip_train suppresses cc18_runner
+    assert summary["n_jobs_deferred_standard"] == 1815
+    assert summary["n_jobs_deferred_heavy"] == 423
+    assert summary["n_jobs_refused_non_canary"] == 42
+    assert summary["source_shards_unchanged"] is True
+    assert summary["stage3_signoff_present"] is False
+    md5_after = _committed_shard_md5s()
+    assert md5_before == md5_after
+    # Per-task / per-algorithm / per-method breakdowns are present.
+    assert "per_task_breakdown" in summary
+    assert "per_algorithm_breakdown" in summary
+    assert "per_method_breakdown" in summary
+    assert "max_evaluations_used_per_task" in summary
+    assert "timeout_seconds_per_cell_per_task" in summary
+    # policy_max_evaluations_note reports stage0_max_evaluations=1.
+    assert "stage0_max_evaluations=1" in summary["policy_max_evaluations_note"]
+    assert "timeout_seconds_per_cell=14400" in summary["policy_timeout_note"]
+
+
+def test_execute_path_refuses_when_plan_summary_missing(
+    tmp_path: Path,
+) -> None:
+    from scripts.run_stage0_extreme_lane import (
+        GateRefusalError,
+        execute_stage0_extreme_lane,
+    )
+
+    std, hvy = _write_pair(tmp_path)
+    with pytest.raises(GateRefusalError, match="Commit 42 plan summary not found"):
+        execute_stage0_extreme_lane(
+            shards_dir=SHARDS_DIR,
+            run_root=tmp_path / "runs",
+            out_root=tmp_path / "out",
+            stage_runs_dir=tmp_path / "stage_runs",
+            openml_cache_root=tmp_path / "cache",
+            standard_lane_summary=std,
+            heavy_lane_summary=hvy,
+            plan_summary_path=tmp_path / "absent.json",
+            max_age_days=30,
+            skip_train=True,
+            run_id="test_exec_missing_plan",
+        )
+
+
+def test_execute_path_refuses_when_plan_already_executed(
+    tmp_path: Path,
+) -> None:
+    """If the plan summary on disk reports execution_status='executed'
+    (i.e. the lane was already run), Commit 43's executor refuses to
+    re-run it."""
+    from scripts.run_stage0_extreme_lane import (
+        GateRefusalError,
+        execute_stage0_extreme_lane,
+    )
+
+    fake_plan = tmp_path / "plan.json"
+    fake_plan.write_text(
+        json.dumps({
+            "execution_status": "executed",  # not planned_not_executed
+            "n_runnable_extreme_canary": 24,
+            "extreme_tasks_to_execute": [6, 167121],
+            "policy_version": PINNED_POLICY_VERSION,
+            "exported_at": datetime.now(timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ",
+            ),
+            "stage3_signoff_present": False,
+        }),
+        encoding="utf-8",
+    )
+    std, hvy = _write_pair(tmp_path)
+    with pytest.raises(GateRefusalError, match="planned_not_executed"):
+        execute_stage0_extreme_lane(
+            shards_dir=SHARDS_DIR,
+            run_root=tmp_path / "runs",
+            out_root=tmp_path / "out",
+            stage_runs_dir=tmp_path / "stage_runs",
+            openml_cache_root=tmp_path / "cache",
+            standard_lane_summary=std,
+            heavy_lane_summary=hvy,
+            plan_summary_path=fake_plan,
+            max_age_days=30,
+            skip_train=True,
+        )
+
+
+def test_execute_path_refuses_when_plan_has_policy_drift(
+    tmp_path: Path,
+) -> None:
+    from scripts.run_stage0_extreme_lane import (
+        GateRefusalError,
+        execute_stage0_extreme_lane,
+    )
+
+    fake_plan = tmp_path / "plan.json"
+    fake_plan.write_text(
+        json.dumps({
+            "execution_status": "planned_not_executed",
+            "n_runnable_extreme_canary": 24,
+            "extreme_tasks_to_execute": [6, 167121],
+            "policy_version": "f" * 64,  # drift
+            "exported_at": datetime.now(timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ",
+            ),
+            "stage3_signoff_present": False,
+        }),
+        encoding="utf-8",
+    )
+    std, hvy = _write_pair(tmp_path)
+    with pytest.raises(GateRefusalError, match="policy_version"):
+        execute_stage0_extreme_lane(
+            shards_dir=SHARDS_DIR,
+            run_root=tmp_path / "runs",
+            out_root=tmp_path / "out",
+            stage_runs_dir=tmp_path / "stage_runs",
+            openml_cache_root=tmp_path / "cache",
+            standard_lane_summary=std,
+            heavy_lane_summary=hvy,
+            plan_summary_path=fake_plan,
+            max_age_days=30,
+            skip_train=True,
+        )
+
+
+def test_cli_execute_refuses_without_include_extreme_tasks(
+    tmp_path: Path,
+) -> None:
+    """The CLI requires BOTH --execute-extreme-lane AND
+    --include-extreme-tasks. A single flag is not enough."""
+    res = subprocess.run(
+        [sys.executable, str(RUN_SCRIPT),
+         "--execute-extreme-lane",
+         "--stage-runs-dir", str(tmp_path / "stage_runs"),
+         "--run-root", str(tmp_path / "runs"),
+         "--output-root", str(tmp_path / "out"),
+         "--openml-cache-root", str(tmp_path / "cache")],
+        capture_output=True, text=True, check=False,
+    )
+    assert res.returncode == 3, res.stdout + res.stderr
+    assert "--include-extreme-tasks" in res.stderr
+
+
+def test_cli_include_extreme_tasks_alone_does_not_execute(
+    tmp_path: Path,
+) -> None:
+    """--include-extreme-tasks WITHOUT --execute-extreme-lane stays
+    in planning mode."""
+    res = subprocess.run(
+        [sys.executable, str(RUN_SCRIPT),
+         "--include-extreme-tasks",
+         "--stage-runs-dir", str(tmp_path / "stage_runs")],
+        capture_output=True, text=True, check=False,
+    )
+    assert res.returncode == 0, res.stderr
+    # The planning summary was published — NOT the execute summary.
+    assert (
+        tmp_path / "stage_runs"
+        / "stage0_extreme_lane_plan_latest_summary.json"
+    ).exists()
+    assert not (
+        tmp_path / "stage_runs"
+        / "stage0_extreme_lane_latest_summary.json"
+    ).exists()
 
 
 # ---------------------------------------------------------------------------
