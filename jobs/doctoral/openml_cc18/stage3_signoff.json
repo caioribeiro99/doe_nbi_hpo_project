@@ -1,0 +1,61 @@
+{
+  "aggregate_plan_summary_path": "experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.json",
+  "aggregate_plan_summary_sha256": "c116bd973cbd98eaf5d784eb4e736a82d10f948882af54d21fd7f9c6685869b7",
+  "branch": "repo-publication-readiness",
+  "caveats_acknowledged": [
+    {
+      "dataset": "isolet",
+      "id": "isolet_future_recalibration_candidate",
+      "summary": "isolet ran in the standard lane but its observed runtime crosses the 900 s heavy-promotion threshold (1078.6 s in Commit 40). It is a candidate for future policy recalibration via scripts/build_cc18_heavy_task_policy.py but lane assignments are NOT changed mid-replica; this signoff covers replica 1 under the Commit 38 policy.",
+      "task_id": 3481
+    },
+    {
+      "dataset": "Devnagari-Script",
+      "id": "devnagari_extreme_budget_non_equivalence",
+      "summary": "Devnagari-Script ran under the policy-defined extreme.stage0_max_evaluations=1 (YAML default). Standard and heavy lanes ran at max_evaluations=5. random_search / tpe_optuna / default_gbdt cells on Devnagari therefore exercised fewer configurations than the rest of the panel; doe_rsm_vrf_true_nbi is unchanged (it floors at n_doe=max(2*d, max_evaluations)=8 for d=4). Headline panel-average metrics that aggregate Devnagari with the other 70 tasks should footnote this asymmetry.",
+      "task_id": 167121
+    }
+  ],
+  "declared_scope": [
+    "sign off stage0_replica_001 as a complete, reproducible stage-0 baseline under the pinned policy_version",
+    "authorize future commits to plan downstream/top-up execution using this signoff as a gate",
+    "do not authorize any actual downstream/top-up execution inside this commit",
+    "no cloud execution is authorized by this commit"
+  ],
+  "downstream_execution_authorized_in_this_commit": false,
+  "extreme_lane_plan_summary_path": "experiments/_stage_runs/stage0_extreme_lane_plan_latest_summary.json",
+  "extreme_lane_plan_summary_sha256": "f0fbaf3095cfa1c5c00d68a0800608f82df0cb74b265211ffbee5716cefac813",
+  "extreme_lane_summary_path": "experiments/_stage_runs/stage0_extreme_lane_latest_summary.json",
+  "extreme_lane_summary_sha256": "e502346357cbe3063cb78ed06790375b2a1e7e6ec8e620430de7a5789c977fdf",
+  "failure_counts": {
+    "failed_timeout_total": 0,
+    "failed_total": 0,
+    "pending_total": 0,
+    "running_total": 0
+  },
+  "git_sha_at_signoff": "77035d0662832750cf6bd3baa186f13f05587d8a",
+  "heavy_lane_summary_path": "experiments/_stage_runs/stage0_heavy_lane_latest_summary.json",
+  "heavy_lane_summary_sha256": "cb75565820bf21a221e14075d7ae9cb6e39946765accbd52aa9db1fe77a69dbb",
+  "justification": "I sign off stage0_replica_001 as a complete and reproducible stage-0 baseline under policy_version 47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36. I acknowledge that isolet/task 3481 is a future policy-recalibration candidate due to observed runtime, but no lane change is applied mid-replica. I also acknowledge that Devnagari-Script/task 167121 was executed under the policy-defined extreme-lane budget with stage0_max_evaluations=1, so its results should be interpreted with that budget caveat. This signoff authorizes future planning/execution commits to use the stage0_replica_001 summaries as a gate, but does not itself run any downstream/top-up execution.",
+  "lane_success_counts": {
+    "extreme": 24,
+    "heavy": 156,
+    "standard": 684
+  },
+  "n_canary_success_total": 864,
+  "n_jobs_total_expected": 2304,
+  "no_pending_running_failed_all_lanes": true,
+  "notes": "Commit 45 explicit operator sign-off. No OpenML training was run by this commit; the standard, heavy, and extreme lane summaries referenced here were produced by Commits 40, 41, and 43 respectively. The aggregator (Commit 44) is the machine-readable review surface that preceded this signoff. The runner refuses stage-3 top-up rows until this file exists; creating it unlocks *planning* of the next tier \u2014 actual execution is a separate operator-reviewed commit.",
+  "operator_handle": "caioribeiro99",
+  "operator_name": "Caio Tertuliano Ribeiro",
+  "policy_version": "47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36",
+  "schema_version": 1,
+  "signed_at_utc": "2026-05-18T18:17:24Z",
+  "signoff_plan_summary_path": "experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.json",
+  "signoff_plan_summary_sha256": "c116bd973cbd98eaf5d784eb4e736a82d10f948882af54d21fd7f9c6685869b7",
+  "signoff_status": "signed",
+  "signoff_type": "stage0_replica_001",
+  "source_shards_unchanged_all_lanes": true,
+  "standard_lane_summary_path": "experiments/_stage_runs/stage0_standard_lane_latest_summary.json",
+  "standard_lane_summary_sha256": "2f8c7f051c566f95d14c6956b87814783ea6273de261d30eae1ed02897f19404"
+}

@@ -136,8 +136,12 @@ python scripts/audit_method_capabilities.py
 
 Stage 3 is locked: the runner refuses to claim any job carrying the
 `requires_manual_signoff_before_stage3` note unless
-`jobs/doctoral/openml_cc18/stage3_signoff.json` exists. Neither
-Commit 29 nor Commit 30 creates that file.
+`jobs/doctoral/openml_cc18/stage3_signoff.json` exists. The signoff
+file was created in Commit 45 (operator-reviewed; see
+`docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`), but it carries
+`downstream_execution_authorized_in_this_commit = false` — so the
+*runner* will no longer refuse on absence, but actual stage-3
+dispatch still needs a separate, operator-reviewed commit.
 
 ## Heavy-task policy (Commit 38)
 
@@ -153,10 +157,11 @@ splits into a standard / heavy / extreme pass, each with its own
 stage-run summary under `experiments/_stage_runs/`. See
 `docs/HEAVY_TASK_POLICY.md`.
 
-## Stage 0 lane progress (Commits 40 → 44)
+## Stage 0 lane progress (Commits 40 → 45)
 
 Stage 0 splits into three independent lanes per the heavy-task
-policy (Commit 38):
+policy (Commit 38), followed by aggregate planning and operator
+signoff:
 
 - standard (Commit 40 `daae8ab`): 684 / 684 green;
 - heavy (Commit 41 `ddb657d`): 156 / 156 green;
@@ -164,15 +169,23 @@ policy (Commit 38):
   `extreme.stage0_max_evaluations = 1`;
 - aggregate signoff plan (Commit 44): 864 / 864 canary cells
   across 72 tasks, all four artifacts pinned to the same
-  `policy_version`; `signoff_status = "planned_not_signed"`.
+  `policy_version`; initially `signoff_status =
+  "planned_not_signed"`;
+- operator signoff (Commit 45): `stage3_signoff.json` written
+  via `scripts/sign_stage0_replica_001.py` with operator
+  metadata, both required caveat acknowledgements, and
+  `downstream_execution_authorized_in_this_commit = false`. The
+  aggregator is re-run; the published plan summary now reads
+  `signoff_status = "signed"`.
 
 All lanes pin the same `policy_version`. The committed shards
 under `shards/stage0_replica_001/` are byte-identical to the
 Commit 28 baseline (each lane uses copies under
-`runs/cc18/<run_id>/`). `stage3_signoff.json` is intentionally
-absent; see `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the
-operator review surface and what the eventual signoff commit
-must record.
+`runs/cc18/<run_id>/`). `stage3_signoff.json` is now present
+(see Commit 45); it unlocks the *planning* of stage-3 top-up
+commits but does not itself dispatch any cells. See
+`docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the review
+surface and the fields the signoff records.
 
 ## Result handoff protocol (Commit 35)
 

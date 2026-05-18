@@ -361,13 +361,22 @@ def build_signoff_plan(
     out_json: Path = DEFAULT_OUT_JSON,
     out_md: Path = DEFAULT_OUT_MD,
     write_summary: bool = True,
+    signoff_file: Path | None = None,
 ) -> dict:
-    if SIGNOFF_FILE.exists():
-        raise SignoffRefusalError(
-            f"{SIGNOFF_FILE} already exists; refusing to plan signoff "
-            "over an already-signed replica."
-        )
+    """Build the aggregate signoff plan.
 
+    Behaviour depends on whether the stage-3 sign-off file is present
+    on disk (Commit 45 onward):
+
+    - **Absent** (Commit 44 default): publish ``signoff_status =
+      "planned_not_signed"`` with ``final_recommendation =
+      "ready_for_operator_review"``.
+    - **Present**: read the sign-off record, verify it references the
+      same three lane summaries (SHA-256 check), and republish with
+      ``signoff_status = "signed"`` and
+      ``final_recommendation = "signed_ready_for_next_stage_planning"``.
+    """
+    signoff_file = signoff_file or SIGNOFF_FILE
     standard = _load_lane(
         standard_path, lane_name="standard",
         expected_executed=EXPECTED_N_STANDARD,
@@ -555,17 +564,59 @@ def build_signoff_plan(
         and n_running_total == 0
     )
 
-    # Final recommendation.
-    if (
+    # Optional: read the on-disk stage-3 sign-off file (Commit 45
+    # onward). If present and well-formed, we flip status to "signed"
+    # and embed the operator metadata + sign-off hashes. The
+    # aggregator still refuses if the signoff file claims to cover
+    # a different set of lane summaries than the ones we just hashed.
+    signoff_record: dict | None = None
+    signoff_sha256: str | None = None
+    if signoff_file.exists():
+        try:
+            signoff_record = json.loads(signoff_file.read_text(encoding="utf-8"))
+        except Exception as exc:
+            raise SignoffRefusalError(
+                f"{signoff_file} exists but is not valid JSON: {exc}"
+            ) from exc
+        signoff_sha256 = _sha256(signoff_file)
+        # Cross-check: the signoff's recorded lane-summary SHA-256s
+        # must match the live lane summary hashes we just computed.
+        for expected_key, live_hash in (
+            ("standard_lane_summary_sha256", hashes["standard_sha256"]),
+            ("heavy_lane_summary_sha256", hashes["heavy_sha256"]),
+            ("extreme_lane_summary_sha256", hashes["extreme_sha256"]),
+        ):
+            recorded = signoff_record.get(expected_key)
+            if recorded is not None and recorded != live_hash:
+                raise SignoffRefusalError(
+                    f"{signoff_file} recorded {expected_key}={recorded} "
+                    f"but live lane summary hashes {live_hash}; the lane "
+                    "summary was modified after sign-off."
+                )
+        # Policy version must also match.
+        sg_pv = signoff_record.get("policy_version")
+        if sg_pv is not None and sg_pv != policy_version:
+            raise SignoffRefusalError(
+                f"{signoff_file} recorded policy_version={sg_pv} but "
+                f"the live policy hashes {policy_version}; mid-replica "
+                "policy drift detected."
+            )
+
+    # Final recommendation depends on signoff presence.
+    if signoff_record is not None:
+        signoff_status = "signed"
+        recommendation = "signed_ready_for_next_stage_planning"
+    elif (
         all_lane_summaries_green
         and source_shards_unchanged_all_lanes
         and n_canary_success_total == (
             EXPECTED_N_STANDARD + EXPECTED_N_HEAVY + EXPECTED_N_EXTREME
         )
-        and not SIGNOFF_FILE.exists()
     ):
+        signoff_status = "planned_not_signed"
         recommendation = "ready_for_operator_review"
     else:
+        signoff_status = "planned_not_signed"
         recommendation = "blocked_resolve_above"
 
     summary = {
@@ -576,10 +627,30 @@ def build_signoff_plan(
         "exported_at": datetime.now(timezone.utc).strftime(
             "%Y-%m-%dT%H:%M:%SZ"
         ),
-        "signoff_status": "planned_not_signed",
-        "stage3_signoff_present": SIGNOFF_FILE.exists(),
-        "stage3_signoff_path": _safe_rel(SIGNOFF_FILE),
+        "signoff_status": signoff_status,
+        "stage3_signoff_present": signoff_file.exists(),
+        "stage3_signoff_path": _safe_rel(signoff_file),
+        "stage3_signoff_sha256": signoff_sha256,
         "signoff_plan_doc": SIGNOFF_DOC,
+        "signoff_record": (
+            {
+                "schema_version": signoff_record.get("schema_version"),
+                "signoff_type": signoff_record.get("signoff_type"),
+                "signed_at_utc": signoff_record.get("signed_at_utc"),
+                "operator_name": signoff_record.get("operator_name"),
+                "operator_handle": signoff_record.get("operator_handle"),
+                "branch": signoff_record.get("branch"),
+                "git_sha_at_signoff": signoff_record.get("git_sha_at_signoff"),
+                "downstream_execution_authorized_in_this_commit":
+                    signoff_record.get(
+                        "downstream_execution_authorized_in_this_commit",
+                    ),
+                "caveats_acknowledged":
+                    signoff_record.get("caveats_acknowledged"),
+                "declared_scope": signoff_record.get("declared_scope"),
+            }
+            if signoff_record is not None else None
+        ),
         # Lane summary paths + content hashes.
         "standard_summary_path": _safe_rel(standard_path),
         "heavy_summary_path": _safe_rel(heavy_path),
@@ -940,7 +1011,32 @@ def _render_md(summary: dict) -> str:
         lines.append(f"- {item}")
     lines.append("")
 
-    if summary["final_recommendation"] == "ready_for_operator_review":
+    if summary["final_recommendation"] == "signed_ready_for_next_stage_planning":
+        sr = summary.get("signoff_record") or {}
+        lines.append("## Verdict: **SIGNED — READY FOR NEXT-STAGE PLANNING**\n")
+        lines.append(
+            f"Stage 0 replica 1 was signed off at "
+            f"`{sr.get('signed_at_utc')}` by "
+            f"`{sr.get('operator_name')}` "
+            f"(`{sr.get('operator_handle')}`) on branch "
+            f"`{sr.get('branch')}` at git_sha "
+            f"`{str(sr.get('git_sha_at_signoff'))[:12]}`. "
+            f"downstream_execution_authorized_in_this_commit: "
+            f"{sr.get('downstream_execution_authorized_in_this_commit')}.\n"
+        )
+        lines.append(
+            f"- stage3_signoff_path: `{summary['stage3_signoff_path']}`"
+        )
+        lines.append(
+            f"- stage3_signoff_sha256: `{summary['stage3_signoff_sha256']}`\n"
+        )
+        lines.append(
+            "Caveats remain in force (see above). A future commit "
+            "may plan the next execution tier (stage-3 top-ups) "
+            "but must do so explicitly — this signoff is the gate, "
+            "not the trigger.\n"
+        )
+    elif summary["final_recommendation"] == "ready_for_operator_review":
         lines.append("## Verdict: **READY FOR OPERATOR REVIEW**\n")
         lines.append(
             "Stage 0 replica 1 lane summaries are aggregate-consistent. "
@@ -983,6 +1079,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out-json", type=Path, default=DEFAULT_OUT_JSON)
     parser.add_argument("--out-md", type=Path, default=DEFAULT_OUT_MD)
     parser.add_argument(
+        "--signoff-file", type=Path, default=SIGNOFF_FILE,
+        help="Stage-3 sign-off file. When present and well-formed, the "
+             "aggregator flips signoff_status to 'signed'.",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="Compute the plan but do not write to disk.",
     )
@@ -998,6 +1099,7 @@ def main(argv: list[str] | None = None) -> int:
             out_json=args.out_json,
             out_md=args.out_md,
             write_summary=not args.dry_run,
+            signoff_file=args.signoff_file,
         )
     except SignoffRefusalError as exc:
         print(f"SIGNOFF REFUSAL: {exc}", file=sys.stderr)
@@ -1014,7 +1116,10 @@ def main(argv: list[str] | None = None) -> int:
     if not args.dry_run:
         print(f"json: {args.out_json}")
         print(f"md:   {args.out_md}")
-    rc = 0 if summary["final_recommendation"] == "ready_for_operator_review" else 4
+    rc = 0 if summary["final_recommendation"] in (
+        "ready_for_operator_review",
+        "signed_ready_for_next_stage_planning",
+    ) else 4
     return rc
 
 

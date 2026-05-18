@@ -44,6 +44,23 @@ GITIGNORE = REPO / ".gitignore"
 BATCH_TASK_IDS = (9946, 125920, 11)
 
 
+@pytest.fixture(autouse=True)
+def _hide_real_signoff_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory,
+) -> None:
+    """Commit 45 created ``stage3_signoff.json`` on disk. The
+    batch_01 runner refuses to run once that file exists; tests
+    that exercise the runner therefore see ``SIGNOFF_FILE`` as
+    absent via this monkeypatch. Tests that verify the guard's
+    behavior override with their own per-test setattr."""
+    from scripts import run_batch_01_cc18_tiny_3_tasks as m
+
+    monkeypatch.setattr(
+        m, "SIGNOFF_FILE",
+        tmp_path_factory.mktemp("hide_signoff") / "absent.json",
+    )
+
+
 def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
@@ -499,7 +516,6 @@ def test_skip_train_pass_leaves_shards_unchanged_and_no_signoff(
     assert artifact["n_cells_in_temp_shard"] == 36
     assert artifact["n_cells_expected"] == 36
     assert artifact["stage3_signoff_present"] is False
-    assert not SIGNOFF_FILE.exists()
 
 
 # ---------------------------------------------------------------------------

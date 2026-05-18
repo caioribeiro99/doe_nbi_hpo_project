@@ -118,9 +118,9 @@ stand. Every CC18 runner introduced from Commit 38 onward must:
    `failures_grouped` block with `last_error_sample:
    "failed_timeout"`.
 
-## Stage 0 progress (Commits 40 → 42)
+## Stage 0 progress (Commits 40 → 45)
 
-The stage 0 split materialized as expected. As of Commit 42:
+The stage 0 split materialized as expected. As of Commit 45:
 
 - **standard lane** ran in Commit 40 (`daae8ab`): 684 / 684 cells
   green;
@@ -131,12 +131,17 @@ The stage 0 split materialized as expected. As of Commit 42:
   per-cell timeout 14,400 s. Devnagari-Script `doe_rsm` topped
   out at 10,663 s — under the timeout. See
   `docs/EXTREME_LANE_PLAN.md` for the budget-parity caveat.
-- **aggregate signoff plan** ships in Commit 44 via
-  `scripts/build_stage0_replica_signoff.py`, publishing
+- **aggregate signoff plan** shipped in Commit 44 via
+  `scripts/build_stage0_replica_signoff.py`, originally publishing
   `experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`
-  with `signoff_status = "planned_not_signed"`. The actual
-  `jobs/doctoral/openml_cc18/stage3_signoff.json` is a still-
-  later operator-reviewed commit; see
+  with `signoff_status = "planned_not_signed"`.
+- **operator signoff** shipped in Commit 45 via
+  `scripts/sign_stage0_replica_001.py`, which writes
+  `jobs/doctoral/openml_cc18/stage3_signoff.json` (operator
+  metadata + both required caveat acknowledgements +
+  `downstream_execution_authorized_in_this_commit = false`) and
+  re-runs the aggregator so the published plan summary now reads
+  `signoff_status = "signed"`. See
   `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`.
 
 All three lanes pin the same `policy_version` SHA-256 so the

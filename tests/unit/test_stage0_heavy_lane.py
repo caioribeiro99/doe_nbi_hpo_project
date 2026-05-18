@@ -52,6 +52,23 @@ PINNED_POLICY_VERSION = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _hide_real_signoff_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory,
+) -> None:
+    """Commit 45 created ``stage3_signoff.json`` on disk. The heavy-
+    lane runner refuses to run once that file exists; tests that
+    exercise the runner must therefore see ``SIGNOFF_FILE`` as
+    absent. Tests that verify the guard override this fixture's
+    monkeypatch with their own per-test setattr to a tmp path."""
+    from scripts import run_stage0_heavy_lane as m
+
+    monkeypatch.setattr(
+        m, "SIGNOFF_FILE",
+        tmp_path_factory.mktemp("hide_signoff") / "absent.json",
+    )
+
+
 def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
@@ -565,7 +582,6 @@ def test_skip_train_copies_all_10_shards_and_preserves_md5(
     assert summary["expected_heavy_canary_cells"] == 156
     assert summary["source_shards_unchanged"] is True
     assert summary["stage3_signoff_present"] is False
-    assert not SIGNOFF_FILE.exists()
     assert summary["policy_version"] == PINNED_POLICY_VERSION
     assert summary["policy_version_pinned"] == PINNED_POLICY_VERSION
     assert "isolet" in summary["isolet_recalibration_note"]
@@ -709,10 +725,6 @@ def test_skip_train_isolet_remains_standard_and_skipped(
     for status, err in isolet_rows:
         assert status == "skipped"
         assert err == "deferred_standard_lane"
-
-
-def test_signoff_file_still_absent_on_disk() -> None:
-    assert not SIGNOFF_FILE.exists()
 
 
 def test_default_paths_resolve_to_committed_artifacts() -> None:

@@ -349,8 +349,24 @@ def test_policy_doc_mentions_lanes_and_helper() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_signoff_file_is_not_created_by_this_commit() -> None:
-    assert not SIGNOFF_FILE.exists()
+def test_signoff_file_is_not_created_by_runtime_guardrails() -> None:
+    """The runtime-guardrails module must never create or mutate
+    ``stage3_signoff.json``. Pre-Commit-45 the file was absent;
+    post-Commit-45 the operator-reviewed Commit 45 owns it. Either
+    way, nothing in this module should change its state."""
+    import hashlib
+
+    before = (
+        hashlib.sha256(SIGNOFF_FILE.read_bytes()).hexdigest()
+        if SIGNOFF_FILE.exists() else None
+    )
+    from doe_xgb import runtime_guardrails  # noqa: F401 — import-only smoke
+
+    after = (
+        hashlib.sha256(SIGNOFF_FILE.read_bytes()).hexdigest()
+        if SIGNOFF_FILE.exists() else None
+    )
+    assert before == after
 
 
 def test_policy_artifacts_are_under_benchmarks_not_runs() -> None:

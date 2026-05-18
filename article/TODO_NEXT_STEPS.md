@@ -118,24 +118,44 @@
 > All four stage-0 artifacts (standard / heavy / extreme-plan /
 > extreme) pin the same `policy_version`.
 >
-> **Commit 44 (this commit) plans the aggregate signoff.**
+> **Commit 44 planned the aggregate signoff.**
 > `scripts/build_stage0_replica_signoff.py` reads the three
 > lane summaries, records cross-lane invariants (same
 > policy_version, all green, source_shards_unchanged,
 > stage3_signoff_present=false), aggregates metrics by
 > lane / method / algorithm / task_type, and publishes
-> `experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`
-> with `signoff_status = "planned_not_signed"`. See
+> `experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`,
+> originally with `signoff_status = "planned_not_signed"`. See
 > `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the operator
 > review surface and the `isolet` / `Devnagari-Script`
 > caveats.
 >
-> **Next operational step:** human review of the aggregate
-> signoff plan + the lane summaries. Only after that, a
-> separate operator-reviewed Commit 45+ may create
-> `jobs/doctoral/openml_cc18/stage3_signoff.json`, which
-> unlocks the stage-3 top-up machinery. Commit 44 does NOT
-> create that file.
+> **Commit 45 (this commit) signs off stage 0 replica 1.**
+> `scripts/sign_stage0_replica_001.py` re-verifies every gate
+> the aggregate plan advertised, writes
+> `jobs/doctoral/openml_cc18/stage3_signoff.json` with operator
+> metadata (`Caio Tertuliano Ribeiro` / `caioribeiro99`), both
+> required caveat acknowledgements
+> (`isolet_future_recalibration_candidate` +
+> `devnagari_extreme_budget_non_equivalence`), and
+> `downstream_execution_authorized_in_this_commit = false`,
+> then re-runs the aggregator so the published plan summary now
+> reads `signoff_status = "signed"`,
+> `final_recommendation = "signed_ready_for_next_stage_planning"`.
+> The signoff freezes the lane summary SHA-256s; the aggregator
+> refuses on any post-signoff lane-summary tampering. No OpenML
+> training, shard mutation, or downstream execution is performed
+> by this commit.
+>
+> **Next operational step:** planning of the stage-3 top-up
+> commits. Now that `stage3_signoff.json` exists, the runner
+> will no longer refuse stage-3 rows on the absence gate, but
+> actual dispatch still needs a separate, operator-reviewed
+> commit (Commit 46+). That commit should decide which top-up
+> stages, which methods, which workers, and over what wall-clock
+> budget; it should also consider whether to recalibrate the
+> heavy-task policy (e.g. promote `isolet` to heavy) before
+> running replicas 2 → N under a fresh `policy_version`.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

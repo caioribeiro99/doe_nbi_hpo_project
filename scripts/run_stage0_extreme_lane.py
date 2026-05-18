@@ -474,6 +474,7 @@ def plan_stage0_extreme_lane(
     expected_extreme_canary_cells: int = EXPECTED_EXTREME_CANARY_CELLS,
     enforce_pinned_policy_version: bool = True,
     write_summary: bool = True,
+    signoff_file: Path | None = None,
 ) -> dict:
     """Inventory-only planning entry point. Refuses to mutate any
     committed artifact and refuses to contact OpenML."""
@@ -500,10 +501,11 @@ def plan_stage0_extreme_lane(
         max_age_days=max_age_days,
     )
 
-    if SIGNOFF_FILE.exists():
+    effective_signoff = signoff_file if signoff_file is not None else SIGNOFF_FILE
+    if effective_signoff.exists():
         raise GateRefusalError(
             f"refusing: stage-3 sign-off file already exists at "
-            f"{SIGNOFF_FILE}"
+            f"{effective_signoff}"
         )
 
     source_shards = sorted(shards_dir.glob("shard_*.sqlite"))
@@ -590,8 +592,8 @@ def plan_stage0_extreme_lane(
         "openml_payloads_committed": False,
         "execution_shards_committed": False,
         "execution_shards_created": False,
-        "stage3_signoff_present": SIGNOFF_FILE.exists(),
-        "stage3_signoff_path": _safe_rel(SIGNOFF_FILE),
+        "stage3_signoff_present": effective_signoff.exists(),
+        "stage3_signoff_path": _safe_rel(effective_signoff),
         "runtime_anchor_batch_03": runtime_anchor,
         "eta": eta,
         "package_versions": collect_package_versions((
@@ -969,6 +971,7 @@ def execute_stage0_extreme_lane(
     force_run_dir: bool = True,
     expected_extreme_canary_cells: int = EXPECTED_EXTREME_CANARY_CELLS,
     enforce_pinned_policy_version: bool = True,
+    signoff_file: Path | None = None,
 ) -> dict:
     """Real execution of the stage-0 extreme lane.
 
@@ -1009,10 +1012,11 @@ def execute_stage0_extreme_lane(
         expected_policy_version=live_policy_version,
     )
 
-    if SIGNOFF_FILE.exists():
+    effective_signoff = signoff_file if signoff_file is not None else SIGNOFF_FILE
+    if effective_signoff.exists():
         raise GateRefusalError(
             f"refusing: stage-3 sign-off file already exists at "
-            f"{SIGNOFF_FILE}"
+            f"{effective_signoff}"
         )
 
     source_shards = sorted(shards_dir.glob("shard_*.sqlite"))
@@ -1408,7 +1412,7 @@ def execute_stage0_extreme_lane(
         "git_sha": _git_sha(),
         "capability_audit": _capability_audit_summary(),
         "run_dir": _safe_rel(run_dir),
-        "stage3_signoff_present": SIGNOFF_FILE.exists(),
+        "stage3_signoff_present": effective_signoff.exists(),
         "stage3_signoff_note": (
             "stage0_replica_001 now has standard, heavy, and "
             "extreme lane summaries. stage3_signoff.json is "
@@ -1695,6 +1699,12 @@ def main(argv: list[str] | None = None) -> int:
              "classification + summary, but do NOT invoke the cc18 "
              "runner. Used by the test suite.",
     )
+    parser.add_argument(
+        "--signoff-file", type=Path, default=None,
+        help="Override the stage-3 sign-off file path. Defaults to "
+             "the committed location. Tests pass a tmp path so the "
+             "guard sees the file as absent.",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -1715,6 +1725,7 @@ def main(argv: list[str] | None = None) -> int:
                 max_age_days=args.max_age_days,
                 run_id=run_id,
                 enforce_pinned_policy_version=not args.allow_policy_drift,
+                signoff_file=args.signoff_file,
             )
             elapsed = time.perf_counter() - t0
             print(
@@ -1772,6 +1783,7 @@ def main(argv: list[str] | None = None) -> int:
             hard_cap_hours_per_shard=args.hard_cap_hours_per_shard,
             skip_train=args.skip_train,
             enforce_pinned_policy_version=not args.allow_policy_drift,
+            signoff_file=args.signoff_file,
         )
         elapsed = time.perf_counter() - t0
         print(

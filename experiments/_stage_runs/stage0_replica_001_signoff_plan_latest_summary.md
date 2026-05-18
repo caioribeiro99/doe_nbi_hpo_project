@@ -2,10 +2,10 @@
 
 - run_id: `stage0_replica_001_signoff_plan_latest`
 - stage: `stage0_replica_001`
-- exported_at: `2026-05-18T13:56:13Z`
-- **signoff_status: `planned_not_signed`**
-- stage3_signoff_present: False
-- final_recommendation: **ready_for_operator_review**
+- exported_at: `2026-05-18T18:17:24Z`
+- **signoff_status: `signed`**
+- stage3_signoff_present: True
+- final_recommendation: **signed_ready_for_next_stage_planning**
 - signoff_plan_doc: `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`
 
 ## Lane summary references
@@ -159,6 +159,11 @@ _missing keys_: `['balanced_accuracy']`
 - record the three lane summary SHA-256 hashes recorded in this signoff plan
 - record explicit approval metadata (operator, timestamp, justification)
 
-## Verdict: **READY FOR OPERATOR REVIEW**
+## Verdict: **SIGNED — READY FOR NEXT-STAGE PLANNING**
 
-Stage 0 replica 1 lane summaries are aggregate-consistent. A later commit (operator-reviewed) may create `jobs/doctoral/openml_cc18/stage3_signoff.json` to unlock the stage-3 top-up machinery. Commit 44 does NOT do that.
+Stage 0 replica 1 was signed off at `2026-05-18T18:17:24Z` by `Caio Tertuliano Ribeiro` (`caioribeiro99`) on branch `repo-publication-readiness` at git_sha `77035d066283`. downstream_execution_authorized_in_this_commit: False.
+
+- stage3_signoff_path: `jobs/doctoral/openml_cc18/stage3_signoff.json`
+- stage3_signoff_sha256: `3f3f1b1fd681934404078ea9d9ad665c274eb1394dfd05950c24a760fd7608b1`
+
+Caveats remain in force (see above). A future commit may plan the next execution tier (stage-3 top-ups) but must do so explicitly — this signoff is the gate, not the trigger.

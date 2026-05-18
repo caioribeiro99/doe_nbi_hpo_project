@@ -5,8 +5,19 @@ replica 1. It explains *why* sign-off is separated from execution,
 *what* needs to be reviewed before the sign-off file is created,
 and *what* the later sign-off commit must record.
 
-This is a **planning-only** commit. It does NOT create
-`jobs/doctoral/openml_cc18/stage3_signoff.json`.
+The aggregate plan was published as a **planning-only** Commit 44
+artifact. Commit 45 (`scripts/sign_stage0_replica_001.py`) is the
+dedicated operator-reviewed commit that creates
+`jobs/doctoral/openml_cc18/stage3_signoff.json`. Once that file
+exists, the aggregator (re-run by Commit 45) republishes the same
+summary with `signoff_status = "signed"` and
+`final_recommendation = "signed_ready_for_next_stage_planning"`.
+
+The signed signoff JSON freezes the SHA-256s of the three lane
+summaries; subsequent invocations of
+`scripts/build_stage0_replica_signoff.py` cross-check the live
+lane summary hashes against the recorded ones and refuse if any
+lane summary is modified after signoff.
 
 ## Current lane state
 
@@ -25,8 +36,11 @@ All four artifacts share the same `policy_version`:
 47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36
 ```
 
-`jobs/doctoral/openml_cc18/stage3_signoff.json` is **intentionally
-absent**. The aggregate summary published by this commit records
+As of **Commit 45**,
+`jobs/doctoral/openml_cc18/stage3_signoff.json` exists and the
+republished aggregate summary records
+`signoff_status = "signed"`. Prior to Commit 45 the file was
+intentionally absent and the summary read
 `signoff_status = "planned_not_signed"`.
 
 ## Why sign-off is separate from execution
@@ -147,32 +161,41 @@ treat the 864 canary successes as the full replica and account
 for the budget asymmetry rather than subsetting "only the
 standard lane".
 
-## What a later signoff commit should do
+## What the Commit 45 signoff records
 
-A separate, operator-reviewed commit (Commit 45+) may create
-`jobs/doctoral/openml_cc18/stage3_signoff.json`. That file should
-record, at minimum:
+`scripts/sign_stage0_replica_001.py` writes
+`jobs/doctoral/openml_cc18/stage3_signoff.json` with:
 
-- the **final `policy_version`** (currently
-  `47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36`);
-- the **SHA-256 of all three lane summary JSONs** (these are
-  recorded in this commit's aggregate plan);
-- explicit **approval metadata** (operator name / handle,
-  ISO-8601 timestamp, free-form justification — at least one
-  sentence acknowledging both caveats above);
-- a **declared scope** for what the sign-off unlocks
-  (specifically: which top-up stages, which methods, which
-  workers);
-- a **policy_version transition note** if the operator intends
-  to recalibrate (e.g. promote `isolet` to heavy) before stage
-  3 — in which case the sign-off file applies only to the
-  current replica and a new replica starts under a fresh
-  policy.
+- the **final `policy_version`**
+  (`47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36`,
+  pinned across Commits 38 → 45);
+- the **SHA-256 of all three lane summary JSONs**, the
+  extreme-lane plan summary, and the aggregate plan summary
+  (these are recorded in Commit 44's aggregate plan and re-hashed
+  here at sign-off time);
+- explicit **approval metadata** (operator name, operator handle,
+  branch, git_sha_at_signoff, ISO-8601 `signed_at_utc`,
+  free-form `justification` that names both caveats explicitly);
+- a **`declared_scope`** array stating what the signoff does and
+  does not authorize (Commit 45 explicitly does NOT authorize any
+  downstream / stage-3 / top-up execution — it only unlocks the
+  capacity decision for a *future* planning commit);
+- a **`caveats_acknowledged`** array carrying both required ids:
+  `isolet_future_recalibration_candidate` and
+  `devnagari_extreme_budget_non_equivalence`;
+- `downstream_execution_authorized_in_this_commit = false`;
+- aggregate counts (`n_jobs_total_expected = 2304`,
+  `n_canary_success_total = 864`, lane success counts
+  `{standard: 684, heavy: 156, extreme: 24}`, all failure
+  counters at zero).
 
 Sign-off is not a "yes, run more" button. It is a structured
 artifact that downstream readers (replica 2 operators, the
 article reviewers, an external auditor) can trace from raw shards
 through lane summaries to the operator's recorded approval.
 
-Until that commit ships, the runner refuses stage-3 rows and the
-pipeline stays in pre-stage-3 territory.
+Commit 45 unlocks the *planning* of stage-3 / top-up commits
+(the runner's existing refusal-on-absence check now passes); it
+does NOT itself dispatch any cells. Actual stage-3 execution
+remains a separate, operator-reviewed commit gated on this
+signoff.

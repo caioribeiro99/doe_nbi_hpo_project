@@ -60,6 +60,24 @@ PINNED_POLICY_VERSION = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _hide_real_signoff_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory,
+) -> None:
+    """Commit 45 created ``stage3_signoff.json`` on disk. The extreme-
+    lane runner refuses to run (in both planning and execute paths)
+    once that file exists; tests that exercise the runner must
+    therefore see ``SIGNOFF_FILE`` as absent. Tests that verify the
+    guard override this with their own per-test setattr to a tmp
+    path."""
+    from scripts import run_stage0_extreme_lane as m
+
+    monkeypatch.setattr(
+        m, "SIGNOFF_FILE",
+        tmp_path_factory.mktemp("hide_signoff") / "absent.json",
+    )
+
+
 def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
@@ -153,7 +171,8 @@ def test_dry_run_exits_zero_and_publishes_planning_summary(
     out_dir = tmp_path / "stage_runs"
     res = subprocess.run(
         [sys.executable, str(RUN_SCRIPT), "--dry-run",
-         "--stage-runs-dir", str(out_dir)],
+         "--stage-runs-dir", str(out_dir),
+         "--signoff-file", str(tmp_path / "absent_signoff.json")],
         capture_output=True, text=True, check=False,
     )
     assert res.returncode == 0, res.stderr
@@ -181,7 +200,8 @@ def test_default_invocation_runs_planning_mode_not_execution(
     out_dir = tmp_path / "stage_runs"
     res = subprocess.run(
         [sys.executable, str(RUN_SCRIPT),
-         "--stage-runs-dir", str(out_dir)],
+         "--stage-runs-dir", str(out_dir),
+         "--signoff-file", str(tmp_path / "absent_signoff.json")],
         capture_output=True, text=True, check=False,
     )
     assert res.returncode == 0, res.stderr
@@ -376,7 +396,8 @@ def test_cli_include_extreme_tasks_alone_does_not_execute(
     res = subprocess.run(
         [sys.executable, str(RUN_SCRIPT),
          "--include-extreme-tasks",
-         "--stage-runs-dir", str(tmp_path / "stage_runs")],
+         "--stage-runs-dir", str(tmp_path / "stage_runs"),
+         "--signoff-file", str(tmp_path / "absent_signoff.json")],
         capture_output=True, text=True, check=False,
     )
     assert res.returncode == 0, res.stderr
@@ -801,10 +822,6 @@ def test_plan_run_marks_execution_status_planned_not_executed(
 # ---------------------------------------------------------------------------
 
 
-def test_signoff_file_still_absent_on_disk() -> None:
-    assert not SIGNOFF_FILE.exists()
-
-
 def test_plan_doc_exists_and_mentions_key_concepts() -> None:
     text = PLAN_DOC.read_text(encoding="utf-8")
     text_lower = text.lower()
@@ -867,7 +884,8 @@ def test_dry_run_does_not_touch_data_source_openml_cc18(
     before = _openml_cache_fingerprint()
     res = subprocess.run(
         [sys.executable, str(RUN_SCRIPT),
-         "--stage-runs-dir", str(tmp_path / "stage_runs")],
+         "--stage-runs-dir", str(tmp_path / "stage_runs"),
+         "--signoff-file", str(tmp_path / "absent_signoff.json")],
         capture_output=True, text=True, check=False,
         env={**os.environ},
     )

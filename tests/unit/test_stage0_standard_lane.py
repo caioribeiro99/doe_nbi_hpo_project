@@ -42,6 +42,25 @@ POLICY_CSV = REPO / "benchmarks/doctoral/openml_cc18/heavy_task_policy.csv"
 GUARDRAILS_YAML = REPO / "benchmarks/doctoral/openml_cc18/runtime_guardrails.yaml"
 
 
+@pytest.fixture(autouse=True)
+def _hide_real_signoff_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory,
+) -> None:
+    """Commit 45 created ``stage3_signoff.json`` on disk. The standard-
+    lane runner refuses to run once that file exists (the production
+    guard against re-running stage 0 after sign-off). Tests that
+    exercise the runner must therefore see ``SIGNOFF_FILE`` as
+    absent; tests that explicitly verify the guard override this
+    fixture's monkeypatch with their own per-test setattr to a
+    tmp path that does exist."""
+    from scripts import run_stage0_standard_lane as m
+
+    monkeypatch.setattr(
+        m, "SIGNOFF_FILE",
+        tmp_path_factory.mktemp("hide_signoff") / "absent.json",
+    )
+
+
 def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
@@ -429,7 +448,6 @@ def test_skip_train_copies_all_10_shards_and_preserves_md5(
     assert summary["n_jobs_refused_non_canary"] == 1131
     assert summary["source_shards_unchanged"] is True
     assert summary["stage3_signoff_present"] is False
-    assert not SIGNOFF_FILE.exists()
     assert summary["expected_standard_canary_cells"] == 684
 
     # Execution copies exist (10 of them) under runs/.
@@ -512,10 +530,6 @@ def test_skip_train_does_not_execute_heavy_or_extreme(tmp_path: Path) -> None:
                 "deferred_heavy_lane", "deferred_extreme_lane",
                 "refused_not_in_canary_set",
             }, (tid, status, err)
-
-
-def test_signoff_file_still_absent_on_disk() -> None:
-    assert not SIGNOFF_FILE.exists()
 
 
 def test_default_paths_resolve_to_committed_artifacts() -> None:

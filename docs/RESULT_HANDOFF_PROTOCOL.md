@@ -244,10 +244,18 @@ Stage 0 publishes one summary per lane under
 - `stage0_extreme_lane_latest_summary.{json,md}` — Commit 43
   (`28961fe`); ships with `execution_status = "executed"`.
 - `stage0_replica_001_signoff_plan_latest_summary.{json,md}` —
-  Commit 44 (this commit); aggregates the three lane summaries
-  with `signoff_status = "planned_not_signed"`. The actual
-  `jobs/doctoral/openml_cc18/stage3_signoff.json` is a still-
-  later operator-reviewed commit; see
+  Commit 44 published this with `signoff_status =
+  "planned_not_signed"`. **Commit 45 re-runs the aggregator** so
+  it now reads `signoff_status = "signed"`,
+  `final_recommendation = "signed_ready_for_next_stage_planning"`,
+  carries `stage3_signoff_sha256` (the on-disk SHA-256 of the
+  Commit 45 signoff JSON), and includes a `signoff_record`
+  block with operator metadata. The aggregator cross-checks the
+  signoff's recorded lane SHA-256s against the live ones on
+  every run; mismatch raises `SignoffRefusalError`.
+- `jobs/doctoral/openml_cc18/stage3_signoff.json` — created by
+  Commit 45 via `scripts/sign_stage0_replica_001.py`. Carries
+  `downstream_execution_authorized_in_this_commit = false`; see
   `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`.
 
 The dedicated planning summary keeps the same JSON layout used
@@ -270,11 +278,17 @@ summary's `execution_status` is `executed`.
   committed source shards still hash to their pre-run MD5. If they
   drifted, the summary records `source_shards_unchanged: false`,
   and downstream gates treat the run as poisoned.
-- `stage3_signoff.json` is never created by the protocol. The
-  runner refuses stage-3 rows tagged
-  `requires_manual_signoff_before_stage3` until that file appears,
-  and that file appears only by manual operator decision well
-  beyond this commit.
+- `stage3_signoff.json` is never created by the export protocol
+  itself. It was created exactly once by Commit 45's
+  `scripts/sign_stage0_replica_001.py`, which checks every gate
+  the Commit 44 aggregator advertised, writes the file with
+  operator metadata + both required caveat acknowledgements +
+  `downstream_execution_authorized_in_this_commit = false`, and
+  re-publishes the aggregate plan. The runner refuses stage-3
+  rows tagged `requires_manual_signoff_before_stage3` while the
+  file is absent; once present, it still does not auto-dispatch
+  — actual stage-3 execution is a separate, operator-reviewed
+  commit.
 
 ## What gets committed vs. what does not
 

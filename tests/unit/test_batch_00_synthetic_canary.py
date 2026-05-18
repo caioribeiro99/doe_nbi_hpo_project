@@ -235,16 +235,34 @@ def test_artifact_md_contains_fail_verdict_when_failures_present(tmp_path: Path)
 # ---------------------------------------------------------------------------
 
 
-def test_signoff_file_is_not_created_by_this_commit() -> None:
-    """Commit 32 must not create the stage-3 sign-off file. The runner
-    only checks for it; never writes."""
-    assert not SIGNOFF_FILE.exists()
+def test_signoff_file_is_not_touched_by_this_commit() -> None:
+    """Commit 32 must not create or modify the stage-3 sign-off file.
+    Pre-Commit-45 the file is absent; post-Commit-45 it carries the
+    operator's signoff and must remain byte-identical when this
+    runner is unrelated to sign-off (Commit 32 is the synthetic
+    canary; it never writes to ``stage3_signoff.json``)."""
+    if SIGNOFF_FILE.exists():
+        record = json.loads(SIGNOFF_FILE.read_text(encoding="utf-8"))
+        assert record["signoff_type"] == "stage0_replica_001"
+    else:
+        # Pre-Commit-45 invariant.
+        assert not SIGNOFF_FILE.exists()
 
 
 @pytest.mark.skipif(not HAS_XGBOOST, reason="xgboost missing")
-def test_signoff_file_still_absent_after_canary_run(tmp_path: Path) -> None:
+def test_canary_run_does_not_mutate_signoff_file(tmp_path: Path) -> None:
     """Belt-and-braces: even after a real canary pass on the local
-    machine, the runner must not create the sign-off file."""
+    machine, the runner must not write to the sign-off file. We
+    snapshot its SHA-256 (or absence) before and after."""
+    import hashlib
+
+    def _snapshot() -> str | None:
+        return (
+            hashlib.sha256(SIGNOFF_FILE.read_bytes()).hexdigest()
+            if SIGNOFF_FILE.exists() else None
+        )
+
+    before = _snapshot()
     out_root = tmp_path / "out"
     gate = tmp_path / "gate"
     subprocess.run(
@@ -253,7 +271,8 @@ def test_signoff_file_still_absent_after_canary_run(tmp_path: Path) -> None:
          "--max-jobs", "12", "--max-evaluations", "2", "--n-folds", "2"],
         capture_output=True, text=True, check=False,
     )
-    assert not SIGNOFF_FILE.exists()
+    after = _snapshot()
+    assert before == after
 
 
 # ---------------------------------------------------------------------------

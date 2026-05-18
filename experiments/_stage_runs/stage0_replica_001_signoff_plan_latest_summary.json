@@ -31,7 +31,7 @@
       "deferred_heavy": 423
     }
   },
-  "exported_at": "2026-05-18T13:56:13Z",
+  "exported_at": "2026-05-18T18:17:24Z",
   "extreme_lane_plan": {
     "execution_status": "planned_not_executed",
     "exported_at": "2026-05-17T13:48:17Z",
@@ -45,8 +45,8 @@
   "extreme_lane_plan_summary_path": "experiments/_stage_runs/stage0_extreme_lane_plan_latest_summary.json",
   "extreme_sha256": "e502346357cbe3063cb78ed06790375b2a1e7e6ec8e620430de7a5789c977fdf",
   "extreme_summary_path": "experiments/_stage_runs/stage0_extreme_lane_latest_summary.json",
-  "final_recommendation": "ready_for_operator_review",
-  "git_sha": "28961fe2f30a282ad8c03212aecacb4e4550e173",
+  "final_recommendation": "signed_ready_for_next_stage_planning",
+  "git_sha": "77035d0662832750cf6bd3baa186f13f05587d8a",
   "heavy_sha256": "cb75565820bf21a221e14075d7ae9cb6e39946765accbd52aa9db1fe77a69dbb",
   "heavy_summary_path": "experiments/_stage_runs/stage0_heavy_lane_latest_summary.json",
   "lane": "aggregate",
@@ -1555,7 +1555,37 @@
   "runtime_seconds_total": 72535.02772588586,
   "schema_version": 1,
   "signoff_plan_doc": "docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md",
-  "signoff_status": "planned_not_signed",
+  "signoff_record": {
+    "branch": "repo-publication-readiness",
+    "caveats_acknowledged": [
+      {
+        "dataset": "isolet",
+        "id": "isolet_future_recalibration_candidate",
+        "summary": "isolet ran in the standard lane but its observed runtime crosses the 900 s heavy-promotion threshold (1078.6 s in Commit 40). It is a candidate for future policy recalibration via scripts/build_cc18_heavy_task_policy.py but lane assignments are NOT changed mid-replica; this signoff covers replica 1 under the Commit 38 policy.",
+        "task_id": 3481
+      },
+      {
+        "dataset": "Devnagari-Script",
+        "id": "devnagari_extreme_budget_non_equivalence",
+        "summary": "Devnagari-Script ran under the policy-defined extreme.stage0_max_evaluations=1 (YAML default). Standard and heavy lanes ran at max_evaluations=5. random_search / tpe_optuna / default_gbdt cells on Devnagari therefore exercised fewer configurations than the rest of the panel; doe_rsm_vrf_true_nbi is unchanged (it floors at n_doe=max(2*d, max_evaluations)=8 for d=4). Headline panel-average metrics that aggregate Devnagari with the other 70 tasks should footnote this asymmetry.",
+        "task_id": 167121
+      }
+    ],
+    "declared_scope": [
+      "sign off stage0_replica_001 as a complete, reproducible stage-0 baseline under the pinned policy_version",
+      "authorize future commits to plan downstream/top-up execution using this signoff as a gate",
+      "do not authorize any actual downstream/top-up execution inside this commit",
+      "no cloud execution is authorized by this commit"
+    ],
+    "downstream_execution_authorized_in_this_commit": false,
+    "git_sha_at_signoff": "77035d0662832750cf6bd3baa186f13f05587d8a",
+    "operator_handle": "caioribeiro99",
+    "operator_name": "Caio Tertuliano Ribeiro",
+    "schema_version": 1,
+    "signed_at_utc": "2026-05-18T18:17:24Z",
+    "signoff_type": "stage0_replica_001"
+  },
+  "signoff_status": "signed",
   "slowest_cells_overall": [
     {
       "algorithm": "xgboost",
@@ -1707,7 +1737,8 @@
   "source_shards_unchanged_all_lanes": true,
   "stage": "stage0_replica_001",
   "stage3_signoff_path": "jobs/doctoral/openml_cc18/stage3_signoff.json",
-  "stage3_signoff_present": false,
+  "stage3_signoff_present": true,
+  "stage3_signoff_sha256": "3f3f1b1fd681934404078ea9d9ad665c274eb1394dfd05950c24a760fd7608b1",
   "standard_sha256": "2f8c7f051c566f95d14c6956b87814783ea6273de261d30eae1ed02897f19404",
   "standard_summary_path": "experiments/_stage_runs/stage0_standard_lane_latest_summary.json",
   "task_coverage": {

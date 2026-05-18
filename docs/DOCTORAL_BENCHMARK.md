@@ -181,11 +181,16 @@ state is unchanged. Tests always copy a shard to a tmp directory
 before exercising the runner; the committed shard files are not
 mutated by tests.
 
-Stage-3 jobs of every tier-1+ method are still locked behind a
-manual sign-off file at
-`jobs/doctoral/openml_cc18/stage3_signoff.json`; this commit does
-**not** create that file. Without it, the runner refuses to claim
-stage-3 jobs and reports them as `refused_stage3_signoff_missing`.
+Stage-3 jobs of every tier-1+ method are gated by the manual
+sign-off file at
+`jobs/doctoral/openml_cc18/stage3_signoff.json`. The runner
+refuses to claim stage-3 jobs without it and reports them as
+`refused_stage3_signoff_missing`. Commit 45 created the signoff
+file via `scripts/sign_stage0_replica_001.py` (operator metadata
++ both required caveat acknowledgements, with
+`downstream_execution_authorized_in_this_commit = false`).
+Stage-3 dispatch itself is still a separate, operator-reviewed
+commit; Commit 45 only unlocks the planning of that commit.
 
 ## Executable canary adapters (Commit 30)
 
@@ -330,30 +335,34 @@ standard / heavy / extreme pass, each with its own published
 stage-run summary. See `docs/HEAVY_TASK_POLICY.md` for the
 contract.
 
-## Stage 0 lane progress (Commits 40 → 44)
+## Stage 0 lane progress (Commits 40 → 45)
 
 Per Commit 38's heavy-task policy, full stage 0 runs as three
-independent lanes:
+independent lanes, then a planning commit, then operator signoff:
 
 | lane | commit | runner | status |
 |---|---|---|---|
 | standard (57 tasks, 684 cells) | Commit 40 (`daae8ab`) | `scripts/run_stage0_standard_lane.py` | green |
 | heavy (13 tasks, 156 cells) | Commit 41 (`ddb657d`) | `scripts/run_stage0_heavy_lane.py` | green |
 | extreme (2 tasks, 24 cells) | Commit 43 (`28961fe`) | `scripts/run_stage0_extreme_lane.py --execute-extreme-lane` | green |
-| aggregate signoff plan | Commit 44 (this commit) — **planning only** | `scripts/build_stage0_replica_signoff.py` | planned_not_signed |
+| aggregate signoff plan | Commit 44 — **planning only** | `scripts/build_stage0_replica_signoff.py` | planned_not_signed |
+| operator signoff | Commit 45 (this commit) | `scripts/sign_stage0_replica_001.py` | signed |
 
 All three lanes share the same `policy_version` SHA-256
 (`47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36`).
-Stage 0 replica 1 is now lane-complete (864 / 864 canary cells
-green: 684 standard + 156 heavy + 24 extreme); Commit 44
-publishes the aggregate signoff plan at
+Stage 0 replica 1 is lane-complete (864 / 864 canary cells
+green: 684 standard + 156 heavy + 24 extreme). Commit 44
+published the aggregate signoff plan at
 `experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`
-with `signoff_status = "planned_not_signed"`. Creating
-`jobs/doctoral/openml_cc18/stage3_signoff.json` (the file that
-unlocks stage-3 top-ups) is a still-later operator-reviewed
-commit; see `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the
-review surface, the `isolet` / `Devnagari-Script` caveats,
-and what the eventual signoff commit must record.
+with `signoff_status = "planned_not_signed"`. Commit 45 then
+created `jobs/doctoral/openml_cc18/stage3_signoff.json` — the
+operator-reviewed file that unlocks stage-3 top-up *planning*
+(actual dispatch is a separate, future commit) — and re-ran the
+aggregator so the published summary now reads
+`signoff_status = "signed"`. See
+`docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the review
+surface, the `isolet` / `Devnagari-Script` caveats, and the
+exact fields the signoff records.
 
 ## Result handoff protocol (Commit 35)
 

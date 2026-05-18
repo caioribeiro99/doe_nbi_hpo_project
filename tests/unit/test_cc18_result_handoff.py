@@ -303,11 +303,23 @@ def test_export_summary_writes_json_md_with_required_keys(tmp_path: Path) -> Non
 
 
 def test_export_summary_md_pass_when_terminal_and_unchanged(
-    tmp_path: Path,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """The 'GREEN' verdict requires ``stage3_signoff_present`` to
+    be false. Post-Commit-45 the real signoff file exists on disk,
+    which would correctly flip the verdict to 'NOT GREEN' (a signed
+    replica's per-shard run summaries should not advertise as
+    'green-ready-to-promote' since they have already been
+    promoted). For this test, monkeypatch the exporter's
+    ``SIGNOFF_FILE`` constant to a tmp path so the GREEN code path
+    is exercised."""
+    from scripts import export_cc18_run_summary as exp
     from scripts.create_cc18_run_dir import create_run_dir
     from scripts.export_cc18_run_summary import export_summary
 
+    monkeypatch.setattr(
+        exp, "SIGNOFF_FILE", tmp_path / "absent_signoff.json",
+    )
     create_run_dir(
         run_id="md_green_run",
         stage="stage0_replica_001",

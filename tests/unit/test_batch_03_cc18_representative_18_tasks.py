@@ -43,6 +43,22 @@ BATCH_TASK_IDS = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _hide_real_signoff_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory,
+) -> None:
+    """Commit 45 created ``stage3_signoff.json`` on disk. The
+    batch_03 runner refuses to run once that file exists; tests
+    therefore see ``SIGNOFF_FILE`` as absent via this monkeypatch.
+    Tests verifying the guard override with per-test setattr."""
+    from scripts import run_batch_03_cc18_representative_18_tasks as m
+
+    monkeypatch.setattr(
+        m, "SIGNOFF_FILE",
+        tmp_path_factory.mktemp("hide_signoff") / "absent.json",
+    )
+
+
 def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
@@ -355,7 +371,6 @@ def test_skip_train_pass_leaves_committed_shards_unchanged(
     assert summary["source_shards_unchanged"] is True
     assert summary["shards_unchanged_after_download"] is True
     assert summary["stage3_signoff_present"] is False
-    assert not SIGNOFF_FILE.exists()
 
     json_p = (
         tmp_path / "stage_runs"
@@ -377,5 +392,3 @@ def test_skip_train_pass_leaves_committed_shards_unchanged(
         assert "runs" in p.resolve().parts
 
 
-def test_signoff_file_still_absent_on_disk() -> None:
-    assert not SIGNOFF_FILE.exists()

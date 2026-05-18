@@ -18,9 +18,14 @@ Covers:
   shards, or reports stage3_signoff_present=True;
 - refuses when the three lane summaries disagree on
   ``policy_version``;
-- refuses when ``stage3_signoff.json`` already exists on disk;
-- emits ``signoff_status = "planned_not_signed"``;
-- does NOT create ``stage3_signoff.json``;
+- when ``stage3_signoff.json`` does not exist, emits
+  ``signoff_status = "planned_not_signed"`` (Commit 44 default);
+- when ``stage3_signoff.json`` exists and references the same lane
+  summaries (matching SHA-256s and policy_version), emits
+  ``signoff_status = "signed"`` (Commit 45 onward);
+- refuses when ``stage3_signoff.json`` exists but recorded lane
+  summary SHA-256s drift from the live ones;
+- never creates ``stage3_signoff.json`` itself;
 - reports the canonical lane counts (684 / 156 / 24);
 - reports ``n_canary_success_total = 864``;
 - reports ``n_tasks_total_expected = 72``;
@@ -59,6 +64,26 @@ SHARDS_DIR = REPO / "jobs/doctoral/openml_cc18/shards/stage0_replica_001"
 PINNED_POLICY_VERSION = (
     "47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36"
 )
+
+
+@pytest.fixture(autouse=True)
+def _hide_real_signoff_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory,
+) -> None:
+    """Commit 45 created ``stage3_signoff.json`` on disk with the
+    real lane-summary SHA-256s embedded. Tests that build a fresh
+    triple under ``tmp_path`` and call ``build_signoff_plan`` would
+    otherwise hit the aggregator's hash-drift refusal because the
+    tmp summaries hash differently from the recorded ones. Hide the
+    real sign-off file from the aggregator's default; tests that
+    want the on-disk file (e.g. round-trip against the real lane
+    summaries) pass ``signoff_file=`` explicitly."""
+    from scripts import build_stage0_replica_signoff as m
+
+    monkeypatch.setattr(
+        m, "SIGNOFF_FILE",
+        tmp_path_factory.mktemp("hide_signoff") / "absent.json",
+    )
 
 
 def _md5(p: Path) -> str:
@@ -344,20 +369,130 @@ def test_refuses_when_stage3_signoff_present_in_lane_summary(
         )
 
 
-def test_refuses_when_stage3_signoff_file_exists(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+def test_signoff_present_with_matching_hashes_flips_to_signed(
+    tmp_path: Path,
 ) -> None:
-    from scripts import build_stage0_replica_signoff as m
+    """Commit 45 onward: an on-disk stage3_signoff.json whose
+    recorded lane SHA-256s and policy_version match the live values
+    flips the aggregate's ``signoff_status`` to ``"signed"`` and the
+    recommendation to ``"signed_ready_for_next_stage_planning"``."""
+    from scripts.build_stage0_replica_signoff import build_signoff_plan
 
-    fake = tmp_path / "stage3_signoff.json"
-    fake.write_text("{}", encoding="utf-8")
-    monkeypatch.setattr(m, "SIGNOFF_FILE", fake)
     std, hvy, ext = _write_canonical_triple(tmp_path)
-    with pytest.raises(m.SignoffRefusalError, match="already exists"):
-        m.build_signoff_plan(
+    signoff = tmp_path / "stage3_signoff.json"
+    signoff.write_text(
+        json.dumps({
+            "schema_version": 1,
+            "signoff_type": "stage0_replica_001",
+            "signoff_status": "signed",
+            "operator_name": "Caio Tertuliano Ribeiro",
+            "operator_handle": "caioribeiro99",
+            "branch": "repo-publication-readiness",
+            "policy_version": PINNED_POLICY_VERSION,
+            "standard_lane_summary_sha256": _sha256(std),
+            "heavy_lane_summary_sha256": _sha256(hvy),
+            "extreme_lane_summary_sha256": _sha256(ext),
+            "downstream_execution_authorized_in_this_commit": False,
+            "declared_scope": ["test"],
+            "caveats_acknowledged": [
+                {"id": "isolet_future_recalibration_candidate"},
+                {"id": "devnagari_extreme_budget_non_equivalence"},
+            ],
+        }),
+        encoding="utf-8",
+    )
+    summary = build_signoff_plan(
+        standard_path=std, heavy_path=hvy, extreme_path=ext,
+        plan_path=tmp_path / "absent_plan.json",
+        out_json=tmp_path / "agg.json", out_md=tmp_path / "agg.md",
+        write_summary=False,
+        signoff_file=signoff,
+    )
+    assert summary["signoff_status"] == "signed"
+    assert summary["final_recommendation"] == "signed_ready_for_next_stage_planning"
+    assert summary["stage3_signoff_present"] is True
+    assert summary["stage3_signoff_sha256"] == _sha256(signoff)
+    rec = summary["signoff_record"]
+    assert rec is not None
+    assert rec["operator_name"] == "Caio Tertuliano Ribeiro"
+    assert rec["operator_handle"] == "caioribeiro99"
+    assert rec["downstream_execution_authorized_in_this_commit"] is False
+
+
+def test_refuses_when_signoff_hashes_drift(tmp_path: Path) -> None:
+    """If a lane summary is modified after signoff (its SHA-256 no
+    longer matches the value recorded in stage3_signoff.json), the
+    aggregator refuses — this is the post-signoff tamper detector."""
+    from scripts.build_stage0_replica_signoff import (
+        SignoffRefusalError,
+        build_signoff_plan,
+    )
+
+    std, hvy, ext = _write_canonical_triple(tmp_path)
+    signoff = tmp_path / "stage3_signoff.json"
+    signoff.write_text(
+        json.dumps({
+            "schema_version": 1,
+            "signoff_type": "stage0_replica_001",
+            "signoff_status": "signed",
+            "policy_version": PINNED_POLICY_VERSION,
+            "standard_lane_summary_sha256": _sha256(std),
+            "heavy_lane_summary_sha256": "0" * 64,  # wrong on purpose
+            "extreme_lane_summary_sha256": _sha256(ext),
+        }),
+        encoding="utf-8",
+    )
+    with pytest.raises(SignoffRefusalError, match="modified after sign-off"):
+        build_signoff_plan(
             standard_path=std, heavy_path=hvy, extreme_path=ext,
             out_json=tmp_path / "x.json", out_md=tmp_path / "x.md",
             write_summary=False,
+            signoff_file=signoff,
+        )
+
+
+def test_refuses_when_signoff_policy_version_drift(tmp_path: Path) -> None:
+    from scripts.build_stage0_replica_signoff import (
+        SignoffRefusalError,
+        build_signoff_plan,
+    )
+
+    std, hvy, ext = _write_canonical_triple(tmp_path)
+    signoff = tmp_path / "stage3_signoff.json"
+    signoff.write_text(
+        json.dumps({
+            "schema_version": 1,
+            "policy_version": "0" * 64,
+            "standard_lane_summary_sha256": _sha256(std),
+            "heavy_lane_summary_sha256": _sha256(hvy),
+            "extreme_lane_summary_sha256": _sha256(ext),
+        }),
+        encoding="utf-8",
+    )
+    with pytest.raises(SignoffRefusalError, match="policy drift"):
+        build_signoff_plan(
+            standard_path=std, heavy_path=hvy, extreme_path=ext,
+            out_json=tmp_path / "x.json", out_md=tmp_path / "x.md",
+            write_summary=False,
+            signoff_file=signoff,
+        )
+
+
+def test_refuses_when_signoff_file_is_not_json(tmp_path: Path) -> None:
+    from scripts.build_stage0_replica_signoff import (
+        SignoffRefusalError,
+        build_signoff_plan,
+    )
+
+    std, hvy, ext = _write_canonical_triple(tmp_path)
+    signoff = tmp_path / "stage3_signoff.json"
+    signoff.write_text("not json!", encoding="utf-8")
+    with pytest.raises(SignoffRefusalError, match="not valid JSON"):
+        build_signoff_plan(
+            standard_path=std, heavy_path=hvy, extreme_path=ext,
+            out_json=tmp_path / "x.json", out_md=tmp_path / "x.md",
+            write_summary=False,
+            signoff_file=signoff,
         )
 
 
@@ -442,18 +577,22 @@ def test_aggregate_records_canonical_counts_and_hashes(
 
 
 def test_does_not_create_stage3_signoff_file(tmp_path: Path) -> None:
-    """The script's sole purpose is to publish a plan summary; it
-    must never create stage3_signoff.json (whose presence would
-    unlock the stage-3 top-up machinery)."""
+    """The aggregator script must never create stage3_signoff.json
+    (whose presence would unlock the stage-3 top-up machinery).
+    Creating it is a separate operator-reviewed commit
+    (``scripts/sign_stage0_replica_001.py``, Commit 45)."""
     from scripts.build_stage0_replica_signoff import build_signoff_plan
 
     std, hvy, ext = _write_canonical_triple(tmp_path)
+    signoff_file = tmp_path / "signoff_should_not_be_created.json"
+    assert not signoff_file.exists()
     build_signoff_plan(
         standard_path=std, heavy_path=hvy, extreme_path=ext,
         out_json=tmp_path / "agg.json",
         out_md=tmp_path / "agg.md",
+        signoff_file=signoff_file,
     )
-    assert not SIGNOFF_FILE.exists()
+    assert not signoff_file.exists()
 
 
 def test_md_mentions_isolet_and_devnagari_caveats(tmp_path: Path) -> None:
@@ -515,10 +654,24 @@ def test_signoff_doc_exists_and_mentions_key_concepts() -> None:
         assert token in text, f"signoff doc missing token: {token}"
 
 
-def test_signoff_file_still_absent_on_disk() -> None:
-    """Sanity: the actual sign-off file must not exist under jobs/
-    anywhere in the test suite's lifetime."""
-    assert not SIGNOFF_FILE.exists()
+def test_signoff_file_state_on_disk() -> None:
+    """Sanity: ``stage3_signoff.json`` exists from Commit 45 onward
+    and carries the pinned policy_version + both required caveat
+    acknowledgements. Pre-Commit-45, this file was absent — that
+    state is documented in
+    ``docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`` and tested by the
+    aggregator's ``planned_not_signed`` happy-path test."""
+    if not SIGNOFF_FILE.exists():
+        pytest.skip("stage3_signoff.json absent (pre-Commit-45 state)")
+    record = json.loads(SIGNOFF_FILE.read_text(encoding="utf-8"))
+    assert record["signoff_status"] == "signed"
+    assert record["policy_version"] == PINNED_POLICY_VERSION
+    assert (
+        record["downstream_execution_authorized_in_this_commit"] is False
+    )
+    caveat_ids = {c["id"] for c in record["caveats_acknowledged"]}
+    assert "isolet_future_recalibration_candidate" in caveat_ids
+    assert "devnagari_extreme_budget_non_equivalence" in caveat_ids
 
 
 def test_committed_lane_summaries_round_trip_through_real_aggregator(
