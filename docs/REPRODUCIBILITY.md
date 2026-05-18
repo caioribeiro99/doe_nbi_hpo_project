@@ -168,20 +168,24 @@ every CC18 runner from Commit 38 onward consults. Extreme tasks
 are deferred unless `--include-extreme-tasks` is set. See
 `docs/HEAVY_TASK_POLICY.md`.
 
-**Stage 0 lane runs (Commits 40 → 42).** Per the heavy-task
+**Stage 0 lane runs (Commits 40 → 44).** Per the heavy-task
 policy (Commit 38), full stage 0 splits into three independent
 passes. Standard lane (`stage0_standard_lane_latest_summary.json`,
 Commit 40) covered the 57 standard tasks × 4 canary methods × 3
 algorithms = 684 cells; heavy lane
 (`stage0_heavy_lane_latest_summary.json`, Commit 41) covered the
-13 heavy tasks × 4 × 3 = 156 cells. Commit 42 adds
-`scripts/run_stage0_extreme_lane.py` in PLANNING-ONLY mode (runs
-default to a dry-run plan; real execution is locked behind
-`--execute-extreme-lane`); see `docs/EXTREME_LANE_PLAN.md` for
-the Devnagari-Script runtime forecast and the max_evaluations
-tradeoff. Stage 0 replica 1 is not considered complete until all
-three lanes have green stage-run summaries pinned to the same
-`policy_version`.
+13 heavy tasks × 4 × 3 = 156 cells. Commit 42 added
+`scripts/run_stage0_extreme_lane.py` in PLANNING-ONLY mode;
+Commit 43 executed the extreme lane (24 / 24 cells green at
+the policy's `stage0_max_evaluations = 1`). Commit 44 publishes
+the aggregate signoff plan via
+`scripts/build_stage0_replica_signoff.py` →
+`experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`
+with `signoff_status = "planned_not_signed"`. Stage 0 replica
+1 is now lane-complete (864 / 864 canary cells across 72
+tasks) but `jobs/doctoral/openml_cc18/stage3_signoff.json` is
+intentionally absent — creating it is a later operator-
+reviewed commit; see `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`.
 
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.

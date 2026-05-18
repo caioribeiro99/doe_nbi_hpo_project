@@ -153,22 +153,26 @@ splits into a standard / heavy / extreme pass, each with its own
 stage-run summary under `experiments/_stage_runs/`. See
 `docs/HEAVY_TASK_POLICY.md`.
 
-## Stage 0 lane progress (Commits 40 → 42)
+## Stage 0 lane progress (Commits 40 → 44)
 
 Stage 0 splits into three independent lanes per the heavy-task
 policy (Commit 38):
 
 - standard (Commit 40 `daae8ab`): 684 / 684 green;
 - heavy (Commit 41 `ddb657d`): 156 / 156 green;
-- extreme (Commit 42, planning only): see
-  `docs/EXTREME_LANE_PLAN.md`. The runner
-  (`scripts/run_stage0_extreme_lane.py`) ships in dry-run mode
-  and refuses execution unless `--execute-extreme-lane` is
-  explicitly passed. Commit 42 must NOT pass that flag.
+- extreme (Commit 43 `28961fe`): 24 / 24 green at the policy's
+  `extreme.stage0_max_evaluations = 1`;
+- aggregate signoff plan (Commit 44): 864 / 864 canary cells
+  across 72 tasks, all four artifacts pinned to the same
+  `policy_version`; `signoff_status = "planned_not_signed"`.
 
-All three lanes pin the same `policy_version`. The committed
-shards under `shards/stage0_replica_001/` are untouched (each
-lane uses copies under `runs/cc18/<run_id>/`).
+All lanes pin the same `policy_version`. The committed shards
+under `shards/stage0_replica_001/` are byte-identical to the
+Commit 28 baseline (each lane uses copies under
+`runs/cc18/<run_id>/`). `stage3_signoff.json` is intentionally
+absent; see `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the
+operator review surface and what the eventual signoff commit
+must record.
 
 ## Result handoff protocol (Commit 35)
 

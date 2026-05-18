@@ -109,11 +109,33 @@
 > `docs/EXTREME_LANE_PLAN.md` for the runtime forecast (~15.7 h
 > on the dedicated Mac, dominated by Devnagari-Script), the
 > max_evaluations 1-vs-5 tradeoff, and the promotion criteria
-> for stage 0 replica 1 complete. **Next operational step:**
-> human review of `docs/EXTREME_LANE_PLAN.md`, followed by
-> Commit 43 (or later) actually invoking the extreme lane with
-> `--execute-extreme-lane`. Do NOT touch the extreme lane until
-> the plan has been read.
+> for stage 0 replica 1 complete.
+>
+> **Commit 43 (`28961fe`) ran the extreme lane.** 24 / 24 cells
+> green in 30,844 s of runner CPU at the policy default
+> `extreme.stage0_max_evaluations = 1`. Devnagari-Script
+> doe_rsm peaked at 10,663 s (under the 14,400 s timeout).
+> All four stage-0 artifacts (standard / heavy / extreme-plan /
+> extreme) pin the same `policy_version`.
+>
+> **Commit 44 (this commit) plans the aggregate signoff.**
+> `scripts/build_stage0_replica_signoff.py` reads the three
+> lane summaries, records cross-lane invariants (same
+> policy_version, all green, source_shards_unchanged,
+> stage3_signoff_present=false), aggregates metrics by
+> lane / method / algorithm / task_type, and publishes
+> `experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`
+> with `signoff_status = "planned_not_signed"`. See
+> `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the operator
+> review surface and the `isolet` / `Devnagari-Script`
+> caveats.
+>
+> **Next operational step:** human review of the aggregate
+> signoff plan + the lane summaries. Only after that, a
+> separate operator-reviewed Commit 45+ may create
+> `jobs/doctoral/openml_cc18/stage3_signoff.json`, which
+> unlocks the stage-3 top-up machinery. Commit 44 does NOT
+> create that file.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

@@ -231,7 +231,7 @@ The interaction with the handoff protocol is additive:
 See `docs/HEAVY_TASK_POLICY.md` for the lane definitions and the
 classification rules.
 
-## Stage 0 lane summaries (Commits 40 → 42)
+## Stage 0 lane summaries (Commits 40 → 44)
 
 Stage 0 publishes one summary per lane under
 `experiments/_stage_runs/`:
@@ -241,9 +241,14 @@ Stage 0 publishes one summary per lane under
 - `stage0_extreme_lane_plan_latest_summary.{json,md}` —
   Commit 42 (planning-only; `execution_status =
   "planned_not_executed"`);
-- `stage0_extreme_lane_latest_summary.{json,md}` — a later
-  commit, only after `docs/EXTREME_LANE_PLAN.md` is reviewed
-  and `--execute-extreme-lane` is passed.
+- `stage0_extreme_lane_latest_summary.{json,md}` — Commit 43
+  (`28961fe`); ships with `execution_status = "executed"`.
+- `stage0_replica_001_signoff_plan_latest_summary.{json,md}` —
+  Commit 44 (this commit); aggregates the three lane summaries
+  with `signoff_status = "planned_not_signed"`. The actual
+  `jobs/doctoral/openml_cc18/stage3_signoff.json` is a still-
+  later operator-reviewed commit; see
+  `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`.
 
 The dedicated planning summary keeps the same JSON layout used
 by the other lanes, with an extra top-level field

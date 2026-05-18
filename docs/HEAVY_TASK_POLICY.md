@@ -126,11 +126,18 @@ The stage 0 split materialized as expected. As of Commit 42:
   green;
 - **heavy lane** ran in Commit 41 (`ddb657d`): 156 / 156 cells
   green;
-- **extreme lane** is in planning state under Commit 42 via
-  `scripts/run_stage0_extreme_lane.py --dry-run`. See
-  `docs/EXTREME_LANE_PLAN.md` — actual execution is gated behind
-  `--execute-extreme-lane` and will land in a later commit only
-  after the plan is reviewed.
+- **extreme lane** ran in Commit 43 (`28961fe`): 24 / 24 cells
+  green at the policy's `extreme.stage0_max_evaluations = 1`,
+  per-cell timeout 14,400 s. Devnagari-Script `doe_rsm` topped
+  out at 10,663 s — under the timeout. See
+  `docs/EXTREME_LANE_PLAN.md` for the budget-parity caveat.
+- **aggregate signoff plan** ships in Commit 44 via
+  `scripts/build_stage0_replica_signoff.py`, publishing
+  `experiments/_stage_runs/stage0_replica_001_signoff_plan_latest_summary.{json,md}`
+  with `signoff_status = "planned_not_signed"`. The actual
+  `jobs/doctoral/openml_cc18/stage3_signoff.json` is a still-
+  later operator-reviewed commit; see
+  `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md`.
 
 All three lanes pin the same `policy_version` SHA-256 so the
 three stage-run summaries belong to the same replica.
