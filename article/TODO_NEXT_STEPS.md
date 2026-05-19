@@ -147,15 +147,31 @@
 > training, shard mutation, or downstream execution is performed
 > by this commit.
 >
-> **Next operational step:** planning of the stage-3 top-up
-> commits. Now that `stage3_signoff.json` exists, the runner
-> will no longer refuse stage-3 rows on the absence gate, but
-> actual dispatch still needs a separate, operator-reviewed
-> commit (Commit 46+). That commit should decide which top-up
-> stages, which methods, which workers, and over what wall-clock
-> budget; it should also consider whether to recalibrate the
-> heavy-task policy (e.g. promote `isolet` to heavy) before
-> running replicas 2 → N under a fresh `policy_version`.
+> **Commit 46 plans stage-3 / top-up dispatch.**
+> `scripts/plan_stage3_topup.py` reads the Commit-45 signoff and
+> the three stage-0 lane summaries, computes the three top-up
+> tiers (`topup_to_5` / `topup_to_10` / `topup_to_30`, totalling
+> 25,056 additional canary cells across 30 replicas of the
+> 864-cell panel), records SHA-256-cross-checked invariants
+> against the live `heavy_task_policy.csv`, and publishes
+> `experiments/_stage_runs/stage3_topup_plan_latest_summary.{json,md}`
+> plus the per-tier / per-lane manifest
+> (`benchmarks/doctoral/openml_cc18/stage3_topup_manifest.{csv,md}`)
+> and the worker plan
+> (`benchmarks/doctoral/openml_cc18/stage3_worker_plan.{csv,md}`).
+> Three new docs frame the work:
+> `docs/STAGE3_TOPUP_EXECUTION_PLAN.md` (strategic context),
+> `docs/STAGE3_POLICY_DECISION.md` (Option A vs B vs C),
+> `docs/STAGE3_DISTRIBUTED_RUNBOOK.md` (per-worker operator
+> runbook). No Stage-3 / top-up execution happens in Commit 46.
+> No policy change happens either: Commit 46 implements
+> Option C and stays policy-neutral.
+>
+> **Next operational step:** Commit 47 should run a tiny
+> Stage-3 / top-up pilot — `replica_002`, `shard_00`, standard
+> lane, canary methods only, no heavy / extreme — and an
+> operator should review the pilot summary before scaling to
+> the full `topup_to_5`.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

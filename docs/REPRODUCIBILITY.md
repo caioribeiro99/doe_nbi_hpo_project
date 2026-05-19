@@ -194,6 +194,24 @@ invocations refuse if any lane summary is modified after
 signoff. See `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the
 review surface.
 
+**Stage-3 / top-up planning (Commit 46).** Commit 46 adds
+`scripts/plan_stage3_topup.py`, a read-only planner that reads
+the Commit-45 signoff and the three stage-0 lane summaries,
+computes the three top-up tiers (`topup_to_5`, `topup_to_10`,
+`topup_to_30`; 4 / 5 / 20 additional replicas; +3,456 / +4,320
+/ +17,280 additional canary cells; +25,056 in total across 30
+replicas), and publishes
+`experiments/_stage_runs/stage3_topup_plan_latest_summary.{json,md}`
+plus per-tier manifests under
+`benchmarks/doctoral/openml_cc18/stage3_topup_manifest.{csv,md}`
+and a worker plan under
+`benchmarks/doctoral/openml_cc18/stage3_worker_plan.{csv,md}`.
+The planner refuses on missing / unsigned signoff, on
+`policy_version` drift against the live `heavy_task_policy.csv`
+(unless `--allow-policy-drift-report-only` is passed), and on
+post-signoff lane-summary SHA-256 drift. No Stage-3 / top-up
+execution happens in Commit 46.
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

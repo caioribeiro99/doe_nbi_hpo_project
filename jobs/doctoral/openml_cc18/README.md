@@ -187,6 +187,35 @@ commits but does not itself dispatch any cells. See
 `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the review
 surface and the fields the signoff records.
 
+## Stage-3 / top-up planning (Commit 46)
+
+Commit 46 plans the dispatch from `stage0_replica_001` to the
+three top-up tiers without running any cells:
+
+- `topup_to_5`  — replicas 002–005, +3,456 additional canary
+  cells, shards under `shards/stage1_topup_to_005/`.
+- `topup_to_10` — replicas 006–010, +4,320 additional canary
+  cells, shards under `shards/stage2_topup_to_010/`.
+- `topup_to_30` — replicas 011–030, +17,280 additional canary
+  cells, shards under `shards/stage3_topup_to_030/`.
+
+The planner is `scripts/plan_stage3_topup.py`. It refuses on
+missing / unsigned signoff, on `policy_version` drift against
+the live `heavy_task_policy.csv`, and on post-signoff lane
+summary SHA-256 drift. Output lives at
+`experiments/_stage_runs/stage3_topup_plan_latest_summary.{json,md}`.
+Per-tier × per-lane manifests live at
+`benchmarks/doctoral/openml_cc18/stage3_topup_manifest.{csv,md}`
+and the worker plan at `stage3_worker_plan.{csv,md}`. Strategic
+context is in `docs/STAGE3_TOPUP_EXECUTION_PLAN.md`; the
+Option A/B/C policy decision is in
+`docs/STAGE3_POLICY_DECISION.md`; per-worker operator steps
+are in `docs/STAGE3_DISTRIBUTED_RUNBOOK.md`.
+
+No Stage-3 / top-up execution happens in Commit 46. The next
+execution commit is expected to be a tiny pilot: `replica_002`,
+`shard_00`, standard lane, canary methods only.
+
 ## Result handoff protocol (Commit 35)
 
 The committed shards under `shards/` are *immutable job-queue

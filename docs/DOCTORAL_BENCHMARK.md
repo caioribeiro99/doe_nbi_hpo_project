@@ -346,7 +346,7 @@ independent lanes, then a planning commit, then operator signoff:
 | heavy (13 tasks, 156 cells) | Commit 41 (`ddb657d`) | `scripts/run_stage0_heavy_lane.py` | green |
 | extreme (2 tasks, 24 cells) | Commit 43 (`28961fe`) | `scripts/run_stage0_extreme_lane.py --execute-extreme-lane` | green |
 | aggregate signoff plan | Commit 44 — **planning only** | `scripts/build_stage0_replica_signoff.py` | planned_not_signed |
-| operator signoff | Commit 45 (this commit) | `scripts/sign_stage0_replica_001.py` | signed |
+| operator signoff | Commit 45 | `scripts/sign_stage0_replica_001.py` | signed |
 
 All three lanes share the same `policy_version` SHA-256
 (`47b6b50c6d1e1d09087c148bb69464bbed99eface9c411c621331a4ad7855f36`).
@@ -363,6 +363,25 @@ aggregator so the published summary now reads
 `docs/STAGE0_REPLICA_001_SIGNOFF_PLAN.md` for the review
 surface, the `isolet` / `Devnagari-Script` caveats, and the
 exact fields the signoff records.
+
+## Stage-3 / top-up planning (Commit 46)
+
+Commit 46 is the planning commit that scaffolds the scaling
+from `stage0_replica_001` to the three top-up tiers
+(`topup_to_5`, `topup_to_10`, `topup_to_30` — 4 / 5 / 20
+additional replicas, +3,456 / +4,320 / +17,280 canary cells).
+It adds `scripts/plan_stage3_topup.py` (read-only planner),
+emits a JSON / MD plan summary under
+`experiments/_stage_runs/stage3_topup_plan_latest_summary.{json,md}`,
+and publishes machine-readable manifests under
+`benchmarks/doctoral/openml_cc18/stage3_topup_manifest.{csv,md}`
+and `stage3_worker_plan.{csv,md}`. Three new docs frame the
+work: `docs/STAGE3_TOPUP_EXECUTION_PLAN.md`,
+`docs/STAGE3_POLICY_DECISION.md`, and
+`docs/STAGE3_DISTRIBUTED_RUNBOOK.md`. No Stage-3 / top-up
+execution happens in Commit 46. The next execution commit
+(Commit 47) is expected to be a tiny Stage-3 pilot:
+`replica_002`, `shard_00`, standard lane, canary methods only.
 
 ## Result handoff protocol (Commit 35)
 

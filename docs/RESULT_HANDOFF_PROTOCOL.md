@@ -289,6 +289,16 @@ summary's `execution_status` is `executed`.
   file is absent; once present, it still does not auto-dispatch
   — actual stage-3 execution is a separate, operator-reviewed
   commit.
+- Stage-3 / top-up *planning* (Commit 46 onward) is also read-
+  only against the handoff protocol. `scripts/plan_stage3_topup.py`
+  reads the signoff + lane summaries + `heavy_task_policy.csv` +
+  shard MD5s and publishes
+  `experiments/_stage_runs/stage3_topup_plan_latest_summary.{json,md}`.
+  The planner refuses if the live `policy_version` differs from
+  the signed one (unless `--allow-policy-drift-report-only` is
+  passed) and if any lane summary's SHA-256 drifted since
+  signoff. The planner does not create execution SQLite files
+  and does not mutate committed shards.
 
 ## What gets committed vs. what does not
 

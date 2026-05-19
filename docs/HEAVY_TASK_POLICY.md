@@ -147,6 +147,24 @@ The stage 0 split materialized as expected. As of Commit 45:
 All three lanes pin the same `policy_version` SHA-256 so the
 three stage-run summaries belong to the same replica.
 
+## Stage-3 / top-up planning (Commit 46)
+
+Commit 46 plans the scaling from the signed
+`stage0_replica_001` to the three top-up tiers (`topup_to_5`,
+`topup_to_10`, `topup_to_30`) without dispatching any execution.
+`scripts/plan_stage3_topup.py` reads the live
+`heavy_task_policy.csv` SHA-256 and the policy_version recorded
+in `stage3_signoff.json` and refuses if they diverge — unless the
+operator explicitly asks for a *candidate drift report* via
+`--allow-policy-drift-report-only`. The drift report is a
+planning artifact only; it does not create a new
+`heavy_task_policy.csv` and does not change `policy_version`.
+`docs/STAGE3_POLICY_DECISION.md` describes the Option A
+(freeze) vs Option B (re-policy for R≥2) vs Option C
+(produce drift report; defer decision) trade-off. Commit 46
+implements Option C: the policy stays frozen until a future,
+deliberate operator commit decides otherwise.
+
 ## Stage 0 split
 
 Full stage 0 will no longer run as a single 2 304-job pass.
