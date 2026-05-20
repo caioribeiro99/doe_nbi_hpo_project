@@ -12,9 +12,12 @@ Mac, or a contingency host). It assumes:
   (`shard_00` / replica 2 / standard lane / canary methods only;
   see `experiments/_stage_runs/`
   `stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`).
-  Operator review of that summary is required before scaling to
-  any larger Stage-3 run; the runbook below stays valid for
-  *that* future, larger run.
+- Commit 48 expanded the pilot to **replica_002 standard lane
+  across all 10 shards** (still no heavy / extreme; still no
+  full `topup_to_5`; see `experiments/_stage_runs/`
+  `stage3_replica_002_standard_lane_latest_summary.{json,md}`).
+  Operator review of that summary is required before any
+  heavy-lane or broader top-up execution.
 - The reader is the operator on a worker machine.
 
 The runbook is **execution-oriented**. It does not change policy,
@@ -301,16 +304,21 @@ git pull --ff-only
 python scripts/plan_stage3_topup.py
 ```
 
-Commit 47 has now executed the tiny Stage-3 / top-up pilot
+Commit 47 has executed the tiny Stage-3 / top-up pilot
 (`shard_00` / replica 2 / standard lane / canary methods only).
-The pilot summary at
+Commit 48 has expanded the pilot to **replica_002 standard lane
+across all 10 shards** (still no heavy, no extreme, no full
+`topup_to_5`). Both summaries at
 `experiments/_stage_runs/`
 `stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`
+and
+`experiments/_stage_runs/`
+`stage3_replica_002_standard_lane_latest_summary.{json,md}`
 **must** be operator-reviewed before any further Stage-3 dispatch.
-Do not scale directly to the full `topup_to_5` tier from the pilot:
-the next planned step is a slightly larger Stage-3 pilot
-(replica 2 across all standard-lane shards, or shard_00 standard +
-a selected heavy probe).
+Do not scale directly to the full `topup_to_5` tier; the next
+planned step is for the operator to decide between running
+replica_002 heavy lane, a selected heavy-lane pilot first, or an
+aggregate review for replica_002 standard before heavy execution.
 
 When a per-tier aggregator script lands (planned after operator
 review of Commit 47), the personal Mac will run it here and either

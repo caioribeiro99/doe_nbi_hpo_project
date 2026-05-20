@@ -207,6 +207,35 @@
 > `shard_00` standard + a selected heavy probe. Do not
 > scale directly to the full `topup_to_5` tier without
 > reviewing the Commit-47 summary.
+>
+> **Commit 48 (this commit) expanded the pilot to replica_002
+> standard lane across all 10 shards.**
+> `scripts/run_stage3_replica002_standard_lane.py` chains three
+> gates — Commit 45 signoff, Commit 46 plan summary, Commit 47
+> pilot summary — refusing on missing files, drifted
+> `policy_version`, a failed pilot, or a pilot that exercised a
+> different scope. It copies all ten `shard_NN.sqlite` files
+> from `shards/stage0_replica_001/` into `runs/cc18/<run_id>/`,
+> rewrites every copy so every row carries `replica = 2` and
+> `stage = 'stage1_topup_to_005'`, defers heavy / extreme rows,
+> refuses non-canary rows, and executes the 684 standard-lane
+> canary cells (57 standard tasks × 4 canary methods × 3
+> algorithms). The 10 committed source shards are
+> byte-identical pre/post run; no execution SQLite, fitted
+> model, raw OpenML payload, notebook, or fairness artifact is
+> staged. The committed summary lives at
+> `experiments/_stage_runs/`
+> `stage3_replica_002_standard_lane_latest_summary.{json,md}`.
+> Commit 48 does **not** run the full `topup_to_5` tier, the
+> heavy lane, the extreme lane, or any other replica.
+>
+> **Next operational step (after Commit 48):** only after the
+> Commit-48 summary has been operator-reviewed, Commit 49
+> should decide whether to: (a) run replica_002 heavy lane;
+> (b) run a selected heavy-lane pilot first; or (c) create an
+> aggregate review for replica_002 standard before heavy
+> execution. Do not scale directly to the full `topup_to_5`
+> tier without reviewing the Commit-48 summary.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

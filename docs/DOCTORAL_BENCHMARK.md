@@ -411,6 +411,28 @@ heavy lane, or the extreme lane. Operator review of the
 pilot summary is required before any further Stage-3 / top-up
 dispatch.
 
+## Stage-3 / top-up replica_002 standard lane (Commit 48)
+
+Commit 48 expands the Commit 47 single-shard pilot to the full
+standard lane for one replica: **all 10** source template
+shards, ``replica = 2`` only, standard lane only, canary methods
+only. The runner
+`scripts/run_stage3_replica002_standard_lane.py` chains three
+gates (Commit 45 signoff → Commit 46 plan → Commit 47 pilot
+summary) before copying any shard. It copies all ten
+`shard_NN.sqlite` files into `runs/cc18/<run_id>/`, rewrites
+every copy so all rows carry ``replica = 2`` and
+``stage = 'stage1_topup_to_005'``, defers heavy / extreme rows,
+refuses non-canary rows, and executes the 684 standard-lane
+canary cells. The 10 committed source shards remain
+byte-identical. The committed summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_standard_lane_latest_summary.{json,md}`.
+
+Commit 48 still does **not** run the full `topup_to_5` tier,
+heavy lane, extreme lane, or any other replica. Operator review
+is required before any heavy-lane or broader top-up execution.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac

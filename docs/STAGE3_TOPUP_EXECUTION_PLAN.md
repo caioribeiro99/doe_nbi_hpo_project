@@ -337,3 +337,48 @@ plan or run only a *slightly* larger Stage-3 pilot (e.g. replica 2
 across all 10 standard-lane shards, or shard_00 standard + a
 selected heavy probe). Do not scale directly to the full
 `topup_to_5` tier without reviewing the Commit 47 summary.
+
+## Commit 48 — replica_002 standard lane across all 10 shards
+
+Commit 48 expands the Commit 47 single-shard pilot to the full
+standard lane for one replica:
+
+- **all 10** source template shards;
+- one replica (`replica = 2`, the first replica of the
+  `topup_to_5` tier);
+- one lane (`standard`);
+- four canary methods × three algorithms only;
+- 684 executable standard-lane canary cells total
+  (57 standard tasks × 4 canary × 3 algorithms).
+
+Commit 48 chains three gates: the Commit 45 signoff, the
+Commit 46 plan summary, and the **Commit 47 pilot summary**
+(`execution_status = executed`, `replica = 2`, `lane = standard`,
+68 / 68 success, no failures, same pinned `policy_version`).
+
+What Commit 48 explicitly does **not** do:
+
+- run any other replica (3 / 4 / 5);
+- run the heavy or extreme lanes;
+- run non-canary methods;
+- run the full `topup_to_5` tier (3,456 canary cells across
+  replicas 2–5);
+- regenerate `heavy_task_policy.csv` or
+  `runtime_guardrails.yaml`;
+- mutate any committed source shard;
+- commit raw OpenML payloads or execution SQLite files.
+
+Artifacts published in Commit 48:
+
+- `scripts/run_stage3_replica002_standard_lane.py`;
+- `tests/unit/test_stage3_replica002_standard_lane.py`;
+- `experiments/_stage_runs/`
+  `stage3_replica_002_standard_lane_latest_summary.{json,md}`.
+
+**Operator review is still required before any heavy-lane or
+broader top-up execution.** Only after the Commit 48 summary has
+been operator-reviewed, Commit 49 should decide whether to:
+(a) run replica_002 heavy lane; (b) run a selected heavy-lane
+pilot first; or (c) create an aggregate review for replica_002
+standard before heavy execution. Do not scale directly to the
+full `topup_to_5` tier without reviewing the Commit 48 summary.

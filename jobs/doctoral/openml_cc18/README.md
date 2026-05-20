@@ -242,6 +242,32 @@ Commit 47 does **not** run the full `topup_to_5` tier, the
 heavy lane, or the extreme lane. Operator review is required
 before any further Stage-3 / top-up dispatch.
 
+## Stage-3 / top-up replica_002 standard lane (Commit 48)
+
+Commit 48 expands the Commit 47 single-shard pilot to the
+full standard lane for one replica:
+
+- **all 10** source template shards;
+- one replica (`replica = 2`);
+- one lane (`standard`);
+- four canary methods × three algorithms only.
+
+The runner `scripts/run_stage3_replica002_standard_lane.py`
+chains three gates — the Commit 45 signoff, the Commit 46 plan
+summary, and the Commit 47 pilot summary — refusing on missing
+files, drifted `policy_version`, a failed pilot, or a pilot
+that ran a different scope. It copies all ten shards into
+`runs/cc18/<run_id>/`, rewrites every copy so every row carries
+`replica = 2` and `stage = 'stage1_topup_to_005'`, defers heavy
+/ extreme rows, refuses non-canary rows, and executes the 684
+standard-lane canary cells. The 10 committed source shards
+remain byte-identical. The committed summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_standard_lane_latest_summary.{json,md}`.
+Commit 48 still does **not** run the full `topup_to_5` tier,
+heavy lane, extreme lane, or any other replica. Operator review
+is required before any heavy-lane or broader top-up execution.
+
 ## Result handoff protocol (Commit 35)
 
 The committed shards under `shards/` are *immutable job-queue
