@@ -172,6 +172,41 @@
 > lane, canary methods only, no heavy / extreme — and an
 > operator should review the pilot summary before scaling to
 > the full `topup_to_5`.
+>
+> **Commit 47 (this commit) ran the tiny Stage-3 / top-up
+> pilot.**
+> `scripts/run_stage3_pilot_replica002_shard00_standard_lane.py`
+> verifies the Commit-45 signoff and the Commit-46 plan
+> summary (refusing on missing files, drifted
+> `policy_version`, or a plan that excludes `replica = 2`
+> from `topup_to_5`), copies `shard_00.sqlite` from
+> `shards/stage0_replica_001/` into `runs/cc18/<run_id>/`,
+> rewrites the copy so every row carries `replica = 2` and
+> `stage = 'stage1_topup_to_005'`, defers heavy and extreme
+> rows, refuses non-canary rows, and executes the 68
+> standard-lane canary cells on shard_00 (4 canary methods ×
+> 3 algorithms × 17 standard tasks ≈ 68 with the catboost-
+> excluded shape baked into the schedule). The committed
+> source shard is byte-identical pre/post pilot; no
+> execution SQLite, fitted model, raw OpenML payload,
+> notebook, or fairness artifact is staged. The committed
+> summary lives at `experiments/_stage_runs/`
+> `stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`.
+> Commit 47 does **not** run the full `topup_to_5` tier, the
+> heavy lane, or the extreme lane, and does **not**
+> regenerate `heavy_task_policy.csv`,
+> `heavy_task_policy_report.md`, or
+> `runtime_guardrails.yaml`. Operator review of the pilot
+> summary is required before any further Stage-3 / top-up
+> dispatch.
+>
+> **Next operational step (after Commit 47):** only after
+> the pilot summary has been operator-reviewed, Commit 48
+> should plan or run a slightly larger Stage-3 pilot — e.g.
+> `replica_002` across all 10 standard-lane shards, or
+> `shard_00` standard + a selected heavy probe. Do not
+> scale directly to the full `topup_to_5` tier without
+> reviewing the Commit-47 summary.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

@@ -212,6 +212,28 @@ The planner refuses on missing / unsigned signoff, on
 post-signoff lane-summary SHA-256 drift. No Stage-3 / top-up
 execution happens in Commit 46.
 
+**Stage-3 / top-up tiny pilot (Commit 47).** Commit 47 adds
+`scripts/run_stage3_pilot_replica002_shard00_standard_lane.py`
+and runs the **first real Stage-3 / top-up execution** on this
+repository. The pilot is deliberately tiny: one shard
+(`shard_00`), one replica (`replica = 2`, the first replica of
+the `topup_to_5` tier), the standard lane only, and the four
+canary methods only. The pilot script gates on the Commit-45
+signoff and the Commit-46 plan summary, refusing on missing
+files, drifted `policy_version`, or a plan summary that does
+not list `replica = 2` under `topup_to_5`. It copies
+`shard_00.sqlite` under `runs/cc18/<run_id>/`, rewrites the
+copy so every row carries `replica = 2` and
+`stage = 'stage1_topup_to_005'`, defers heavy / extreme rows,
+refuses non-canary rows, and executes the 68 standard-lane
+canary cells. The committed source shard remains byte-identical
+across the pilot. The committed summary lands at
+`experiments/_stage_runs/`
+`stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`.
+Commit 47 does **not** run the full `topup_to_5` tier, heavy
+lane, or extreme lane. Operator review is required before any
+further Stage-3 / top-up dispatch.
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

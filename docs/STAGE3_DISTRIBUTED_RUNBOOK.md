@@ -8,6 +8,13 @@ Mac, or a contingency host). It assumes:
   (`jobs/doctoral/openml_cc18/stage3_signoff.json` exists with
   `signoff_status = "signed"`).
 - Commit 46 published the top-up plan, manifests, and worker plan.
+- Commit 47 ran the **tiny Stage-3 / top-up pilot**
+  (`shard_00` / replica 2 / standard lane / canary methods only;
+  see `experiments/_stage_runs/`
+  `stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`).
+  Operator review of that summary is required before scaling to
+  any larger Stage-3 run; the runbook below stays valid for
+  *that* future, larger run.
 - The reader is the operator on a worker machine.
 
 The runbook is **execution-oriented**. It does not change policy,
@@ -294,10 +301,21 @@ git pull --ff-only
 python scripts/plan_stage3_topup.py
 ```
 
-When a per-tier aggregator script lands (planned for the next
-commit after the Commit-47 pilot), the personal Mac will run it
-here and either publish a planning-only artifact or, after operator
-review, write the per-tier signoff.
+Commit 47 has now executed the tiny Stage-3 / top-up pilot
+(`shard_00` / replica 2 / standard lane / canary methods only).
+The pilot summary at
+`experiments/_stage_runs/`
+`stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`
+**must** be operator-reviewed before any further Stage-3 dispatch.
+Do not scale directly to the full `topup_to_5` tier from the pilot:
+the next planned step is a slightly larger Stage-3 pilot
+(replica 2 across all standard-lane shards, or shard_00 standard +
+a selected heavy probe).
+
+When a per-tier aggregator script lands (planned after operator
+review of Commit 47), the personal Mac will run it here and either
+publish a planning-only artifact or, after operator review, write
+the per-tier signoff.
 
 ## Step 15 — health checks before each run
 

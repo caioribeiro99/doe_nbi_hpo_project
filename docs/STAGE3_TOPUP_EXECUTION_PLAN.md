@@ -301,3 +301,39 @@ Commit 47 is the **tiny Stage-3 / top-up pilot**:
 After Commit 47 publishes a clean pilot summary and an operator
 review, the next commit dispatches the rest of `topup_to_5` per
 the worker plan.
+
+## Commit 47 — first real Stage-3 / top-up execution (tiny pilot)
+
+Commit 47 is the **first real Stage-3 / top-up execution** on this
+repo. It is deliberately tiny and controlled:
+
+- one shard: `shard_00`;
+- one replica: `2` (the first replica of the `topup_to_5` tier);
+- one lane: `standard`;
+- four canary methods × three algorithms only;
+- 68 executable standard-lane canary cells on shard_00
+  (31 heavy rows deferred, 11 extreme rows deferred, 109
+  non-canary rows refused).
+
+What Commit 47 explicitly does **not** do:
+
+- run the full `topup_to_5` tier (3,456 canary cells across 10
+  shards × 4 replicas);
+- run the heavy or extreme lanes;
+- regenerate `heavy_task_policy.csv`, its report, or
+  `runtime_guardrails.yaml`;
+- mutate any committed source shard;
+- commit raw OpenML payloads or execution SQLite files.
+
+Pilot artifacts published in Commit 47:
+
+- `scripts/run_stage3_pilot_replica002_shard00_standard_lane.py`;
+- `tests/unit/test_stage3_pilot_replica002_shard00_standard_lane.py`;
+- `experiments/_stage_runs/`
+  `stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`.
+
+**Operator review is required before scaling.** Commit 48 should
+plan or run only a *slightly* larger Stage-3 pilot (e.g. replica 2
+across all 10 standard-lane shards, or shard_00 standard + a
+selected heavy probe). Do not scale directly to the full
+`topup_to_5` tier without reviewing the Commit 47 summary.

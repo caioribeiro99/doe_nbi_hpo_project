@@ -383,6 +383,34 @@ execution happens in Commit 46. The next execution commit
 (Commit 47) is expected to be a tiny Stage-3 pilot:
 `replica_002`, `shard_00`, standard lane, canary methods only.
 
+## Stage-3 / top-up tiny pilot (Commit 47)
+
+Commit 47 is the **first real Stage-3 / top-up execution** on
+this repository. It is intentionally tiny:
+
+- one shard (`shard_00`);
+- one replica (`replica = 2`, the first replica of the
+  `topup_to_5` tier);
+- standard lane only;
+- canary methods only.
+
+The pilot script is
+`scripts/run_stage3_pilot_replica002_shard00_standard_lane.py`.
+It copies `shard_00.sqlite` under `runs/cc18/<run_id>/`,
+rewrites the **copy** to carry `replica = 2` and
+`stage = 'stage1_topup_to_005'` (the closest existing label in
+the SQLite CHECK constraint for the `topup_to_5` tier), defers
+heavy / extreme rows, refuses non-canary rows, and executes
+the 68 standard-lane canary cells. The committed source shard
+stays byte-identical. The committed summary lands at
+`experiments/_stage_runs/`
+`stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`.
+
+Commit 47 does **not** run the full `topup_to_5` tier, the
+heavy lane, or the extreme lane. Operator review of the
+pilot summary is required before any further Stage-3 / top-up
+dispatch.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac
