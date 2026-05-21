@@ -236,6 +236,41 @@
 > aggregate review for replica_002 standard before heavy
 > execution. Do not scale directly to the full `topup_to_5`
 > tier without reviewing the Commit-48 summary.
+>
+> **Commit 49 (this commit) ran replica_002 heavy lane across
+> all 10 shards.**
+> `scripts/run_stage3_replica002_heavy_lane.py` chains four
+> gates — Commit 45 signoff, Commit 46 plan summary, Commit 48
+> standard-lane summary (refusing on a non-green standard
+> pass), and a defensive isolet-lane guard. It copies all ten
+> `shard_NN.sqlite` files from `shards/stage0_replica_001/`
+> into `runs/cc18/<run_id>/`, rewrites the copies so every row
+> carries `replica = 2` and `stage = 'stage1_topup_to_005'`,
+> defers standard / extreme rows, refuses non-canary rows, and
+> executes the 156 heavy-lane canary cells (13 heavy tasks × 4
+> canary methods × 3 algorithms) at the policy's
+> `stage0_max_evaluations = 5` budget with the 7,200 s per-cell
+> timeout. The 10 committed source shards are byte-identical
+> pre/post run; no execution SQLite, fitted model, raw OpenML
+> payload, notebook, or fairness artifact is staged. The
+> committed summary lives at
+> `experiments/_stage_runs/`
+> `stage3_replica_002_heavy_lane_latest_summary.{json,md}`.
+> Commit 49 does **not** run the full `topup_to_5` tier, the
+> extreme lane, or any other replica; it does **not** rerun
+> the standard lane; and it does **not** promote `isolet`
+> (task 3481) into the heavy lane — isolet remains a future
+> policy recalibration candidate under signoff caveat 1, but
+> the pinned `policy_version` keeps it standard for this
+> commit.
+>
+> **Next operational step (after Commit 49):** only after the
+> Commit-49 summary has been operator-reviewed, Commit 50
+> should plan the replica_002 extreme lane (Devnagari-Script +
+> the second extreme task under the pinned policy). Do not run
+> extreme lane in Commit 49. Do not scale to replicas 3–5
+> until replica_002 standard + heavy + extreme has been
+> reviewed end-to-end.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

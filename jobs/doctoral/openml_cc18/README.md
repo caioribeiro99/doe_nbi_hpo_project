@@ -268,6 +268,34 @@ Commit 48 still does **not** run the full `topup_to_5` tier,
 heavy lane, extreme lane, or any other replica. Operator review
 is required before any heavy-lane or broader top-up execution.
 
+## Stage-3 / top-up replica_002 heavy lane (Commit 49)
+
+Commit 49 runs the heavy-lane companion on replica 2:
+
+- **all 10** source template shards;
+- one replica (`replica = 2`);
+- one lane (`heavy`);
+- four canary methods × three algorithms only;
+- 156 executable heavy-lane canary cells total.
+
+The runner `scripts/run_stage3_replica002_heavy_lane.py` chains
+four gates (signoff → top-up plan → Commit 48 standard summary →
+defensive isolet guard) before copying any shard. It copies all
+10 shards into `runs/cc18/<run_id>/`, rewrites the copies to
+`replica = 2` / `stage = 'stage1_topup_to_005'`, defers standard
+/ extreme rows, refuses non-canary rows, and executes the 156
+heavy-lane canary cells at the policy's
+`stage0_max_evaluations = 5` budget. The 10 committed source
+shards remain byte-identical. The committed summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_heavy_lane_latest_summary.{json,md}`.
+
+Commit 49 still does **not** run the full `topup_to_5` tier,
+extreme lane, or any other replica; it does **not** rerun the
+standard lane; and it does **not** promote `isolet` (task 3481)
+into the heavy lane. Operator review is required before any
+extreme-lane or broader top-up execution.
+
 ## Result handoff protocol (Commit 35)
 
 The committed shards under `shards/` are *immutable job-queue

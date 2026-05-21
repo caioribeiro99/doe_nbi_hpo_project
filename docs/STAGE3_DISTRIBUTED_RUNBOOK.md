@@ -16,8 +16,13 @@ Mac, or a contingency host). It assumes:
   across all 10 shards** (still no heavy / extreme; still no
   full `topup_to_5`; see `experiments/_stage_runs/`
   `stage3_replica_002_standard_lane_latest_summary.{json,md}`).
+- Commit 49 ran the **replica_002 heavy lane across all 10
+  shards** (still no extreme; still no standard rerun; still
+  no full `topup_to_5`; isolet not promoted to heavy; see
+  `experiments/_stage_runs/`
+  `stage3_replica_002_heavy_lane_latest_summary.{json,md}`).
   Operator review of that summary is required before any
-  heavy-lane or broader top-up execution.
+  extreme-lane or broader top-up execution.
 - The reader is the operator on a worker machine.
 
 The runbook is **execution-oriented**. It does not change policy,
@@ -308,17 +313,23 @@ Commit 47 has executed the tiny Stage-3 / top-up pilot
 (`shard_00` / replica 2 / standard lane / canary methods only).
 Commit 48 has expanded the pilot to **replica_002 standard lane
 across all 10 shards** (still no heavy, no extreme, no full
-`topup_to_5`). Both summaries at
+`topup_to_5`). Commit 49 has run the **replica_002 heavy lane
+across all 10 shards** (no standard rerun, no extreme, no full
+`topup_to_5`; isolet kept standard under the pinned policy). All
+three summaries at
 `experiments/_stage_runs/`
-`stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`
+`stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`,
+`experiments/_stage_runs/`
+`stage3_replica_002_standard_lane_latest_summary.{json,md}`,
 and
 `experiments/_stage_runs/`
-`stage3_replica_002_standard_lane_latest_summary.{json,md}`
-**must** be operator-reviewed before any further Stage-3 dispatch.
-Do not scale directly to the full `topup_to_5` tier; the next
-planned step is for the operator to decide between running
-replica_002 heavy lane, a selected heavy-lane pilot first, or an
-aggregate review for replica_002 standard before heavy execution.
+`stage3_replica_002_heavy_lane_latest_summary.{json,md}`
+**must** be operator-reviewed before any further Stage-3
+dispatch. Do not scale directly to the full `topup_to_5` tier;
+the next planned step is for the operator to decide whether to
+plan the replica_002 extreme lane (Commit 50 candidate) or run
+an aggregate review of replica_002 standard + heavy before
+extreme execution.
 
 When a per-tier aggregator script lands (planned after operator
 review of Commit 47), the personal Mac will run it here and either

@@ -255,6 +255,29 @@ Commit 48 still does **not** run the full `topup_to_5` tier,
 heavy lane, extreme lane, or any other replica. Operator review
 is required before any heavy-lane or broader top-up execution.
 
+**Stage-3 / top-up replica_002 heavy lane (Commit 49).** Commit
+49 adds `scripts/run_stage3_replica002_heavy_lane.py` and runs
+the heavy-lane companion to Commit 48: all 10 source template
+shards, `replica = 2`, the heavy lane only, and the four canary
+methods only. The runner chains four gates: the Commit 45
+signoff, the Commit 46 plan summary, the Commit 48 standard-lane
+summary (refusing on a non-green standard pass), and a
+defensive isolet-lane guard. It copies all ten
+`shard_NN.sqlite` files under `runs/cc18/<run_id>/`, rewrites
+the copies to `replica = 2` /
+`stage = 'stage1_topup_to_005'`, defers standard / extreme
+rows, refuses non-canary rows, and executes the 156 heavy-lane
+canary cells at `stage0_max_evaluations = 5` with a per-cell
+timeout of 7,200 s. The 10 committed source shards remain
+byte-identical. The committed summary lands at
+`experiments/_stage_runs/`
+`stage3_replica_002_heavy_lane_latest_summary.{json,md}`.
+Commit 49 still does **not** run the full `topup_to_5` tier,
+the extreme lane, or any other replica; it does **not** rerun
+the standard lane; and it does **not** promote `isolet` (task
+3481) into the heavy lane. Operator review is required before
+any extreme-lane or broader top-up execution.
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

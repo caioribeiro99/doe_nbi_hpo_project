@@ -382,3 +382,59 @@ been operator-reviewed, Commit 49 should decide whether to:
 pilot first; or (c) create an aggregate review for replica_002
 standard before heavy execution. Do not scale directly to the
 full `topup_to_5` tier without reviewing the Commit 48 summary.
+
+## Commit 49 — replica_002 heavy lane across all 10 shards
+
+Commit 49 runs the heavy-lane companion to Commit 48 on replica
+2:
+
+- **all 10** source template shards;
+- one replica (`replica = 2`);
+- one lane (`heavy`);
+- four canary methods × three algorithms only;
+- 156 executable heavy-lane canary cells total
+  (13 heavy tasks × 4 canary × 3 algorithms).
+
+The runner
+`scripts/run_stage3_replica002_heavy_lane.py` chains four
+checks: the Commit 45 signoff, the Commit 46 plan summary, the
+Commit 48 standard-lane summary (684 / 684 success), and a
+defensive guard refusing if `isolet` ever shows up as `heavy`
+under the live policy.
+
+Heavy-lane policy budget under
+`benchmarks/doctoral/openml_cc18/runtime_guardrails.yaml`:
+
+- per-cell timeout = **7,200 s** (2 h);
+- `stage0_max_evaluations` = **5** (same as Commit 41's stage-0
+  heavy run — top-up cells stack under the signed-off budget).
+
+What Commit 49 explicitly does **not** do:
+
+- run any other replica (3 / 4 / 5);
+- rerun the standard lane (already green via Commit 48);
+- run the extreme lane (gated to a later commit);
+- run non-canary methods;
+- run the full `topup_to_5` tier;
+- regenerate `heavy_task_policy.csv` or
+  `runtime_guardrails.yaml`;
+- **promote `isolet` (task 3481) into the heavy lane**: isolet
+  remains a *future* policy recalibration candidate under
+  signoff caveat 1, but the pinned `policy_version` keeps it
+  standard for this commit;
+- mutate any committed source shard;
+- commit raw OpenML payloads or execution SQLite files.
+
+Artifacts published in Commit 49:
+
+- `scripts/run_stage3_replica002_heavy_lane.py`;
+- `tests/unit/test_stage3_replica002_heavy_lane.py`;
+- `experiments/_stage_runs/`
+  `stage3_replica_002_heavy_lane_latest_summary.{json,md}`.
+
+**Operator review is required before any extreme-lane or broader
+top-up execution.** Only after the Commit 49 summary has been
+operator-reviewed, Commit 50 should plan the replica_002 extreme
+lane (Devnagari-Script + the second extreme task under the
+pinned policy). Do not scale to replicas 3–5 until replica_002
+standard + heavy + extreme has been reviewed end-to-end.

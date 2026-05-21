@@ -433,6 +433,32 @@ Commit 48 still does **not** run the full `topup_to_5` tier,
 heavy lane, extreme lane, or any other replica. Operator review
 is required before any heavy-lane or broader top-up execution.
 
+## Stage-3 / top-up replica_002 heavy lane (Commit 49)
+
+Commit 49 runs the heavy-lane companion on replica 2: all 10
+source template shards, heavy lane only, four canary methods
+only — 156 executable heavy-lane canary cells total. The runner
+`scripts/run_stage3_replica002_heavy_lane.py` chains four gates
+(Commit 45 signoff → Commit 46 plan → Commit 48 standard-lane
+summary → defensive isolet-lane guard) before copying any shard.
+It rewrites the 10 execution copies to `replica = 2` and
+`stage = 'stage1_topup_to_005'`, defers standard / extreme rows,
+refuses non-canary rows, and executes the 156 heavy-lane canary
+cells at the policy's `stage0_max_evaluations = 5` budget with
+the 7,200 s per-cell timeout. The 10 committed source shards
+remain byte-identical. The committed summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_heavy_lane_latest_summary.{json,md}`.
+
+Commit 49 does **not** run the full `topup_to_5` tier, the
+extreme lane, or any other replica, and does **not** rerun the
+standard lane. It also does **not** promote `isolet` (task 3481)
+into the heavy lane — isolet remains a future policy
+recalibration candidate under signoff caveat 1, but the pinned
+`policy_version` keeps it standard for this commit. Operator
+review is required before the extreme lane or broader top-up
+execution.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac
