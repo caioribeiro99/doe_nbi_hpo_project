@@ -438,3 +438,55 @@ operator-reviewed, Commit 50 should plan the replica_002 extreme
 lane (Devnagari-Script + the second extreme task under the
 pinned policy). Do not scale to replicas 3–5 until replica_002
 standard + heavy + extreme has been reviewed end-to-end.
+
+## Commit 50 — plan replica_002 extreme lane (planning-only)
+
+Commit 50 is the **planning** counterpart to Commit 49: it
+chains four gates (signoff → Commit 46 plan → Commit 48 standard
+summary → Commit 49 heavy summary) and emits a read-only
+extreme-lane plan summary for replica_002 without executing
+anything. See `docs/STAGE3_REPLICA002_EXTREME_PLAN.md` for the
+full narrative.
+
+Scope:
+
+- 2 extreme tasks under the pinned policy: **6 / `letter`** and
+  **167121 / `Devnagari-Script`**;
+- 2 tasks × 4 canary methods × 3 algorithms = **24** planned
+  runnable extreme canary cells;
+- 42 extreme non-canary rows planned for refusal;
+- 1,815 standard rows already completed in Commit 48 and 423
+  heavy rows already completed in Commit 49 are skipped as
+  authoritative.
+
+Commit 50 explicitly does **not**:
+
+- run training of any kind;
+- create execution SQLite files under `runs/`;
+- mutate any committed source shard;
+- regenerate `heavy_task_policy.csv` or
+  `runtime_guardrails.yaml`;
+- create or modify `stage3_signoff.json`;
+- rerun the standard lane (Commit 48 stands);
+- rerun the heavy lane (Commit 49 stands);
+- execute the extreme lane (Commit 51 candidate);
+- run the full `topup_to_5` tier;
+- touch replicas 003 / 004 / 005.
+
+Artifacts published in Commit 50:
+
+- `scripts/plan_stage3_replica002_extreme_lane.py`;
+- `tests/unit/test_stage3_replica002_extreme_lane_plan.py`;
+- `docs/STAGE3_REPLICA002_EXTREME_PLAN.md`;
+- `experiments/_stage_runs/`
+  `stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`.
+
+**Operator review is required before Commit 51 executes the
+extreme lane.** Commit 51 must require explicit
+`--include-extreme-tasks` and `--execute-extreme-lane` flags, use
+the policy-defined `extreme.stage0_max_evaluations = 1` budget
+and `extreme.timeout_seconds_per_cell = 14,400 s`, and chain
+five gates (signoff + plan + Commit 48 + Commit 49 + this
+Commit 50 plan summary). Do not scale to replicas 3–5 until
+replica_002 standard + heavy + extreme has been reviewed
+end-to-end.

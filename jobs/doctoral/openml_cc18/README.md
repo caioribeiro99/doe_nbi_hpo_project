@@ -296,6 +296,25 @@ standard lane; and it does **not** promote `isolet` (task 3481)
 into the heavy lane. Operator review is required before any
 extreme-lane or broader top-up execution.
 
+## Stage-3 / top-up replica_002 extreme-lane plan (Commit 50)
+
+Commit 50 is the planning companion to Commit 49. The planner
+`scripts/plan_stage3_replica002_extreme_lane.py` chains four
+gates (signoff → top-up plan → Commit 48 standard summary →
+Commit 49 heavy summary) and emits a read-only extreme-lane
+plan summary for replica_002 — no training, no execution
+SQLite, no shard mutation. The plan projects the 24 runnable
+extreme canary cells across the two extreme tasks under the
+pinned policy (`6 / letter`, `167121 / Devnagari-Script`), the
+42 non-canary extreme rows it would refuse, and the 1,815 +
+423 standard / heavy rows already completed in Commits 48 and
+49. See `docs/STAGE3_REPLICA002_EXTREME_PLAN.md` for the
+narrative and
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`
+for the artifact. Operator review of the plan is required
+before Commit 51 may execute the extreme lane.
+
 ## Result handoff protocol (Commit 35)
 
 The committed shards under `shards/` are *immutable job-queue

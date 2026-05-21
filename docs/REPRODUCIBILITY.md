@@ -278,6 +278,30 @@ the standard lane; and it does **not** promote `isolet` (task
 3481) into the heavy lane. Operator review is required before
 any extreme-lane or broader top-up execution.
 
+**Stage-3 / top-up replica_002 extreme-lane plan (Commit 50).**
+Commit 50 adds `scripts/plan_stage3_replica002_extreme_lane.py`,
+a read-only planner that chains four gates (Commit 45 signoff,
+Commit 46 top-up plan, Commit 48 standard-lane summary, Commit
+49 heavy-lane summary) and emits an extreme-lane plan summary
+for replica_002 without executing anything. The planner
+enumerates the 24 runnable extreme canary cells across the two
+extreme tasks under the pinned policy — `6 / letter` and
+`167121 / Devnagari-Script` — plus 42 non-canary extreme rows
+it would refuse and the 1,815 + 423 standard / heavy rows that
+are already authoritatively complete via Commits 48 and 49. The
+plan summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`,
+with the narrative at
+`docs/STAGE3_REPLICA002_EXTREME_PLAN.md`. Commit 50 does
+**not** run training, create execution SQLite under `runs/`,
+mutate any committed shard, regenerate
+`heavy_task_policy.csv` or `runtime_guardrails.yaml`, or change
+`policy_version`. Operator review of the plan is required
+before Commit 51 may execute the extreme lane under the
+policy-defined budget (`extreme.stage0_max_evaluations = 1`,
+per-cell timeout 14,400 s).
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

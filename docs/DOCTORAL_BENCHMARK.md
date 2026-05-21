@@ -459,6 +459,34 @@ recalibration candidate under signoff caveat 1, but the pinned
 review is required before the extreme lane or broader top-up
 execution.
 
+## Stage-3 / top-up replica_002 extreme-lane plan (Commit 50)
+
+Commit 50 is the **planning** companion to Commit 49: it chains
+four gates (signoff → Commit 46 plan → Commit 48 standard
+summary → Commit 49 heavy summary), inspects the 10 committed
+source template shards, and projects the future Commit 51
+extreme execution. The planner
+`scripts/plan_stage3_replica002_extreme_lane.py` enumerates the
+24 runnable extreme canary cells (2 extreme tasks — `letter` and
+`Devnagari-Script` — × 4 canary methods × 3 algorithms), the 42
+non-canary extreme rows it would refuse, and the 1,815 + 423
+standard / heavy rows already completed in Commits 48 / 49. The
+plan summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`,
+with a longer narrative at
+`docs/STAGE3_REPLICA002_EXTREME_PLAN.md`.
+
+Commit 50 explicitly does **not** run training, create execution
+SQLite under `runs/`, mutate any committed shard, regenerate
+`heavy_task_policy.csv` or `runtime_guardrails.yaml`, change
+`policy_version`, create a new signoff file, rerun the standard
+or heavy lanes, execute the extreme lane, or scale to replicas
+003 – 005. Operator review of the plan summary is required
+before Commit 51 may execute the extreme lane under the
+policy-defined `extreme.stage0_max_evaluations = 1` budget and
+`extreme.timeout_seconds_per_cell = 14,400 s`.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac

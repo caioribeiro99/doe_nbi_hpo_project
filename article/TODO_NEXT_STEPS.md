@@ -271,6 +271,43 @@
 > extreme lane in Commit 49. Do not scale to replicas 3–5
 > until replica_002 standard + heavy + extreme has been
 > reviewed end-to-end.
+>
+> **Commit 50 (this commit) planned the replica_002 extreme
+> lane.** This is a planning-only commit.
+> `scripts/plan_stage3_replica002_extreme_lane.py` chains four
+> gates — Commit 45 signoff, Commit 46 top-up plan, Commit 48
+> standard-lane summary, Commit 49 heavy-lane summary —
+> refusing on missing files, drifted `policy_version`, failed
+> upstream lanes, or a live extreme-task universe that differs
+> from `(6, 167121)`. It inspects the 10 committed source
+> template shards read-only and projects: 24 runnable extreme
+> canary cells (2 tasks × 4 canary methods × 3 algorithms =
+> `letter` + `Devnagari-Script`), 42 non-canary extreme rows
+> to be refused, 1,815 standard rows already completed in
+> Commit 48, and 423 heavy rows already completed in Commit
+> 49. The committed plan artifact lives at
+> `experiments/_stage_runs/`
+> `stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`
+> with the narrative at
+> `docs/STAGE3_REPLICA002_EXTREME_PLAN.md`. Commit 50 does
+> **not** run training, create execution SQLite under `runs/`,
+> mutate any committed shard, regenerate
+> `heavy_task_policy.csv` or `runtime_guardrails.yaml`, change
+> `policy_version`, create a new signoff file, rerun the
+> standard / heavy lanes, execute the extreme lane, run the
+> full `topup_to_5`, or touch replicas 003–005.
+>
+> **Next operational step (after Commit 50):** only after the
+> Commit-50 plan has been operator-reviewed, Commit 51 should
+> execute the replica_002 extreme lane under the pinned
+> `policy_version` (extreme `stage0_max_evaluations = 1`,
+> per-cell timeout 14,400 s). Commit 51 must require explicit
+> `--include-extreme-tasks` and `--execute-extreme-lane` flags
+> and must chain five gates (signoff + Commit 46 plan + Commit
+> 48 standard + Commit 49 heavy + this Commit 50 plan
+> summary). Do not scale to replicas 003–005 until
+> replica_002 standard + heavy + extreme has been reviewed
+> end-to-end.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the
