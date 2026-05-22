@@ -156,3 +156,32 @@ After Commit 50 lands and an operator reviews this plan, Commit
 - use `max_evaluations = 1` and `timeout = 14,400 s / cell`;
 - never run the standard or heavy lane, never scale to
   replica_003+.
+
+## Commit 51 — replica_002 extreme-lane execution
+
+Commit 51 is the real execution that consumes this plan. The
+script `scripts/run_stage3_replica002_extreme_lane.py` chains
+**five** gates (signoff → top-up plan → Commit 48 standard →
+Commit 49 heavy → this Commit 50 plan summary) and requires
+both `--include-extreme-tasks` and `--execute-extreme-lane` for
+real execution. Without both flags it falls back to a
+planning-only report identical to `--dry-run`.
+
+The runner copies all 10 source template shards under
+`runs/cc18/stage3_replica_002_extreme_lane_latest/`, rewrites
+the copies to `replica = 2` /
+`stage = 'stage1_topup_to_005'`, defers standard / heavy rows
+(Commits 48 / 49 stand), refuses non-canary extreme rows, and
+executes the 24 extreme canary cells (2 tasks × 4 canary
+methods × 3 algorithms) at the policy-defined
+`extreme.stage0_max_evaluations = 1` budget with the 14,400 s
+per-cell timeout. The committed summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+
+Commit 51 still does **not** rerun the standard or heavy lane,
+run the full `topup_to_5` tier, touch replicas 003–005, change
+`policy_version`, create a new signoff file, or commit any
+execution SQLite / OpenML payload. Operator review of the
+Commit 51 summary is required before any aggregate replica_002
+review or signoff.

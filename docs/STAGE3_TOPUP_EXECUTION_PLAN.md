@@ -490,3 +490,48 @@ five gates (signoff + plan + Commit 48 + Commit 49 + this
 Commit 50 plan summary). Do not scale to replicas 3–5 until
 replica_002 standard + heavy + extreme has been reviewed
 end-to-end.
+
+## Commit 51 — replica_002 extreme-lane execution
+
+Commit 51 executes the plan from Commit 50:
+
+- **all 10** source template shards;
+- one replica (`replica = 2`);
+- one lane (`extreme`);
+- four canary methods × three algorithms only;
+- 24 executable extreme-lane canary cells.
+
+The runner `scripts/run_stage3_replica002_extreme_lane.py`
+chains **five** gates (Commit 45 signoff → Commit 46 plan →
+Commit 48 standard summary → Commit 49 heavy summary → Commit
+50 extreme plan summary), refuses real execution unless **both**
+`--include-extreme-tasks` and `--execute-extreme-lane` flags are
+passed, and uses the policy-defined extreme budget
+(`stage0_max_evaluations = 1`, per-cell timeout 14,400 s).
+
+Commit 51 still does **not**:
+
+- run any other replica (3 / 4 / 5);
+- rerun the standard lane (Commit 48 stands);
+- rerun the heavy lane (Commit 49 stands);
+- run non-canary methods;
+- run the full `topup_to_5` tier;
+- regenerate `heavy_task_policy.csv` or
+  `runtime_guardrails.yaml`;
+- create a new signoff file;
+- mutate any committed source shard;
+- commit raw OpenML payloads or execution SQLite files.
+
+Artifacts published in Commit 51:
+
+- `scripts/run_stage3_replica002_extreme_lane.py`;
+- `tests/unit/test_stage3_replica002_extreme_lane.py`;
+- `experiments/_stage_runs/`
+  `stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+
+**Operator review is required before any aggregate replica_002
+review or signoff.** Only after the Commit 51 summary has been
+operator-reviewed, Commit 52 should aggregate the four lane
+artifacts (Commit 48 standard + Commit 49 heavy + Commit 50
+plan + Commit 51 extreme) into a replica_002 signoff. Do not
+scale to replicas 3–5 until that aggregate review is green.

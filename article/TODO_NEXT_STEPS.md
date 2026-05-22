@@ -308,6 +308,40 @@
 > summary). Do not scale to replicas 003–005 until
 > replica_002 standard + heavy + extreme has been reviewed
 > end-to-end.
+>
+> **Commit 51 (this commit) executed the replica_002 extreme
+> lane.**
+> `scripts/run_stage3_replica002_extreme_lane.py` chains five
+> gates — Commit 45 signoff, Commit 46 plan, Commit 48
+> standard summary, Commit 49 heavy summary, Commit 50 extreme
+> plan summary — and requires both `--include-extreme-tasks`
+> and `--execute-extreme-lane` flags for real execution.
+> Without both flags it falls back to a planning-only report.
+> It copies all ten `shard_NN.sqlite` files from
+> `shards/stage0_replica_001/` into `runs/cc18/<run_id>/`,
+> rewrites the copies so every row carries `replica = 2` and
+> `stage = 'stage1_topup_to_005'`, defers standard / heavy
+> rows, refuses non-canary rows, and executes the 24
+> extreme-lane canary cells (2 extreme tasks × 4 canary
+> methods × 3 algorithms = `letter` + `Devnagari-Script`) at
+> the policy-defined `extreme.stage0_max_evaluations = 1`
+> budget with the 14,400 s per-cell timeout. The 10 committed
+> source shards are byte-identical pre/post run; no execution
+> SQLite, fitted model, raw OpenML payload, notebook, or
+> fairness artifact is staged. The committed summary lives at
+> `experiments/_stage_runs/`
+> `stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+> Commit 51 does **not** rerun the standard or heavy lane, run
+> the full `topup_to_5` tier, touch replicas 003–005, change
+> `policy_version`, or create a new signoff file.
+>
+> **Next operational step (after Commit 51):** only after the
+> Commit-51 summary has been operator-reviewed, Commit 52
+> should aggregate / review / signoff replica_002 by chaining
+> the four executed-lane summaries (Commit 48 standard +
+> Commit 49 heavy + Commit 50 plan + this Commit 51 extreme).
+> Do not scale to replicas 003–005 until that aggregate
+> review is green.
 
 These are the actions needed to take the manuscript from scaffold to
 submitted draft. They are deliberately ordered: each step gates the

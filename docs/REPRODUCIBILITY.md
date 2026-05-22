@@ -302,6 +302,30 @@ before Commit 51 may execute the extreme lane under the
 policy-defined budget (`extreme.stage0_max_evaluations = 1`,
 per-cell timeout 14,400 s).
 
+**Stage-3 / top-up replica_002 extreme-lane execution (Commit
+51).** Commit 51 adds
+`scripts/run_stage3_replica002_extreme_lane.py` and executes
+the 24-cell extreme lane planned in Commit 50 across all 10
+source template shards. The runner chains five gates (signoff
++ Commit 46 plan + Commit 48 standard + Commit 49 heavy +
+Commit 50 plan) and requires **both** `--include-extreme-tasks`
+and `--execute-extreme-lane` flags for real execution. It
+copies all ten `shard_NN.sqlite` files under
+`runs/cc18/<run_id>/`, rewrites the copies to `replica = 2` /
+`stage = 'stage1_topup_to_005'`, defers standard / heavy rows,
+refuses non-canary rows, and executes the 24 extreme canary
+cells (2 extreme tasks × 4 canary methods × 3 algorithms) at
+the policy-defined `extreme.stage0_max_evaluations = 1` budget
+with the 14,400 s per-cell timeout. The 10 committed source
+shards remain byte-identical. The committed summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+Commit 51 does **not** rerun the standard or heavy lane, run
+the full `topup_to_5` tier, touch replicas 003 – 005, change
+`policy_version`, create a new signoff file, or commit any
+execution SQLite / OpenML payload. Operator review is required
+before any aggregate replica_002 review or signoff.
+
 **Result handoff protocol (Commit 35).** From batch_02 onward,
 results cross machines through `docs/RESULT_HANDOFF_PROTOCOL.md`.
 The committed SQLite shards under `jobs/doctoral/openml_cc18/shards/`

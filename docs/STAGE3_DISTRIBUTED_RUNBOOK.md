@@ -26,9 +26,13 @@ Mac, or a contingency host). It assumes:
   `docs/STAGE3_REPLICA002_EXTREME_PLAN.md` and
   `experiments/_stage_runs/`
   `stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`.
-  No training ran, no execution SQLite was created, no
-  committed shard was modified. Operator review of that plan
-  is required before Commit 51 executes the extreme lane.
+- Commit 51 **executed the replica_002 extreme lane** under the
+  pinned policy_version (`extreme.stage0_max_evaluations = 1`,
+  per-cell timeout 14,400 s); see
+  `experiments/_stage_runs/`
+  `stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+  Operator review of that summary is required before any
+  aggregate replica_002 review / signoff.
 - The reader is the operator on a worker machine.
 
 The runbook is **execution-oriented**. It does not change policy,
@@ -323,23 +327,26 @@ across all 10 shards** (still no heavy, no extreme, no full
 across all 10 shards** (no standard rerun, no extreme, no full
 `topup_to_5`; isolet kept standard under the pinned policy).
 Commit 50 has published the **planning-only replica_002 extreme
-lane plan** (no execution, no shard mutation). All four
-summaries at
+lane plan** (no execution, no shard mutation). Commit 51 has
+**executed the replica_002 extreme lane** under the pinned
+`policy_version` (`extreme.stage0_max_evaluations = 1`,
+per-cell timeout 14,400 s, with both `--include-extreme-tasks`
+and `--execute-extreme-lane` flags). All five summaries at
 `experiments/_stage_runs/`
 `stage3_pilot_replica_002_shard00_standard_lane_latest_summary.{json,md}`,
 `experiments/_stage_runs/`
 `stage3_replica_002_standard_lane_latest_summary.{json,md}`,
 `experiments/_stage_runs/`
 `stage3_replica_002_heavy_lane_latest_summary.{json,md}`,
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`,
 and
 `experiments/_stage_runs/`
-`stage3_replica_002_extreme_lane_plan_latest_summary.{json,md}`
-**must** be operator-reviewed before Commit 51 executes the
-extreme lane. Do not scale directly to the full `topup_to_5`
-tier; the next planned step is for the operator to authorize
-Commit 51 (replica_002 extreme execution under the pinned
-policy_version, requiring explicit `--include-extreme-tasks`
-and `--execute-extreme-lane` flags).
+`stage3_replica_002_extreme_lane_latest_summary.{json,md}`
+**must** be operator-reviewed before any aggregate replica_002
+review or signoff. Do not scale to replicas 003 – 005 until
+replica_002 standard + heavy + extreme has been reviewed
+end-to-end.
 
 When a per-tier aggregator script lands (planned after operator
 review of Commit 47), the personal Mac will run it here and either

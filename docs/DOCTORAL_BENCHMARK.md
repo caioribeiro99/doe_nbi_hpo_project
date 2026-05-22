@@ -487,6 +487,31 @@ before Commit 51 may execute the extreme lane under the
 policy-defined `extreme.stage0_max_evaluations = 1` budget and
 `extreme.timeout_seconds_per_cell = 14,400 s`.
 
+## Stage-3 / top-up replica_002 extreme-lane execution (Commit 51)
+
+Commit 51 runs the 24 extreme-lane canary cells planned in
+Commit 50: all 10 source template shards, `replica = 2`,
+extreme lane only, four canary methods × three algorithms, two
+extreme tasks (`6 / letter` and `167121 / Devnagari-Script`).
+The runner `scripts/run_stage3_replica002_extreme_lane.py`
+chains **five** gates (signoff → Commit 46 plan → Commit 48
+standard summary → Commit 49 heavy summary → Commit 50 extreme
+plan summary), refuses real execution unless **both**
+`--include-extreme-tasks` and `--execute-extreme-lane` flags
+are passed, and uses the policy-defined extreme budget
+(`stage0_max_evaluations = 1`, per-cell timeout 14,400 s). The
+committed source shards remain byte-identical. The committed
+summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+
+Commit 51 does **not** rerun the standard / heavy lanes, run
+the full `topup_to_5` tier, touch replicas 003–005, change
+`policy_version`, create a new signoff file, or commit any
+execution SQLite / OpenML payload. Operator review of the
+Commit 51 summary is required before any aggregate replica_002
+review or signoff.
+
 ## Result handoff protocol (Commit 35)
 
 `docs/RESULT_HANDOFF_PROTOCOL.md` formalizes how the dedicated Mac

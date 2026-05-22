@@ -315,6 +315,37 @@ narrative and
 for the artifact. Operator review of the plan is required
 before Commit 51 may execute the extreme lane.
 
+## Stage-3 / top-up replica_002 extreme-lane execution (Commit 51)
+
+Commit 51 executes the plan from Commit 50:
+
+- **all 10** source template shards;
+- one replica (`replica = 2`);
+- one lane (`extreme`);
+- four canary methods × three algorithms only;
+- 24 executable extreme-lane canary cells across the two
+  extreme tasks (`6 / letter`, `167121 / Devnagari-Script`).
+
+The runner `scripts/run_stage3_replica002_extreme_lane.py`
+chains five gates (signoff → Commit 46 plan → Commit 48
+standard summary → Commit 49 heavy summary → Commit 50 extreme
+plan), requires both `--include-extreme-tasks` and
+`--execute-extreme-lane` flags, copies all 10 shards into
+`runs/cc18/<run_id>/`, rewrites the copies to `replica = 2` /
+`stage = 'stage1_topup_to_005'`, defers standard / heavy rows,
+refuses non-canary rows, and executes the 24 extreme canary
+cells at `stage0_max_evaluations = 1` / timeout 14,400 s. The
+10 committed source shards remain byte-identical. The committed
+summary lives at
+`experiments/_stage_runs/`
+`stage3_replica_002_extreme_lane_latest_summary.{json,md}`.
+
+Commit 51 does **not** rerun the standard or heavy lane, run
+the full `topup_to_5` tier, touch replicas 003–005, change
+`policy_version`, create a new signoff file, or commit any
+execution SQLite / OpenML payload. Operator review is required
+before any aggregate replica_002 review or signoff.
+
 ## Result handoff protocol (Commit 35)
 
 The committed shards under `shards/` are *immutable job-queue
