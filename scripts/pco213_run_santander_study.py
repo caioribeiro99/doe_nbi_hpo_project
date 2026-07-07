@@ -269,6 +269,34 @@ def stage_optimize(args) -> None:
                      **ee.score_probs(y_te, hold_p, threshold=thr)})
     results = pd.DataFrame(rows)
     results.to_csv(args.out / "holdout_results.csv", index=False)
+
+    # Corrected repeated-CV t-test (Nadeau-Bengio) on per-fold OOF differences:
+    # proposed method vs each baseline, on the SAME folds (J = 5 folds x 2 repeats).
+    z = np.load(args.out / "oof.npz", allow_pickle=False)
+    fold_ids = [z["fold_ids0"], z["fold_ids1"]]
+    proba_by_method = {
+        "scheffe_optimum_logloss": [P @ w_meta for P in P_list],
+        "slsqp_direct_logloss": [P @ w_direct for P in P_list],
+        "uniform_voting": [P @ ee.uniform_weights(M) for P in P_list],
+        "best_single": [P[:, j_best] for P in P_list],
+        "stacking_lr": [stacker.predict_proba(P)[:, 1] for P in P_list],
+    }
+    stats_out: dict[str, dict] = {}
+    for metric in ("roc_auc", "log_loss"):
+        folds = {
+            name: np.concatenate(
+                [ee.per_fold_metric(ps[r], y_tr, fold_ids[r], metric)
+                 for r in range(len(P_list))]
+            )
+            for name, ps in proba_by_method.items()
+        }
+        ref = folds["scheffe_optimum_logloss"]
+        stats_out[metric] = {
+            f"scheffe_vs_{other}": ee.corrected_repeated_cv_ttest(ref - folds[other])
+            for other in ("uniform_voting", "best_single", "stacking_lr",
+                          "slsqp_direct_logloss")
+        }
+    _write_json(stats_out, args.out / "statistics_corrected_ttest.json")
     _write_json({"weights": weights_out,
                  "best_single_model": names[j_best],
                  "gap_scheffe_vs_direct_logloss_oof":
