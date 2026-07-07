@@ -36,3 +36,6 @@ experiments/pco213/*
 !data/pco213/raw/.gitkeep
 !data/pco213/processed/.gitkeep
 !experiments/pco213/.gitkeep
+reports/pco213/article/*.aux
+reports/pco213/article/*.log
+reports/pco213/article/*.out
