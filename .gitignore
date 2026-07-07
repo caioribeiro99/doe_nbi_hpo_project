@@ -27,3 +27,12 @@ data/design/*
 # macOS files
 **/.DS_Store
 
+
+# PCO213 (branch pco213-classification-mixture-ensemble)
+.venv-pco213/
+data/pco213/raw/*
+data/pco213/processed/*
+experiments/pco213/*
+!data/pco213/raw/.gitkeep
+!data/pco213/processed/.gitkeep
+!experiments/pco213/.gitkeep

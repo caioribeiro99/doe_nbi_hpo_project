@@ -1,0 +1,11 @@
+# PCO213 study runtime (python >= 3.11). Create the env with:
+#   python3.11 -m venv --system-site-packages .venv-pco213
+#   .venv-pco213/bin/pip install -r requirements-pco213.txt
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.4
+scipy>=1.11
+statsmodels>=0.14
+xgboost>=2.0
+matplotlib>=3.8
+pytest>=8.0
