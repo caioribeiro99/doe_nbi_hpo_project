@@ -345,7 +345,245 @@ def stage_figures(args) -> None:
     print("[figures]", *[str(p) for p in made], sep="\n  ")
 
 
-STAGES = {
+# ---------------------------------------------------------------- postwork
+# Optional stages (DoE + RSM + NBI, docs/PCO213/POSTWORK_EXPERIMENT_PLAN.md).
+# They only READ the delivered artifacts in --output-dir and WRITE to
+# --postwork-output-dir; the frozen course delivery is never modified.
+
+OBJECTIVE_CHOICES = ("auc", "logloss", "cost")
+
+
+def _require(args, paths: list[Path], suggestion: str) -> bool:
+    """Check artifact preconditions; print a clear message when missing."""
+    missing = [p for p in paths if not p.exists()]
+    if missing:
+        print("[postwork] artefatos necessários ausentes:")
+        for p in missing:
+            print(f"  - {p}")
+        print(f"[postwork] rode antes: {suggestion}")
+        return False
+    return True
+
+
+def _load_pooled_oof(args):
+    z = np.load(args.out / "oof.npz", allow_pickle=False)
+    P_all = np.vstack([z["P0"], z["P1"]])
+    y_all = np.tile(z["y_train"], 2)
+    names = [str(s) for s in z["model_names"]]
+    return P_all, y_all, names
+
+
+def _compute_costs(args) -> dict:
+    """Per-model inference cost (ms per 1k predictions) from saved OOF timings.
+
+    Documented fallback: models are not persisted by the pipeline, so the
+    cost is derived from the predict timings recorded during OOF generation
+    (each model predicted n_train rows once per repeat). For a fresh direct
+    measurement, re-run `--stage oof` (heavy) — never triggered from here.
+    """
+    t = _read_json(args.out / "oof_timings.json")
+    n_predictions = t["n_train"] * 2  # rows predicted once per repeat
+    costs = {
+        name: 1000.0 * 1000.0 * seconds / n_predictions  # ms per 1k predictions
+        for name, seconds in t["predict_seconds"].items()
+    }
+    return {
+        "method": "oof_timings_fallback",
+        "note": ("Derived from OOF predict timings (models are not persisted). "
+                 "For a direct measurement re-run --stage oof."),
+        "n_predictions_basis": n_predictions,
+        "cost_ms_per_1k": costs,
+    }
+
+
+def stage_cost(args) -> None:
+    if not _require(args, [args.out / "oof_timings.json"],
+                    "python scripts/pco213_run_santander_study.py --stage oof"):
+        return
+    if args.dry_run:
+        print(f"[cost][dry-run] leria {args.out/'oof_timings.json'} e escreveria "
+              f"{args.postwork_out/'inference_costs.json'} (custo ~0 s)")
+        return
+    report = _compute_costs(args)
+    _write_json(report, args.postwork_out / "inference_costs.json")
+    print("[cost] ms/1k predições:",
+          {k: round(v, 2) for k, v in report["cost_ms_per_1k"].items()})
+
+
+def _build_objectives(args, names: list[str]):
+    """Objective callables on w (minimization convention) per --objectives."""
+    from mixens.nbi import linear_cost
+
+    wanted = [o.strip() for o in args.objectives.split(",") if o.strip()]
+    bad = [o for o in wanted if o not in OBJECTIVE_CHOICES]
+    if bad or len(wanted) < 2:
+        raise SystemExit(f"--objectives deve ter >=2 entre {OBJECTIVE_CHOICES}; recebi {wanted}")
+    cost_file = args.postwork_out / "inference_costs.json"
+    objectives, labels = [], []
+    for o in wanted:
+        if o == "auc":
+            m = _rebuild_pooled(args, "roc_auc")
+            objectives.append(lambda w, m=m: -float(m.predict_weights(np.asarray(w)[None, :])[0]))
+            labels.append("neg_auc(metamodelo)")
+        elif o == "logloss":
+            m = _rebuild_pooled(args, "log_loss")
+            objectives.append(lambda w, m=m: float(m.predict_weights(np.asarray(w)[None, :])[0]))
+            labels.append("logloss(metamodelo)")
+        elif o == "cost":
+            if not cost_file.exists():
+                print("[nbi] inference_costs.json ausente — computando via stage cost")
+                _write_json(_compute_costs(args), cost_file)
+            c = _read_json(cost_file)["cost_ms_per_1k"]
+            cvec = np.array([c[n] for n in names], dtype=float)
+            objectives.append(lambda w, cvec=cvec: linear_cost(w, cvec))
+            labels.append("custo_ms_1k(exato,linear)")
+    return objectives, labels, wanted
+
+
+def _real_objective_values(P_all, y_all, names, args, W) -> pd.DataFrame:
+    """Evaluate REAL (OOF) metrics + cost for an (N, M) array of weights."""
+    from sklearn.metrics import log_loss, roc_auc_score
+
+    cost_file = args.postwork_out / "inference_costs.json"
+    c = _read_json(cost_file)["cost_ms_per_1k"]
+    cvec = np.array([c[n] for n in names], dtype=float)
+    rows = []
+    for w in W:
+        p = P_all @ w
+        rows.append({
+            **{f"w_{n}": float(w[j]) for j, n in enumerate(names)},
+            "real_roc_auc": float(roc_auc_score(y_all, p)),
+            "real_log_loss": float(log_loss(y_all, p)),
+            "real_cost_ms_1k": float(w @ cvec),
+        })
+    return pd.DataFrame(rows)
+
+
+def stage_nbi(args) -> None:
+    from mixens.nbi import run_nbi_on_simplex
+
+    needed = [args.out / "scheffe_report.json", args.out / "oof.npz",
+              args.out / "oof_timings.json"]
+    if not _require(args, needed,
+                    "python scripts/pco213_run_santander_study.py --stage all  (pipeline da entrega)"):
+        return
+    if args.dry_run:
+        print(f"[nbi][dry-run] objetivos={args.objectives} | ~{args.nbi_points} subproblemas NBI "
+              f"sobre metamodelos de Scheffé reconstruídos de {args.out/'scheffe_report.json'};\n"
+              f"  candidatos revalidados nas métricas reais OOF; escreveria "
+              f"{args.postwork_out/'nbi_candidates.csv'} e {args.postwork_out/'nbi_summary.json'} "
+              f"(custo estimado: segundos)")
+        return
+    P_all, y_all, names = _load_pooled_oof(args)
+    objectives, labels, wanted = _build_objectives(args, names)
+    result = run_nbi_on_simplex(objectives, len(names), n_points=args.nbi_points,
+                                seed=args.random_state)
+    W = np.array([c["w"] for c in result["candidates"]], dtype=float)
+    df = _real_objective_values(P_all, y_all, names, args, W)
+    meta_cols = pd.DataFrame({
+        "t": [c["t"] for c in result["candidates"]],
+        "residual_norm": [c["residual_norm"] for c in result["candidates"]],
+        "success": [c["success"] for c in result["candidates"]],
+        **{f"beta_{i}": [c["beta"][i] for c in result["candidates"]]
+           for i in range(len(wanted))},
+    })
+    out = pd.concat([meta_cols, df], axis=1)
+    out.to_csv(args.postwork_out / "nbi_candidates.csv", index=False)
+    anchors_df = _real_objective_values(P_all, y_all, names, args,
+                                        np.array(result["anchors_w"], dtype=float))
+    _write_json({
+        "objectives": wanted,
+        "objective_labels": labels,
+        "n_subproblems": int(len(result["candidates"])),
+        "n_success": int(sum(c["success"] for c in result["candidates"])),
+        "anchors_w": result["anchors_w"],
+        "anchors_real": anchors_df.to_dict(orient="records"),
+        "payoff_raw": result["payoff_raw"],
+        "utopia_raw": result["utopia_raw"],
+        "pseudo_nadir_raw": result["pseudo_nadir_raw"],
+        "normalized": result["normalized"],
+        "model_names": names,
+    }, args.postwork_out / "nbi_summary.json")
+    print(f"[nbi] {len(result['candidates'])} subproblemas "
+          f"({int(sum(c['success'] for c in result['candidates']))} ok) — "
+          f"candidatos em {args.postwork_out/'nbi_candidates.csv'}")
+
+
+def _objective_matrix(df: pd.DataFrame, wanted: list[str]) -> np.ndarray:
+    """Real-metric columns -> minimization-convention objective matrix."""
+    cols = {"auc": -df["real_roc_auc"].to_numpy(),
+            "logloss": df["real_log_loss"].to_numpy(),
+            "cost": df["real_cost_ms_1k"].to_numpy()}
+    return np.column_stack([cols[o] for o in wanted])
+
+
+def stage_pareto(args) -> None:
+    from mixens.mixture_design import sample_dirichlet
+    from mixens.selection import (
+        generational_distance,
+        inverted_generational_distance,
+        normalize_objectives,
+        pareto_filter,
+        spacing_metric,
+    )
+
+    needed = [args.out / "oof.npz", args.postwork_out / "nbi_candidates.csv",
+              args.postwork_out / "inference_costs.json"]
+    if not _require(args, needed,
+                    "python scripts/pco213_run_santander_study.py --stage nbi"):
+        return
+    if args.dry_run:
+        print(f"[pareto][dry-run] avaliaria {args.pareto_dirichlet_points} pontos Dirichlet "
+              f"+ vértices/centroide nas métricas reais OOF (~1 min por 1000 pontos), "
+              f"filtraria não dominados e compararia com a fronteira NBI;\n  escreveria "
+              f"{args.postwork_out/'pareto_reference.csv'} e "
+              f"{args.postwork_out/'pareto_metrics.json'}")
+        return
+    P_all, y_all, names = _load_pooled_oof(args)
+    M = len(names)
+    wanted = [o.strip() for o in args.objectives.split(",") if o.strip()]
+    W_ref = np.vstack([
+        np.eye(M),
+        np.full((1, M), 1.0 / M),
+        sample_dirichlet(M, args.pareto_dirichlet_points, random_state=args.random_state),
+    ])
+    ref_df = _real_objective_values(P_all, y_all, names, args, W_ref)
+    F_ref = _objective_matrix(ref_df, wanted)
+    ref_mask = pareto_filter(F_ref)
+    ref_df["non_dominated"] = ref_mask
+    ref_df.to_csv(args.postwork_out / "pareto_reference.csv", index=False)
+
+    nbi_df = pd.read_csv(args.postwork_out / "nbi_candidates.csv")
+    F_nbi = _objective_matrix(nbi_df, wanted)
+    nbi_mask = pareto_filter(F_nbi)
+
+    # Normalize both fronts with the SAME reference scale before distances.
+    utopia = F_ref[ref_mask].min(axis=0)
+    nadir = F_ref[ref_mask].max(axis=0)
+    ref_n = normalize_objectives(F_ref[ref_mask], utopia, nadir)
+    nbi_n = normalize_objectives(F_nbi[nbi_mask], utopia, nadir)
+    metrics = {
+        "objectives": wanted,
+        "n_reference_points": int(len(F_ref)),
+        "n_reference_front": int(ref_mask.sum()),
+        "n_nbi_candidates": int(len(F_nbi)),
+        "n_nbi_front": int(nbi_mask.sum()),
+        "gd_nbi_vs_reference": generational_distance(nbi_n, ref_n),
+        "igd_nbi_vs_reference": inverted_generational_distance(nbi_n, ref_n),
+        "spacing_nbi_front": spacing_metric(nbi_n),
+        "spacing_reference_front": spacing_metric(ref_n),
+        "note": ("GD baixo = fronteira NBI próxima da referência; IGD baixo = boa "
+                 "cobertura; spacing menor = espaçamento mais uniforme (argumento "
+                 "clássico do NBI). Referência = Dirichlet denso + filtro Pareto "
+                 "nas métricas reais OOF."),
+    }
+    _write_json(metrics, args.postwork_out / "pareto_metrics.json")
+    print(f"[pareto] referência: {int(ref_mask.sum())}/{len(F_ref)} não dominados | "
+          f"NBI: {int(nbi_mask.sum())}/{len(F_nbi)} | GD={metrics['gd_nbi_vs_reference']:.4f} "
+          f"IGD={metrics['igd_nbi_vs_reference']:.4f}")
+
+
+CORE_STAGES = {
     "data": stage_data,
     "bench": stage_bench,
     "oof": stage_oof,
@@ -354,28 +592,58 @@ STAGES = {
     "optimize": stage_optimize,
     "figures": stage_figures,
 }
+POSTWORK_STAGES = {
+    "cost": stage_cost,
+    "nbi": stage_nbi,
+    "pareto": stage_pareto,
+}
+STAGES = {**CORE_STAGES, **POSTWORK_STAGES}
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--stage", default="all", choices=["all", *STAGES])
+    ap.add_argument("--stage", default="all",
+                    choices=["all", "postwork_all", *STAGES])
     ap.add_argument("--mode", default="final_2h", choices=list(data_mod.SAMPLE_CAPS))
     ap.add_argument("--max-runtime-minutes", type=float, default=120.0)
     ap.add_argument("--sample-size", type=int, default=None)
     ap.add_argument("--random-state", type=int, default=42)
     ap.add_argument("--output-dir", default=str(REPO / "experiments" / "pco213" / "santander"))
+    # ---- postwork options (safe defaults; never re-run heavy stages) ----
+    ap.add_argument("--postwork-output-dir",
+                    default=str(REPO / "experiments" / "pco213_postwork" / "santander"))
+    ap.add_argument("--nbi-points", type=int, default=15,
+                    help="máximo de subproblemas NBI (lattice de betas)")
+    ap.add_argument("--pareto-dirichlet-points", type=int, default=5000,
+                    help="pontos Dirichlet da fronteira de referência")
+    ap.add_argument("--objectives", default="auc,logloss,cost",
+                    help=f">=2 dentre {','.join(OBJECTIVE_CHOICES)}")
+    ap.add_argument("--skip-heavy", action="store_true", default=True,
+                    help="nunca dispara OOF/refit a partir dos estágios postwork (default)")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="só valida artefatos e imprime o plano dos estágios postwork")
     args = ap.parse_args()
     args.out = Path(args.output_dir)
     args.out.mkdir(parents=True, exist_ok=True)
+    args.postwork_out = Path(args.postwork_output_dir)
+    if not args.dry_run:
+        args.postwork_out.mkdir(parents=True, exist_ok=True)
 
     t0 = time.perf_counter()
-    stages = list(STAGES) if args.stage == "all" else [args.stage]
+    if args.stage == "all":
+        stages = list(CORE_STAGES)  # entrega original — postwork nunca entra aqui
+    elif args.stage == "postwork_all":
+        stages = list(POSTWORK_STAGES)
+    else:
+        stages = [args.stage]
     for s in stages:
         STAGES[s](args)
     total = time.perf_counter() - t0
     print(f"[done] stages={stages} total wall {total/60:.1f} min")
-    stamp = {"stages": stages, "wall_minutes": round(total / 60.0, 2)}
-    _write_json(stamp, args.out / f"run_{'_'.join(stages[:1])}_timing.json")
+    if not args.dry_run:
+        stamp = {"stages": stages, "wall_minutes": round(total / 60.0, 2)}
+        target = args.postwork_out if stages[0] in POSTWORK_STAGES else args.out
+        _write_json(stamp, target / f"run_{'_'.join(stages[:1])}_timing.json")
 
 
 if __name__ == "__main__":
