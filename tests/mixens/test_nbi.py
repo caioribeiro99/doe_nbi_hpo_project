@@ -130,3 +130,44 @@ def test_mixens_does_not_import_doe_xgb() -> None:
             if any("doe_xgb" in n for n in names):
                 offenders.append(f"{p.name}:{node.lineno}")
     assert offenders == [], f"mixens must not import doe_xgb: {offenders}"
+
+
+# --- regression: failed subproblems must be reported, never crash the run ---
+
+
+def test_project_free_vars_handles_feasible_and_infeasible_points() -> None:
+    from mixens.nbi import project_free_vars
+
+    w, feasible = project_free_vars(np.array([0.2, 0.3]))
+    assert feasible
+    np.testing.assert_allclose(w, [0.2, 0.3, 0.5])
+    # sum(z) > 1: a failed subproblem's free variables; projected onto w_3 = 0
+    w, feasible = project_free_vars(np.array([0.9, 0.9]))
+    assert not feasible
+    np.testing.assert_allclose(w, [0.5, 0.5, 0.0])
+    validate_weights(w[None, :])
+
+
+def test_run_nbi_on_simplex_survives_degenerate_vertex_anchor() -> None:
+    """One anchor at a box corner (cheapest vertex of a linear cost) and the
+    other in the interior: the beta-vertex subproblem at the corner is a
+    degenerate KKT point where SLSQP may fail from every start (observed with
+    the Santander log-loss x cost pair). The run must still return valid
+    simplex weights and flag any unconverged subproblem as success=False."""
+    costs = np.array([1.0, 10.0, 20.0, 30.0, 40.0])
+    centre = np.full(5, 0.2)
+
+    def cost(w: np.ndarray) -> float:
+        return float(w @ costs)
+
+    def quality(w: np.ndarray) -> float:  # convex, interior minimum
+        return float(np.sum((w - centre) ** 2))
+
+    res = run_nbi_on_simplex([quality, cost], 5, n_points=8, n_starts=4, seed=1)
+    ws = np.asarray([c["w"] for c in res["candidates"]])
+    validate_weights(ws)
+    assert ws.shape == (8, 5)
+    for c in res["candidates"]:
+        if c["success"]:
+            assert c["residual_norm"] < 1e-3
+    assert sum(c["success"] for c in res["candidates"]) >= 4

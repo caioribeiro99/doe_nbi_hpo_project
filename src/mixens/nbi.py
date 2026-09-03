@@ -21,7 +21,7 @@ Objectives follow the MINIMIZATION convention (wrap "maximize AUC" as -AUC).
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Literal
 
 import numpy as np
@@ -224,6 +224,7 @@ def solve_nbi_subproblem(
 
     best: NBISubproblemResult | None = None
     best_t = -np.inf
+    fallback: NBISubproblemResult | None = None  # least-residual candidate if no start converges
     for z_start in starts:
         res = minimize(
             fun=lambda z: -float(z[k]),
@@ -251,9 +252,14 @@ def solve_nbi_subproblem(
         if res.success and t_val > best_t and residual_norm < 1e-3:
             best = candidate
             best_t = t_val
-        elif best is None:
-            best = candidate
-    assert best is not None
+        elif fallback is None or residual_norm < fallback.residual_norm:
+            fallback = candidate
+    if best is None:
+        # No start satisfied the NBI equality within tolerance: report the
+        # least-residual attempt, explicitly flagged as a failed subproblem
+        # (never as a converged one, even if SLSQP claimed success).
+        assert fallback is not None
+        best = replace(fallback, success=False)
     return best
 
 
@@ -294,6 +300,24 @@ def lift_simplex(z: np.ndarray, *, atol: float = 1e-8) -> np.ndarray:
     w = w / w.sum()
     validate_weights(w[None, :])
     return w
+
+
+def project_free_vars(z: np.ndarray, *, atol: float = 1e-6) -> tuple[np.ndarray, bool]:
+    """Map (M-1,) free variables to a simplex point WITHOUT raising.
+
+    Feasible points (``sum(z) <= 1``) go through :func:`lift_simplex`.
+    Infeasible ones — which only arise from a failed NBI subproblem, e.g.
+    at a degenerate vertex anchor where SLSQP cannot satisfy the equality
+    constraint — are projected onto the face ``w_M = 0`` by renormalizing
+    ``z``. Returns ``(w, feasible)`` so callers can flag the candidate.
+    """
+    z = np.clip(np.asarray(z, dtype=float), 0.0, 1.0)
+    s = float(z.sum())
+    if s <= 1.0 + atol:
+        return lift_simplex(z), True
+    w = np.concatenate([z / s, [0.0]])
+    validate_weights(w[None, :])
+    return w, False
 
 
 def objectives_on_free_vars(
@@ -393,14 +417,14 @@ def run_nbi_on_simplex(
 
     candidates = []
     for c in run.candidates:
-        w = lift_simplex(np.clip(c.x, 0.0, 1.0))
+        w, feasible = project_free_vars(c.x)
         candidates.append({
             "beta": c.beta.tolist(),
             "w": w.tolist(),
             "t": c.t,
             "F_normalized": c.F_at_x.tolist(),
             "residual_norm": c.residual_norm,
-            "success": bool(c.success),
+            "success": bool(c.success) and feasible,
         })
     anchors_w = [lift_simplex(np.clip(x, 0.0, 1.0)).tolist() for x in raw_anchors.x_star]
     return {
@@ -426,6 +450,7 @@ __all__ = [
     "lift_simplex",
     "linear_cost",
     "objectives_on_free_vars",
+    "project_free_vars",
     "run_nbi",
     "run_nbi_on_simplex",
     "simplex_nbi_config",
