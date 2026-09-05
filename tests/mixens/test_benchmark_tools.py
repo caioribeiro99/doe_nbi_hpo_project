@@ -123,3 +123,14 @@ def test_compare_orders_selects_parsimonious_model():
     assert out["orders"]["quadratic"]["estimable"] and out["orders"]["special_cubic"]["estimable"]
     assert out["selected_order"] == "quadratic"
     assert out["orders"]["quadratic"]["external"]["rmse"] < 1e-8
+
+
+def test_minimize_on_simplex_handles_vertex_optimum_of_linear_objective():
+    from mixens.optimize import minimize_on_simplex
+    c = np.array([3.0, 1.0, 2.0, 5.0, 4.0])
+    w = minimize_on_simplex(lambda w: float(w @ c), 5, n_starts=3, random_state=0)
+    np.testing.assert_allclose(w, [0, 1, 0, 0, 0], atol=1e-6)
+    # interior convex optimum still found
+    centre = np.full(5, 0.2)
+    w2 = minimize_on_simplex(lambda w: float(np.sum((w - centre) ** 2)), 5, n_starts=3, random_state=0)
+    np.testing.assert_allclose(w2, centre, atol=1e-5)

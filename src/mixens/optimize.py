@@ -37,12 +37,32 @@ def minimize_on_simplex(
     """SLSQP with sum(w)=1, w>=0, multi-start; returns the best w found."""
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}]
     bounds = [(0.0, 1.0)] * M
-    best_w, best_v = None, np.inf
+    best_w, best_v = None, np.inf          # converged (res.success) solutions
+    feas_w, feas_v = None, np.inf          # best feasible iterate regardless of the success flag
     for w0 in _multistart_points(M, n_starts, random_state):
         res = minimize(fn, w0, method="SLSQP", bounds=bounds, constraints=constraints,
                        options={"maxiter": 500, "ftol": 1e-10})
-        if res.success and res.fun < best_v:
-            best_v, best_w = float(res.fun), res.x
+        w = np.clip(np.asarray(res.x, dtype=float), 0.0, 1.0)
+        if w.sum() <= 0:
+            continue
+        w = w / w.sum()
+        v = float(fn(w))
+        if not np.isfinite(v):
+            continue
+        if res.success and v < best_v:
+            best_v, best_w = v, w
+        if v < feas_v:
+            feas_v, feas_w = v, w
+    # Exact safeguard for objectives whose optimum lies on a vertex (e.g. linear
+    # Scheffé surfaces or their scalarizations), where SLSQP reports
+    # "positive directional derivative" at the degenerate corner: evaluate the
+    # vertices and the centroid explicitly.
+    for w in np.vstack([np.eye(M), np.full((1, M), 1.0 / M)]):
+        v = float(fn(w))
+        if np.isfinite(v) and v < feas_v:
+            feas_v, feas_w = v, w
+    if best_w is None or feas_v < best_v - 1e-12:
+        best_w = feas_w
     if best_w is None:
         raise RuntimeError("SLSQP failed from all starts")
     w = np.clip(best_w, 0.0, 1.0)
