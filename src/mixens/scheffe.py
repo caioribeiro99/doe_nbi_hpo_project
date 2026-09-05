@@ -218,7 +218,77 @@ def summarize_coefficients(models: Sequence[MixtureScheffeModel]) -> pd.DataFram
     )
 
 
+def compare_orders(
+    W_design: np.ndarray,
+    y_design: np.ndarray,
+    W_val: np.ndarray,
+    y_val: np.ndarray,
+    *,
+    component_names: Sequence[str],
+    orders: Sequence[ScheffeOrder] = ("linear", "quadratic", "special_cubic"),
+    tolerance: float = 0.10,
+) -> dict:
+    """Fit several Scheffé orders on the design and validate each on unseen
+    points; select the LOWEST order whose external RMSE is within
+    ``tolerance`` (relative) of the best external RMSE (pre-registered
+    parsimony rule). Also reports rank correlation on the validation set,
+    extrapolation range and rank/conditioning diagnostics per order."""
+    from scipy.stats import spearmanr
+
+    df_d = pd.DataFrame(np.asarray(W_design, dtype=float), columns=list(component_names))
+    y_d = pd.Series(np.asarray(y_design, dtype=float))
+    n_obs = len(y_d)
+    fits: dict[str, dict] = {}
+    for order in orders:
+        n_terms = len(_build_scheffe_design_matrix(df_d, component_names=component_names, order=order)[1])
+        if n_terms >= n_obs:
+            fits[order] = {"estimable": False, "n_terms": n_terms}
+            continue
+        m = MixtureScheffeModel.fit(df_d, y_d, component_names=component_names, order=order)
+        ext = external_validation(m, np.asarray(W_val, dtype=float), np.asarray(y_val, dtype=float))
+        pred_v = m.predict_weights(np.asarray(W_val, dtype=float))
+        rho = float(spearmanr(pred_v, np.asarray(y_val, dtype=float)).correlation) if len(y_val) > 2 else float("nan")
+        pred_d = m.predict_weights(np.asarray(W_design, dtype=float))
+        fits[order] = {
+            "estimable": True,
+            "n_terms": n_terms,
+            "r2_train": m.fit_report.r2,
+            "r2_adj_train": m.fit_report.r2_adj,
+            "rank": m.fit_report.rank,
+            "condition_number": m.fit_report.condition_number,
+            "rmse_train": float(np.sqrt(np.mean((pred_d - np.asarray(y_design)) ** 2))),
+            "external": ext,
+            "spearman_external": rho,
+            "pred_range_validation": [float(pred_v.min()), float(pred_v.max())],
+            "obs_range_validation": [float(np.min(y_val)), float(np.max(y_val))],
+            "extrapolation_excess": float(max(0.0, np.max(y_val) - np.max(pred_v), np.min(pred_v) - np.min(y_val))),
+            "terms": list(m.terms),
+            "coefficients": list(m.coefficients),
+            "pvalues": m.fit_report.pvalues,
+        }
+    est = [o for o in orders if fits[o].get("estimable")]
+    if not est:
+        raise RuntimeError("no estimable Scheffé order")
+    best = min(est, key=lambda o: fits[o]["external"]["rmse"])
+    best_rmse = fits[best]["external"]["rmse"]
+    chosen = best
+    for o in orders:  # lowest order first
+        if fits[o].get("estimable") and fits[o]["external"]["rmse"] <= (1.0 + tolerance) * best_rmse:
+            chosen = o
+            break
+    return {"orders": fits, "best_external_order": best, "selected_order": chosen,
+            "selection_rule": f"lowest order with external RMSE within {tolerance:.0%} of the best"}
+
+
+def model_from_coefficients(component_names: Sequence[str], terms: Sequence[str],
+                            coefficients: Sequence[float]) -> MixtureScheffeModel:
+    return MixtureScheffeModel(component_names=tuple(component_names), terms=tuple(terms),
+                               coefficients=tuple(coefficients), fit_report=None)  # type: ignore[arg-type]
+
+
 __all__ = [
+    "compare_orders",
+    "model_from_coefficients",
     "ScheffeOrder",
     "FitReport",
     "MixtureScheffeModel",

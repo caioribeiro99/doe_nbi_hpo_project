@@ -208,7 +208,43 @@ def build_study_design(q: int) -> np.ndarray:
     return arr
 
 
+def build_benchmark_design(q: int = 5) -> np.ndarray:
+    """Expanded controlled mixture design for the post-work benchmark.
+
+    For q = 5 it has 66 distinct runs:
+      simplex-lattice {q,3}                       35  (vertices, edge thirds, ternary centroids)
+      {q,2} edge midpoints                        10
+      overall centroid                             1
+      q axial points ((q+1)/2q on one component)   5
+      quaternary centroids (1/4 on 4 components)   5
+      centroid⊕ternary-centroid midpoints         10  (interior, full support)
+    The design supports the Scheffé linear (5), quadratic (15) and special
+    cubic (25 terms) with ≥ 41 residual df, with interior support that the
+    delivered 21-run design lacked. Validation points are generated
+    separately (Dirichlet) and never enter the fit.
+    """
+    parts = [
+        generate_simplex_lattice(q, 3),
+        generate_simplex_lattice(q, 2),
+        np.full((1, q), 1.0 / q, dtype=float),
+        generate_axial_points(q),
+        generate_simplex_centroid(q, depth=q)[[i for i, r in enumerate(generate_simplex_centroid(q, depth=q))
+                                              if np.count_nonzero(r) == q - 1]],
+    ]
+    centroid = np.full(q, 1.0 / q)
+    tern = generate_simplex_centroid(q, depth=3)
+    tern = tern[np.count_nonzero(tern, axis=1) == 3]
+    parts.append(0.5 * (centroid[None, :] + tern))
+    arr = np.vstack(parts)
+    rounded = np.round(arr, 12)
+    _, idx = np.unique(rounded, axis=0, return_index=True)
+    arr = arr[np.sort(idx)]
+    validate_weights(arr)
+    return arr
+
+
 __all__ = [
+    "build_benchmark_design",
     "simplex_lattice_count",
     "generate_simplex_lattice",
     "generate_simplex_centroid",

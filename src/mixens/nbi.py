@@ -42,6 +42,11 @@ class NBIConfig:
     feasibility_constraint: Callable[[np.ndarray], np.ndarray] | None = None
     quasi_normal: Literal["minus_phi_ones", "gram_schmidt"] = "minus_phi_ones"
     maxiter: int = 500
+    simplex_starts: bool = False      # draw multistart points on the simplex (M-1 free coords)
+    fd_eps: float | None = None       # SLSQP finite-difference step (None = scipy default)
+    accept_feasible: bool = False     # accept iterates satisfying the NBI equality (residual < tol)
+                                      # even if SLSQP stops on the iteration limit (non-smooth objectives)
+    residual_tol: float = 1e-3
 
 
 @dataclass(frozen=True)
@@ -86,15 +91,36 @@ class NBIRun:
 # ---------------------------------------------------------------------------
 
 
+def _draw_starts(cfg: NBIConfig, rng: np.random.Generator, n: int) -> list[np.ndarray]:
+    """Multistart points: on the simplex (centroid + Dirichlet, first k coords)
+    when ``cfg.simplex_starts``; otherwise the origin's box-domain starts."""
+    bounds = cfg.bounds
+    k = bounds.shape[0]
+    if cfg.simplex_starts:
+        starts = [np.full(k, 1.0 / (k + 1))]
+        for _ in range(max(0, n - 1)):
+            starts.append(rng.dirichlet(np.ones(k + 1))[:k])
+        return starts
+    starts = [np.mean(bounds, axis=1)]
+    for _ in range(max(0, n - 1)):
+        starts.append(rng.uniform(bounds[:, 0], bounds[:, 1]))
+    return starts
+
+
+def _slsqp_options(cfg: NBIConfig, **extra) -> dict:
+    opts = {"maxiter": cfg.maxiter, "disp": False, **extra}
+    if cfg.fd_eps is not None:
+        opts["eps"] = float(cfg.fd_eps)
+    return opts
+
+
 def _multistart_minimize(
     objective: SurrogateCallable,
     cfg: NBIConfig,
 ) -> tuple[np.ndarray, float, bool, str]:
     bounds = cfg.bounds
     rng = np.random.default_rng(cfg.seed)
-    starts = [np.mean(bounds, axis=1)]
-    for _ in range(max(0, cfg.n_starts - 1)):
-        starts.append(rng.uniform(bounds[:, 0], bounds[:, 1]))
+    starts = _draw_starts(cfg, rng, cfg.n_starts)
 
     constraints: list = []
     if cfg.feasibility_constraint is not None:
@@ -111,7 +137,7 @@ def _multistart_minimize(
                 method=cfg.solver.upper() if cfg.solver == "slsqp" else cfg.solver,
                 bounds=[(float(lo), float(hi)) for lo, hi in bounds],
                 constraints=constraints,
-                options={"maxiter": cfg.maxiter, "disp": False},
+                options=_slsqp_options(cfg),
             )
         except Exception as exc:  # pragma: no cover - defensive
             msg = f"solver raised: {exc}"
@@ -162,6 +188,26 @@ def compute_anchors(
     )
 
 
+def anchors_from_points(
+    surrogates: Sequence[SurrogateCallable],
+    x_star: np.ndarray,
+) -> AnchorSet:
+    """AnchorSet from externally supplied anchor points (q, k) — e.g. real
+    single-objective optima — without any minimization."""
+    x_star = np.asarray(x_star, dtype=float)
+    q = len(surrogates)
+    if x_star.shape[0] != q:
+        raise ValueError(f"need {q} anchors, got {x_star.shape[0]}")
+    F_star = np.zeros((q, q), dtype=float)
+    for j in range(q):
+        for i, fi in enumerate(surrogates):
+            F_star[i, j] = float(fi(x_star[j]))
+    utopia = np.diag(F_star).copy()
+    pseudo_nadir = F_star.max(axis=1)
+    return AnchorSet(x_star=x_star, F_star=F_star, utopia=utopia, nadir=pseudo_nadir.copy(),
+                     pseudo_nadir=pseudo_nadir, diagnostics={"messages": {"source": "supplied anchors"}})
+
+
 def build_chim(anchors: AnchorSet, cfg: NBIConfig) -> CHIM:
     """Construct the convex-hull-of-individual-minima matrix and a quasi-normal."""
     q = cfg.objective_count
@@ -201,7 +247,10 @@ def solve_nbi_subproblem(
     F_target_no_t = anchors.utopia + chim.Phi @ beta_arr
 
     rng = np.random.default_rng(cfg.seed)
-    x0_x = np.mean(cfg.bounds, axis=1) if x0 is None else np.asarray(x0, dtype=float)
+    if x0 is None:
+        x0_x = np.full(k, 1.0 / (k + 1)) if cfg.simplex_starts else np.mean(cfg.bounds, axis=1)
+    else:
+        x0_x = np.asarray(x0, dtype=float)
     z0 = np.concatenate([x0_x, [0.0]])
     bounds = [(float(lo), float(hi)) for lo, hi in cfg.bounds] + [(0.0, None)]
 
@@ -218,8 +267,7 @@ def solve_nbi_subproblem(
         constraints.append({"type": "ineq", "fun": _feas})
 
     starts = [z0]
-    for _ in range(max(0, cfg.n_starts - 1)):
-        rx = rng.uniform(cfg.bounds[:, 0], cfg.bounds[:, 1])
+    for rx in _draw_starts(cfg, rng, cfg.n_starts)[1:]:
         starts.append(np.concatenate([rx, [0.0]]))
 
     best: NBISubproblemResult | None = None
@@ -232,7 +280,7 @@ def solve_nbi_subproblem(
             method="SLSQP",
             bounds=bounds,
             constraints=constraints,
-            options={"maxiter": cfg.maxiter, "ftol": 1e-9, "disp": False},
+            options=_slsqp_options(cfg, ftol=1e-9),
         )
         x_part = np.asarray(res.x[:k], dtype=float)
         t_val = float(res.x[k])
@@ -249,8 +297,9 @@ def solve_nbi_subproblem(
             optimizer_info={"nfev": int(res.nfev), "nit": int(getattr(res, "nit", 0)),
                             "fun": float(res.fun)},
         )
-        if res.success and t_val > best_t and residual_norm < 1e-3:
-            best = candidate
+        accepted = residual_norm < cfg.residual_tol and (res.success or cfg.accept_feasible)
+        if accepted and t_val > best_t:
+            best = replace(candidate, success=True)
             best_t = t_val
         elif fallback is None or residual_norm < fallback.residual_norm:
             fallback = candidate
@@ -267,16 +316,39 @@ def run_nbi(
     surrogates: Sequence[SurrogateCallable],
     betas: np.ndarray,
     cfg: NBIConfig,
+    *,
+    anchors: AnchorSet | None = None,
+    warm_start: bool = True,
 ) -> NBIRun:
-    """Run the NBI pipeline: anchors -> CHIM -> per-beta subproblems."""
+    """Run the NBI pipeline: anchors -> CHIM -> per-beta subproblems.
+
+    ``anchors`` may be supplied (e.g. real single-objective optima) instead
+    of being minimized. With ``warm_start`` (default) a vertex beta e_j is
+    answered directly by anchor j (t = 0 by construction — re-solving it is
+    a degenerate KKT problem that SLSQP fails systematically at box corners),
+    and every other subproblem starts from the CHIM point's pre-image
+    sum_j beta_j x_j* in addition to the regular multistart points.
+    """
     betas = np.asarray(betas, dtype=float)
     if betas.ndim != 2 or betas.shape[1] != cfg.objective_count:
         raise ValueError(f"betas must have shape (N, q={cfg.objective_count}); got {betas.shape}")
-    anchors = compute_anchors(surrogates, cfg)
+    if anchors is None:
+        anchors = compute_anchors(surrogates, cfg)
     chim = build_chim(anchors, cfg)
-    candidates = [
-        solve_nbi_subproblem(surrogates, chim, beta, anchors=anchors, cfg=cfg) for beta in betas
-    ]
+    candidates = []
+    for beta in betas:
+        j_vertex = int(np.argmax(beta))
+        if warm_start and np.isclose(beta[j_vertex], 1.0) and np.allclose(beta.sum(), 1.0):
+            x = anchors.x_star[j_vertex]
+            F_val = np.array([float(f(x)) for f in surrogates])
+            target = anchors.utopia + chim.Phi @ beta
+            candidates.append(NBISubproblemResult(
+                beta=beta.copy(), x=np.asarray(x, dtype=float), t=0.0, F_at_x=F_val,
+                residual_norm=float(np.linalg.norm(F_val - target)), success=True,
+                message="vertex beta: anchor returned (t=0)", optimizer_info={"nfev": 0, "nit": 0, "fun": 0.0}))
+            continue
+        x0 = beta @ anchors.x_star if warm_start else None
+        candidates.append(solve_nbi_subproblem(surrogates, chim, beta, anchors=anchors, cfg=cfg, x0=x0))
     return NBIRun(anchors=anchors, chim=chim, betas=betas,
                   candidates=tuple(candidates), config=cfg)
 
@@ -343,9 +415,14 @@ def simplex_nbi_config(
     n_starts: int = 10,
     seed: int = 42,
     maxiter: int = 500,
+    simplex_starts: bool = True,
+    fd_eps: float | None = None,
+    accept_feasible: bool = False,
 ) -> NBIConfig:
     """NBIConfig for the ensemble-weight simplex: M-1 free vars in [0,1]
-    with the inequality ``w_M = 1 - sum(z) >= 0``."""
+    with the inequality ``w_M = 1 - sum(z) >= 0``. Multistart points are
+    drawn on the simplex by default (the box-domain starts of the original
+    port are infeasible with probability 1 - 1/(M-1)!)."""
     if n_components < 2:
         raise ValueError("need at least 2 components")
     bounds = np.tile(np.array([0.0, 1.0]), (n_components - 1, 1))
@@ -356,6 +433,9 @@ def simplex_nbi_config(
         seed=seed,
         feasibility_constraint=lambda z: np.array([1.0 - float(np.sum(z))]),
         maxiter=maxiter,
+        simplex_starts=simplex_starts,
+        fd_eps=fd_eps,
+        accept_feasible=accept_feasible,
     )
 
 
@@ -387,6 +467,10 @@ def run_nbi_on_simplex(
     seed: int = 42,
     maxiter: int = 500,
     normalize: bool = True,
+    anchors_w: Sequence[np.ndarray] | None = None,
+    fd_eps: float | None = None,
+    warm_start: bool = True,
+    accept_feasible: bool = False,
 ) -> dict[str, Any]:
     """Full NBI over ensemble weights, in two passes.
 
@@ -398,9 +482,14 @@ def run_nbi_on_simplex(
     are returned as valid simplex weight vectors.
     """
     cfg = simplex_nbi_config(n_components, len(objectives_on_w),
-                             n_starts=n_starts, seed=seed, maxiter=maxiter)
+                             n_starts=n_starts, seed=seed, maxiter=maxiter, fd_eps=fd_eps,
+                             accept_feasible=accept_feasible)
     raw = objectives_on_free_vars(objectives_on_w)
-    raw_anchors = compute_anchors(raw, cfg)
+    if anchors_w is not None:
+        z_star = np.asarray([np.asarray(w, dtype=float)[: n_components - 1] for w in anchors_w])
+        raw_anchors = anchors_from_points(raw, z_star)
+    else:
+        raw_anchors = compute_anchors(raw, cfg)
 
     if normalize:
         span = raw_anchors.pseudo_nadir - raw_anchors.utopia
@@ -413,7 +502,9 @@ def run_nbi_on_simplex(
         surrogates = list(raw)
 
     betas = beta_lattice(len(objectives_on_w), n_points)
-    run = run_nbi(surrogates, betas, cfg)
+    # the normalized surrogates share the raw anchors' minimizers (affine rescaling)
+    norm_anchors = anchors_from_points(surrogates, raw_anchors.x_star)
+    run = run_nbi(surrogates, betas, cfg, anchors=norm_anchors, warm_start=warm_start)
 
     candidates = []
     for c in run.candidates:
@@ -425,15 +516,23 @@ def run_nbi_on_simplex(
             "F_normalized": c.F_at_x.tolist(),
             "residual_norm": c.residual_norm,
             "success": bool(c.success) and feasible,
+            "message": c.message,
+            "nfev": int(c.optimizer_info.get("nfev", 0)),
         })
-    anchors_w = [lift_simplex(np.clip(x, 0.0, 1.0)).tolist() for x in raw_anchors.x_star]
+    anchors_w_out = [lift_simplex(np.clip(x, 0.0, 1.0)).tolist() for x in raw_anchors.x_star]
     return {
-        "anchors_w": anchors_w,
+        "anchors_w": anchors_w_out,
+        "anchors_source": "supplied" if anchors_w is not None else "surrogate_minimization",
         "payoff_raw": raw_anchors.F_star.tolist(),
         "utopia_raw": raw_anchors.utopia.tolist(),
         "pseudo_nadir_raw": raw_anchors.pseudo_nadir.tolist(),
+        "payoff_normalized": run.anchors.F_star.tolist(),
         "n_hat": run.chim.n_hat.tolist(),
+        "betas": betas.tolist(),
         "normalized": bool(normalize),
+        "fd_eps": fd_eps,
+        "accept_feasible": bool(accept_feasible),
+        "warm_start": bool(warm_start),
         "candidates": candidates,
     }
 
@@ -441,6 +540,7 @@ def run_nbi_on_simplex(
 __all__ = [
     "AnchorSet",
     "CHIM",
+    "anchors_from_points",
     "NBIConfig",
     "NBIRun",
     "NBISubproblemResult",
