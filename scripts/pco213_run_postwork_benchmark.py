@@ -164,7 +164,8 @@ class Ctx:
 
     # ---- stage status
     def status(self, name: str, rep: int) -> dict:
-        return read_json(self.rep_dir(name, rep) / "stage_status.json", {})
+        # read-only: never creates the replication directory
+        return read_json(self.root / name / f"rep_{rep:02d}" / "stage_status.json", {})
 
     def set_status(self, name: str, rep: int, stage: str, **fields) -> None:
         st = self.status(name, rep)
@@ -817,18 +818,48 @@ def rep_seconds(ctx: Ctx, name: str, rep: int) -> float | None:
     return None
 
 
+SEED_POLICY = {
+    "outer_split": "base_seed + rep (stratified 80/20 train_test_split)",
+    "inner_cv": "base_seed + rep (StratifiedKFold shuffle) and model random_state",
+    "design_validation": "seed+1000 (60 Dirichlet(1)), seed+2000 (40 Dirichlet(0.5))",
+    "direct_auc_scan": "seed+3000 (Dirichlet(1)), seed+4000 (Dirichlet(0.3))",
+    "reference": "seed+5000 (Dirichlet(1)), seed+6000 (Dirichlet(0.3)), seed+7000 (shuffle), "
+                 "seed+8000/seed+9000 (independent check), seed+10000*round(+1) (extra rounds)",
+    "comparators": "seed+11000 (scalarization lambdas), seed+12000 (random Dirichlet budget)",
+    "quality": "seed+13000 (size-matched spacing subsets)",
+    "nbi": "seed (multistart)",
+}
+
+
 def init_manifest(ctx: Ctx, datasets: list[str]) -> None:
     mpath = ctx.root / "benchmark_manifest.json"
     m = read_json(mpath, {})
     m.setdefault("created_at", now())
     m["git_commit"] = ds_mod.git_commit()
     m["environment"] = env_info()
-    m["config"] = {k: v for k, v in vars(ctx.args).items()}
+    cfg = {k: v for k, v in vars(ctx.args).items()}
+    if m.get("config") and m["config"] != cfg:
+        m.setdefault("config_history", []).append({"until": now(), "config": m["config"],
+                                                   "git_commit": m.get("git_commit")})
+    m["config"] = cfg
     m["stages"] = STAGES
     m["datasets"] = datasets
+    m["seed_policy"] = SEED_POLICY
+    m["seeds"] = {d_: {f"rep_{r:02d}": int(ctx.args.base_seed + r) for r in range(ctx.args.reps)} for d_ in datasets}
     m.setdefault("decisions", [])
     m.setdefault("status", {})
     write_json_atomic(m, mpath)
+
+
+def dry_run_plan(ctx: Ctx, datasets: list[str], stages: list[str], R: int) -> dict:
+    """List pending (dataset, rep, stage) work without executing anything."""
+    pending = [(d_, r, s) for d_ in datasets for r in range(R) for s in stages
+               if ctx.status(d_, r).get(s, {}).get("status") != "done"]
+    complete = {d_: [r for r in range(R) if all(ctx.status(d_, r).get(s, {}).get("status") == "done" for s in STAGES)]
+                for d_ in datasets}
+    pending_reps = {d_: sorted({r for dd, r, _ in pending if dd == d_}) for d_ in datasets}
+    return {"complete_replications": complete, "pending_replications": pending_reps,
+            "n_pending_stages": len(pending), "n_pending_replications": sum(len(v) for v in pending_reps.values())}
 
 
 def record_decision(ctx: Ctx, text: str) -> None:
@@ -868,6 +899,8 @@ def main() -> None:
     ap.add_argument("--max-days", type=float, default=5.0)
     ap.add_argument("--reduced-reps", type=int, default=5)
     ap.add_argument("--smoke", action="store_true", help="tiny wiring run (sample rows, 1 rep, small reference)")
+    ap.add_argument("--dry-run", action="store_true", help="list pending dataset x rep x stage work and exit")
+    ap.add_argument("--no-auto-reduce", action="store_true", help="never reduce R after the pilot projection")
     args = ap.parse_args()
     if args.smoke:
         args.root = args.root.rstrip("/") + "_smoke" if "smoke" not in args.root else args.root
@@ -881,6 +914,10 @@ def main() -> None:
     ctx = Ctx(args, log)
     datasets = [s.strip() for s in args.datasets.split(",") if s.strip()]
     stages = [s.strip() for s in args.stages.split(",") if s.strip()]
+    if args.dry_run:
+        plan = dry_run_plan(ctx, datasets, stages, args.reps)
+        print(json.dumps(plan, indent=2))
+        return
     init_manifest(ctx, datasets)
     log(f"benchmark start: datasets={datasets} reps={args.reps} stages={stages} root={root}")
     with open(root / "benchmark.pid", "w") as f:
@@ -898,7 +935,7 @@ def main() -> None:
         m = read_json(root / "benchmark_manifest.json", {})
         m["runtime_projection"] = {"per_rep_seconds": measured, "R": R, "projected_days": projected_days}
         write_json_atomic(m, root / "benchmark_manifest.json")
-        if projected_days > args.max_days and R > args.reduced_reps:
+        if projected_days > args.max_days and R > args.reduced_reps and not args.no_auto_reduce:
             record_decision(f"projected {projected_days:.2f} days for R={R} exceeds the {args.max_days}-day ceiling; "
                             f"reducing to R={args.reduced_reps} for ALL datasets")
             R = args.reduced_reps

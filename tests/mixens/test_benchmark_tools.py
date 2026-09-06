@@ -134,3 +134,24 @@ def test_minimize_on_simplex_handles_vertex_optimum_of_linear_objective():
     centre = np.full(5, 0.2)
     w2 = minimize_on_simplex(lambda w: float(np.sum((w - centre) ** 2)), 5, n_starts=3, random_state=0)
     np.testing.assert_allclose(w2, centre, atol=1e-5)
+
+
+def test_runner_dry_run_lists_only_pending_work(tmp_path):
+    """--dry-run must report completed replications as complete, never execute, and never create rep dirs."""
+    import json, subprocess, sys
+    from pathlib import Path
+    repo = Path(__file__).resolve().parents[2]
+    root = tmp_path / "bench"
+    stages = ["oof", "design", "scheffe", "refs", "reference", "nbi_A", "nbi_B", "nbi_C", "comparators", "quality"]
+    (root / "uci_credit" / "rep_00").mkdir(parents=True)
+    (root / "uci_credit" / "rep_00" / "stage_status.json").write_text(json.dumps({s: {"status": "done", "seconds": 1.0, "attempts": 1} for s in stages}))
+    (root / "uci_credit" / "rep_01").mkdir(parents=True)
+    (root / "uci_credit" / "rep_01" / "stage_status.json").write_text(json.dumps({"oof": {"status": "done", "seconds": 1.0, "attempts": 1}, "design": {"status": "failed", "attempts": 1}}))
+    out = subprocess.run([sys.executable, str(repo / "scripts" / "pco213_run_postwork_benchmark.py"), "--dry-run",
+                          "--root", str(root), "--datasets", "uci_credit", "--reps", "3"], capture_output=True, text=True, check=True)
+    plan = json.loads(out.stdout)
+    assert plan["complete_replications"] == {"uci_credit": [0]}
+    assert plan["pending_replications"] == {"uci_credit": [1, 2]}
+    assert plan["n_pending_stages"] == 9 + 10
+    assert not (root / "uci_credit" / "rep_02").exists()
+    assert not (root / "benchmark_manifest.json").exists()
