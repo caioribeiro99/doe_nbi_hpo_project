@@ -1,0 +1,141 @@
+quantity,dataset,level,k,n,p,wilson_lo,wilson_hi,jeffreys_lo,jeffreys_hi
+reliability_gate_pass,santander,roc_auc,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+reliability_gate_pass,santander,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,santander,brier,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,santander,pr_auc,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+reliability_gate_pass,bnp,roc_auc,5,30,0.16666666666666666,0.07336542325431777,0.33564350658665026,0.066573953567455,0.3274277516634612
+reliability_gate_pass,bnp,log_loss,3,30,0.1,0.03459988847741868,0.256210827331743,0.028980619032726484,0.2434016089849271
+reliability_gate_pass,bnp,brier,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,bnp,pr_auc,13,30,0.43333333333333335,0.27377485469947366,0.6080269312687199,0.26891916644472913,0.609939728064391
+reliability_gate_pass,porto,roc_auc,16,30,0.5333333333333333,0.3614229949695976,0.6976761120463056,0.3586722885920079,0.7018977439287897
+reliability_gate_pass,porto,log_loss,12,30,0.4,0.24590628016444746,0.576796398787843,0.24048591561453866,0.5777997309662938
+reliability_gate_pass,porto,brier,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,porto,pr_auc,27,30,0.9,0.7437891726682571,0.9654001115225814,0.7565983910150729,0.9710193809672735
+reliability_gate_pass,uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,uci_credit,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,uci_credit,brier,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+reliability_gate_pass,uci_credit,pr_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_B vs nbi_A, igd_plus]",santander,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_B vs nbi_A, hv_ratio]",santander,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs nbi_B, igd_plus]",santander,weighted,28,30,0.9333333333333333,0.7867654148312584,0.9815229763754831,0.8029056794177941,0.9858877133522242
+"win_frac[nbi_C vs nbi_B, hv_ratio]",santander,weighted,28,30,0.9333333333333333,0.7867654148312584,0.9815229763754831,0.8029056794177941,0.9858877133522242
+"win_frac[nbi_C vs ws_random_scalarization, igd_plus]",santander,weighted,10,30,0.3333333333333333,0.19230497996726426,0.5121994849532198,0.18597875024779506,0.5111481492171623
+"win_frac[nbi_C vs ws_random_scalarization, hv_ratio]",santander,weighted,25,30,0.8333333333333334,0.6643564934133498,0.9266345767456822,0.6725722483365387,0.933426046432545
+"win_frac[nbi_C vs random_dirichlet_budget, igd_plus]",santander,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs random_dirichlet_budget, hv_ratio]",santander,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_B vs nbi_A, igd_plus]",bnp,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_B vs nbi_A, hv_ratio]",bnp,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs nbi_B, igd_plus]",bnp,weighted,6,30,0.2,0.09505107121882947,0.3730569656380418,0.08806737551990593,0.366613133841223
+"win_frac[nbi_C vs nbi_B, hv_ratio]",bnp,weighted,24,30,0.8,0.6269430343619583,0.9049489287811706,0.633386866158777,0.911932624480094
+"win_frac[nbi_C vs ws_random_scalarization, igd_plus]",bnp,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs ws_random_scalarization, hv_ratio]",bnp,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs random_dirichlet_budget, igd_plus]",bnp,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs random_dirichlet_budget, hv_ratio]",bnp,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_B vs nbi_A, igd_plus]",porto,weighted,23,30,0.7666666666666667,0.5907167369328042,0.8820761191944214,0.5956000872368983,0.8890790928417474
+"win_frac[nbi_B vs nbi_A, hv_ratio]",porto,weighted,24,30,0.8,0.6269430343619583,0.9049489287811706,0.633386866158777,0.911932624480094
+"win_frac[nbi_C vs nbi_B, igd_plus]",porto,weighted,28,30,0.9333333333333333,0.7867654148312584,0.9815229763754831,0.8029056794177941,0.9858877133522242
+"win_frac[nbi_C vs nbi_B, hv_ratio]",porto,weighted,28,30,0.9333333333333333,0.7867654148312584,0.9815229763754831,0.8029056794177941,0.9858877133522242
+"win_frac[nbi_C vs ws_random_scalarization, igd_plus]",porto,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs ws_random_scalarization, hv_ratio]",porto,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs random_dirichlet_budget, igd_plus]",porto,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs random_dirichlet_budget, hv_ratio]",porto,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_B vs nbi_A, igd_plus]",uci_credit,weighted,24,30,0.8,0.6269430343619583,0.9049489287811706,0.633386866158777,0.911932624480094
+"win_frac[nbi_B vs nbi_A, hv_ratio]",uci_credit,weighted,24,30,0.8,0.6269430343619583,0.9049489287811706,0.633386866158777,0.911932624480094
+"win_frac[nbi_C vs nbi_B, igd_plus]",uci_credit,weighted,29,30,0.9666666666666667,0.8332960885388428,0.9940914096838022,0.8545822226459798,0.9963795356262083
+"win_frac[nbi_C vs nbi_B, hv_ratio]",uci_credit,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs ws_random_scalarization, igd_plus]",uci_credit,weighted,18,30,0.6,0.42320360121215705,0.7540937198355525,0.42220026903370617,0.7595140843854613
+"win_frac[nbi_C vs ws_random_scalarization, hv_ratio]",uci_credit,weighted,16,30,0.5333333333333333,0.3614229949695976,0.6976761120463056,0.3586722885920079,0.7018977439287897
+"win_frac[nbi_C vs random_dirichlet_budget, igd_plus]",uci_credit,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"win_frac[nbi_C vs random_dirichlet_budget, hv_ratio]",uci_credit,weighted,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+nbi_A_feasibility_rate>=0.9,santander,A,26,30,0.8666666666666667,0.7031867316460598,0.9469034455288754,0.7134710731517377,0.9532724978151752
+nbi_B_feasibility_rate>=0.9,santander,B,23,30,0.7666666666666667,0.5907167369328042,0.8820761191944214,0.5956000872368983,0.8890790928417474
+nbi_C_feasibility_rate>=0.9,santander,C,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+nbi_A_feasibility_rate>=0.9,bnp,A,27,30,0.9,0.7437891726682571,0.9654001115225814,0.7565983910150729,0.9710193809672735
+nbi_B_feasibility_rate>=0.9,bnp,B,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+nbi_C_feasibility_rate>=0.9,bnp,C,2,30,0.06666666666666667,0.018477023624516822,0.21323458516874166,0.014112286647775725,0.19709432058220586
+nbi_A_feasibility_rate>=0.9,porto,A,10,30,0.3333333333333333,0.19230497996726426,0.5121994849532198,0.18597875024779506,0.5111481492171623
+nbi_B_feasibility_rate>=0.9,porto,B,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+nbi_C_feasibility_rate>=0.9,porto,C,29,30,0.9666666666666667,0.8332960885388428,0.9940914096838022,0.8545822226459798,0.9963795356262083
+nbi_A_feasibility_rate>=0.9,uci_credit,A,3,30,0.1,0.03459988847741868,0.256210827331743,0.028980619032726484,0.2434016089849271
+nbi_B_feasibility_rate>=0.9,uci_credit,B,3,30,0.1,0.03459988847741868,0.256210827331743,0.028980619032726484,0.2434016089849271
+nbi_C_feasibility_rate>=0.9,uci_credit,C,29,30,0.9666666666666667,0.8332960885388428,0.9940914096838022,0.8545822226459798,0.9963795356262083
+"beta_sign_positive[gnb*knn, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*rf, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*xgb, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*rf, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*xgb, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*gnb, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*knn, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*rf, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*xgb, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[rf*xgb, roc_auc]",santander,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*knn, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*rf, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*xgb, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[knn*rf, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[knn*xgb, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*gnb, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*knn, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*rf, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*xgb, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[rf*xgb, log_loss]",santander,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*knn, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*rf, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*xgb, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*rf, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*xgb, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*gnb, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*knn, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*rf, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*xgb, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[rf*xgb, roc_auc]",bnp,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*knn, log_loss]",bnp,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*rf, log_loss]",bnp,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*xgb, log_loss]",bnp,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[knn*rf, log_loss]",bnp,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*xgb, log_loss]",bnp,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*gnb, log_loss]",bnp,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*knn, log_loss]",bnp,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*rf, log_loss]",bnp,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*xgb, log_loss]",bnp,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[rf*xgb, log_loss]",bnp,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*knn, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*rf, roc_auc]",porto,roc_auc,24,30,0.8,0.6269430343619583,0.9049489287811706,0.633386866158777,0.911932624480094
+"beta_sign_positive[gnb*xgb, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*rf, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*xgb, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*gnb, roc_auc]",porto,roc_auc,14,30,0.4666666666666667,0.30232388795369436,0.6385770050304025,0.2981022560712103,0.6413277114079919
+"beta_sign_positive[lr*knn, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*rf, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*xgb, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[rf*xgb, roc_auc]",porto,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*knn, log_loss]",porto,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*rf, log_loss]",porto,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*xgb, log_loss]",porto,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[knn*rf, log_loss]",porto,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*xgb, log_loss]",porto,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*gnb, log_loss]",porto,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*knn, log_loss]",porto,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*rf, log_loss]",porto,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*xgb, log_loss]",porto,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[rf*xgb, log_loss]",porto,log_loss,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*knn, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*rf, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*xgb, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*rf, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[knn*xgb, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*gnb, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*knn, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*rf, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[lr*xgb, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[rf*xgb, roc_auc]",uci_credit,roc_auc,30,30,1.0,0.886486605238548,1.0,0.9203218261827399,1.0
+"beta_sign_positive[gnb*knn, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*rf, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[gnb*xgb, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[knn*rf, log_loss]",uci_credit,log_loss,14,30,0.4666666666666667,0.30232388795369436,0.6385770050304025,0.2981022560712103,0.6413277114079919
+"beta_sign_positive[knn*xgb, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*gnb, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[lr*knn, log_loss]",uci_credit,log_loss,2,30,0.06666666666666667,0.018477023624516822,0.21323458516874166,0.014112286647775725,0.19709432058220586
+"beta_sign_positive[lr*rf, log_loss]",uci_credit,log_loss,2,30,0.06666666666666667,0.018477023624516822,0.21323458516874166,0.014112286647775725,0.19709432058220586
+"beta_sign_positive[lr*xgb, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999
+"beta_sign_positive[rf*xgb, log_loss]",uci_credit,log_loss,0,30,0.0,0.0,0.11351339476145204,0.0,0.07967817381725999

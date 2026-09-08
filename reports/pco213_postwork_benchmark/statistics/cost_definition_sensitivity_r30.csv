@@ -1,0 +1,13 @@
+dataset,endpoint,n,best_set_differs_count,best_set_differs_frac,wilson_lo,wilson_hi,median_rank_spearman_weighted_vs_support,best_weighted_freq,best_support_freq,mean,median,frac_below_0.8,bimodality_coefficient,gmm_bic_delta
+santander,hv_ratio,30,10.0,0.3333333333333333,0.19230497996726426,0.5121994849532198,0.8285714285714287,"{'nbi_C': 24, 'ws_random_scalarization': 5, 'nbi_B': 1}","{'nbi_C': 26, 'design_runs': 4}",,,,,
+santander,igd_plus,30,21.0,0.7,0.5212421239810444,0.8333525181143747,0.6857142857142857,"{'ws_random_scalarization': 20, 'nbi_C': 9, 'design_runs': 1}",{'nbi_C': 30},,,,,
+santander,nbi_C_support_hv_ratio,30,,,,,,,,0.9935193115855792,0.9950495321079821,0.0,0.6930053633640164,11.827564655484053
+bnp,hv_ratio,30,24.0,0.8,0.6269430343619583,0.9049489287811706,0.8857142857142858,"{'nbi_C': 24, 'nbi_B': 6}","{'design_runs': 13, 'nbi_B': 13, 'nbi_C': 4}",,,,,
+bnp,igd_plus,30,20.0,0.6666666666666666,0.4878005150467802,0.8076950200327357,0.7714285714285715,"{'nbi_B': 24, 'nbi_C': 6}","{'design_runs': 13, 'nbi_B': 10, 'nbi_C': 6, 'nbi_A': 1}",,,,,
+bnp,nbi_C_support_hv_ratio,30,,,,,,,,0.810549242936414,0.9686430597256304,0.43333333333333335,0.7941674094012359,87.13637745157152
+porto,hv_ratio,30,8.0,0.26666666666666666,0.14182663247581012,0.4444796184128676,0.942857142857143,"{'nbi_C': 28, 'nbi_B': 2}","{'nbi_C': 20, 'nbi_B': 6, 'ws_random_scalarization': 4}",,,,,
+porto,igd_plus,30,2.0,0.06666666666666667,0.018477023624516822,0.21323458516874166,1.0,"{'nbi_C': 28, 'nbi_B': 2}","{'nbi_C': 26, 'nbi_B': 4}",,,,,
+porto,nbi_C_support_hv_ratio,30,,,,,,,,0.9199322490737187,0.933375138661949,0.06666666666666667,0.5682880833156205,1.6612124727930606
+uci_credit,hv_ratio,30,20.0,0.6666666666666666,0.4878005150467802,0.8076950200327357,0.6571428571428573,"{'nbi_C': 16, 'ws_random_scalarization': 14}","{'ws_random_scalarization': 22, 'design_runs': 8}",,,,,
+uci_credit,igd_plus,30,19.0,0.6333333333333333,0.4551356351862472,0.7812607928773656,0.6,"{'nbi_C': 18, 'ws_random_scalarization': 12}","{'ws_random_scalarization': 28, 'design_runs': 2}",,,,,
+uci_credit,nbi_C_support_hv_ratio,30,,,,,,,,0.9425638269116666,0.941620333403541,0.0,0.22653725058087384,-2.3801227436553916

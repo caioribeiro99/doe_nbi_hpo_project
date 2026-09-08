@@ -1,0 +1,25 @@
+{
+  "replications_per_dataset": {
+    "bnp": 30,
+    "porto": 30,
+    "santander": 30,
+    "uci_credit": 30
+  },
+  "r10_max_rep": 9,
+  "primary_comparisons": [
+    "nbi_B vs nbi_A",
+    "nbi_C vs nbi_B",
+    "nbi_C vs ws_random_scalarization",
+    "nbi_C vs random_dirichlet_budget"
+  ],
+  "endpoints": {
+    "igd_plus": "lower",
+    "hv_ratio": "higher"
+  },
+  "rho_nadeau_bengio": 0.25,
+  "tie_tol": 0.0001,
+  "n_boot": 10000,
+  "seed": 20260906,
+  "holm_family": "per dataset: 4 primary comparisons x 2 endpoints (8 tests)",
+  "sign_convention": "delta > 0 means the new (second-named) method is better"
+}
