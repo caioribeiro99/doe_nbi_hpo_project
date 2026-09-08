@@ -17,7 +17,7 @@ Primary comparisons (new method vs reference method):
 1. NBI-B vs NBI-A (real anchors vs surrogate anchors, same Scheffé surfaces);
 2. NBI-C vs NBI-B (metamodel-free on cached OOF vs surrogate with real anchors);
 3. NBI-C vs random weighted scalarization on the surfaces with real anchors;
-4. NBI-C vs budget-matched (66-point) random Dirichlet(1) search.
+4. NBI-C vs 66-point random Dirichlet(1) search (matched only in the number of returned candidates, 66; not evaluation-matched: NBI-C uses ≈ 4 × 10⁵ real OOF evaluations per replication, the comparators ≈ 66).
 
 Primary endpoints, computed on real revalidated objectives against the empirical Pareto reference of the same replication: **IGD+** (lower is better) and **hypervolume ratio** (higher is better). The primary analysis uses the weighted (linear) cost, which is the objective every NBI variant optimized; the support-cost repetition is reported as a sensitivity analysis. All other indicators (GD, IGD, spacing, joint non-dominated fraction, runtime, front sizes, success rates) are descriptive.
 
@@ -38,7 +38,7 @@ Because replications overlap, an ordinary paired t-test overstates precision. Th
 
 ## 5. Proportions
 
-Frequencies over replications (reliability-gate pass, win fractions, sign consistency of coefficients, NBI feasibility ≥ 0.9, holdout ranking agreement, best-set changes between cost definitions) are reported with **Wilson** and **Jeffreys** 95% intervals (`proportion_intervals.csv`).
+Frequencies over replications are reported with **Wilson** and **Jeffreys** 95% intervals: reliability-gate pass, primary win fractions, coefficient sign consistency and NBI feasibility ≥ 0.9 in `proportion_intervals.csv`; holdout ranking agreement in `holdout_transfer_r30.csv`; best-set changes between cost definitions in `cost_definition_sensitivity_r30.csv` (six comparison sets, single-objective references excluded, argmax without tie tolerance).
 
 ## 6. Specific analyses
 

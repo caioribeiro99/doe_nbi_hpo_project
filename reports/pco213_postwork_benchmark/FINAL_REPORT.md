@@ -1,277 +1,211 @@
-# DoE + Scheffé RSM + NBI for multiobjective ensemble-weight optimization — multi-dataset replicated benchmark
+# DoE + Scheffé RSM + NBI for multiobjective ensemble-weight optimization — four-dataset benchmark at R = 30 outer replications
 
-**Final research report** · run 2026-09-04 21:38 → 2026-09-06 01:10 (America/Sao_Paulo) · repository `caioribeiro99/doe_nbi_hpo_project`, branch `pco213-classification-mixture-ensemble`
+**Final research report (R = 30)** · repository `caioribeiro99/doe_nbi_hpo_project`, branch `pco213-classification-mixture-ensemble`
+**Frozen R = 10 analysis:** git tag `pco213-postwork-r10` (commit `a91f222`) is the immutable reference for the earlier ten-replication study; its replications 0–9 are retained unchanged inside this R = 30 analysis. Section 10 compares the two.
 
-Machine-readable basis: `summary.json`, `tables/*.csv`, `manifests/*.json` (this folder); figures in `figures/pco213_postwork_benchmark/`. Raw per-replication artifacts (OOF matrices, reference samples, candidate tables, stage status) are under `experiments/pco213_postwork_benchmark/` and are not versioned.
+Machine-readable basis: `summary.json`, `tables/*.csv` (120 replications), `statistics/*.csv` (replication-level inference, methods in `STATISTICAL_ANALYSIS_R30.md`), `manifests/*.json`; figures `figures/pco213_postwork_benchmark/fig*.png` (aggregates) and `r30_*.png` (distributions). Raw per-replication artifacts stay under `experiments/pco213_postwork_benchmark/` (unversioned).
 
 ---
 
-## 1. Provenance
+## 1. Provenance and execution
 
 | Item | Value |
 |---|---|
-| Runner commit (recorded in the manifest) | `6fa7877` |
-| Commits created in this work | `c2e37c4` benchmark runner + modules + tests · `f1249ff` tmux launch/resume script · `46af91a` aggregation/figures script · `6fa7877` fix: `minimize_on_simplex` returns the best feasible point at vertex optima · `2a8961b` aggregated results, figures, manifests (+ this report's commit) |
-| Base | `a771cff` (failed NBI subproblems reported instead of crashing), on top of `3791683` |
-| Tests | 67 passed (`tests/mixens`, 10 new) |
-| Environment | Python 3.11.15; numpy 2.4.6, pandas 3.0.5, scipy 1.17.1, scikit-learn 1.9.0, statsmodels 0.15.0, xgboost 3.2.0; macOS arm64, Apple M4 Max, 14 cores, 36 GB |
-| Git state at the end | working tree clean; all commits pushed to `origin/pco213-classification-mixture-ensemble` |
+| Protocol | identical to R = 10 (frozen): 80/20 stratified outer split, seed = 20260904 + rep; 5-fold stratified OOF; 5-model zoo (lr, gnb, knn, rf, xgb) with fold-safe preprocessing; 66-run mixture DoE + 100 unseen Dirichlet validation points; Scheffé linear/quadratic/special-cubic with parsimony selection and reliability gate (R²ext ≥ 0.5 and Spearman ≥ 0.9); direct references (SLSQP log-loss, direct AUC search); NBI-A (surrogate anchors), NBI-B (real anchors), NBI-C (metamodel-free) on 66 β's; empirical Pareto reference ≥ 100k points with convergence check; weighted and support (10⁻³) cost; real-OOF revalidation; untouched holdout confirmation |
+| Runner / analysis commits | `6fa7877` (R = 10 runner) · `5d1d5f4` dry-run, no-auto-reduce, persisted seed map · `cf462b4` statistics pipeline · `cdc7492` R = 30 tables, statistics, figures · (this report) |
+| Replications | 120 / 120 (30 per dataset); replications 10–29 launched with `--reps 30 --no-auto-reduce` after a dry-run proved replications 0–9 complete and exactly 80 replications (800 stages) pending |
+| Runtime | extension 53.6 h of stage time (2026-09-06 08:42 → 09-08 14:19 local), cumulative 81.1 h; per dataset santander 30.4 h, porto 28.8 h, bnp 16.3 h, uci_credit 5.6 h; NBI-C 56.2 h of the total |
+| Counts | 3,600 model fits · 19,920 DoE evaluations · 23,760 NBI subproblems · 50.2 M real-objective evaluations (NBI-C, ≈ 4.2 × 10⁵ per replication) · 15.5 M reference points (+ 2.4 M check points) · 4.8 M direct AUC-search evaluations |
+| Failures / retries | 0 in the 80 new replications; the 2 retries of the R = 10 run (Porto rep 0 comparators, UCI rep 0 reference) remain the only ones |
+| Tests | 68 passed (`tests/mixens`; one regression test added for the dry-run planner) |
+| Datasets | unchanged files, checksums re-verified against the R = 10 manifests: santander `704545ba…`, bnp `d3e0b615…`, porto `7115d4f9…` (200k stratified cap, seed 20260904), uci_credit `30c6be3a…` |
+| Git | working tree clean, all commits pushed |
 
-### Datasets (all invariant-validated at load; Kaggle test labels never used; raw files not committed)
-
-| Dataset | Source / acquisition | SHA-256 of the raw train file | Rows used × features | Prevalence | Missing |
-|---|---|---|---|---|---|
-| santander | Kaggle competition, public mirror (existing loader cascade) | `704545ba…6596e` | 200,000 × 200 numeric | 0.1005 | 0 |
-| bnp | Kaggle competition; competition download endpoint returned HTTP 403 for this account, so the file was taken from the public dataset mirror `hjimbean/kaggle-classification-autofe-benchmark` (same 114,321 × 133 layout, string categoricals, v22 with 18,210 levels) | `d3e0b615…d37c5` | 114,321 × 131 (112 numeric, 19 categorical) | 0.7612 | 0.34 |
-| porto | Kaggle competition; public mirror `pushero/porto-seguros-safe-driver-prediction-train-data` (train.csv byte size identical to the official file, 115,852,544 B) | `7115d4f9…edf13` | 200,000 of 595,212 (stratified cap, seed 20260904) × 57 (26 numeric, 14 categorical, 17 binary; −1 → NaN for numeric) | 0.0365 | 0.004 |
-| uci_credit | UCI ML repository #350 (xls) | `30c6be3a…0933` | 30,000 × 23 (20 numeric, 3 categorical) | 0.2212 | 0 |
-
-Full manifests (columns, preprocessing decisions, model parameters, seeds, timings, status per stage) are in `manifests/`.
-
-### Design of the experiment
-
-- Outer replication: R = 10 independent stratified 80/20 partitions per dataset (seed = 20260904 + r); inner 5-fold stratified OOF on the training side; holdout used only for confirmation.
-- Model zoo (fixed, no HPO): lr, gnb, knn(k=100, brute), rf(200 trees), xgb(400 trees); fold-safe `ColumnTransformer` preprocessing (median imputation + indicator, scaling for lr/knn, one-hot with 0.5% minimum frequency for lr/gnb/knn, ordinal codes for rf/xgb).
-- Inference cost per model: median of 5 timed `predict_proba` calls on a fixed 10k-row holdout batch (preprocessing included), ms per 1k predictions.
-- Mixture DoE: 66-run controlled design ({5,3} lattice ∪ {5,2} midpoints ∪ centroid ∪ 5 axial ∪ 5 quaternary centroids ∪ 10 interior centroid–ternary midpoints) + 100 independent Dirichlet validation points (60 Dir(1), 40 Dir(0.5)) never used in fitting.
-- Response surfaces: Scheffé linear, quadratic, special cubic for ROC-AUC, log-loss, Brier, PR-AUC; selection = lowest order whose external RMSE is within 10% of the best; reliability gate = external R² ≥ 0.5 and Spearman ≥ 0.9 on the unseen points.
-- Single-objective references: best single model, uniform voting, logistic stacking, direct SLSQP log-loss optimum (exact, convex), direct AUC search (40k Dirichlet(1)/(0.3) points + design + Nelder–Mead polish), Scheffé optima, real anchors.
-- Empirical Pareto reference: ≥ 100k Dirichlet points (50% α = 1, 50% α = 0.3, shuffled) + vertices, centroid, 190 edge points, {5,6} lattice interior points, design, validation, references, and an exact ε-constraint sweep (40 caps) for log-loss × weighted cost; another 100k added while an independent 20k check displaced > 5% of the front (max 3 rounds). Final empirical reference = non-dominated union of the sample and every candidate set. Both cost definitions: weighted Σwᵢcᵢ and support Σ_{wᵢ>10⁻³} cᵢ.
-- NBI: 66-β lattice ({3,10}), objectives (−AUC, log-loss, weighted cost), normalized by anchor payoff. A: Scheffé surfaces + surrogate anchors; B: same surfaces + real anchors (direct AUC optimum, SLSQP log-loss optimum, cheapest vertex); C: metamodel-free on the cached OOF (rank-based AUC, exact log-loss, SLSQP with finite-difference step 10⁻³, feasible-iterate acceptance). Vertex β's return their anchor; other subproblems warm-start at the CHIM pre-image.
-- Comparators: random weighted scalarization on the surfaces with real anchors (66 λ), budget-matched random Dirichlet search (66 points), the 66 DoE runs, the single-objective references.
-- Every candidate revalidated on the real cached OOF (AUC, log-loss, Brier, PR-AUC, both costs, N_eff, entropy, support), Pareto-filtered again on real objectives; quality (GD, IGD, IGD+, spacing, spacing-CV, hypervolume ratio with reference point 1.1³, joint non-dominated fraction over all valid candidates, coverage, extreme recovery, size-matched spacing percentile) computed only on real objectives with a common normalization from the empirical reference front.
+Statistical unit and reading rules: one outer partition of one dataset; partitions within a dataset overlap, so replication statistics describe partition sensitivity; the dataset is the unit of generalization; comparisons are paired by replication; bootstrap intervals are Monte Carlo stability intervals; formal tests use the Nadeau–Bengio corrected resampled t (ρ = 0.25, df = 29) with Holm correction within each dataset's family of 8 primary tests, Wilcoxon signed-rank as a distribution-free check; effect consistency (win fractions, rank-biserial r) takes precedence over p-values. Δ > 0 always means the second-named method is better.
 
 ---
 
-## 2. Execution summary
-
-| Item | Value |
-|---|---|
-| Completed replications | 40 / 40 (10 per dataset); no reduction of R was necessary (pilot-pass projection 1.16 days for R = 10, ceiling 5 days) |
-| Total stage time | 27.53 h (wall clock 27.5 h) |
-| Per dataset | santander 10.57 h · porto 9.64 h · bnp 5.50 h · uci_credit 1.82 h |
-| Per stage | metamodel-free NBI-C 19.01 h · single-objective references 3.30 h · empirical reference 2.20 h · OOF 1.39 h · NBI-A 0.73 h · NBI-B 0.52 h · quality 0.29 h · rest < 0.1 h |
-| Model fits | 1,200 (25 fold fits + 5 refits per replication) |
-| DoE evaluations | 6,640 (66 design + 100 validation per replication) |
-| NBI subproblems | 7,920 (66 × 3 variants × 40) |
-| Real-objective evaluations in NBI-C | 17,004,670 (≈ 425k per replication) |
-| Direct AUC-search evaluations | 1,614,624 |
-| Reference points evaluated | 5,822,560 (100,564 per replication per round; 1.3–1.6 rounds on average) plus 800,000 independent check-set evaluations |
-| Failed / retried stages | 2 retries, 0 unresolved: `porto/rep_00/comparators` (a solver-robustness defect, fixed in `6fa7877` and retried on resume) and `uci_credit/rep_00/reference` (interrupted by the restart, recomputed) |
-
----
-
-## 3. Model-level performance (mean over 10 replications; OOF AUC / holdout AUC / OOF log-loss / cost ms per 1k)
+## 2. Model-level performance (mean over 30 replications; OOF AUC / holdout AUC / OOF log-loss / cost ms per 1k)
 
 | Dataset | lr | gnb | knn | rf | xgb |
 |---|---|---|---|---|---|
-| santander | 0.8592 / 0.8600 / 0.2324 / 0.72 | **0.8878** / 0.8812 / 0.2112 / 0.78 | 0.7253 / 0.7262 / 0.3512 / 240.3 | 0.8448 / 0.8463 / 0.2752 / 3.75 | 0.8808 / 0.8839 / 0.2202 / 1.05 |
-| bnp | 0.7345 / 0.7348 / 0.4844 / 3.35 | 0.5989 / 0.6007 / 3.829 / 3.72 | 0.6780 / 0.6796 / 0.5126 / 150.2 | 0.7425 / 0.7453 / 0.4821 / 6.18 | **0.7481** / 0.7533 / 0.4740 / 3.49 |
-| porto | **0.6244** / 0.6297 / 0.1529 / 1.38 | 0.5896 / 0.5922 / 1.884 / 1.58 | 0.5668 / 0.5632 / 0.1610 / 232.3 | 0.6194 / 0.6241 / 0.1533 / 4.32 | 0.5906 / 0.6008 / 0.1589 / 1.64 |
-| uci_credit | 0.7235 / 0.7248 / 0.4656 / 0.51 | 0.6602 / 0.6705 / 1.134 / 0.57 | 0.7568 / 0.7605 / 0.4451 / 23.9 | **0.7830** / 0.7831 / 0.4274 / 5.76 | 0.7655 / 0.7652 / 0.4553 / 0.85 |
+| santander | 0.8594 / 0.8593 / 0.2322 / 0.72 | **0.8880** / 0.8804 / 0.2110 / 0.78 | 0.7247 / 0.7271 / 0.3515 / 246.1 | 0.8451 / 0.8456 / 0.2752 / 3.81 | 0.8811 / 0.8831 / 0.2201 / 1.08 |
+| bnp | 0.7345 / 0.7347 / 0.4843 / 3.32 | 0.6034 / 0.6061 / 3.741 / 3.70 | 0.6777 / 0.6799 / 0.5127 / 149.6 | 0.7425 / 0.7446 / 0.4821 / 6.19 | **0.7482** / 0.7532 / 0.4740 / 3.45 |
+| porto | **0.6251** / 0.6272 / 0.1529 / 1.38 | 0.5884 / 0.5922 / 1.861 / 1.58 | 0.5668 / 0.5636 / 0.1610 / 230.5 | 0.6207 / 0.6224 / 0.1532 / 4.34 | 0.5917 / 0.5985 / 0.1588 / 1.64 |
+| uci_credit | 0.7238 / 0.7245 / 0.4655 / 0.52 | 0.6583 / 0.6709 / 1.161 / 0.57 | 0.7571 / 0.7584 / 0.4450 / 24.1 | **0.7829** / 0.7832 / 0.4275 / 5.67 | 0.7651 / 0.7663 / 0.4553 / 0.86 |
 
-kNN costs 36–330× the cheapest model on every dataset; GNB is severely over-confident on BNP, Porto and UCI (log-loss 1.1–3.8).
+Unchanged from R = 10 to three decimals. kNN costs 42–320× the cheapest model; GNB is over-confident on BNP, Porto and UCI.
 
----
+## 3. Single-objective references (mean over 30; OOF AUC ± sd / OOF log-loss / holdout AUC / holdout log-loss / weighted cost)
 
-## 4. Scheffé response surfaces (selected order, unseen Dirichlet points; medians over replications)
-
-| Dataset | Response | Selected order (freq.) | Reliable | R²ext median (min) | rel-RMSE | Spearman | R²ext by order lin / quad / sp.cubic |
+| Dataset | best single | uniform | stacking | SLSQP log-loss | direct AUC | Scheffé LL opt. | Scheffé AUC opt. |
 |---|---|---|---|---|---|---|---|
-| santander | ROC-AUC | quadratic 8, linear 2 | 0 / 10 | −0.40 (−0.63) | 0.185 | 0.818 | −0.94 / −0.30 / −0.34 |
-| santander | log-loss | quadratic 9, sp.cubic 1 | 10 / 10 | 0.973 (0.962) | 0.033 | 0.994 | 0.82 / 0.97 / 0.97 |
-| bnp | ROC-AUC | linear 7, quadratic 2, sp.cubic 1 | 2 / 10 | 0.03 (−1.27) | 0.198 | 0.908 | −0.02 / −0.27 / −0.35 |
-| bnp | log-loss | linear 7, sp.cubic 2, quadratic 1 | 2 / 10 | 0.08 (−0.47) | 0.155 | 0.963 | −0.04 / −0.44 / −0.18 |
-| porto | ROC-AUC | quadratic 10 | 6 / 10 | 0.52 (0.35) | 0.127 | 0.912 | 0.24 / 0.52 / 0.57 |
-| porto | log-loss | linear 7, sp.cubic 2, quadratic 1 | 5 / 10 | 0.62 (0.43) | 0.106 | 0.996 | 0.53 / 0.46 / 0.50 |
-| uci_credit | ROC-AUC | quadratic 5, sp.cubic 5 | 10 / 10 | 0.994 (0.982) | 0.016 | 0.996 | 0.89 / 0.99 / 0.99 |
-| uci_credit | log-loss | quadratic 8, sp.cubic 2 | 10 / 10 | 0.995 (0.985) | 0.014 | 0.995 | 0.85 / 0.99 / 0.995 |
-| all | Brier | quadratic 10 | 10 / 10 | 1.000 | 0.000 | 1.000 | exact (algebraic identity, sanity check only) |
-| santander / bnp / porto / uci | PR-AUC | — | 0 / 3 / 8 / 10 | −0.38 / 0.44 / 0.77 / 0.95 | | | |
+| santander | 0.8880±.0006/.2110/.8804/.2175/0.78 | 0.8893/.2268/.8892/.2262/50.5 | 0.8868/.2152/.8863/.2161 | **0.8917/.2088**/.8880/.2113/0.88 | 0.8923/.2120/.8900/.2131/3.74 | 0.8901/.2111/.8849/.2141/26.6 | 0.8902/.2155/.8854/.2175/45.8 |
+| bnp | 0.7482±.0014/.4740/.7532/.4697/3.45 | 0.7358/.5188/.7372/.5176/33.3 | 0.7540/.4720/.7563/.4705 | **0.7539/.4689**/.7570/.4669/3.84 | 0.7547/.4698/.7573/.4683/4.37 | 0.7461/.4830/.7507/.4793/3.47 | 0.7488/.4746/.7533/.4711/7.90 |
+| porto | 0.6251±.0025/.1529/.6272/.1527/1.38 | 0.6151/.1962/.6179/.1957/47.9 | 0.6239/.1532/.6261/.1531 | **0.6311/.1525**/.6325/.1524/13.1 | 0.6311/.1525/.6325/.1524/15.8 | 0.6187/.1622/.6207/.1620/4.11 | 0.6299/.1525/.6319/.1524/2.69 |
+| uci_credit | 0.7829±.0018/.4275/.7832/.4273/5.67 | 0.7671/.4652/.7678/.4652/6.35 | 0.7826/.4286/.7826/.4286 | **0.7836/.4268**/.7837/.4268/5.98 | 0.7839/.4273/.7841/.4271/6.87 | 0.7831/.4277/.7833/.4275/5.83 | 0.7838/.4273/.7841/.4271/7.67 |
 
-Reading: the surrogate is dataset- and metric-dependent, tracking the heterogeneity of the model pool. The extremes are unambiguous: on UCI every response is captured to R²ext ≈ 0.99; on Santander log-loss is captured (0.97) but AUC is not (negative R²ext at every order; R² < 0 arises because the surface is worse than the mean on a response whose range across the simplex is only ≈ 0.04 AUC, absolute RMSE ≈ 0.008; the surface is qualitatively wrong along the kNN direction, as diagnosed in the first post-work run); on BNP neither AUC nor log-loss is captured by any order (higher orders are worse externally, over-fitting a surface with an exponential-like blow-up near the over-confident GNB vertex, whose OOF log-loss is 3.97). The intermediate cells are borderline and validation-draw dependent: Porto AUC values straddle the 0.5 threshold (0.35–0.70), and on Porto/BNP log-loss the positive R²ext of the (mostly linear) selected surface is carried by the few validation points nearest the GNB vertex; three of Porto's five log-loss failures pass R² and fail only the Spearman gate. Extrapolation excess on the validation points is ≈ 0 everywhere, so failures are misspecification/interior error, not range extrapolation. The Brier row is a fitting-code sanity check, not evidence of surrogate quality.
-
-### Interaction coefficients (quadratic fit, all replications)
-
-Sign frequency is 1.0 or 0.0 for the four largest interactions in every dataset × response, and the top pair is the same in 10/10 replications (9/10 cases; Porto AUC 7/10). The dominant pairs differ across datasets:
-
-| Dataset | Largest AUC interactions β_ij (mean ± sd) | Largest log-loss interactions |
-|---|---|---|
-| santander | gnb·knn +0.242±0.003, knn·xgb +0.231, knn·rf +0.199, lr·knn +0.196 | gnb·knn −0.174±0.001, lr·knn −0.147, knn·xgb −0.136 |
-| bnp | gnb·xgb +0.157±0.023, gnb·rf +0.147, lr·gnb +0.141, knn·xgb +0.113 | gnb·xgb −4.02±0.24, gnb·rf −3.99, gnb·knn −3.99, lr·gnb −3.97 |
-| porto | gnb·knn +0.071±0.008, knn·xgb +0.068, lr·knn +0.062, knn·rf +0.052 | gnb·knn −1.93±0.09, gnb·xgb −1.92, gnb·rf −1.91 |
-| uci_credit | gnb·xgb +0.129±0.008, gnb·rf +0.101, lr·xgb +0.088, lr·gnb +0.077 | gnb·xgb −0.73±0.12, gnb·knn −0.70, gnb·rf −0.68 |
-
-In every dataset the largest positive AUC interactions involve the weakest classifier by OOF AUC (kNN on Santander/Porto, GNB on BNP/UCI; on Porto the single largest term is gnb·knn in 7/10 replications and knn·xgb in 3/10), and the largest negative log-loss interactions involve GNB (the over-confident one). Between-replication CV of these coefficients ranges from 0.006 (Santander) to 0.18 (UCI log-loss, BNP AUC), median 0.06; three near-zero terms outside the top four flip sign. The coefficients are taken from the quadratic fit in every replication irrespective of the selected order, and the design is identical across replications, so this is stability under data resampling and does not imply surface adequacy. The interpretation must be the Scheffé one: β_ij is the edge-midpoint gain over the linear average of the two vertices, so a weak-strong pair whose blend tracks the stronger member has β_ij ≈ 2 × (vertex gap); Spearman(β_ij, vertex AUC gap) is 0.82 / 0.94 / 0.81 on Santander / BNP / UCI (0.10 on Porto, where all models lie within 0.06 AUC). On the real OOF predictions the 50/50 blend of the top-β pair is below its stronger member on Santander (−0.005), BNP (−0.017) and UCI (−0.020) in 10/10 replications; only Porto's gnb+knn blend is genuinely synergistic (+0.009). The pairs whose 50/50 blend beats both members are lr+rf (Santander), rf+xgb (BNP), gnb+xgb (Porto) and knn+xgb (UCI), none of which carries the largest β_ij.
+Weight stability of the real optima over 30 replications (mean ± sd): Santander SLSQP gnb 0.68±0.01 / xgb 0.32±0.01; BNP xgb 0.63±0.01 / lr 0.22±0.01 / rf 0.15±0.01; Porto lr 0.53±0.03 / rf 0.34±0.03 / xgb 0.09±0.02 / knn 0.05±0.02; UCI rf 0.77±0.03 / xgb 0.16±0.02 / knn 0.06±0.02. The Scheffé-derived optima remain below the direct optima on every dataset and are 30–50× more expensive on Santander.
 
 ---
 
-## 5. Single-objective references (mean over replications; OOF AUC / OOF log-loss / holdout AUC / holdout log-loss / weighted cost)
+## 4. Scheffé surfaces and the reliability gate (R = 30)
 
-| Dataset | best single | uniform | stacking | SLSQP log-loss | direct AUC | Scheffé LL optimum | Scheffé AUC optimum |
-|---|---|---|---|---|---|---|---|
-| santander | 0.8878/0.2112/0.8812/0.2169/0.78 | 0.8890/0.2269/0.8899/0.2260/49.3 | 0.8866/0.2154/0.8872/0.2156 | **0.8914/0.2090**/0.8889/0.2107/0.87 | 0.8921/0.2125/0.8909/0.2129/6.20 | 0.8900/0.2112/0.8859/0.2135/25.2 | 0.8897/0.2153/0.8857/0.2171/41.1 |
-| bnp | 0.7481/0.4740/0.7533/0.4693/3.49 | 0.7364/0.5205/0.7384/0.5198/33.4 | 0.7539/0.4720/0.7565/0.4700 | **0.7538/0.4689**/0.7571/0.4667/3.87 | 0.7546/0.4699/0.7574/0.4681/4.40 | 0.7456/0.4873/0.7504/0.4836/3.50 | 0.7491/0.4739/0.7536/0.4703/7.84 |
-| porto | 0.6244/0.1529/0.6297/0.1526/1.38 | 0.6149/0.1971/0.6192/0.1970/48.2 | 0.6228/0.1532/0.6277/0.1530 | **0.6302/0.1525**/0.6349/0.1523/14.4 | 0.6303/0.1525/0.6348/0.1523/17.7 | 0.6184/0.1647/0.6230/0.1644/3.87 | 0.6294/0.1526/0.6342/0.1523/2.43 |
-| uci_credit | 0.7830/0.4274/0.7831/0.4274/5.76 | 0.7673/0.4644/0.7679/0.4636/6.33 | 0.7828/0.4284/0.7825/0.4288 | **0.7837/0.4267**/0.7834/0.4269/6.03 | 0.7840/0.4271/0.7840/0.4270/6.85 | 0.7833/0.4274/0.7832/0.4273/6.12 | 0.7839/0.4271/0.7841/0.4271/7.54 |
-
-Weight stability of the real optima (mean ± sd over replications): Santander SLSQP = gnb 0.68±0.01, xgb 0.32±0.01; BNP SLSQP = xgb 0.63±0.02, lr 0.21±0.02, rf 0.15±0.01; Porto SLSQP = lr 0.54±0.04, rf 0.32±0.03, xgb 0.09±0.02, knn 0.05±0.02; UCI SLSQP = rf 0.78±0.04, xgb 0.16±0.02, knn 0.06±0.03. The direct-AUC optima have the same support with small shifts. The Scheffé-derived optima are worse than the direct optima on every dataset (AUC −0.001 to −0.012; log-loss +0.0003 to +0.018) and, on Santander, 30–50× more expensive because they carry kNN weight.
-
----
-
-## 6. Empirical Pareto reference: convergence
-
-| Dataset | Points (mean) | Rounds (mean, max) | Front displaced by the independent 20k check (mean, max) | Front size weighted / support (median) |
-|---|---|---|---|---|
-| santander | 150,564 | 1.5, 3 | 0.025, 0.060 | 142 / 46 |
-| bnp | 130,564 | 1.3, 2 | 0.023, 0.042 | 122 / 41 |
-| porto | 160,564 | 1.6, 3 | 0.034, 0.049 | 100 / 14 |
-| uci_credit | 140,564 | 1.4, 2 | 0.036, 0.050 | 457 / 80 |
-
-The references were extended until an independently drawn 20k-point check displaced no more than 5% of the weighted-cost sample front: 25 replications needed one 100k round, 12 two, 3 three; 39/40 met the tolerance and Santander replication 1 stopped at the 3-round cap at 5.97%. Three qualifications. The check applies to the weighted-cost front only; applying the same 20k check to the support-cost fronts displaces 0.3–9.1% on average (16/40 replications above 5%, max 20.5%). The 20k check is one fifth of the sample density and doubles as the stopping rule, so it understates how far a further 100k points move the front (about 2×: 5–23% of the weighted front, up to 36% of the support front in the multi-round replications). In objective space these displacements are immaterial for the indicators: the hypervolume ratio of a sample front to its union with the displacing points is ≥ 0.998 and the normalized IGD ≤ 0.011. The final reference is the non-dominated union with every candidate set (NBI-B and NBI-C together contribute 30–40% of its points, NBI-C alone 8–25%), so convergence and coverage indicators are partly self-graded; the 800,000 check-set evaluations are not included in the 5.8 M count. Contributors to the weighted-cost sample fronts: Dirichlet(0.3) points, the exact ε-constraint sweep and edge points.
-
----
-
-## 7. Pareto quality vs the empirical reference (medians over 10 replications; IQR in `summary.json`)
-
-### 7.1 Weighted (linear) cost
-
-| Dataset | Set | n front | GD | IGD | IGD+ | HV ratio | joint-ND (all valid) | spacing CV | size-matched spacing pct |
-|---|---|---|---|---|---|---|---|---|---|
-| santander | NBI-A | 13 | 0.250 | 0.117 | 0.083 | 0.852 | 0.000 | 1.50 | 0.99 |
-| santander | NBI-B | 19 | 0.011 | 0.053 | 0.007 | 0.983 | 0.047 | 1.41 | 0.78 |
-| santander | NBI-C | 37 | 0.005 | 0.043 | 0.005 | **0.993** | 0.459 | 2.78 | 0.99 |
-| santander | random scalarization | 54 | 0.001 | 0.215 | 0.007 | 0.978 | 0.720 | 2.23 | 0.00 |
-| santander | random Dirichlet (66) | 5 | 2.38 | 0.433 | 0.361 | 0.562 | 0.000 | 0.93 | 1.00 |
-| santander | DoE runs (66) | 7 | 0.001 | 0.093 | 0.007 | 0.982 | 0.061 | 1.07 | 0.64 |
-| bnp | NBI-A | 8 | 0.002 | 0.190 | 0.028 | 0.917 | 0.083 | 0.81 | 0.49 |
-| bnp | NBI-B | 44 | 0.000 | 0.060 | 0.014 | 0.968 | 0.583 | 3.06 | 0.99 |
-| bnp | NBI-C | 34 | 0.009 | 0.027 | 0.014 | **0.983** | 0.336 | 0.92 | 0.54 |
-| bnp | random scalarization | 2 | 0.084 | 0.445 | 0.295 | 0.493 | 0.000 | — | — |
-| bnp | random Dirichlet (66) | 4 | 5.57 | 1.55 | 1.53 | 0.000 | 0.000 | 1.27 | 1.00 |
-| bnp | DoE runs (66) | 6 | 0.084 | 0.170 | 0.031 | 0.916 | 0.030 | 1.04 | 0.84 |
-| porto | NBI-A | 12 | 0.033 | 0.219 | 0.065 | 0.823 | 0.015 | 0.59 | 0.10 |
-| porto | NBI-B | 56 | 0.015 | 0.071 | 0.048 | 0.883 | 0.432 | 2.61 | 0.99 |
-| porto | NBI-C | 56 | 0.003 | 0.031 | 0.008 | **0.982** | 0.727 | 1.56 | 0.98 |
-| porto | random scalarization | 14 | 0.035 | 0.312 | 0.083 | 0.786 | 0.076 | 2.20 | 0.87 |
-| porto | random Dirichlet (66) | 5 | 56.1 | 1.76 | 1.76 | 0.000 | 0.000 | 1.37 | 1.00 |
-| porto | DoE runs (66) | 3 | 0.082 | 0.355 | 0.159 | 0.640 | 0.008 | 0.79 | 0.39 |
-| uci_credit | NBI-A | 16 | 0.009 | 0.199 | 0.170 | 0.669 | 0.292 | 1.64 | 0.46 |
-| uci_credit | NBI-B | 28 | 0.003 | 0.180 | 0.157 | 0.688 | 0.491 | 2.06 | 0.40 |
-| uci_credit | NBI-C | 63 | 0.001 | 0.031 | 0.009 | **0.977** | 0.785 | 2.19 | 0.45 |
-| uci_credit | random scalarization | 55 | 0.001 | 0.133 | 0.008 | 0.980 | 0.720 | 1.51 | 0.01 |
-| uci_credit | random Dirichlet (66) | 10 | 0.398 | 0.226 | 0.141 | 0.750 | 0.000 | 1.02 | 0.97 |
-| uci_credit | DoE runs (66) | 8 | 0.012 | 0.083 | 0.033 | 0.920 | 0.045 | 1.06 | 0.78 |
-
-IQR of the NBI variants (IGD+ · HV ratio · joint-ND): Santander A 0.062–0.135 · 0.80–0.89 · 0.00–0.01; B 0.006–0.010 · 0.981–0.984 · 0.04–0.05; C 0.004–0.009 · 0.988–0.994 · 0.37–0.52. BNP A 0.026–0.244 · 0.64–0.92 · 0.03–0.09; B 0.012–0.015 · 0.962–0.971 · 0.50–0.60; C 0.012–0.015 · 0.980–0.984 · 0.33–0.35. Porto A 0.036–0.109 · 0.72–0.90 · 0.00–0.04; B 0.032–0.053 · 0.86–0.92 · 0.30–0.53; C 0.007–0.010 · 0.980–0.983 · 0.46–0.84. UCI A 0.117–0.244 · 0.54–0.79 · 0.22–0.40; B 0.125–0.234 · 0.57–0.78 · 0.40–0.60; C 0.007–0.015 · 0.967–0.983 · 0.75–0.83.
-
-### 7.2 Support (deployment) cost
-
-| Dataset | NBI-A IGD+ / HV / jND | NBI-B | NBI-C | random scalarization | random Dirichlet | DoE runs |
+| Dataset | Response | Selected order (freq.) | Gate pass k/30 | P(pass), Wilson 95% | R²ext median [bootstrap CI] | Spearman median |
 |---|---|---|---|---|---|---|
-| santander | 0.063 / 0.860 / 0.00 | 0.009 / 0.985 / 0.03 | **0.002 / 0.992 / 0.46** | 0.010 / 0.985 / 0.00 | 0.608 / 0.078 / 0 | 0.008 / 0.988 / 0.03 |
-| bnp | 0.041 / 0.929 / 0.00 | 0.021 / 0.843 / 0.11 | 0.059 / 0.663 / 0.20 | 0.353 / 0.566 / 0.00 | 7.82 / 0.000 / 0 | **0.038 / 0.965** / 0.03 |
-| porto | 0.066 / 0.870 / 0.00 | 0.018 / 0.845 / 0.02 | **0.008 / 0.932 / 0.14** | 0.081 / 0.852 / 0.02 | 1.36 / 0.000 / 0 | 0.172 / 0.700 / 0.00 |
-| uci_credit | 0.042 / 0.917 / 0.05 | 0.051 / 0.882 / 0.25 | 0.042 / 0.938 / 0.17 | **0.006 / 0.982** / 0.12 | 0.546 / 0.098 / 0 | 0.012 / 0.974 / 0.02 |
+| santander | ROC-AUC | quadratic 26, linear 4 | 0 | 0.00 [0.00, 0.11] | −0.333 [−0.559, −0.199] | 0.830 |
+| santander | log-loss | quadratic 29, sp.cubic 1 | 30 | 1.00 [0.89, 1.00] | 0.971 [0.967, 0.973] | 0.994 |
+| bnp | ROC-AUC | linear 22, quadratic 7, sp.cubic 1 | 5 | 0.17 [0.07, 0.34] | 0.118 [−0.034, 0.244] | 0.908 |
+| bnp | log-loss | linear 21, quadratic 7, sp.cubic 2 | 3 | 0.10 [0.03, 0.26] | −0.180 [−0.246, 0.042] | 0.955 |
+| porto | ROC-AUC | quadratic 26, sp.cubic 2, linear 2 | 16 | 0.53 [0.36, 0.70] | 0.519 [0.482, 0.581] | 0.924 |
+| porto | log-loss | linear 20, quadratic 8, sp.cubic 2 | 12 | 0.40 [0.25, 0.58] | 0.506 [0.492, 0.580] | 0.995 |
+| uci_credit | ROC-AUC | quadratic 20, sp.cubic 10 | 30 | 1.00 [0.89, 1.00] | 0.992 [0.989, 0.992] | 0.995 |
+| uci_credit | log-loss | quadratic 27, sp.cubic 3 | 30 | 1.00 [0.89, 1.00] | 0.993 [0.991, 0.993] | 0.993 |
+| all | Brier | quadratic 30/30 | 30 | 1.00 | 1.000 (algebraic identity, sanity check only) | 1.000 |
 
-### 7.3 Paired differences across replications (weighted cost; mean, fraction of replications with the sign shown)
+The R = 10 pass fractions (0, 0.2, 0.6, 1.0 for AUC; 1.0, 0.2, 0.5, 1.0 for log-loss) all lie inside the R = 30 Wilson intervals. The extremes are settled: the Santander AUC surface never passes and the UCI surfaces always pass; BNP's surfaces almost never pass; Porto remains a genuine borderline case (its per-replication R²ext straddles 0.5 for both responses), and no amount of replication turns it into a clear pass or fail. Extrapolation excess is ≈ 0 everywhere; failures are polynomial misspecification, not range extrapolation.
 
-| Dataset | B − A IGD+ (frac < 0) | B − A HV (frac > 0) | C − B IGD+ (frac < 0) | C − B HV (frac > 0) | C − B joint-ND (frac > 0) | B − random Dirichlet HV | B − random scalarization HV |
+### Interaction coefficients (quadratic fit, 30 replications)
+
+| Dataset | Largest AUC interactions β_ij (mean ± sd; sign freq.; top-1 freq.) | Largest log-loss interactions |
+|---|---|---|
+| santander | gnb·knn +0.243±0.003 (1.0; 1.00), knn·xgb +0.232, knn·rf +0.199, lr·knn +0.197 | gnb·knn −0.174±0.001 (0.0; 1.00), lr·knn −0.148, knn·xgb −0.137 |
+| bnp | gnb·xgb +0.148±0.026 (1.0; 1.00), gnb·rf +0.139, lr·gnb +0.133, knn·xgb +0.113 | gnb·xgb −3.92±0.25 (0.0; 1.00), gnb·rf −3.89, gnb·knn −3.89, lr·gnb −3.87 |
+| porto | gnb·knn +0.071±0.008 (1.0; 0.63), knn·xgb +0.068 (top-1 0.37), lr·knn +0.063, knn·rf +0.052 | gnb·knn −1.90±0.23 (0.0; 1.00), gnb·xgb −1.89, gnb·rf −1.89 |
+| uci_credit | gnb·xgb +0.130±0.008 (1.0; 1.00), gnb·rf +0.103, lr·xgb +0.086, lr·gnb +0.078 | gnb·xgb −0.756±0.101 (0.0; 1.00), gnb·knn −0.727, gnb·rf −0.705 |
+
+Sign frequency is exactly 1.0 or 0.0 for the four largest interactions in all 8 ROC-AUC/log-loss cells at R = 30; only five small terms flip sign (ranks 8–10 in their cell, |mean| ≤ 11% of the cell's largest interaction: Porto AUC gnb·rf 0.80 and lr·gnb 0.47; UCI log-loss knn·rf 0.47, lr·knn 0.07, lr·rf 0.07; three of them have intervals excluding zero, so they are small rather than null). Negative log-loss interactions are forced by the convexity of log-loss in the blended probability (Jensen), so the log-loss sign stability is a fit-quality check and only the AUC signs are informative. Between-replication CV is 0.007–0.18 (median ≈ 0.06). The R = 10 → R = 30 change of the top-3 means is ≤ 6.0% relative (BNP AUC gnb·xgb 0.157 → 0.148), 4.1–4.3% for UCI log-loss and ≤ 2.5% elsewhere; the largest-mean term is identical at R = 10 and R = 30 in all 8 cells and is the per-replication top-1 in 30/30 replications in 7 cells and 19/30 on Porto AUC. **The interpretation from R = 10 holds exactly:** the largest positive AUC interactions involve the weakest classifier (kNN on Santander/Porto, GNB on BNP/UCI), β_ij tracks the vertex-quality gap (Santander gnb·knn gap 0.163, BNP gnb·xgb 0.145, UCI gnb·xgb 0.107), and the real 50/50 blend of the top-β pair is *worse* than its better member in 30/30 replications on Santander (−0.005), BNP (−0.018) and UCI (−0.020); only Porto's gnb+knn blend beats both members (30/30, +0.010; on the untouched holdout the same pattern holds, 0/30, 0/30, 0/30 and 29/30). The optimally weighted blend of the top-β pair gains at most +0.0004 (BNP), +0.0002 (UCI) and 0 (Santander, pure GNB) versus +0.010 on Porto, contradicting the fitted quadratics, which predict interior edge optima on all four datasets. The pairs whose 50/50 blend beats the better member in ≥ 80% of replications are lr·rf, gnb·xgb, knn·rf, lr·xgb (Santander), lr·rf, lr·xgb, rf·xgb (BNP), gnb·knn, gnb·xgb, knn·xgb, lr·rf (Porto) and knn·xgb (UCI); with the single exception of Porto they never carry the largest β_ij. Pareto participation of the top-β pair (both models active on the reference front) is 9% (Santander), 51% (BNP), 3% (Porto), 58% (UCI). Diversity vs β_ij: Spearman(β_ij^AUC, error correlation) = −0.53 / −0.84 / +0.03 / −0.77 and Spearman(β_ij^LL, error correlation) = 0.65 / 0.87 / 0.82 / 0.93 per dataset (n = 10 pairs each), unchanged from R = 10 and still explained by the vertex-quality gap and the GNB-vs-rest contrast rather than by exploitable complementarity.
+
+---
+
+## 5. Empirical Pareto reference (R = 30)
+
+Median 100,564 points per replication (1 round in most; 2–3 rounds where the independent 20k check displaced > 5%); median displacement 2.2–3.9% (weighted front), 39/40 R = 10 and 116/120 R = 30 replications within the 5% tolerance (the others stopped at the 3-round cap, max 6.0%). Median sample-front sizes: weighted 135 / 120 / 94 / 481, support 40 / 39 / 14 / 87 (Santander / BNP / Porto / UCI). The caveats of the R = 10 report stand: the final reference is the non-dominated union of the sample with every candidate set (NBI-B/C contribute 30–40% of its points), the check applies to the weighted-cost front only, and the objective-space effect of residual displacement is immaterial (HV ratio ≥ 0.998).
+
+---
+
+## 6. Primary paired comparisons (weighted cost, R = 30; Δ > 0 = second method better)
+
+| Dataset | Comparison | ΔIGD+ mean [95% CI] · median | ΔHV mean [95% CI] · median | wins/ties/losses (IGD+ · HV) | r_rb (IGD+ · HV) | NB p, Holm (IGD+ · HV) | Wilcoxon Holm p (IGD+ · HV) |
 |---|---|---|---|---|---|---|---|
-| santander | −0.087 (10/10) | +0.136 (10/10) | −0.002 (10/10) | +0.009 (10/10) | +0.39 (10/10) | +0.53 (10/10) | +0.004 (8/10) |
-| bnp | −0.207 (10/10) | +0.249 (10/10) | +0.0005 (4/10) | +0.015 (9/10) | −0.17 (1/10) | +0.94 (10/10) | +0.46 (10/10) |
-| porto | −0.006 (6/10) | +0.017 (6/10) | −0.058 (10/10) | +0.152 (10/10) | +0.27 (8/10) | +0.82 (10/10) | +0.02 (6/10) |
-| uci_credit | −0.005 (5/10) | +0.009 (5/10) | −0.170 (9/10) | +0.305 (10/10) | +0.29 (10/10) | −0.07 (5/10) | −0.31 (1/10) |
+| santander | B vs A | +0.120 [0.098, 0.143] · 0.125 | +0.179 [0.148, 0.210] · 0.196 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | 0.007 · 0.004 | <0.001 · <0.001 |
+| santander | C vs B | +0.0016 [0.0011, 0.0021] · 0.0017 | +0.0077 [0.0064, 0.0089] · 0.0084 | 28/0/2 · 28/0/2 | 0.84 · 0.98 | 0.099 · 0.003 | <0.001 · <0.001 |
+| santander | C vs scalarization | −0.0029 [−0.0050, −0.0010] · −0.0018 | +0.0106 [0.0077, 0.0134] · 0.0104 | 10/0/20 · 25/0/5 | −0.47 · 0.93 | 0.35 · 0.06 | 0.023 · <0.001 |
+| santander | C vs random Dirichlet | +0.82 [0.62, 1.03] · 0.71 | +0.71 [0.61, 0.81] · 0.78 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | 0.052 · <0.001 | <0.001 · <0.001 |
+| bnp | B vs A | +0.239 [0.111, 0.377] · 0.015 | +0.279 [0.154, 0.415] · 0.059 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | 0.66 · 0.66 | <0.001 · <0.001 |
+| bnp | C vs B | −0.0029 [−0.0044, −0.0011] · −0.0028 | +0.0086 [0.0043, 0.0132] · 0.0106 | 6/0/24 · 24/0/6 | −0.74 · 0.68 | 0.66 · 0.66 | <0.001 · <0.001 |
+| bnp | C vs scalarization | +0.40 [0.29, 0.53] · 0.29 | +0.54 [0.47, 0.61] · 0.51 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | 0.18 · <0.001 | <0.001 · <0.001 |
+| bnp | C vs random Dirichlet | +1.51 [1.29, 1.74] · 1.51 | +0.94 [0.91, 0.97] · 0.98 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | <0.001 · <0.001 | <0.001 · <0.001 |
+| porto | B vs A | +0.038 [0.017, 0.058] · 0.030 | +0.085 [0.037, 0.131] · 0.076 | 23/0/7 · 24/0/6 | 0.65 · 0.66 | 0.79 · 0.79 | 0.002 · 0.002 |
+| porto | C vs B | +0.042 [0.024, 0.063] · 0.024 | +0.108 [0.064, 0.162] · 0.074 | 28/0/2 · 28/0/2 | 0.90 · 0.91 | 0.79 · 0.79 | <0.001 · <0.001 |
+| porto | C vs scalarization | +1.64 [0.08, 4.69] · 0.091 | +0.27 [0.19, 0.37] · 0.22 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | 0.79 · 0.35 | <0.001 · <0.001 |
+| porto | C vs random Dirichlet | +1.94 [1.56, 2.36] · 1.79 | +0.93 [0.89, 0.97] · 0.98 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | 0.023 · <0.001 | <0.001 · <0.001 |
+| uci_credit | B vs A | +0.036 [0.021, 0.050] · 0.050 | +0.060 [0.034, 0.083] · 0.092 | 24/0/6 · 24/1/5 | 0.75 · 0.75 | 0.45 · 0.45 | <0.001 · <0.001 |
+| uci_credit | C vs B | +0.158 [0.129, 0.191] · 0.145 | +0.277 [0.226, 0.332] · 0.275 | 29/0/1 · 30/0/0 | 1.00 · 1.00 | 0.010 · 0.010 | <0.001 · <0.001 |
+| uci_credit | C vs scalarization | +0.0008 [−0.0012, 0.0030] · 0.0005 | +0.0015 [−0.0031, 0.0067] · 0.0007 | 18/0/12 · 16/0/14 | 0.12 · 0.06 | 1.00 · 1.00 | 1.00 · 1.00 |
+| uci_credit | C vs random Dirichlet | +0.140 [0.126, 0.155] · 0.140 | +0.252 [0.232, 0.273] · 0.241 | 30/0/0 · 30/0/0 | 1.00 · 1.00 | <0.001 · <0.001 | <0.001 · <0.001 |
 
-### 7.4 NBI subproblem outcome and cost
+Reading. Only the Nadeau–Bengio test is overlap-corrected (its variance inflation is (1/30 + 0.25)/(1/30) ≈ 8.5, i.e. standard errors ×2.9); the Wilcoxon column is an uncorrected distribution-free check and cannot rescue a non-significant corrected result. Where the corrected test does not reach 0.05 despite 30/30 wins (BNP B vs A, Porto C vs B) the paired-difference distribution is bimodal or heavy-tailed (BNP B − A: mean +0.28 vs median +0.06, sd 0.37, driven by NBI-A's collapse replications; Porto C − B: three replications where NBI-B's hypervolume collapses to 0.44–0.50), the mean-based test is uninformative by the plan's own rule, and the win fraction with its Wilson interval (30/30 → [0.89, 1.00]), the median with its bootstrap interval (BNP median ΔHV +0.059 [0.051, 0.070]) and the rank-biserial correlation are the evidence of consistency. The UCI significance of C vs B (Holm p = 0.0095/0.0098) is knife-edge (0.017–0.018 with ρ = 0.30 or a 16-test family). Four qualifiers bound these comparisons. (i) On Porto and UCI the B − A win fractions are dominated by the 20 extension replications (18/20 and 19/20 versus 6/10 and 5/10 + 1 tie in replications 0–9; UCI batch difference Fisher p = 0.009 under an identical protocol), i.e. partition sensitivity rather than a sharpened estimate of a fixed rate; Porto's IGD+ count is 23/30. (ii) The UCI gap between C and B is a subproblem-convergence effect, not a surrogate-accuracy effect: UCI's surfaces pass the gate 30/30, but NBI-B certifies a median 29 of 66 subproblems and the indicators use converged candidates only (Spearman(ΔHV, n_valid_B) = −0.92); retaining B's unconverged iterates keeps the direction (30/30) but cuts the mean gap to +0.108 HV / +0.070 IGD+, and in the three replications where B converged on all 66 the gap is ≤ 0.01. (iii) NBI-C is not budget-matched to anything (≈ 4.2 × 10⁵ real OOF evaluations and 3–84× the wall time of NBI-B; 0 real evaluations for A/B; ≈ 5 s for the comparators) and its candidates form 8–25% of the reference front it is graded against (direction unaffected, magnitude partly self-graded). (iv) Random scalarization optimizes the surrogates while NBI-C optimizes the exact cached-OOF objectives, so the BNP/Porto advantage of C over scalarization cannot be attributed to the NBI construction rather than to the objective source without a scalarization-on-cached-OOF comparator; on identical surfaces NBI-B beats scalarization 30/30 (BNP) and 25/30 (Porto) but loses 29/30 (UCI). The 66-point Dirichlet(1) comparator is matched only in the number of returned candidates and is degenerate (hypervolume ratio exactly 0 in 21/30 BNP, 25/30 Porto and 10/30 Santander replications because uniform blends cost 8–20× the reference front); every set including the unoptimized 66-run design beats it 30/30 on every dataset, so those wins are a floor check on the reference geometry, not evidence of search efficiency. Under the support cost (`statistics/paired_primary_effects.csv`): B vs A stays 30/30 on Santander and 29/30 on Porto (IGD+), becomes 19–20/30 on BNP and reverses on UCI (NBI-B worse in 26–27/30); C vs B stays positive on Santander (30/30 IGD+), Porto (26/30) and UCI (26–27/30) and reverses on BNP (C worse in 20–24/30); C vs scalarization reverses on UCI (0/30) and Santander IGD+ reverses in C's favour (30/30).
 
-| Dataset | A certified | B certified | C feasible | A / B / C seconds per replication | C / B compute ratio |
-|---|---|---|---|---|---|
-| santander | 0.96 | 0.93 | 0.83 | 38 / 38 / 2,613 | 69× |
-| bnp | 0.96 | 0.99 | 0.83 | 25 / 17 / 1,432 | 84× |
-| porto | 0.56 | 1.00 | 0.97 | 86 / 33 / 2,486 | 76× |
-| uci_credit | 0.46 | 0.51 | 0.97 | 111 / 94 / 311 | 3.3× |
+### Median indicator table (weighted cost; full table in `README.md`)
 
-The two columns do not measure the same thing. For A and B a subproblem counts when SLSQP certifies convergence and the NBI equality residual is < 10⁻³; for C, whose real AUC objective is piecewise constant so SLSQP essentially never certifies (on UCI replication 0 all 61 non-vertex successes exit on the iteration limit), a subproblem counts when the equality is satisfied to < 10⁻³ within the iteration budget (`accept_feasible`); under the A/B rule C would score 4/66 there. C also ran at a reduced optimizer budget (2 starts, 120 iterations, finite-difference gradients, versus 10 starts and 300 iterations for A/B), so the compute ratios are configuration-dependent. Three of the 66 β's are anchor vertices counted without solver work. The UCI rates are bimodal (26–52% in eight replications, 95–100% in two; medians 35% / 42%): on the Scheffé surfaces the NBI equality is infeasible for interior β's with β_cost ≈ 0.3–0.6 (global minimum residual 0.01–0.07 even allowing t < 0), a CHIM/front-geometry effect that the reliability gate does not capture. Surface reliability is therefore neither sufficient (UCI) nor necessary (Santander AUC unreliable in 10/10, A/B 93–96%) for NBI subproblem success, and anchor placement matters independently (Porto A 56% vs B 100% on identical surfaces).
+| Dataset | Set | n front | IGD+ | HV ratio | joint-ND | spacing pct |
+|---|---|---|---|---|---|---|
+| santander | NBI-A / B / C | 13 / 20 / 35 | 0.136 / 0.011 / 0.010 | 0.789 / 0.981 / **0.989** | 0.00 / 0.05 / 0.44 | 1.00 / 0.69 / 0.99 |
+| santander | scalarization / random / DoE | 57 / 6 / 7 | 0.007 / 0.715 / 0.011 | 0.978 / 0.215 / 0.981 | 0.74 / 0.00 / 0.06 | 0.00 / 1.00 / 0.66 |
+| bnp | NBI-A / B / C | 8 / 44 / 34 | 0.027 / 0.012 / 0.014 | 0.913 / 0.971 / **0.983** | 0.08 / 0.58 / 0.34 | 0.53 / 0.99 / 0.54 |
+| bnp | scalarization / random / DoE | 1 / 5 / 6 | 0.308 / 1.525 / 0.029 | 0.474 / 0.000 / 0.918 | 0.00 / 0.00 / 0.03 | 0.04 / 1.00 / 0.84 |
+| porto | NBI-A / B / C | 11 / 60 / 56 | 0.097 / 0.035 / 0.007 | 0.769 / 0.914 / **0.982** | 0.02 / 0.37 / 0.71 | 0.09 / 1.00 / 0.96 |
+| porto | scalarization / random / DoE | 12 / 5 / 3 | 0.104 / 1.792 / 0.154 | 0.762 / 0.000 / 0.647 | 0.00 / 0.00 / 0.00 | 0.94 / 1.00 / 0.69 |
+| uci_credit | NBI-A / B / C | 11 / 27 / 65 | 0.217 / 0.154 / 0.010 | 0.622 / 0.706 / 0.976 | 0.27 / 0.55 / 0.78 | 0.49 / 0.41 / 0.41 |
+| uci_credit | scalarization / random / DoE | 44 / 10 / 8 | 0.009 / 0.150 / 0.032 | **0.978** / 0.733 / 0.922 | 0.61 / 0.00 / 0.05 | 0.05 / 0.93 / 0.79 |
 
-### 7.5 Holdout confirmation of the knee picks (weighted cost; mean over replications)
-
-Mean holdout-minus-OOF AUC for the knee point of NBI-A/B/C and random scalarization is within ±0.005 on every dataset (Santander −0.001 to −0.003, BNP +0.002 to +0.003, Porto up to +0.0051, UCI ±0.001; between-replication sd ≤ 0.011, individual replications up to +0.023 on Porto) and mean log-loss within ±0.003. The shift is shared with the individual base models on the same partitions (correlation 0.87–0.96 across replications), so it reflects the partition and the full-training refit rather than selection optimism: the OOF-selected weights transfer to the holdout. This is level agreement, not ranking agreement; holdout and OOF name the same best of the four knee picks in 5/10 (BNP), 8/10 (Porto) and 10/10 (Santander, UCI) replications, with between-pick gaps of the order of the replication noise. Holdout labels enter only these confirmation metrics; 10k unlabelled holdout feature rows were also used as the inference-cost timing batch. The knee picks themselves: Santander NBI-C AUC 0.8919 / log-loss 0.2098 at 1.2 ms per 1k (holdout 0.8905 / 0.2106); BNP NBI-B 0.7509 / 0.4716 at 3.4 ms; Porto NBI-C 0.6297 / 0.1526 at 2.4 ms; UCI NBI-B 0.7766 / 0.4324 at 3.5 ms.
-
----
-
-## 8. Fronts: composition, faces and costs
-
-Active-model frequency on the weighted-cost empirical reference fronts (fraction of front points with wᵢ > 10⁻³): Santander gnb 0.97, xgb 0.70, lr 0.40, rf 0.24, knn 0.12; BNP lr 1.00, xgb 0.96, rf 0.54, gnb 0.49, knn 0.003; Porto lr 1.00, xgb 0.94, rf 0.81, knn 0.39, gnb 0.21; UCI lr 0.99, xgb 0.97, rf 0.70, gnb 0.60, knn 0.23.
-
-Support-cost fronts (dominant active sets, share of front points): Santander gnb+knn+rf+xgb 0.35, gnb+xgb 0.24, gnb+rf+xgb 0.23; BNP lr+rf+xgb 0.35, rf+xgb 0.17, lr+gnb+rf+xgb 0.15; Porto lr+knn+rf+xgb 0.35, lr 0.15, lr+rf 0.09, lr+xgb 0.09; UCI lr+knn+rf+xgb 0.17, lr+rf 0.14, lr+xgb 0.12. kNN is active on 38%, 1%, 44% and 34% of the support-front points (Santander, BNP, Porto, UCI): it survives only as the last, expensive AUC increment, never in the cheap or the log-loss-optimal region.
-
-AUC-vs-log-loss conflict (direct-AUC optimum minus SLSQP optimum, OOF, mean over replications): ΔAUC +0.00068 (Santander, sd 0.00005), +0.00082 (BNP), +0.00006 (Porto), +0.00030 (UCI) against Δlog-loss +0.0035, +0.0009, +0.00001, +0.0004 and Δweighted-cost +5.3, +0.5, +3.3, +0.8 ms per 1k.
-
-Diversity vs interaction strength (pair-level means, n = 10 pairs per dataset; replications are near-identical): Spearman(β_ij^AUC, pairwise correlation of OOF soft errors |p − y|) = −0.52 (Santander, p = 0.13), −0.83 (BNP, p = 0.005), −0.13 (Porto), −0.79 (UCI, p = 0.01); Spearman(β_ij^log-loss, error correlation) = 0.65 / 0.93 / 0.90 / 0.89 (all p ≤ 0.05). The AUC association is not driven by the weakest-classifier pairs: it is stronger among the six pairs of stronger models (−0.83 to −0.94 on Santander/BNP/UCI) and weak or reversed among the four pairs containing the weakest model, and it is largely explained by the pair's vertex-AUC gap (partial Spearman given the gap −0.1 to −0.4). The log-loss association is a two-cluster contrast between GNB pairs (soft-error correlation near 0 or negative because 75–93% of GNB's probabilities lie beyond 0.01/0.99; β −0.7 to −4.0) and all other pairs; soft-error correlation saturates near 1 on imbalanced data for any pair of low-probability predictors (Porto non-GNB pairs 0.985–0.997), so it measures calibration and vertex-quality asymmetry more than instance-level diversity.
-
----
-
-## 9. Cross-dataset answers
-
-**Q1. Are Scheffé pair interactions reproducible across datasets?** Within a dataset, yes: the four largest interactions have sign frequency exactly 1.0 or 0.0 in all 16 dataset × response cells, and the top pair is identical in 77 of 80 dataset × response × replication cases (Porto AUC alternates between two kNN pairs). Across datasets, the magnitudes and the dominant pairs are not reproducible: the top AUC pair is gnb·knn on Santander and Porto and gnb·xgb on BNP and UCI, and the log-loss interaction scale spans 0.17 (Santander) to 4.0 (BNP), driven by GNB's over-confidence. Stability here is under data resampling with a fixed design; it does not imply that the quadratic surface is adequate (it fails the gate for AUC in 10/10 Santander and 5/10 BNP replications).
-
-**Q2. Do the same classifier pairs exhibit complementarity repeatedly?** The pairs that repeat are those containing the dataset's weakest (AUC) or most over-confident (log-loss) classifier, kNN or GNB, and their large β_ij are the mechanical Scheffé consequence of a poor vertex (β_ij ≈ 2 × vertex gap), not complementarity that survives in the interior: the 50/50 blend of the top-β pair is worse than its stronger member on Santander, BNP and UCI in every replication, kNN carries ≤ 0.07 mean weight in every real optimum, and GNB carries 0 outside Santander. The pairs whose blend genuinely beats both members differ by dataset (lr+rf, rf+xgb, gnb+xgb, knn+xgb on Santander, BNP, Porto, UCI) and are not the largest-β pairs, so the cross-dataset difference reflects which classifier is weakest rather than a reproducible synergy structure.
-
-**Q3. Do Pareto solutions collapse onto a small simplex face or remain structurally diverse?** They concentrate on 2–4-model faces: {gnb, xgb} (+rf) on Santander, {lr, rf, xgb} on BNP, {lr, rf, xgb} (+knn at the expensive end) on Porto, {lr, rf, xgb} on UCI. Structural diversity exists only along the cost axis (cheap single-model corners, e.g. pure lr on Porto/UCI), not on the quality plateau.
-
-**Q4. Is the AUC-vs-log-loss conflict practically meaningful?** Along the AUC axis, no: the direct-AUC optimum (verified to be the maximum-AUC point of the ≥ 100k reference sample and of every candidate set, to 4 × 10⁻⁵) exceeds the exact SLSQP log-loss optimum by only +0.00006 to +0.00082 AUC (sd across replications ≤ 0.0001), below the between-replication sd of the AUC level itself (0.0006–0.003) and 5–100× smaller than the ensembling gain over the best single model; the whole bi-objective (AUC, log-loss) front of the reference spans exactly this extent. Two qualifications. On Santander the log-loss side is not negligible: the +0.0035 sacrifice is 1.7% of log-loss, 15% of the simplex log-loss range, and exceeds the entire ensembling gain in log-loss over the best single model (0.0022), so the AUC optimum there is worse calibrated than GNB alone. And the degeneracy is in objective space, not in weight or cost space: the two optima are distinct weight vectors (mean L1 distance 0.36 on Santander/BNP) and the AUC optimum is markedly more expensive (Santander weighted cost 6.2 vs 0.9 ms/1k). The three-objective problem is therefore effectively quality-vs-cost, with the AUC axis adding a cost, not a benefit.
-
-**Q5. Does the cost objective create genuinely different solutions?** Yes. The cost range on the fronts spans 0.5–240 ms per 1k, the cheap end is single- or two-model (lr, lr+gnb, lr+xgb) and the quality end adds rf/xgb (and, at the extreme, kNN), so the fronts contain solutions that differ in support, not only in proportions. The weighted-cost fronts contain 100–457 points precisely because cost separates otherwise quality-equivalent blends.
-
-**Q6. Does support-based cost change conclusions relative to weighted cost?** On BNP yes, elsewhere little. None of the NBI variants optimized the step cost (all minimize the linear weighted cost), so the support-cost tables measure how weighted-cost solutions transfer. By construction the step cost collapses each face's front to two dimensions: sample-front medians fall from 100–457 to 14–80 points (union fronts 178–542 → 29–107), each 66-point candidate set retains only 7–13 own-non-dominated points, and the all-valid joint-ND fraction is capped near 0.10–0.15, so NBI-B's fall from 0.43–0.58 to 0.02–0.11 on Porto/BNP must be read against that ceiling (on Porto NBI-B's HV and IGD+ do not worsen and NBI-C stays best in 8/10 replications). On BNP the method ranking genuinely flips: NBI-C's HV ratio drops from 0.98 to 0.55–0.72 in 6/10 replications (0.97 in the other 4) and the DoE runs (6/10) or the single-objective references (3/10) become the best set; the direction is robust to raising the activity threshold to 10⁻² (NBI-C median 0.56), although the median 0.66 at 10⁻³ is inflated in 4/10 replications by a single near-threshold kNN point that stretches the cost normalization ~10×. Santander and Porto conclusions are unchanged and UCI shifts weakly. kNN activity is not reduced by the step cost (1–44% of support-front points vs 0.3–39% on the weighted fronts). Deployment conclusions must be drawn on the support-cost front, and the support-cost hypervolume is fragile to the activity threshold; the linear cost is the smooth relaxation the optimizers need.
-
-**Q7. How accurately does NBI approximate the empirical Pareto reference?** Metamodel-free NBI-C: median IGD+ 0.005–0.014, HV ratio 0.977–0.993, joint-ND 0.34–0.79, GD ≤ 0.009 on every dataset (weighted cost). Surrogate NBI with real anchors (B): IGD+ 0.007–0.014 and HV 0.97–0.98 where the log-loss surface is reliable (Santander, BNP), 0.048 / 0.88 on Porto and 0.157 / 0.69 on UCI. Surrogate NBI with surrogate anchors (A): HV 0.67–0.92, joint-ND ≤ 0.29.
-
-**Q8. Does real-anchor NBI consistently outperform surrogate-anchor NBI?** Under weighted cost it never hurts on IGD+/HV and it helps in 10/10 replications on the two datasets whose surrogate anchors are misplaced, which coincide with the datasets failing the reliability gate: Santander median ΔIGD+ −0.076 and ΔHV +0.13 (means −0.087 / +0.14); BNP median −0.015 / +0.05, with means of −0.21 / +0.25 pulled by three replications (7, 8, 9) in which the surrogate anchors collapse (ΔIGD+ −0.30 to −0.89). The proximate driver is the surrogate AUC anchor landing at a far more expensive mixture (Santander 31–55 vs 2–17 ms/1k; BNP replications 7 and 9, 18–31 vs 4.4). On Porto and UCI, IGD+ and HV show no consistent direction (better in 4–5 of 10), although real anchors still improve subproblem success (Porto B 66/66 vs A 5–64), GD and joint-ND in 9–10 of 10 replications. Within BNP and Porto, per-replication surface reliability does not predict the gain, so this is a between-dataset association over four datasets. Under support cost the BNP HV gain holds in only 5/10 and UCI-B is worse in 8/10. Anchor construction is the first-order fix for surrogate NBI, and it is sufficient only when the surface itself is adequate.
-
-**Q9. Does metamodel-free optimization materially outperform surrogate NBI?** Under weighted cost NBI-C is the best or statistically indistinguishable-from-best candidate set on convergence/coverage indicators on every dataset (median IGD+ 0.005–0.014, HV ratio 0.977–0.993). It is clearly best on Santander and Porto; on BNP, NBI-B is nominally ahead on IGD+ (0.0136 vs 0.0140, C wins 4/10) while C is ahead on HV (9/10); on UCI the surface-based random scalarization, which costs seconds, is nominally ahead on both IGD+ (0.0084 vs 0.0094) and HV (0.980 vs 0.977), C winning only 4–5 of 10. NBI-C beats NBI-B in HV ratio in ≥ 9/10 replications on all four datasets (Santander +0.009, BNP +0.015, Porto +0.15, UCI +0.31), robust to retaining B's unconverged candidates, and in IGD+ in 10/10, 4/10, 10/10 and 9/10. It has the worst spacing CV of the three variants on 3/4 datasets. The compute price per replication is 69× (Santander), 84× (BNP), 76× (Porto) and 3.3× (UCI) that of NBI-B, at ≈ 425k real evaluations, with C run at a reduced optimizer budget.
-
-**Q10. When Scheffé fails, is it external R², extrapolation, or local misspecification?** Not extrapolation (validation points lie inside the design's predicted range, excess ≈ 0). It is misspecification of the polynomial form: on Santander AUC no order reaches positive R²ext (−0.94 / −0.30 / −0.34) and on BNP higher orders are worse than linear for both AUC and log-loss (over-fitting a surface with an exponential-like blow-up near the GNB vertex). The reliability gate caught these cases in 10/10 (Santander AUC) and 8/10 (BNP) replications, and they are exactly the cases where surrogate anchors fail (Q8).
-
-**Q11. Does classifier error diversity correlate with β_ij strength?** In the expected direction, with the caveats of §8: with n = 10 pairs per dataset the AUC association is significant only on BNP (−0.83) and UCI (−0.79), null on Porto and non-significant on Santander, while the log-loss association is 0.65–0.93 everywhere. It is not a weakest-classifier confound (it is stronger among pairs of stronger models); it is largely explained by the vertex-quality gap of the pair, because β_ij is numerically the midpoint gain over the linear average of the two vertices, and for log-loss it is a GNB-versus-rest contrast. Diversity measured as soft-error correlation predicts interaction magnitude but not whether the interaction is exploitable, and on BNP and Porto the quadratic log-loss surface is unreliable in 10/10 replications, so the non-GNB β_ij there are not interpretable.
-
-**Q12. Is NBI more uniform than budget-matched random search after real-objective validation?** Two separate answers. Quality: "budget-matched" means 66 candidate points (66 real evaluations for the random baseline versus ~230 for NBI-A, ~40k more for NBI-B's real-AUC anchor and ~425k for NBI-C). Under weighted cost, 66-point Dirichlet(1) search is far behind NBI-B and NBI-C on Santander, BNP and Porto (HV, IGD+, IGD, GD all 10/10; median HV 0.56 / 0.00 / 0.00 vs 0.97–0.99) and behind NBI-C on UCI (10/10), but not behind NBI-A/B on UCI, where random search has the higher median HV (0.75 vs 0.67/0.69) and better IGD+ because A/B return only 17–34 valid candidates; random search's joint-ND is 0 in 39/40 replications. The exact 0.00 hypervolumes on BNP and Porto are a reference-box effect of Dirichlet(1) with a 150–250 ms/1k kNN in the pool (every point carries ≈ 22% kNN weight); Dirichlet(0.1) at the same 66 evaluations reaches HV 0.91 / 0.73 / 0.53 / 0.88, at which point NBI-A no longer beats random search on Santander, BNP or UCI while NBI-B/C still do on three datasets and NBI-C on UCI. Random scalarization on the surfaces with real anchors matches NBI-B/C on hypervolume on Santander (0.978) with worse coverage (IGD 0.215 vs 0.043–0.053), ties NBI-C on UCI, is indistinguishable from NBI-A/B on Porto (HV 0.79, 6–47 front points), and collapses on BNP (1–3 front points in 9/10 replications). Uniformity: the classical uniform-spacing claim is not supported by the benchmark's size-matched test (Schott spacing of the validated NBI front vs 200 random equal-size subsets of the empirical reference front, of which 30–40% are NBI's own candidates): median percentiles 0.78 / 0.99 / 0.995 / 0.40 (NBI-B) and 0.995 / 0.54 / 0.985 / 0.45 (NBI-C). The indicator is dominated by the isolation of the 2–3 anchor points (80–98% of the nearest-neighbour-distance variance) and by absolute scale; with the relative (CV) form UCI becomes the least even and BNP NBI-C becomes significantly more even (0.065), after trimming the three most isolated points the outcome is mixed, and every comparator including random Dirichlet search scores above 0.5. The defensible statement is that the even β-spacing designed on the surrogate CHIM does not translate into a measurable evenness advantage on the real front under any tested definition.
+NBI outcome rates (mean over 30): A certified 0.98 / 0.95 / 0.58 / 0.39, B certified 0.95 / 1.00 / 1.00 / 0.48, C feasible 0.83 / 0.83 / 0.98 / 0.98 (Santander / BNP / Porto / UCI), with the semantic caveat of the R = 10 report (A/B = SLSQP-certified, C = equality feasible under a lenient rule and a reduced budget). Mean seconds per replication A / B / C: 32 / 33 / 2,527 (Santander), 22 / 35 / 1,409 (BNP), 83 / 54 / 2,503 (Porto), 125 / 100 / 306 (UCI): compute ratios C/B of 77×, 40×, 46× and 3×.
 
 ---
 
-## 10. Conclusion
+## 7. Regimes, gate-conditional gains and cost definition (R = 30)
 
-**Does the evidence support DoE + response-surface metamodeling + NBI as a reproducible and interpretable framework for multiobjective ensemble-weight optimization?**
+**BNP regime.** NBI-A's weighted hypervolume ratio on BNP splits into two regimes (exploratory diagnostics only: Sarle's coefficient 0.84, two-component GMM ΔBIC ≈ 48; no formal multimodality test): 7/30 replications (7, 9, 18, 20, 23, 26, 27) collapse to 0.04–0.12, two are intermediate (0.53, 0.55) and 21 lie at 0.89–0.93 (mean 0.695, median 0.913, sd 0.36). The collapse coincides exactly with the selection of the quadratic ROC-AUC order by the parsimony rule (7/7 collapsed replications quadratic versus 0/22 of the linear-selected ones): a quadratic surface moves the surrogate AUC anchor from the xgb vertex to an interior mixture that the empirical reference dominates (the reference covers 97–100% of the NBI-A front there versus 25–50% otherwise); in 6/7 cases that mixture carries kNN and costs 16–31 ms/1k, which is why anchor cost tracks the collapse (Spearman(HV_A, anchor cost) = −0.69, descriptive p over overlapping partitions), but replication 26 collapses with a 4.6 ms/1k anchor, so cost is a marker of the misplacement, not its mechanism. Because the quadratic order is selected only when it fits the unseen points better, the collapsed replications have *higher* external R² (median 0.46 vs 0.08) and pass the gate more often (3/7 vs 2/23): the gate and external R² do not protect against the collapse. The larger B − A gain in the 5 gate-passing replications (mean ΔHV +0.64 vs +0.21) is therefore NBI-A's collapse in 3 of those 5 restated (HV_B is 0.97–0.98 in both groups; HV_A 0.34 vs 0.77) and must not be read as real anchors adding more when the surface is reliable; real anchors remove the collapse in every replication (HV_B 0.94–0.995). On Santander the gain is uniform (30/30, no gate passes), on Porto 12/16 with gate pass versus 12/14 without, on UCI 24/30 with all gates passed. Other regime findings: Porto NBI-B's hypervolume has a low mode (0.44–0.77 in 6 replications; Sarle 0.77) with 100% subproblem certification, so its failure is CHIM geometry, not solver failure; UCI NBI-A/B certification rates are bimodal (0.26–0.52 in most replications, 0.95–1.00 in 3), and NBI-A's hypervolume on UCI correlates with surface R²ext (+0.59 AUC, +0.57 log-loss, descriptive p ≈ 0.001), i.e. on UCI the surfaces do matter.
 
-Partly, and the parts must be separated:
+**Support vs weighted cost.** All NBI sets were optimized under the weighted cost and only re-scored under the support cost. Over the six comparison sets (single-objective references excluded; including them gives 14/30 and 25/30 on Santander and BNP) the hypervolume-best set differs between the two definitions in 10/30 (Santander), 23–24/30 (BNP; one replication's margin of 9 × 10⁻⁵ lies inside the tie tolerance), 8/30 (Porto) and 20/30 (UCI) replications. On Santander and Porto NBI-C remains best under both (26/30, 20/30); on UCI random scalarization wins the support-cost hypervolume in 22/30. On BNP the support-cost hypervolume ratios are not comparable across replications: the per-replication normalization box's cost bound is ≈ 17 ms/1k in 13 replications (no kNN-bearing point survives on the support reference front) and ≈ 160–167 ms/1k in the other 17 (one to three kNN-bearing reference points survive as three-objective trade-offs by ≤ 5 × 10⁻⁴ AUC or log-loss), a 10× rescaling of one axis; NBI-C's fronts are the same in both groups, and the 13 replications in which NBI-C's support hypervolume falls below 0.8 (and the DoE runs win) are exactly the narrow-box replications. Under a common bound the split disappears: with the kNN region inside the box NBI-B (24) or NBI-C (6) is best and NBI-C's hypervolume is 0.968–0.990 in 30/30 replications; with it excluded the 66-run design wins 30/30 because it contains the cheap single-model (xgb, lr) and lr+xgb supports that the NBI sets, optimized on the linear cost, omit. The robust BNP finding is therefore qualitative: under a step cost the NBI sets miss the cheapest supports, and the hypervolume penalty depends on the chosen cost range. Sarle's coefficient (≈ 0.79 under every normalization, including the unimodal one) is not evidence of bimodality here. Set rankings between the two definitions correlate (median Spearman 0.66–0.94 per replication), but the winner is stable only on Santander and Porto.
 
-- **DoE/RSM component — reproducible and interpretable, but not reliably predictive.** The 66-run design, the fold-safe OOF protocol, the coefficient signs and rankings, and the reliability gate reproduce across 10 outer replications on all four datasets (coefficient sd 1–15% of the mean, sign frequency 100%). The Scheffé surfaces are an honest, interpretable summary of the performance surface where they pass the gate (log-loss on Santander, Porto and UCI; everything on UCI) and an explicitly detected failure where they do not (AUC on Santander, everything on BNP). The interpretable content that survives is negative as often as positive: the largest interactions mark the weakest classifier, and the practically relevant structure (fronts concentrated on 2–4-model faces, a degenerate AUC-vs-log-loss axis, cost as the only real trade-off) is visible from the surfaces and the fronts together.
-- **Surrogate approximation — the weak link.** Whenever the selected surface fails the reliability gate, surrogate-anchored NBI degrades (HV ratio 0.67–0.85, joint-ND ≈ 0); when it passes, surrogate NBI with real anchors is within IGD+ 0.01 of the reference. The surrogate is therefore usable only behind the gate and with real anchors.
-- **NBI — works as a front constructor when its geometry is fed real information.** With real anchors and either reliable surfaces (Santander, BNP) or the real objectives themselves (all datasets), NBI produces validated fronts with HV ratio 0.97–0.99 and, in the metamodel-free form, the best fronts in the benchmark at 66 subproblems. Its failure modes are geometric, not numerical: vertex β subproblems at degenerate corners (handled by returning the anchor) and 50% subproblem failure on UCI even with reliable surfaces, plus no uniform-spacing advantage after revalidation.
-- **Sensitivity to anchor construction — decisive where the surrogate is poor** (Santander, BNP: 10/10 replications improve), negligible where it is good.
-- **Sensitivity to the cost definition — decisive for deployment conclusions.** The linear cost is what makes the optimization smooth; the support cost is what deployment pays, and it removes 70–85% of the weighted-cost front and reorders the methods on BNP.
+**Holdout transfer.** Under the weighted cost and the knee rule, the OOF-best of the four knee picks (NBI-A/B/C, random scalarization; by AUC) is also holdout-best in 30/30 (Santander), 15/30 (BNP), 23/30 (Porto), 30/30 (UCI) replications; the 20 new replications alone give 20/20, 10/20, 15/20, 20/20, reproducing the R = 10 pattern 10/10, 5/10, 8/10, 10/10. These counts measure how far apart the four picks are relative to holdout noise, not a failure of OOF selection: on BNP the OOF gap between the best and second-best pick (median 0.0005) is below the set-specific holdout noise (sd ≈ 0.0012), several counts rest on gaps of 10⁻⁵–10⁻⁸, and whenever the OOF-best and holdout-best differ the holdout AUC regret is at most 0.0022 (BNP mean 0.0010, Porto 0.0006). The rates are configuration-specific (support cost: 28/30, 28/30, 17/30, 16/30; TOPSIS rule: 29, 28, 20, 29) and should not be read as dataset properties. The mean holdout − OOF AUC of every weighted-cost knee pick lies within ±0.005 as a point estimate (largest −0.0046, Santander scalarization; −0.0049 for Santander NBI-A under support cost), the shifts are systematically negative on Santander and positive on BNP (intervals exclude 0, reaching −0.006 and +0.006), and per-replication |shift| exceeds 0.005 in 17–67% of replications (sd up to 0.010 on Porto). The shift equals the weight-averaged holdout − OOF shift of the base models on the same partition (correlation 0.97–1.00), i.e. it is a partition/refit effect, not selection optimism.
 
-Practical reading: the framework is reproducible and its DoE/RSM layer is interpretable; as an *optimizer* its defensible configuration is NBI with real anchors on the cached OOF (variant C) or, when the reliability gate passes, on the Scheffé surfaces (variant B), followed by real revalidation and a support-cost Pareto filter; random scalarization on reliable surfaces with real anchors is a strong, cheap baseline that surrogate NBI must beat. The single-objective SLSQP log-loss oracle remains the reference for the log-loss axis on every dataset, and the AUC axis adds almost nothing beyond it.
-
-### Caveats that bound every statement above (from the adversarial verification of 12 pre-registered claims: all numbers reproduced; five inferences narrowed as written in §§ 4–9)
-
-1. The empirical reference is the non-dominated union of the sample and every candidate set; NBI-B and NBI-C contribute 30–40% of its points, so convergence/coverage indicators and the size-matched spacing null are partly self-graded.
-2. "Success" differs between variants (A/B: SLSQP-certified with residual < 10⁻³; C: feasibility under a lenient rule) and C ran at a reduced optimizer budget; success rates, compute ratios and validity-filtered indicators are not like-for-like.
-3. All NBI variants optimize the weighted cost; support-cost results measure transfer, and the support-cost hypervolume is fragile to the 10⁻³ activity threshold.
-4. HV = 0.00 means "outside the 1.1 reference box", and the random-Dirichlet baseline's magnitude is a property of the α = 1 sampler with a 150–250 ms/1k kNN in the pool.
-5. Per-dataset statistics rest on n = 10 replications; pair-level correlations on n = 10 pairs; dataset-level "mechanism" statements are between-dataset associations over four datasets.
-6. The reliability gate is a composite (R² and Spearman) and its borderline cells (Porto, BNP) are validation-draw sensitive; parsimony order selection uses the same 100 validation points; quadratic β's are reported irrespective of the selected order.
-7. Several headline means summarize bimodal distributions (BNP anchor gains, UCI NBI-A/B success, BNP NBI-C support HV); medians and per-replication counts are given alongside.
-8. The batched design-point AUC evaluator differs from midrank AUC by ≤ 3.4 × 10⁻⁴ at gnb/knn-dominated points (probability ties); no reliability count changes.
-9. Holdout feature rows (unlabelled) were used for inference-cost timing; holdout labels only for confirmation metrics; holdout agreement is level agreement under weighted cost.
-10. `README.md` front sizes are sample-only fronts and its BNP scalarization median front size (1.5) is printed as 2.
+**AUC-vs-log-loss conflict.** Mean OOF gain of the direct-AUC optimum over the SLSQP log-loss optimum: +0.00068 [0.00066, 0.00071] Santander, +0.00080 [0.00078, 0.00083] BNP, +0.00006 [0.00004, 0.00007] Porto, +0.00034 [0.00031, 0.00038] UCI (non-negative by construction, since the search maximizes OOF AUC; only the magnitude is informative), at log-loss costs of 0.0032 / 0.0009 / 0.000004 / 0.0005; the ensembling gain over the best single model is 5–100× larger (0.0037 / 0.0056 / 0.0060 / 0.0007). Holdout gaps: +0.0020 (Santander, 30/30 positive), +0.0003 (BNP, 8/30 negative), −0.00008 (Porto, 15/30 negative), +0.0003 (UCI, 9/30 negative). In weight space the two optima are distinct on Santander, BNP and UCI (mean L1 distance 0.35, 0.38, 0.20; on Santander the AUC optimum adds rf ≈ 0.12 to gnb+xgb) and essentially coincide on Porto (L1 0.06, support Jaccard 0.97). The apparent deployment-cost gap on Santander (support cost +145 to +258 ms/1k in 22/30 replications, median +254, +3.6 to +4.6 ms/1k in the other 8) is an activity-threshold artifact: the AUC optimum retains a kNN weight of 0.0015–0.062 (median 0.0075) above the 10⁻³ threshold that the derivative-free search does not clean, and that weight is AUC-inert (zeroing it changes OOF AUC by 3 × 10⁻⁶ on average, max 5 × 10⁻⁵, retains ≥ 93% of the gain and improves log-loss by 0.00025); an AUC-equivalent kNN-free gnb+rf+xgb blend costs ≈ +4 ms/1k. Objective-space degeneracy is confirmed at R = 30; the weight-space difference is real but small, and the deployment-cost difference largely disappears once near-threshold weights are cleaned.
 
 ---
 
-## 11. Output paths
+## 8. Cross-dataset answers (R = 30)
 
-- `reports/pco213_postwork_benchmark/README.md`, `summary.json`, `tables/*.csv` (12 tables), `manifests/*.json` (master + 4 dataset manifests), this `FINAL_REPORT.md`
-- `figures/pco213_postwork_benchmark/fig01_methodology.png` … `fig17_nbi_variants_paired.png` (25 files: methodology, fronts and cost definitions per dataset, GD/IGD/IGD+/HV/spacing distributions, β_ij heatmaps, coefficient stability, active support, weight composition, N_eff, diversity vs β_ij, surrogate validation, NBI variant pairing)
-- `experiments/pco213_postwork_benchmark/` (unversioned): `benchmark_manifest.json`, `benchmark.log`, `<dataset>/rep_XX/*`
-- Scripts: `scripts/pco213_run_postwork_benchmark.py`, `scripts/pco213_benchmark_launch.sh`, `scripts/pco213_postwork_benchmark_report.py`; modules `src/mixens/{datasets,bench_models,fastmetrics,pareto_tools}.py` and the extended `nbi.py`, `scheffe.py`, `mixture_design.py`, `optimize.py`
+Q1–Q12 of the R = 10 report are re-answered implicitly in §§ 4–7; the answers are unchanged in direction. The fourteen questions posed for the extension:
+
+1. **Which R = 10 conclusions remained essentially unchanged?** Surrogate reliability pattern (§4); coefficient signs, top pairs and the poor-vertex interpretation (§4); NBI-C best or tied-best on convergence/coverage (§6); the value of real anchors on Santander and BNP (30/30); random Dirichlet search far behind everything; AUC-vs-log-loss degeneracy in objective space with weight-space difference (§7); holdout transfer and ranking-agreement pattern (§7); the BNP support-cost flip (§7); front composition on 2–4-model faces (`summary.json`).
+2. **Which estimates moved materially?** (a) The value of real anchors on Porto and UCI: from an inconclusive 6/10 and 5/10 (+1 tie) at R = 10 to 24/30 with positive intervals at R = 30 (Porto ΔHV +0.085 [0.037, 0.131]; UCI +0.060 [0.034, 0.083]), driven by 18/20 and 19/20 in the extension batch (UCI batch difference Fisher p = 0.009 under an identical protocol), i.e. partition sensitivity that R = 10 had under-sampled; (b) Santander IGD+ for all NBI sets and the DoE runs rose 39–52% relative in replications 10–29 (means ≈ 1.7–2× those of replications 0–9; R = 10 means lie below the R = 30 intervals: C 0.0069 → 0.0105 [0.0084, 0.0127]) while hypervolume changed ≤ 0.005 because the ratio sits near its ceiling — the first ten partitions were an easier draw; (c) Porto NBI-B improved (HV 0.820 → 0.866, IGD+ 0.070 → 0.053) and Santander NBI-A worsened (HV 0.846 → 0.800); (d) BNP NBI-B tightened (IGD+ 0.0138 → 0.0114, HV 0.966 → 0.974), BNP scalarization degraded further (HV 0.51 → 0.44) and UCI NBI-A certification fell 0.46 → 0.39 (inside its wide interval). None of these changes the direction of any conclusion.
+3. **Did the BNP/UCI regime variability persist?** Yes and it is now quantified and explained: BNP NBI-A collapses in 7/30 replications (23%), exactly those in which the parsimony rule selects the quadratic AUC order and misplaces the surrogate anchor (anchor cost is a marker, the gate does not protect); UCI A/B certification is bimodal (3/30 replications at 95–100%); a Porto NBI-B regime (6/30 with HV < 0.8) appeared that was only hinted at in R = 10. The BNP support-cost "bimodality" of NBI-C reported at R = 10 is a normalization-box artifact, not a regime.
+4. **Is the benefit of real anchors still systematic when the surrogate is unreliable?** Yes: 30/30 on the two datasets where the gate almost never passes (Santander, BNP), with rank-biserial 1.0. At R = 30 the benefit is also present, smaller and less uniform, where the gate passes often (Porto 24/30, UCI 24 wins/1 tie/5 losses), and it depends on the cost definition (under support cost UCI reverses and BNP shrinks to 19–20/30). Within BNP the gain is not governed by the gate but by anchor placement, and its size in the gate-passing replications is NBI-A's collapse restated.
+5. **Does NBI-C remain best or tied-best on convergence/coverage?** Yes. Best on Santander and Porto (HV 28/30 vs B, 25/30 and 30/30 vs scalarization), best on hypervolume on BNP (24/30 vs B) while B keeps a small IGD+ edge (24/30, 0.003), and tied with random scalarization on UCI (16–18/30, |Δ| ≤ 0.002). Random Dirichlet search loses 30/30 on each dataset, as does every other set against it (its hypervolume ratio is 0 in 21/30 BNP, 25/30 Porto and 10/30 Santander replications; it is a floor check, not a search-efficiency result).
+6. **Does its compute premium remain justified by effect size?** Only where the surfaces or the surrogate NBI fail. Versus NBI-B the gain is +0.28 HV (UCI, 3× the cost) and +0.11 (Porto, 46×), +0.009 (Santander, 77×) and +0.009 with an IGD+ loss (BNP, 40×); the UCI gain is a convergence effect of NBI-B (median 29/66 subproblems certified) and shrinks to +0.11 if B's unconverged iterates are retained. Against random scalarization the premium buys +0.54 (BNP) and +0.27 (Porto) but nothing on UCI and +0.01 on Santander, and that advantage is confounded with the objective source (exact cached OOF versus surrogates). NBI-C is not evaluation-matched to any comparator; its premium is justified where the surfaces fail (BNP, Porto) and not where a reliable surface exists (UCI, Santander log-loss).
+7. **Does random scalarization remain a strong cheap alternative when surfaces are reliable?** Yes: it ties NBI-C on UCI (all surfaces reliable), matches NBI-B/C on Santander hypervolume (0.978 vs 0.981/0.989) and beats them on IGD+ there, and wins the UCI support-cost hypervolume in 22/30. It collapses to 1–4 front points in 27/30 BNP replications and 12 median points on Porto.
+8. **Is the reliability gate predictive of surrogate-NBI failure?** Between datasets, yes in the coarse sense (the two datasets that never or rarely pass are where surrogate anchors fail worst); within datasets, no: on BNP the collapses occur in replications whose quadratic surface fits the unseen points *better* and passes the gate more often (3/7 vs 2/23), on Porto gate pass does not change the B − A gain, and only on UCI does surface R² correlate with NBI-A quality. The gate identifies unusable surfaces; it does not predict anchor placement.
+9. **Are Scheffé β_ij signs and rankings genuinely stable?** Within datasets, yes (100% sign stability of the top-4 terms, top pair identical in 30/30 except Porto AUC's 63/37 split between two kNN pairs, means moved ≤ 6%); across datasets, no (different top pairs, log-loss scale 0.17–3.9).
+10. **Does the finding that large β_ij reflect poor vertices rather than exploitable synergy remain true?** Yes, exactly: the top-β pair's real 50/50 blend loses to its better member in 30/30 replications on three datasets, β_ij tracks the vertex gap, and the genuinely synergistic pairs are different, smaller-β pairs.
+11. **Is AUC-vs-log-loss conflict still practically degenerate?** In objective space yes (ΔAUC ≤ 0.0008 with interval half-widths ≤ 0.00004), with the same two qualifications: Santander pays 0.003 log-loss for it, and the optima differ in weights and deployment cost.
+12. **Does support cost still materially alter conclusions, especially on BNP?** Partly. The winning set changes in 23–24/30 BNP and 20/30 UCI replications (10/30 Santander, 8/30 Porto), and several paired readings reverse under support cost (C1 on UCI, C2 on BNP, C3 on UCI). On BNP, however, the R = 10 "ranking flip" and the apparent bimodality of NBI-C's support hypervolume are a per-replication normalization-box artifact (cost bound 17 vs 160–167 ms/1k); the robust statement is qualitative: NBI sets optimized under the linear cost omit the cheapest supports that the raw design contains, and the size of the penalty depends on the cost range. The cost definition must always be named; it changes the winner on UCI and BNP and not on Santander/Porto.
+13. **Do OOF-selected knee solutions transfer to the holdout consistently?** Level transfer yes (mean shifts ≤ 0.005 AUC, shared with the base models); ranking transfer only on Santander and UCI (30/30), partially on Porto (23/30), and not on BNP (15/30, among near-ties).
+14. **Are the conclusions statistically stable enough for a manuscript?** For the direction and consistency of every headline claim, yes: win fractions with Wilson intervals excluding 0.5 for all primary effects except the two declared ties (UCI C vs scalarization; Santander IGD+ C vs scalarization), and the Porto/UCI anchor effects that were inconclusive at R = 10 are now 24/30. For magnitudes, the R = 30 bootstrap intervals are narrow except where the distributions are bimodal or heavy-tailed (BNP B − A, Porto C − B, Porto C − scalarization IGD+), where medians and win fractions must be reported instead of means; and every primary statement must name its cost definition, since several reverse under the support cost.
+
+---
+
+## 9. Conclusion at R = 30
+
+The verdict of the R = 10 report stands with tighter evidence. **DoE/RSM** is reproducible and interpretable; its coefficients are stable to a few percent across 30 partitions, and their honest reading is that they locate the weakest vertex, not exploitable complementarity. **The surrogate** is usable only behind the reliability gate, and even then anchor placement, not gate status, decides whether surrogate-anchored NBI works (BNP). **NBI** builds fronts within 1–3% of the empirical reference hypervolume when fed real anchors or real objectives, on every dataset, with geometric rather than numerical failure modes (Porto NBI-B regime, UCI vertex-β infeasibility). **Real anchors** are the first-order fix (30/30 where surfaces fail, 24/30 elsewhere). **Metamodel-free NBI-C** is the safe default and the best or tied-best set everywhere, at a compute premium (≈ 4 × 10⁵ real evaluations per replication, unmatched by any comparator) that is justified only where surfaces fail; **random scalarization on reliable surfaces** is the cheap alternative that a surrogate method must beat. **Deployment cost** must be the step cost; it changes the winning set on UCI and BNP, and on BNP the linear-cost NBI sets omit the cheapest supports that the raw design contains.
+
+---
+
+## 10. Robustness of conclusions from R = 10 to R = 30
+
+Table `statistics/r10_vs_r30_stability.csv` (figure `r30_fig03`). Summary:
+
+| Quantity | Datasets where the R = 10 estimate lies inside the R = 30 95% interval | Largest move |
+|---|---|---|
+| Hypervolume ratio, NBI-A/B/C (12 cells) | 9 / 12 (outside: Santander NBI-A 0.846 → 0.800, Santander NBI-C 0.991 → 0.987, BNP NBI-B 0.966 → 0.974) | Santander NBI-A −0.046; Porto NBI-B 0.820 → 0.866 (inside) |
+| IGD+, NBI-A/B/C (12 cells) | 7 / 12 (outside: Santander A, B, C upward; BNP NBI-B 0.0138 → 0.0114; Porto NBI-A 0.0751 → 0.0911) | Santander NBI-C 0.0069 → 0.0105 (+52%) |
+| Joint-ND fraction (12 cells) | 12 / 12 | Porto NBI-B 0.40 → 0.36 |
+| Reliability-gate pass (8 cells) | 8 / 8 (Wilson) | BNP log-loss 0.20 → 0.10 |
+| Scheffé external R² (8 cells) | 7 / 8 (BNP AUC −0.01 → +0.11, wide interval) | BNP log-loss 0.09 → −0.10 |
+| Top β_ij means (24 terms) | 24 / 24 | ≤ 6% relative (BNP) |
+| β_ij sign frequencies (24 terms) | 24 / 24 (all exactly 0 or 1 at both R) | none |
+| NBI success rates (12 cells) | 11 / 12 (BNP NBI-B 0.988 → 0.995 marginally outside; UCI NBI-A 0.46 → 0.39 is the largest move but inside its wide interval) | −16% (UCI NBI-A) |
+| Reference front sizes, displacement (12 cells) | 9 / 12 (Santander weighted 155 → 144 and support 48 → 42 fronts, Porto displacement 0.034 → 0.027 outside) | −21% (Porto displacement) |
+| Holdout − OOF AUC (16 cells) | 16 / 16 | ≤ 0.003 |
+| Replication runtime (4) | 3 / 4 (Santander 3,804 → 3,650 s outside) | ≤ 4% |
+| Primary paired effects: direction | 32 / 32 identical sign of the median | Porto and UCI B − A sharpened from ≈ 50% wins to 80% |
+
+"R = 10 inside the R = 30 interval" is a lenient, nested criterion (replications 0–9 are one third of the R = 30 sample); against the 20 new replications alone only 6/12 hypervolume and 5/12 IGD+ cells pass, and the Santander IGD+ level and the Porto/UCI anchor-effect win rates differ between the two batches under an identical protocol, which is itself the measure of partition sensitivity the extension was designed to expose.
+
+**Did R = 10 already give a stable scientific conclusion?** For every directional claim, yes: no headline conclusion reversed, no dataset changed category (reliable / unreliable surfaces; NBI-C best or tied), and the coefficient structure was already at its R = 30 values. What R = 10 could not deliver were (i) a decision on the Porto/UCI anchor effect (now 24/30, positive intervals), (ii) the frequency and driver of the BNP surrogate-anchor collapse (now 7/30, anchor cost), (iii) interval widths narrow enough to separate NBI-C from NBI-B on BNP (a genuine IGD+/HV split, not noise), and (iv) the persistence of the cost-definition flip (24/30). R = 30 therefore strengthens the paper by converting three "maybe" findings into quantified ones and by providing defensible intervals, not by changing what the paper says.
+
+---
+
+## 11. Publication-oriented verdict
+
+**A. Strong claims (consistent over 30 partitions on ≥ 3 datasets, intervals excluding the null):** real anchors improve surrogate NBI (30/30 on both gate-failing datasets, 24/30 on the others); metamodel-free NBI approximates the empirical reference to HV ≥ 0.97 on every dataset (30/30 replications each) and is the best or tied-best set under the weighted cost; surrogate reliability is dataset- and metric-dependent and the gate separates the extremes; Scheffé coefficients are partition-stable and their largest interactions mark the weakest vertex; the AUC-vs-log-loss trade-off is objective-space degenerate; naming the cost definition is mandatory because several method rankings reverse under the step cost.
+
+**B. Dataset-specific claims:** the size of the real-anchor gain and its bimodality (BNP); the NBI-B geometric failure regime (Porto); random scalarization's tie with NBI-C (UCI) and collapse (BNP); the ranking-transfer failure to holdout (BNP); the support-cost method flip (BNP, UCI); the compute-premium justification (large on Porto/UCI vs B, negligible on Santander).
+
+**C. Claims to remove from a paper:** any statement that NBI yields more uniformly spaced fronts than random search (not supported under any tested definition); "the reliability gate predicts surrogate-NBI failure" (within-dataset it does not); "large β_ij identifies complementary classifier pairs"; "NBI-C beats budget-matched random search" as evidence of search efficiency (the Dirichlet(1) comparator is candidate-count-matched only and degenerate, and every set beats it); any BNP support-cost hypervolume regime or bimodality (normalization-box artifact); the Santander deployment-cost gap between the AUC and log-loss optima (a near-threshold kNN weight); any p-value that treats 120 replications as independent; the R = 10 mean-based BNP anchor gain (+0.25) without its median (+0.06) and bimodality.
+
+**D. Central contribution statement:** a replicated (4 datasets × 30 partitions), fully revalidated benchmark showing that the DoE → Scheffé → NBI pipeline is reproducible and interpretable as a *surface-description* tool, that its usefulness as a *multiobjective optimizer* hinges on feeding NBI real anchors or real objectives rather than surrogate optima, that a pre-registered reliability gate identifies unusable surfaces but not anchor failures, and that support-based deployment cost, not the linear relaxation, must drive method selection.
+
+**E. Did R = 30 materially strengthen the paper?** It strengthened it in evidence quality (intervals, win fractions, regime frequencies, two comparisons that R = 10 left undecided) without changing a single conclusion; R = 10 had already captured the science, R = 30 makes it publishable.
+
+---
+
+## 12. Output paths
+
+- `reports/pco213_postwork_benchmark/FINAL_REPORT.md` (this file), `README.md` (auto-generated medians), `summary.json`, `tables/*.csv` (120 replications), `statistics/*.csv` + `analysis_config.json`, `STATISTICAL_ANALYSIS_R30.md`, `manifests/*.json`
+- `figures/pco213_postwork_benchmark/fig01–fig17*.png` (aggregates over 120 replications) and `r30_fig01–r30_fig10*.png` (paired ΔIGD+/ΔHV, R10 vs R30 stability, gate frequencies, β_ij intervals, win/tie/loss heatmap, holdout transfer, cost-definition rankings, anchor costs, success-rate ECDFs)
+- `experiments/pco213_postwork_benchmark/` (unversioned raw artifacts, 120 replication directories, master manifest with seed map and config history)
+- Scripts: `scripts/pco213_run_postwork_benchmark.py`, `scripts/pco213_benchmark_launch.sh`, `scripts/pco213_postwork_benchmark_report.py`, `scripts/pco213_postwork_benchmark_stats.py`
+- Frozen R = 10 reference: git tag `pco213-postwork-r10`

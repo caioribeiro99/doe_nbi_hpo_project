@@ -10,7 +10,7 @@ replications as independent observations.
 
 Primary pre-specified comparisons (paired by replication, weighted cost):
   NBI-B vs NBI-A, NBI-C vs NBI-B, NBI-C vs random scalarization,
-  NBI-C vs budget-matched random Dirichlet search.
+  NBI-C vs 66-point random Dirichlet search (candidate-count-matched, not evaluation-matched).
 Primary endpoints: IGD+ (lower is better) and hypervolume ratio (higher).
 Sign convention: delta > 0 always means the SECOND-named (new) method is
 better: dHV = HV_new - HV_ref ; dIGD+ = IGD+_ref - IGD+_new.
@@ -337,12 +337,12 @@ def r10_vs_r30(T: dict, r10_max: int) -> pd.DataFrame:
             piv = sub.pivot(index="rep", columns="term", values="beta")
             for term in piv.columns:
                 if "*" not in term:
-                    add("beta_linear", ds, piv[term], {"term": term})
+                    add("beta_linear", ds, piv[term], {"term": term, "response": resp})
             inter = [t for t in piv.columns if "*" in t]
             top = piv[inter].abs().mean().sort_values(ascending=False).index[:3]
             for term in top:
-                add("beta_interaction_top3", ds, piv[term], {"term": term})
-                add("beta_interaction_sign_pos_freq", ds, (piv[term] > 0).astype(float), {"term": term})
+                add("beta_interaction_top3", ds, piv[term], {"term": term, "response": resp})
+                add("beta_interaction_sign_pos_freq", ds, (piv[term] > 0).astype(float), {"term": term, "response": resp})
     pq = T["pareto_quality"]
     for ds in DATASETS:
         for cost in ("weighted", "support"):
