@@ -12,8 +12,21 @@ combination weights + polynomial surrogate of performance over the weight simple
 those surrogates* is **not new and is not ours to claim**. It is established methodology in the authors' own research
 group, published at least since Bacci et al. (2019) for time-series forecast combination, and applied to neural-network
 ensemble weights by Moreira et al. (2021). The 2025 EAAI paper of which the present first author is a co-author extends
-the same machinery to post-Pareto decision making. The present study is a **transfer and stress test** of that
-framework in a different problem class, plus a set of controls and validation layers that the lineage does not contain.
+the same machinery to post-Pareto decision making.
+
+**Stronger still, and found only during the novelty review:** Rocha, Rotella, Balestrassi, Melgani and Zambroni de
+Souza (2025), *IEEE Access* 13:207903–207915, apply *exactly* this construction to a **model ensemble** — a
+$\{3,5\}$ simplex-lattice mixture design over the probability simplex of the mixing weights of three neural networks,
+factor-analytic reduction of correlated error metrics, NBI over the resulting surrogate objectives, and an
+entropy-based post-Pareto choice. Its stated first contribution is "casting ensemble-weight definition as a structured
+mixture-design problem". Pedro Paulo Balestrassi is a co-author, so this is adjacent-group work rather than a
+disinterested third party, but it is a separate author team and it is published prior art. **The construction
+"mixture design over ensemble weights → surrogate → NBI" therefore has an explicit precedent for ensembles, and no
+part of it may be claimed as new.**
+
+What remains is a **transfer and stress test**: a different problem class (probabilistic classifiers with a non-smooth
+rank objective, a calibration objective and a step-function deployment cost, rather than regression error metrics
+reduced to latent factors), plus a set of controls and validation layers that no member of the lineage contains.
 
 ---
 
@@ -26,11 +39,15 @@ framework in a different problem class, plus a set of controls and validation la
 | Mendes et al. (2016), *Comput. Oper. Res.* 66:434–444 | portfolio proportions modelled by mixture DoE, ARMA–GARCH returns | asset proportions on the simplex | return, risk, entropy | desirability |
 | **Bacci et al. (2019), *Int. J. Prod. Econ.* 212:186–211** | **Simplex-Lattice over forecast-combination weights → PCFA factor scores → Scheffé mixture models → NBI on those models → entropy/GPE selection** | **forecast-combination weights on the simplex** | **rotated factor scores of residual accuracy metrics** | **NBI on mixture surrogates** |
 | Moreira et al. (2021), *Renew. Sustain. Energy Rev.* 135:110450 | DoE + clustering select ANNs, then "a mixture (MDE) is employed to determine the ideal weights for the ensemble formation" | ANN ensemble weights on the simplex | forecast error (MAPE), single objective | mixture-DoE optimization |
+| **Rocha et al. (2025), *IEEE Access* 13:207903–207915** | **{3,5} simplex-lattice over the mixing weights of 3 neural networks → FA/PCA of correlated error metrics → NBI on the surrogate factors → entropy/GPE selection** | **neural-network ensemble weights on the probability simplex** | **latent factors of MAPE/RMSE/MAE** | **NBI on mixture surrogates** |
 | Leal et al. (2022), *Production* 32:e20210119 | Simplex-Lattice {5,10} reduced by D-optimal selection to 200 runs; FA/FMSE; desirability | energy-asset portfolio weights | return, variance, entropy | desirability |
 
-Bacci et al. (2019) is the structural precedent of the present pipeline and Moreira et al. (2021) is the precedent for
-applying it to a *model ensemble*. Any claim of the form "we are the first to treat combination weights as mixture
-components and fit a Scheffé model over them" is false and must not appear.
+Bacci et al. (2019) is the structural precedent of the present pipeline; Moreira et al. (2021) applies mixture DoE to
+a *model ensemble* single-objectively; and **Rocha et al. (2025) combines both — mixture design over model-ensemble
+weights, surrogate, and NBI — which is the present pipeline applied to a regression ensemble.** Any claim of the form
+"we are the first to treat ensemble weights as mixture components", "we introduce a mixture-design formulation of
+ensemble weighting", or "we are the first to run NBI over the ensemble-weight simplex" is false and must not appear.
+Rocha et al. (2025) must be cited in the abstract-adjacent framing, in related work and in the contributions.
 
 ### Stage 2 — The 2025 EAAI predecessor (own prior work)
 
@@ -110,12 +127,12 @@ counterpart in the lineage.
 
 | # | Component | Class | Lineage source | What changes here |
 |---|---|---|---|---|
-| 1 | Mixture formulation of combination weights (non-negativity + sum-to-one; simplex as the experimental region) | **INHERITED** | Bacci 2019; Moreira 2021; Mendes 2016; Leal 2022 | Components are classifiers rather than forecasts, assets or ANNs. The formulation itself is unchanged. |
-| 2 | Mixture design over the weights | **ADAPTED** | Simplex-Lattice in Bacci 2019 and the predecessor; D-optimal reduction in Leal 2022 | A fixed 66-run design combining the {5,3} and {5,2} lattices, the overall centroid, 5 axial points, 5 quaternary centroids and 10 centroid–ternary midpoints, chosen so the pure vertices (single models) and the uniform blend are design points, and augmented by 100 *unseen* Dirichlet compositions reserved for external validation. The lineage designs do not reserve a validation set. |
+| 1 | Mixture formulation of combination weights (non-negativity + sum-to-one; simplex as the experimental region) | **INHERITED** | Bacci 2019; Moreira 2021; **Rocha 2025**; Mendes 2016; Leal 2022 | Components are classifiers rather than forecasts, assets or ANNs. The formulation itself is unchanged. |
+| 2 | Mixture design over the weights | **ADAPTED** | Simplex-Lattice in Bacci 2019, **Rocha 2025** and the predecessor; D-optimal reduction in Leal 2022 | A fixed 66-run design combining the {5,3} and {5,2} lattices, the overall centroid, 5 axial points, 5 quaternary centroids and 10 centroid–ternary midpoints, chosen so the pure vertices (single models) and the uniform blend are design points, and augmented by 100 *unseen* Dirichlet compositions reserved for external validation. The lineage designs do not reserve a validation set. |
 | 3 | Scheffé canonical polynomials as the performance surrogate | **ADAPTED** | Bacci 2019 (factor scores); predecessor (post-Pareto metrics) | Fitted directly to ROC-AUC, log-loss and Brier rather than to rotated factor scores, and the order is selected by an explicit parsimony rule (lowest order within 10% of the best external RMSE) rather than fixed a priori. No factor analysis or FMSE agglutination is used: the three objectives are kept explicit and interpretable, which is what makes the anchor analysis possible. |
 | 4 | External validation of the surrogate + reliability gate | **NEW** | — | 100 held-out Dirichlet points per replication; a pre-registered gate (external R² ≥ 0.5 **and** Spearman ρ ≥ 0.9) decides whether a surface is usable. The lineage reports in-sample fit statistics; it does not validate the mixture surrogate on unseen compositions, and it has no admissibility criterion. |
-| 5 | NBI construction (payoff matrix, CHIM, quasi-normal, β lattice) | **INHERITED** | Das & Dennis 1998 via the predecessor, Bacci 2019, Azevedo 2026, Pereira 2026 | Unchanged mathematics on M−1 free variables, with a projection step and a feasible-iterate acceptance rule added for the non-smooth case (see 7). |
-| 6 | Anchors from surrogate optima (NBI-A) | **INHERITED** | The predecessor's payoff matrix; Bacci 2019 | This is exactly the lineage's construction; here it is the *control condition* rather than the method. |
+| 5 | NBI construction (payoff matrix, CHIM, quasi-normal, β lattice) | **INHERITED** | Das & Dennis 1998 via the predecessor, Bacci 2019, **Rocha 2025**, Azevedo 2026, Pereira 2026 | Unchanged mathematics on M−1 free variables, with a projection step and a feasible-iterate acceptance rule added for the non-smooth case (see 7). |
+| 6 | Anchors from surrogate optima (NBI-A) | **INHERITED** | The predecessor's payoff matrix; Bacci 2019; Rocha 2025 | This is exactly the lineage's construction; here it is the *control condition* rather than the method. |
 | 7 | Anchors from real objectives (NBI-B) and metamodel-free NBI (NBI-C) | **NEW** | — | The lineage always anchors on, and always optimizes, the surrogate. Running the identical NBI with anchors recomputed from real out-of-fold single-objective optima, and again with the real objectives replacing the surrogate entirely, is what turns the pipeline into a controlled experiment about surrogate fidelity. NBI-C additionally requires handling a piecewise-constant ROC-AUC: finite-difference steps, multistart from the simplex, and acceptance of a feasible iterate when SLSQP cannot certify optimality. |
 | 8 | Real-objective revalidation of every candidate | **NEW** | — | Every point returned by any method is re-evaluated on the exact out-of-fold objectives before any indicator is computed. The lineage evaluates candidates on the surrogate and confirms at most the single selected solution (and, in the manufacturing papers, by physical experiment). |
 | 9 | Empirical Pareto reference independent of the surrogate | **NEW** | — | ≥ 100,000 Dirichlet(1) and Dirichlet(0.3) samples plus lattice points and an ε-constraint sweep, with an independent 20,000-point displacement check and up to three enlargement rounds. The lineage has no reference front: front quality is judged by comparing optimizers to each other (Pereira 2026 compares NBI against NSGA-II, MOEA/D, weighted sum and MOLA using hypervolume, IGD and spacing). |
@@ -138,20 +155,26 @@ Summary counts: **INHERITED 4**, **ADAPTED 7**, **NEW 7**, plus one component de
 
 Acceptable, and supported by the record:
 
-> Mixture designs of experiments have been used in our research group to weight the components of a combination:
-> for portfolio proportions [Mendes 2016; Leal 2022], for time-series forecast combination, where a Simplex-Lattice
-> over the combination weights feeds Scheffé models that are then optimized by Normal Boundary Intersection
-> [Bacci 2019], and for neural-network ensemble weights [Moreira 2021]. The same DoE–RSM–NBI framework was recently
-> extended with a mixture-design post-Pareto stage for multiobjective engineering optimization [Pereira 2025]. The
-> present study transfers that framework to classifier ensemble weighting and asks a different question: not whether
-> the pipeline produces a front, but under which conditions the front it produces can be trusted.
+> Mixture designs of experiments have been used to weight the components of a combination: for portfolio proportions
+> [Mendes 2016; Leal 2022], for time-series forecast combination, where a simplex-lattice over the combination weights
+> feeds Scheffé models that are then optimized by Normal Boundary Intersection [Bacci 2019], for neural-network
+> ensemble weights [Moreira 2021], and most recently for a load-forecasting neural-network ensemble in which a
+> simplex-lattice design over the mixing weights, a factor-analytic surrogate and NBI are combined exactly as here
+> [Rocha 2025]. The same DoE–RSM–NBI framework was extended with a mixture-design post-Pareto stage for multiobjective
+> engineering optimization [Pereira 2025]. The construction is therefore established, and we claim no part of it. What
+> has not been established is whether it remains trustworthy when the responses are classifier performance metrics ---
+> one of them a non-smooth rank statistic --- and when deployment cost is a step function of the support. The present
+> study transfers the framework to classifier ensemble weighting and asks that question: not whether the pipeline
+> produces a front, but under which conditions the front it produces can be trusted.
 
 Not acceptable:
 
 - "We propose the use of mixture designs to optimize ensemble weights." (Moreira 2021, Bacci 2019.)
 - "We introduce the combination of mixture design, response surfaces and NBI." (Bacci 2019; Pereira 2025.)
 - "We are the first to model ensemble performance over the simplex with Scheffé polynomials." (Bacci 2019 for
-  forecasts; Moreira 2021 for ANN ensembles.)
+  forecasts; Moreira 2021 for ANN ensembles; Rocha 2025 for a neural-network ensemble with NBI on top.)
+- "We are the first to run NBI over the ensemble-weight simplex." (Rocha 2025.)
+- "We cast ensemble-weight selection as a mixture-design problem." (This is the stated contribution of Rocha 2025.)
 - Any phrasing that presents the predecessor as an external competitor rather than as own prior work.
 
 The defensible statement of what is new is the *evaluation architecture*, not the pipeline: real-versus-surrogate
@@ -161,12 +184,18 @@ over partitions with paired corrected inference, and a deployment-cost definitio
 
 ---
 
-## 4. Open item
+## 4. Open items resolved and remaining
 
-Two group papers relevant to this lineage could not be read and are therefore excluded from `references.bib`:
-Rocha et al. (2020), *Engineering with Computers*, DOI 10.1007/s00366-020-00973-5 (robust optimal point selection by
-MCDM on RSM), and de Paula et al. (2019), Springer AISC, DOI 10.1007/978-3-030-21803-4_60 (a mixture design of
-experiments for genetic-algorithm tuning). Both landing pages returned access challenges and neither Crossref nor
-Semantic Scholar carries an abstract. If either is cited, its abstract must be read first; de Paula et al. (2019) in
-particular could be a further precedent for "mixture DoE over algorithmic weights" and should be checked before the
-novelty claims are finalized.
+**Resolved during the novelty review.** de Paula, Gomes, Gomes and Paiva (2019), *A Mixture Design of Experiments
+Approach for Genetic Algorithm Tuning Applied to Multi-objective Optimization* (Springer AISC, pp. 600–610,
+DOI 10.1007/978-3-030-21803-4_60), was flagged earlier as a possible unread precedent. It has now been read: its
+mixture components are the **weights of the objective functions** in a weighted multiobjective problem, crossed with
+three genetic-algorithm hyperparameters as process variables. It is a mixture-amount/mixture-process design over
+scalarization weights, not over model-combination weights, so it does **not** pre-empt the present work. It is
+nonetheless the conceptual bridge in the lineage from mixture DoE to algorithm tuning and should be cited as such.
+
+**Still unread.** Rocha, Rotella Junior, Aquila, Paiva and Balestrassi (2020), *Engineering with Computers*,
+DOI 10.1007/s00366-020-00973-5 (robust optimal point selection by MCDM on response surfaces). The landing page
+returned an access challenge and neither Crossref nor Semantic Scholar carries an abstract. It concerns post-Pareto
+point selection, which the present study deliberately does not address, so the risk that it pre-empts anything here is
+low; it should still be read before submission.

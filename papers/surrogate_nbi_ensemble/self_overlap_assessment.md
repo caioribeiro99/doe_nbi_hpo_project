@@ -98,15 +98,33 @@ inference).
 2. **Author overlap is partial.** The present first author is the second author of the predecessor. The contribution
    statement should make the relationship explicit rather than leaving it to be inferred from the author lists.
 
-3. **One unread precedent.** de Paula, Gomes, Gomes and Paiva (2019), *A Mixture Design of Experiments Approach for
-   Genetic Algorithm Tuning Applied to Multi-objective Optimization* (Springer AISC, DOI 10.1007/978-3-030-21803-4_60),
-   could be a further precedent for mixture DoE over algorithmic weights. Its abstract could not be retrieved. **It
-   must be read before the novelty claims are finalized.** The same applies to Rocha et al. (2020), *Engineering with
-   Computers*, DOI 10.1007/s00366-020-00973-5.
+3. **Resolved: the previously unread precedent does not pre-empt us.** de Paula, Gomes, Gomes and Paiva (2019),
+   *A Mixture Design of Experiments Approach for Genetic Algorithm Tuning Applied to Multi-objective Optimization*
+   (Springer AISC, pp. 600–610, DOI 10.1007/978-3-030-21803-4_60), has now been read. Its mixture components are the
+   **weights of the objective functions**, crossed with three genetic-algorithm hyperparameters as process variables.
+   It is a mixture design over scalarization weights, not over model-combination weights, and does not pre-empt this
+   work. Rocha et al. (2020), *Engineering with Computers*, DOI 10.1007/s00366-020-00973-5, remains unread; it concerns
+   post-Pareto point selection, which this study deliberately does not address, so the residual risk is low. Read it
+   before submission.
+
+4. **A closer, non-own precedent appeared in the novelty review, and it changes the framing.** Rocha, Rotella,
+   Balestrassi, Melgani and Zambroni de Souza (2025), *IEEE Access* 13:207903–207915, apply a {3,5} simplex-lattice
+   mixture design over the probability simplex of a three-network ensemble, reduce correlated error metrics by factor
+   analysis, run NBI on the resulting surrogate objectives and select by entropy — the present pipeline, applied to a
+   regression ensemble, published before this manuscript. Balestrassi is a UNIFEI collaborator of the predecessor's
+   senior author, so this is adjacent-group work, but it is a separate author team and it is prior art. Consequences:
+   (i) the contribution list must not contain any variant of "we cast ensemble weighting as a mixture-design problem",
+   which is that paper's own stated contribution; (ii) it must be cited in the introduction, in related work and
+   alongside the contributions; (iii) the self-overlap question is now partly an *adjacent-group* overlap question, and
+   the manuscript is safer for it, because what distinguishes this study from Rocha et al. (2025) — non-smooth
+   classifier objectives, the anchor decomposition, revalidation, the empirical reference, the gate, replication, and
+   the deployment-cost contrast — is the same list that distinguishes it from the authors' own prior work.
 
 4. **Dissertation overlap.** The master's dissertation is open access in the UNIFEI repository and shares the
    repository, the objective triple and part of the code. It optimizes XGBoost hyperparameters in a box domain rather
    than ensemble weights on a simplex, so the scientific overlap is small, but it must be cited and the shared code
    base disclosed in the reproducibility statement, which it is.
 
-**Verdict: sufficiently different, conditional on the framing above and on resolving risk 3.**
+**Verdict: sufficiently different, conditional on the framing above.** The overlap that matters is no longer
+with the 2025 EAAI predecessor but with Rocha et al. (2025); the manuscript's distinguishing contributions separate it
+from both, and they are the same contributions in each case.
