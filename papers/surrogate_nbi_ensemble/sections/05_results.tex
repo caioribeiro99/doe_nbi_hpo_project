@@ -1,0 +1,338 @@
+\section{Results}
+\label{sec:results}
+
+Results are organized by research question. All figures and tables derive from the frozen artifacts of the 120
+replications; per-claim provenance, including the source file and interval for every number quoted below, is given in
+the supplementary claims map. Unless stated otherwise, indicators are computed under the weighted cost of
+\cref{eq:weightedcost}, which is the cost the optimizers minimized, and $\Delta > 0$ favours the second-named method.
+
+Before the research questions, one contextual fact frames the rest. Weighting helps, but modestly: the log-loss
+optimum improves out-of-fold ROC-AUC over the best single model by $0.0037$, $0.0056$, $0.0060$ and $0.0007$ on
+Santander, BNP Paribas, Porto Seguro and UCI credit respectively. These are the gains the whole apparatus is competing
+for, and they are one to two orders of magnitude larger than the differences between the multiobjective methods
+studied here. This paper is about whether the front is trustworthy, not about winning a leaderboard.
+
+\subsection{RQ1: How accurately do Scheff\'e surfaces model ensemble performance?}
+\label{sec:results:gate}
+
+Surrogate adequacy is neither uniformly good nor uniformly bad; it depends on both the dataset and the response
+(\cref{tab:gate}, \cref{fig:gate}).
+
+\input{tables/tab02_gate}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig05_reliability_gate.pdf}
+\caption{Left: reliability-gate pass frequency per dataset and response over 30 partitions, with Wilson 95\%
+intervals. Right: the external $\rext$ of the selected order in each partition; the dashed line is the gate threshold.
+The four datasets occupy four distinct regimes, and within Santander the two responses fall on opposite sides of the
+gate.}
+\label{fig:gate}
+\end{figure}
+
+The ROC-AUC surface passes the gate in $0/30$ partitions on Santander, $5/30$ on BNP Paribas, $16/30$ on Porto Seguro
+and $30/30$ on UCI credit. The log-loss surface passes in $30/30$, $3/30$, $12/30$ and $30/30$. Santander is the
+sharpest case: on the same data, in the same partition, the log-loss surface is essentially exact (median
+$\rext = 0.971$) while the ROC-AUC surface has \emph{negative} external $\rext$ (median $-0.333$), meaning it predicts
+unseen compositions worse than the mean of the observations does, even though its rank correlation is a respectable
+$0.830$. Porto Seguro sits genuinely on the threshold for both responses and 30 partitions do not resolve it into a
+clear pass or fail; that is a property of the problem, not a sample-size deficiency.
+
+The failures are misspecification, not extrapolation: the excess of predicted range over observed range on the
+validation points is approximately zero everywhere, so the surrogate is not being asked to predict outside the region
+it was fitted on. It is a low-order polynomial applied to a rank statistic that has plateaus and kinks in the interior
+of the simplex. As a control, the Brier score --- which is genuinely quadratic in $\wvec$ --- is reproduced with
+$\rext = 1.000$ in all 120 replications, confirming that the design and the fitting procedure are sound and that the
+failure is specific to the response.
+
+\Cref{fig:surrogate} shows one panel per regime. The practical consequence is that ``fit a response surface over the
+weight simplex'' is not a safe default for classifier ensembles: whether it works must be tested per dataset and per
+metric, on compositions the surface has not seen.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig02_surrogate_validation.pdf}
+\caption{Predicted versus observed response on the 100 unseen Dirichlet compositions of a single partition, for four
+representative dataset--response pairs spanning the regimes of \cref{tab:gate}. The dashed line is the identity.}
+\label{fig:surrogate}
+\end{figure}
+
+\subsection{RQ2: How stable are the surfaces across resampling, and what do the coefficients mean?}
+\label{sec:results:coefficients}
+
+Whatever the surfaces predict, they predict it consistently. Across 30 partitions the sign of each of the four largest
+interaction coefficients is constant in all eight dataset--response cells; the largest-magnitude interaction is the
+same term at $R = 10$ and at $R = 30$ in all eight cells, and it is the per-partition largest in $30/30$ partitions in
+seven of them (the exception is Porto Seguro's ROC-AUC surface, where two $k$-nearest-neighbour pairs alternate,
+$19/30$ against $11/30$). Between-partition coefficients of variation for the leading terms lie between $0.011$ and
+$0.17$. As a description of the response surface, the model is reproducible.
+
+The interpretation of those coefficients is the substantive finding. In mixture experiments a positive $\beta_{ij}$ in
+\cref{eq:scheffequad} is conventionally read as synergistic blending of components $i$ and $j$. Transferred to
+ensembles, that reading would identify complementary classifier pairs, which would make the surrogate a diversity
+diagnostic. We tested it directly by evaluating, on the real out-of-fold objectives, the 50/50 blend of the pair with
+the largest $\beta_{ij}$ and comparing it with the better of the two members alone.
+
+The reading fails on three of four datasets. The top-$\beta$ blend is \emph{worse} than its better member in $30/30$
+partitions on Santander ($-0.0050$ ROC-AUC), BNP Paribas ($-0.0180$) and UCI credit ($-0.0201$); only on Porto Seguro
+does it beat both members ($+0.0098$, $30/30$), and the same pattern holds on the untouched holdout ($0/30$, $0/30$,
+$29/30$, $0/30$). Optimally weighting the top-$\beta$ pair instead of blending it 50/50 changes little: the best
+attainable gain is $+0.0004$ on BNP Paribas and $+0.0002$ on UCI credit, against $+0.010$ on Porto Seguro.
+
+The explanation is visible in \cref{fig:beta}. The largest interaction consistently involves the \emph{weakest}
+vertex --- $k$-nearest neighbours on Santander and Porto Seguro, Gaussian naive Bayes on BNP Paribas and UCI credit ---
+and $\beta_{ij}$ tracks the vertex-quality gap of the pair (0.163, 0.145, 0.022 and 0.107 for the top pair on the four
+datasets). A large positive $\beta_{ij}$ says that the edge between $i$ and $j$ curves \emph{above the chord} joining
+two vertices, one of which is poor. That is a statement about how bad the weak vertex is, not about how much the pair
+gains over the strong one. Consistently with this, the pairs whose real 50/50 blend does beat its better member in at
+least 80\% of partitions are different, smaller-$\beta$ pairs on every dataset except Porto Seguro, and the
+top-$\beta$ pair is jointly active on the reference front in only 9\% (Santander) and 3\% (Porto Seguro) of front
+points, against 51\% and 58\% on BNP Paribas and UCI credit.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig07_beta_vs_synergy.pdf}
+\caption{Fitted interaction coefficient against the real gain of the corresponding 50/50 blend over its better member,
+one point per classifier pair, averaged over 30 partitions. Marker size is the vertex-quality gap of the pair. Green
+markers denote pairs whose blend beats its better member in at least 80\% of partitions. The largest-$\beta$ pair is
+labelled; on three of four datasets it lies well below zero.}
+\label{fig:beta}
+\end{figure}
+
+The log-loss interactions are uniformly negative and their sign carries no information: log-loss is convex in
+$p_{\wvec}$, so Jensen's inequality forces blending to look favourable. Only the ROC-AUC interaction signs are
+interpretable, and those are the ones the blend test contradicts.
+
+\subsection{RQ3 and RQ4: Surrogate anchors, and whether real anchors repair the front}
+\label{sec:results:anchors}
+
+\input{tables/tab03_paired_primary}
+
+The primary comparisons are in \cref{tab:paired}; \cref{fig:paired} shows the paired distributions and
+\cref{fig:fronts} two representative fronts.
+
+Replacing the surrogate-derived anchors with anchors computed from the real single-objective optima, changing nothing
+else, improves both primary endpoints in every one of the 30 partitions on Santander ($\Delta\hv = +0.179$,
+95\% CI $[0.148, 0.210]$; Holm-corrected $p = 0.004$) and on BNP Paribas ($\Delta\hv$ median $+0.059$), and in
+$24/30$ partitions on Porto Seguro ($+0.085$, $[0.037, 0.131]$) and UCI credit ($+0.060$, $[0.034, 0.083]$). The
+rank-biserial effect size is $1.00$ on the two datasets with unanimous wins and $0.65$--$0.75$ on the other two, and
+the Wilson interval for a $30/30$ win fraction is $[0.89, 1.00]$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig04_paired_deltas.pdf}
+\caption{Paired differences on the two primary endpoints, one point per outer partition, red bar at the median. The
+IGD$^+$ axis is symmetric-logarithmic. The BNP Paribas NBI-B $-$ NBI-A distribution is visibly bimodal: a body of
+small positive differences and a tail of seven partitions where NBI-A collapses.}
+\label{fig:paired}
+\end{figure}
+
+Three qualifications keep this from being a stronger claim than the data support.
+
+First, the corrected test reaches significance only on Santander (and, for NBI-C versus NBI-B, on UCI credit). On BNP
+Paribas the anchor effect is unanimous in sign yet the corrected $p$ is $0.66$, because the paired differences are
+bimodal: the mean $+0.279$ is more than four times the median $+0.059$. A mean-based test on a bimodal distribution is
+uninformative, and by the pre-registered rule we report the median with its bootstrap interval
+($[0.051, 0.070]$), the win fraction and the rank-biserial correlation as the evidence instead. On Porto Seguro the
+$24/30$ win rate with $p = 0.79$ is exactly what a corrected test on 30 overlapping partitions can and cannot resolve.
+
+Second, the Porto Seguro and UCI credit win rates are driven by the twenty partitions added in the extension
+($18/20$ and $19/20$, against $6/10$ and $5/10$ with one tie in the first ten). On UCI credit the difference between
+batches is itself significant under an identical protocol (Fisher $p = 0.009$). This is partition sensitivity, and it
+is the honest reading: the anchor effect on these two datasets is real in direction but its magnitude varies enough
+between draws of ten partitions that ten were not enough to see it.
+
+Third, the effect depends on the cost definition. Under the support cost the Santander effect survives unchanged
+($30/30$), Porto Seguro remains positive on $\igdp$ ($29/30$), BNP Paribas weakens to $19$--$20/30$, and UCI credit
+\emph{reverses}: NBI-B is worse than NBI-A in $26$--$27/30$ partitions.
+
+\paragraph{What goes wrong when anchors come from the surrogate.} The BNP Paribas bimodality has a specific, verifiable
+mechanism. NBI-A's hypervolume ratio splits into 21 partitions at $0.89$--$0.93$, two intermediate, and seven that
+collapse to $0.04$--$0.12$. The seven collapses coincide exactly with the partitions in which the parsimony rule
+selects the \emph{quadratic} ROC-AUC order ($7/7$ collapsed against $0/22$ of the linear-selected partitions). A
+quadratic surface moves the surrogate AUC anchor off the gradient-boosting vertex to an interior mixture that the
+empirical reference dominates; in six of the seven that mixture carries $k$-nearest neighbours and costs 16--31 ms per
+1{,}000 rows, which is why anchor cost tracks the collapse (Spearman $-0.69$), though one partition collapses with a
+cheap anchor, so cost is a marker and not the mechanism.
+
+The consequence for the reliability gate is uncomfortable and important. Because the quadratic order is selected
+precisely when it predicts the unseen points better, the collapsed partitions have \emph{higher} external $\rext$
+(median 0.46 against 0.08) and pass the gate \emph{more} often (3 of 7, against 2 of 23) than the partitions where
+NBI-A works. A gate on surface quality therefore does not protect against this failure. Real anchors do: NBI-B reaches
+$0.94$--$0.995$ hypervolume ratio in all thirty partitions, collapses included.
+
+This also settles how the gate-conditional analysis must be read. The apparent finding that the anchor benefit is
+larger where the gate passes on BNP Paribas ($+0.64$ against $+0.21$) is NBI-A's collapse restated --- three of the
+five gate-passing partitions are collapse partitions --- and must not be reported as evidence that real anchors add
+more when the surface is reliable.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig03_nbi_fronts.pdf}
+\caption{Revalidated fronts of the three NBI variants against the empirical Pareto reference, in the
+accuracy--calibration and accuracy--cost projections, for one partition of Santander (top) and one BNP Paribas
+partition in the collapse regime (bottom). Surrogate anchors displace the NBI-A front away from the reference and up
+the cost axis.}
+\label{fig:fronts}
+\end{figure}
+
+\subsection{RQ5: Surrogate NBI against metamodel-free NBI}
+\label{sec:results:metamodelfree}
+
+Removing the metamodel and running the identical NBI on the exact out-of-fold objectives gives the best or tied-best
+approximation on every dataset. NBI-C attains a median hypervolume ratio of $0.989$, $0.983$, $0.982$ and $0.976$ on
+the four datasets and exceeds $0.97$ in all thirty partitions of each. Against NBI-B it wins on hypervolume in $28$,
+$24$, $28$ and $30$ of 30 partitions; the corrected test reaches significance on Santander ($p = 0.003$) and UCI
+credit ($p = 0.010$).
+
+Two caveats bound this. On BNP Paribas the two arms genuinely split: NBI-C covers more volume ($24/30$) while NBI-B is
+closer to the reference in $\igdp$ ($24/30$, $\Delta = -0.003$). And the large UCI credit gap is not a
+surrogate-accuracy effect at all --- UCI credit's surfaces pass the gate in every partition. It is a convergence
+effect: NBI-B certifies a median of 29 of its 66 subproblems there, the indicators are computed on converged
+candidates only, and the gap correlates with the number of converged subproblems at Spearman $-0.92$. Retaining
+NBI-B's unconverged iterates preserves the direction ($30/30$) but cuts the mean gap from $+0.277$ to $+0.108$
+hypervolume, and in the three partitions where NBI-B converged on all 66 subproblems the gap is at most $0.01$. Both
+observations are reported as they are; neither supports a claim that surrogate error in the interior is the dominant
+term once anchors are right.
+
+The premium for this reliability is large and uneven (\cref{tab:compute}). NBI-C consumes about $4.2\times10^{5}$ real
+out-of-fold objective evaluations per replication where NBI-A and NBI-B consume none, and it costs 73, 40, 45 and 3
+times the wall-clock time of NBI-B. On UCI credit the premium is small and buys the largest gain; on Santander it is
+77-fold and buys $+0.008$ hypervolume, on a dataset whose log-loss surface is already essentially exact. The honest
+summary is that metamodel-free NBI is the safe default and is justified where the surfaces or the anchors fail, not
+that it is uniformly preferable.
+
+\input{tables/tab05_compute}
+
+\paragraph{Cheap comparators.} Random weighted scalarization on the same surfaces with the same real anchors is
+strong where the surfaces are reliable: it ties NBI-C on UCI credit (differences within $\pm 0.002$, win fractions
+$16/30$ and $18/30$, corrected $p = 1.00$), matches it on Santander hypervolume ($0.978$ against $0.989$) and in fact
+beats NBI-C on Santander $\igdp$ in $20/30$ partitions. It collapses where they are not, falling to a median of one
+front point on BNP Paribas and a hypervolume ratio of $0.474$. This comparison is confounded and we say so: NBI-C
+optimizes exact objectives while scalarization optimizes surrogates, so its advantage on BNP Paribas and Porto Seguro
+cannot be attributed to the NBI construction rather than to the objective source. On identical surfaces, NBI-B beats
+scalarization in $30/30$ partitions on BNP Paribas and $25/30$ on Porto Seguro but loses $29/30$ on UCI credit.
+
+The 66-point random Dirichlet sample loses to every method on every dataset, but this is a floor check and not a
+statement about search efficiency. Its hypervolume ratio is exactly zero in $10/30$, $21/30$ and $25/30$ partitions on
+Santander, BNP Paribas and Porto Seguro, because uniform random compositions cost 8 to 20 times more than the
+reference front. The unoptimized 66-run mixture design also beats it $30/30$ everywhere. The comparator is matched to
+the NBI sets only in the number of candidates returned, and no efficiency claim is made from it.
+
+We also record a negative result. NBI is often motivated by the even spread of the points it generates. After
+revalidation on the real objectives, that advantage is not present in our data under any spacing definition we
+computed: the size-matched spacing percentile of NBI-C is $0.99$, $0.54$, $0.96$ and $0.41$ across the four datasets,
+while the random Dirichlet sample scores $1.00$, $1.00$, $1.00$ and $0.93$. Even spacing in the CHIM does not survive
+the map to revalidated objective space.
+
+\subsection{RQ6: What is the actual multiobjective conflict?}
+\label{sec:results:conflict}
+
+The conflict between discrimination and calibration is, in objective space, almost degenerate. The direct ROC-AUC
+optimum exceeds the SLSQP log-loss optimum by $0.00068$, $0.00080$, $0.00006$ and $0.00034$ ROC-AUC on the four
+datasets, with bootstrap interval half-widths below $0.00004$. These gaps are 5 to 100 times smaller than the gain
+from ensembling at all, and on Porto Seguro the two optima coincide for practical purposes (weight-space $L_1$
+distance $0.06$, support Jaccard $0.97$).
+
+Two qualifications prevent the stronger statement that the two problems are the same. The optima differ in weight
+space on the other three datasets ($L_1$ distance $0.35$, $0.38$ and $0.20$; on Santander the AUC optimum adds about
+$0.12$ of random forest to a Gaussian-naive-Bayes-plus-boosting blend), and Santander pays $0.0032$ of log-loss for
+its $0.00068$ of ROC-AUC. A practitioner choosing between the two therefore gets a different \emph{model}, even though
+the objective values are nearly indistinguishable.
+
+We initially read a large deployment-cost difference into this comparison and it did not survive checking. On
+Santander the AUC optimum appeared to cost $+254$ ms per 1{,}000 rows more than the log-loss optimum in 22 of 30
+partitions. The cause is an artifact of the activity threshold in \cref{eq:supportcost}: the derivative-free AUC
+search leaves a $k$-nearest-neighbour weight between $0.0015$ and $0.062$ that sits just above $\varepsilon$ and is
+AUC-inert --- zeroing it changes out-of-fold ROC-AUC by $3\times10^{-6}$ on average, retains at least 93\% of the gain
+and \emph{improves} log-loss. Once such near-threshold weights are cleaned, an AUC-equivalent blend without
+$k$-nearest neighbours costs about $+4$ ms per 1{,}000 rows. We report the corrected version and flag the artifact,
+because it is a general hazard: a support-based cost is sensitive to weights that are numerically nonzero and
+practically irrelevant, and any pipeline using \cref{eq:supportcost} needs an explicit cleaning step.
+
+\subsection{RQ7: How does the cost definition affect the front?}
+\label{sec:results:cost}
+
+Whether a solution is good depends on which cost is being paid, and the two definitions disagree often enough to
+change conclusions (\cref{fig:cost}, \cref{tab:holdout_cost}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig08_cost_definition.pdf}
+\caption{Left: which method attains the best hypervolume, per dataset, under the weighted cost (W) and the support
+cost (S), counted over 30 partitions. Right: the same NBI-C candidate set scored under both cost definitions against
+the raw design runs, for one partition each of BNP Paribas and UCI credit. Under the step cost the design runs occupy
+cheap supports that the NBI sets, optimized on the linear relaxation, do not reach.}
+\label{fig:cost}
+\end{figure}
+
+\input{tables/tab06_holdout_cost}
+
+The hypervolume-best method changes between the two definitions in $10/30$ partitions on Santander, $24/30$ on BNP
+Paribas, $8/30$ on Porto Seguro and $20/30$ on UCI credit. On Santander and Porto Seguro NBI-C remains best under both
+($26/30$ and $20/30$). On UCI credit random scalarization takes the support-cost hypervolume in $22/30$. Several
+paired readings reverse outright, as noted in \cref{sec:results:anchors} and \cref{sec:results:metamodelfree}.
+
+The mechanism, where it can be isolated, is that a method optimizing $\sum_i w_i c_i$ has no incentive to zero out a
+component: a small weight on an expensive model is nearly free under the relaxation and fully priced under the step
+cost. The raw 66-run design, by contrast, contains the pure vertices and the two-model faces by construction, so it
+occupies exactly the cheap supports the NBI sets miss, and under a step cost it can win outright --- as it does in
+$13/30$ BNP Paribas partitions.
+
+One earlier reading of the BNP Paribas support-cost results did not survive scrutiny and we correct it here. The
+apparent bimodality of NBI-C's support hypervolume is a normalization artifact, not a regime: the per-partition
+normalization box has a cost bound near 17 ms per 1{,}000 rows in 13 partitions where no $k$-nearest-neighbour-bearing
+point survives on the support reference front, and near 160--167 in the other 17, a tenfold rescaling of one axis.
+NBI-C's fronts are the same in both groups. Under a common bound the split disappears entirely. The robust statement
+is qualitative --- NBI sets optimized on the linear cost omit the cheapest supports that the raw design contains, and
+the size of the penalty depends on the chosen cost range --- and we make only that claim.
+
+\subsection{RQ8: Do out-of-fold-selected solutions transfer to the untouched holdout?}
+\label{sec:results:holdout}
+
+In level, yes. The mean holdout-minus-out-of-fold ROC-AUC of every knee-selected solution lies within $\pm 0.005$ as a
+point estimate, and the shift equals the weight-averaged shift of the base models on the same partition (correlation
+$0.97$--$1.00$). It is a partition and refitting effect shared with the constituent models, not selection optimism.
+
+In ranking, it depends on the dataset. The out-of-fold-best of the four knee picks is also holdout-best in $30/30$
+partitions on Santander, $15/30$ on BNP Paribas, $23/30$ on Porto Seguro and $30/30$ on UCI credit, and the twenty
+added partitions reproduce this pattern exactly ($20/20$, $10/20$, $15/20$, $20/20$). The BNP Paribas figure measures
+how close the four candidates are, not a failure of selection: their median out-of-fold gap is $0.0005$ against a
+holdout noise standard deviation of about $0.0012$, several partitions are decided by gaps of $10^{-5}$ to $10^{-8}$,
+and whenever the two disagree the holdout regret is at most $0.0022$ ROC-AUC. These rates are also specific to the
+selection rule and cost definition --- under the support cost they become $28$, $28$, $17$ and $16$ of 30 --- and
+should not be read as dataset properties.
+
+\subsection{RQ9: Did ten replications already give the right answer?}
+\label{sec:results:r30}
+
+\input{tables/tab04_r10_vs_r30}
+
+Tripling the number of replications changed no directional conclusion (\cref{tab:r10r30}, \cref{fig:r10r30}). The
+$R = 10$ estimate lies inside the $R = 30$ bootstrap interval in 9 of 12 hypervolume cells, 7 of 12 $\igdp$ cells, all
+8 gate frequencies, all 24 leading coefficient means and sign frequencies, all 16 holdout shifts and 11 of 12 NBI
+success rates; the sign of the median paired effect is identical in all 32 primary cells. The main level shift is on
+Santander, where $\igdp$ rose 39--52\% in relative terms for every method in partitions 10--29 while hypervolume moved
+by less than $0.005$: the first ten partitions were simply an easier draw, and every method moved together.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig06_r10_vs_r30.pdf}
+\caption{Mean indicator at $R = 10$ against $R = 30$ with bootstrap intervals (left, centre) and gate frequencies at
+both sample sizes (right). Points on the diagonal are unchanged estimates.}
+\label{fig:r10r30}
+\end{figure}
+
+What the extension did deliver is not a change of conclusion but a change of status for four findings. The anchor
+effect on Porto Seguro and UCI credit went from an undecidable $6/10$ and $5/10$ to $24/30$ with intervals excluding
+zero. The BNP Paribas anchor-collapse regime went from an observation to a quantified rate ($7/30$) with an identified
+trigger (quadratic order selection). The NBI-C versus NBI-B split on BNP Paribas became resolvable as a genuine
+hypervolume/$\igdp$ trade-off rather than noise. And two apparent phenomena --- the BNP Paribas support-cost
+bimodality and the Santander deployment-cost gap --- were exposed as artifacts.
+
+One caveat on the criterion itself. ``The $R = 10$ estimate lies inside the $R = 30$ interval'' is lenient, because
+partitions 0--9 are one third of the $R = 30$ sample. Against the twenty new partitions alone, only 6 of 12
+hypervolume and 5 of 12 $\igdp$ cells agree, and the Porto Seguro and UCI credit anchor win rates differ between
+batches under an identical protocol. That disagreement is not a defect of either batch; it is the magnitude of
+partition sensitivity that the replication was designed to measure, and it is the reason we report win fractions and
+medians rather than means wherever the two diverge.

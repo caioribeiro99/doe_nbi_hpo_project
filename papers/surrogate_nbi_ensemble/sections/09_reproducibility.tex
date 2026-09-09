@@ -1,0 +1,50 @@
+\label{sec:repro}
+
+\paragraph{Code and frozen states.} All code, manifests, aggregated tables, statistics and figures are in the
+repository \texttt{caioribeiro99/doe\_nbi\_hpo\_project}. Two annotated tags freeze the study. The tag
+\texttt{pco213-postwork-r10} marks the completed ten-replication analysis; the tag \texttt{pco213-postwork-r30}
+(commit \texttt{b3ed050}) marks the thirty-replication analysis reported here, and every number in this paper is
+computed from artifacts at that commit. The manuscript, its figures and its tables are on the branch
+\texttt{paper/surrogate-nbi-ensemble-weighting}, cut from that tag. The comparison of the two tags is the content of
+\cref{sec:results:r30}.
+
+\paragraph{Pipeline and resumption.} The benchmark is driven by a single checkpointed runner
+(\texttt{scripts/pco213\_run\_postwork\_benchmark.py}) with ten stages per replication: out-of-fold estimation, mixture
+design, Scheff\'e fitting, single-objective references, empirical Pareto reference, NBI-A, NBI-B, NBI-C, comparators
+and quality scoring. State is recorded per dataset $\times$ replication $\times$ stage, so an interrupted run resumes
+without recomputation and a completed stage is never silently recomputed. A dry-run mode lists pending work; it was
+used to verify, before the extension was launched, that replications 0--9 were complete and that exactly 80
+replications (800 stages) were pending. Aggregation and statistics are separate scripts
+(\texttt{pco213\_postwork\_benchmark\_report.py}, \texttt{pco213\_postwork\_benchmark\_stats.py}), so the analysis can
+be rerun without re-executing the experiment. The library has 68 unit tests, including reference implementations
+checked against scikit-learn, exact hypervolume on known cases, the 66-run design, NBI anchor and warm-start
+behaviour, and the resumption planner.
+
+\paragraph{Determinism.} Every stochastic component is seeded as $\text{20260904} + r$ for replication $r$: the outer
+stratified partition, the inner fold assignment, the model random states, the Dirichlet validation compositions
+(offset $+1000$ and $+2000$), the direct AUC search ($+3000$, $+4000$), the empirical reference ($+5000$ onwards) and
+the comparators ($+12000$). The seed policy and the full seed map are stored in the master manifest, together with the
+configuration history and the resolved library versions.
+
+\paragraph{Environment.} Python 3.11.15 with NumPy 2.4.6, pandas 3.0.5, SciPy 1.17.1, scikit-learn 1.9.0,
+statsmodels 0.15.0 and XGBoost 3.2.0, on macOS (Apple M4 Max, arm64), with eight worker threads. The complete
+execution consumed 81.1 hours of stage time (27.5 for the first ten replications, 53.6 for the extension) and produced
+3{,}600 model fits, 19{,}920 design evaluations, 23{,}760 NBI subproblems, $5.02\times10^{7}$ real objective
+evaluations, $1.55\times10^{7}$ reference points and $4.8\times10^{6}$ direct-AUC-search evaluations. Two stages were
+retried during the first ten replications and none during the extension.
+
+\paragraph{Data availability and redistribution limits.} The raw datasets are not redistributed. The UCI
+default-of-credit-card-clients data are downloadable from the UCI Machine Learning Repository. The three Kaggle
+datasets are subject to competition rules and must be obtained from Kaggle by the user; the repository records, for
+each, the exact source, the acquisition command, the expected row and feature counts, the expected positive-class
+prevalence and the SHA-256 checksum of the file actually used, so an independent copy can be verified byte-for-byte
+before use. Where a competition endpoint was unavailable, the file was obtained from a public mirror dataset and
+validated against those invariants; the manifests record which source was used for each dataset. Competition test
+labels are never used. Porto Seguro was subsampled to 200{,}000 rows by a stratified draw with the recorded seed. The
+per-replication raw artifacts (out-of-fold probability matrices, candidate sets, reference samples) total about
+829~MB and are deliberately not version-controlled; they are fully reconstructible from the seeds and the runner.
+
+\paragraph{What a replication requires.} Reproducing the aggregate results from the published tables and statistics
+requires only the repository. Reproducing them from raw data requires the four datasets, the pinned environment and
+approximately 81 hours of single-workstation compute, or proportionally less for a subset of datasets or replications,
+since the runner is resumable and parameterized by dataset and replication count.
