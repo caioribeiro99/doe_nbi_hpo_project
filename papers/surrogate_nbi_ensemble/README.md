@@ -58,7 +58,18 @@ Read these before editing the manuscript. They constrain what it may claim.
 Complete first draft: all nine sections written, 8 figures, 7 tables, 86 citations resolving against 179 verified
 references, compiles clean with no undefined citations or references.
 
-**Next actions before submission**, in order: (1) compress the body from about 16,700 words toward the 10,000-word
-target, mainly in Results; (2) read the two unread lineage papers named in `research_lineage.md`; (3) decide the
-NSGA-II arm per `baseline_gap_assessment.md`; (4) confirm authorship and funding; (5) produce the supplementary PDF
-per `supplementary_plan.md`.
+**Next actions before submission**, in order:
+
+1. **Compress.** The body is about 14,900 words of prose (17,100 including tables) against a 10,000-word target;
+   37 pages single-column. Two compression passes have already been made. The remaining excess is concentrated in
+   Results (about 4,100 words over nine research questions) and Discussion (2,100). The cut that costs least is to
+   move the RQ6 conflict analysis and the RQ9 batch-comparison detail to the supplement, keeping one sentence of each
+   in the main text; that is worth roughly 1,200 words. Do not cut numbers that `claims_and_evidence.md` marks
+   PRIMARY.
+2. **Strip the 20 `note` fields from `references.bib`.** They record which bibliographic details are conventional
+   rather than record-derived and are useful during drafting, but they will print in the reference list.
+3. **Read the two unread lineage papers** named at the end of `research_lineage.md` (Rocha et al. 2020, Engineering
+   with Computers) before the novelty claims are final.
+4. **Decide the NSGA-II arm** per `baseline_gap_assessment.md`. Measured cost is 1.3 h candidate-matched.
+5. **Confirm authorship, affiliations and funding**, which are placeholders in `main.tex`.
+6. **Produce the supplementary PDF** per `supplementary_plan.md`.
