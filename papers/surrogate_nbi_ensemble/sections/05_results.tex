@@ -157,7 +157,8 @@ the first ten; on UCI credit the batch difference is itself significant under an
 $p = 0.009$). The anchor effect there is real in direction, but its magnitude varies enough between draws of ten
 partitions that ten were not enough to see it. Third, the effect depends on the cost definition: under the support
 cost Santander survives unchanged ($30/30$) and Porto Seguro stays positive on $\igdp$ ($29/30$), but BNP Paribas
-weakens to $19$--$20/30$ and UCI credit \emph{reverses}, NBI-B being worse in $26$--$27/30$ partitions.
+weakens to $19$--$20/30$ and UCI credit \emph{reverses}, NBI-B being worse in $26$--$27/30$ partitions. The full
+support-cost repetition of \cref{tab:paired} is supplementary Table~S1.
 
 \paragraph{What goes wrong when anchors come from the surrogate.} The BNP Paribas bimodality has a specific mechanism.
 NBI-A's hypervolume ratio splits into 21 partitions at $0.89$--$0.93$, two intermediate, and seven collapsing to
@@ -170,7 +171,7 @@ that mixture carries $k$-nearest neighbours and costs 16--31~ms per 1{,}000 rows
 The consequence for the gate is uncomfortable. Because the quadratic order is selected precisely when it predicts
 unseen points better, the collapsed partitions have \emph{higher} external $\rext$ (median 0.46 against 0.08) and pass
 the gate \emph{more} often (3 of 7, against 2 of 23) than the partitions where NBI-A works. A gate on surface quality
-does not protect against this failure; real anchors do, NBI-B reaching $0.94$--$0.995$ in all thirty partitions. This
+does not protect against this failure; real anchors do, NBI-B reaching $0.935$--$0.996$ in all thirty partitions. This
 also settles how the gate-conditional analysis must be read: the apparent finding that the anchor benefit is larger
 where the gate passes on BNP Paribas ($+0.64$ against $+0.21$) is NBI-A's collapse restated, since three of the five
 gate-passing partitions are collapse partitions, and it is not evidence that real anchors add more when the surface is
