@@ -31,13 +31,12 @@ $p_{\wvec}(x)$ to remain a probability for every input, the weights must satisfy
 w_i \ge 0 \quad (i = 1,\dots,M), \qquad \sum_{i=1}^{M} w_i = 1 ,
 \label{eq:simplex}
 \end{equation}
-that is, $\wvec \in \simplex$, the unit simplex in $\mathbb{R}^{M}$. \Cref{eq:simplex} is exactly the canonical
+that is, $\wvec \in \simplex$, the unit simplex in $\mathbb{R}^{M}$. \Cref{eq:simplex} is the canonical
 constraint set of a \emph{mixture experiment}: the components are the classifiers, the pure vertex $w_i = 1$ is the
-single model $i$ used alone, and the centroid $\wvec = (1/M)\mathbf{1}$ is uniform soft voting. The experimental
-region is a simplex, not a box, so factorial and central-composite designs and ordinary polynomial response surfaces
-with an intercept are not applicable: the sum-to-one constraint makes the design matrix singular. The appropriate
-formalism is the mixture design with a Scheff\'e canonical polynomial, and this correspondence --- rather than any
-performance argument --- is the reason the framework transfers at all.
+single model $i$ used alone, and the centroid is uniform soft voting. The experimental region is a simplex, not a box,
+so factorial designs and ordinary polynomials with an intercept are inapplicable --- the sum-to-one constraint makes
+the design matrix singular --- and the appropriate formalism is the mixture design with a Scheff\'e canonical
+polynomial. This correspondence, rather than any performance argument, is why the framework transfers at all.
 
 Three objectives are considered, all functions of $\wvec$ through \cref{eq:ensemble}:
 \begin{align}
@@ -61,28 +60,26 @@ weight must be loaded, fed and executed, and one that receives none costs nothin
 c_{\mathrm{sup}}(\wvec) \;=\; \sum_{i=1}^{M} c_i \,\mathbf{1}\!\left[w_i > \varepsilon\right], \qquad \varepsilon = 10^{-3},
 \label{eq:supportcost}
 \end{equation}
-which is discontinuous and therefore unusable as an objective for a gradient-based multiobjective method. Every
-optimizer in this study instead sees the continuous relaxation
+which is discontinuous and therefore unusable by a gradient-based method. Every optimizer here instead sees the
+continuous relaxation
 \begin{equation}
 c_{\mathrm{w}}(\wvec) \;=\; \sum_{i=1}^{M} w_i c_i ,
 \label{eq:weightedcost}
 \end{equation}
-which is the natural linear mixture response and coincides with $c_{\mathrm{sup}}$ at the vertices. The two are not
-monotone transformations of each other on the interior: a weight vector that spreads a small amount of mass over an
-expensive model is cheap under \cref{eq:weightedcost} and expensive under \cref{eq:supportcost}. We therefore treat
-\cref{eq:weightedcost} as the optimization objective and \cref{eq:supportcost} as a second, operationally meaningful
-scoring of the \emph{same} solutions, and we report every comparison under both. To our knowledge this contrast has not
-previously been drawn for weighted ensembles; \cref{sec:results:cost} shows that it changes which method wins.
+the natural linear mixture response, which coincides with $c_{\mathrm{sup}}$ at the vertices but not on the
+interior: spreading a little mass over an expensive model is cheap under \cref{eq:weightedcost} and fully priced under
+\cref{eq:supportcost}. We therefore optimize \cref{eq:weightedcost} and additionally score the \emph{same} solutions
+under \cref{eq:supportcost}, reporting every comparison under both. \Cref{sec:results:cost} shows that the choice
+changes which method wins.
 
 \subsection{Mixture design and Scheff\'e surrogates}
 \label{sec:method:scheffe}
 
-\paragraph{Design.} With $M = 5$ the design is a fixed 66-run mixture design, evaluated once per replication on the
-cached out-of-fold probabilities. It is the union of the $\{5,3\}$ and $\{5,2\}$ simplex lattices, the overall
-centroid, the 5 axial points, the 5 quaternary (four-component) centroids and the 10 midpoints between the overall
-centroid and the ternary centroids. This composition guarantees that the 5 pure vertices (each single model), all 10
-binary edges, the ternary and quaternary faces and uniform voting are design points, so the surrogate is fitted with
-support on every face of the simplex that a sparse ensemble could occupy.
+\paragraph{Design.} With $M = 5$ the design is a fixed 66-run mixture design: the union of the $\{5,3\}$ and
+$\{5,2\}$ simplex lattices, the overall centroid, the 5 axial points, the 5 quaternary centroids and the 10 midpoints
+between the overall centroid and the ternary centroids. It therefore places design points on the 5 pure vertices, all
+10 binary edges, the ternary and quaternary faces and uniform voting, giving the surrogate support on every face a
+sparse ensemble could occupy.
 
 \paragraph{Models.} For a response $y$ the Scheff\'e canonical polynomials of order $1$, $2$ and the special cubic are
 \begin{align}
@@ -94,17 +91,12 @@ fitted by ordinary least squares without an intercept and without pure quadratic
 them redundant. No term elimination is performed: the canonical form is kept intact so that $\beta_i$ is the predicted
 response at vertex $i$ and $\beta_{ij}$ measures the departure of the $i$--$j$ edge from linear blending.
 
-\paragraph{External validation and the reliability gate.} The lineage reports in-sample fit statistics. Here each
-replication additionally evaluates 100 compositions drawn from $\mathrm{Dirichlet}(\mathbf{1})$ (60 points) and
-$\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40 points) that are \emph{not} in the design and are never used for fitting.
-On these points we compute the external coefficient of determination $\rext$ and the Spearman rank correlation
-$\rho_{\mathrm{ext}}$ between predicted and observed response. Two decisions follow.
-
-\emph{Order selection} uses a parsimony rule: the lowest order whose external RMSE is within 10\% of the best external
-RMSE among the three orders is selected. Selection is therefore driven by out-of-design predictive accuracy, not by
-in-sample fit.
-
-\emph{Admissibility} uses a pre-registered \emph{reliability gate}: a surface is declared reliable only if
+\paragraph{External validation and the reliability gate.} Where the lineage reports in-sample fit statistics, each
+replication here additionally evaluates 100 compositions drawn from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and
+$\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
+external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} then uses a parsimony rule --- the lowest
+order whose external RMSE is within 10\% of the best --- so it is driven by out-of-design accuracy rather than
+in-sample fit. \emph{Admissibility} uses a pre-registered \emph{reliability gate}: a surface is reliable only if
 \begin{equation}
 \rext \ge 0.5 \quad\text{and}\quad \rho_{\mathrm{ext}} \ge 0.9 .
 \label{eq:gate}
@@ -126,12 +118,11 @@ each $\beta$ on the unit simplex of \emph{scalarization} weights defines the sub
 \max_{\wvec,\,t} \; t \quad \text{s.t.} \quad \bar\Phi\beta + t\,\hat{n} = \bar F(\wvec), \quad \wvec \in \simplex .
 \label{eq:nbi}
 \end{equation}
-Two implementation points matter here. First, the simplex constraint is eliminated by optimizing over $M-1$ free
-variables with $w_M = 1 - \sum_{i<M} w_i$, and a projection step returns the nearest feasible composition when an
-iterate leaves the simplex; without it, subproblems near a vertex can terminate outside the feasible set. Second, for
-vertex values of $\beta$ the subproblem solution is the corresponding anchor, which is returned directly as a warm
-start rather than re-derived. We solve 66 subproblems per replication, using the same $\beta$ lattice for all variants
-so that the three arms are compared at identical points of the CHIM.
+Two implementation points matter. The simplex constraint is eliminated by optimizing over $M-1$ free variables with
+$w_M = 1 - \sum_{i<M} w_i$, with a projection step returning the nearest feasible composition when an iterate leaves
+the simplex; without it, subproblems near a vertex can terminate infeasible. And for vertex values of $\beta$ the
+solution is the corresponding anchor, returned directly rather than re-derived. We solve 66 subproblems per
+replication on the same $\beta$ lattice for all variants, so the arms are compared at identical points of the CHIM.
 
 \paragraph{The three variants.} The variants differ in exactly two binary choices --- where the objectives come from,
 and where the anchors come from --- and in nothing else:
@@ -149,26 +140,23 @@ NBI-C & real out-of-fold objectives & real out-of-fold single-objective optima &
 \end{tabular}
 \end{center}
 
-NBI-A is the construction used in the predecessor framework and in the forecast-combination precedent: everything,
-including the payoff matrix, is derived from the metamodel. NBI-B changes one thing only --- the anchors are the real
-optima found by the single-objective references of \cref{sec:method:refs} --- so the difference between A and B
-isolates the effect of \emph{anchor misplacement} while holding the surrogate surfaces fixed. NBI-C removes the
-metamodel entirely and runs the same NBI on the exact cached out-of-fold objectives, so the difference between B and C
-isolates the residual effect of \emph{surrogate error in the interior} once the anchors are correct. Because $f_1$ is
-piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart from points drawn on the simplex, and
-accepts an iterate whose equality residual is below $10^{-3}$ even when the solver cannot certify optimality; NBI-A and
-NBI-B, which optimize smooth polynomials, require full SLSQP certification. This asymmetry is a consequence of the
-objective, not a tuning choice, and it is reported with the results.
+NBI-A is the construction used throughout the lineage: everything, including the payoff matrix, comes from the
+metamodel. NBI-B changes one thing --- the anchors are the real optima of \cref{sec:method:refs} --- so A versus B
+isolates \emph{anchor misplacement} with the surfaces held fixed. NBI-C removes the metamodel entirely, so B versus C
+isolates the residual effect of \emph{surrogate error in the interior} once anchors are correct. Because $f_1$ is
+piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and accepts an iterate
+whose equality residual is below $10^{-3}$ even without certified optimality, whereas NBI-A and NBI-B optimize smooth
+polynomials and require full SLSQP certification. This asymmetry follows from the objective, not from tuning, and is
+reported with the results.
 
 \subsection{References, comparators and revalidation}
 \label{sec:method:refs}
 
-\paragraph{Single-objective references.} For each replication we compute the best single model, uniform voting,
-logistic stacking, the SLSQP optimum of the log-loss (convex, so this is the global optimum), a direct
-derivative-free search for the ROC-AUC optimum over $4\times10^{4}$ sampled compositions plus local refinement, and the
-optima of the two Scheff\'e surfaces. The log-loss and AUC optima double as the real anchors of NBI-B and NBI-C. We
-emphasize that SLSQP on the convex log-loss remains the correct tool for the single-objective problem; NBI is not
-proposed as a replacement for it.
+\paragraph{Single-objective references.} Each replication computes the best single model, uniform voting, logistic
+stacking, the SLSQP log-loss optimum (convex, hence global), a derivative-free ROC-AUC optimum over $4\times10^{4}$
+sampled compositions with local refinement, and the optima of the two Scheff\'e surfaces. The log-loss and AUC optima
+double as the real anchors of NBI-B and NBI-C. SLSQP on the convex log-loss remains the correct tool for the
+single-objective problem; NBI is not proposed as a replacement for it.
 
 \paragraph{Comparators.} Two cheap alternatives are run on every replication: random weighted scalarization, which
 draws 66 scalarization weight vectors from $\mathrm{Dirichlet}(\mathbf{1})$ and minimizes the corresponding weighted
@@ -177,28 +165,27 @@ $\mathrm{Dirichlet}(\mathbf{1})$ sample of the weight simplex. The second is mat
 \emph{number of returned candidates} and is not compute-matched; it functions as a floor check on the geometry of the
 reference front, not as an efficiency baseline, and is reported as such throughout.
 
-\paragraph{Revalidation.} Every candidate produced by any method --- NBI-A, NBI-B, NBI-C, both comparators, the 66
-design runs and the single-objective references --- is re-evaluated on the exact out-of-fold objectives before any
-indicator is computed, and non-dominated filtering is applied to those revalidated values. No result in this paper is
+\paragraph{Revalidation.} Every candidate from every method --- both NBI variants on surrogates, NBI-C, both
+comparators, the 66 design runs and the references --- is re-evaluated on the exact out-of-fold objectives before any
+indicator is computed, with non-dominated filtering applied to those revalidated values. No result in this paper is
 read off a surrogate.
 
 \subsection{Empirical Pareto reference and quality indicators}
 \label{sec:method:reference}
 
-Comparing approximation sets requires a reference. Since the true Pareto set of \cref{eq:ensemble} over $\simplex$ is
-unknown, each replication constructs an \emph{empirical Pareto reference}: at least $10^{5}$ compositions sampled from
-$\mathrm{Dirichlet}(\mathbf{1})$ and $\mathrm{Dirichlet}(0.3\cdot\mathbf{1})$ in equal parts, augmented with the
-simplex lattice, all vertices and edges, and an $\varepsilon$-constraint sweep with 40 caps solved by SLSQP, all
-evaluated on the real objectives and filtered to the non-dominated set. Convergence is checked by an independent
-sample of $2\times10^{4}$ further points: if these displace more than 5\% of the current front, the reference is
-enlarged and the check repeated, up to three rounds. The final reference is the non-dominated union of this sample
-with every candidate set produced in the replication, which makes it at least as good as any method being scored.
+Comparing approximation sets requires a reference, and the true Pareto set of \cref{eq:ensemble} over $\simplex$ is
+unknown. Each replication therefore constructs an \emph{empirical Pareto reference}: at least $10^{5}$ compositions
+from $\mathrm{Dirichlet}(\mathbf{1})$ and $\mathrm{Dirichlet}(0.3\cdot\mathbf{1})$ in equal parts, augmented with the
+simplex lattice, all vertices and edges, and a 40-cap $\varepsilon$-constraint sweep, evaluated on the real objectives
+and filtered to the non-dominated set. An independent sample of $2\times10^{4}$ points checks convergence: if it
+displaces more than 5\% of the front, the reference is enlarged and rechecked, up to three rounds. The final reference
+is the non-dominated union of this sample with every candidate set of the replication, making it at least as good as
+any method scored against it.
 
-We call this an empirical reference and never a true Pareto front. Two consequences are stated with the results: it
-is a sample-based upper bound on attainable quality, and because candidate sets contribute to it, a method that
-contributes many points is partly graded against itself.
+We call this an empirical reference, never a true Pareto front: it is a sample-based upper bound, and because
+candidate sets contribute to it, a method contributing many points is partly graded against itself.
 
 Approximation sets are scored on min--max normalized objectives by generational distance, inverted generational
-distance, $\igdp$ \citep{ishibuchi2015igdplus}, Schott spacing, the exact hypervolume with reference point $1.1$ on
+distance, $\igdp$ \citep{ishibuchi2015modified}, Schott spacing, the exact hypervolume with reference point $1.1$ on
 each axis, expressed as a ratio to the reference hypervolume, coverage, and the joint non-dominated fraction. $\igdp$
 and the hypervolume ratio are pre-registered as the two primary endpoints; the others are descriptive.
