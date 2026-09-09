@@ -191,9 +191,11 @@ the cost axis.}
 
 Removing the metamodel and running the identical NBI on the exact out-of-fold objectives gives the best or tied-best
 approximation on every dataset. NBI-C attains a median hypervolume ratio of $0.989$, $0.983$, $0.982$ and $0.976$ on
-the four datasets and exceeds $0.97$ in all thirty partitions of each. Against NBI-B it wins on hypervolume in $28$,
-$24$, $28$ and $30$ of 30 partitions; the corrected test reaches significance on Santander ($p = 0.003$) and UCI
-credit ($p = 0.010$).
+Santander, BNP Paribas, Porto Seguro and UCI credit. It exceeds $0.97$ in every partition of Santander and BNP
+Paribas but in $24/30$ and $25/30$ partitions of Porto Seguro and UCI credit; the weaker but uniform statement is that
+it exceeds $0.95$ in all thirty partitions of three datasets and in $26/30$ on Porto Seguro, whose worst partition
+reaches $0.877$. Against NBI-B it wins on hypervolume in $28$, $24$, $28$ and $30$ of 30 partitions; the corrected
+test reaches significance on Santander ($p = 0.003$) and UCI credit ($p = 0.010$).
 
 Two caveats bound this. On BNP Paribas the arms genuinely split: NBI-C covers more volume ($24/30$) while NBI-B is
 closer to the reference in $\igdp$ ($24/30$, $\Delta = -0.003$). And the large UCI credit gap is not a
