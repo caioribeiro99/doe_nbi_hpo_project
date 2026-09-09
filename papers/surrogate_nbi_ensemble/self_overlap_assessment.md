@@ -125,6 +125,17 @@ inference).
    than ensemble weights on a simplex, so the scientific overlap is small, but it must be cited and the shared code
    base disclosed in the reproducibility statement, which it is.
 
+5. **The closest prior art is external, which strengthens the incrementality case rather than weakening it.**
+   Kwon, Lee and Lee (2024), *J. Soc. Korea Ind. Syst. Eng.* 47(4):161–170, already fit a Scheffé polynomial to the
+   accuracy of a five-classifier ensemble over the weight simplex, obtained from a mixture design, and maximize it
+   under the sum-to-one constraint on eleven tabular binary datasets. That is elements 1–3 of this pipeline, applied to
+   classifiers, by an unrelated group. It removes any remaining temptation to present the mixture formulation as a
+   contribution — but it also means the self-overlap question is no longer the binding one: what separates this study
+   from the authors' own prior work (multiobjective treatment, the anchor decomposition, revalidation, the empirical
+   reference, the gate, replication, the deployment-cost contrast) is exactly what separates it from Kwon et al. and
+   from Rocha et al. (2025). A single set of contributions answers all three comparisons, which is the strongest
+   position the manuscript could be in.
+
 **Verdict: sufficiently different, conditional on the framing above.** The overlap that matters is no longer
 with the 2025 EAAI predecessor but with Rocha et al. (2025); the manuscript's distinguishing contributions separate it
 from both, and they are the same contributions in each case.
