@@ -14,8 +14,28 @@ group, published at least since Bacci et al. (2019) for time-series forecast com
 ensemble weights by Moreira et al. (2021). The 2025 EAAI paper of which the present first author is a co-author extends
 the same machinery to post-Pareto decision making.
 
-**Stronger still, and found only during the novelty review:** Rocha, Rotella, Balestrassi, Melgani and Zambroni de
-Souza (2025), *IEEE Access* 13:207903–207915, apply *exactly* this construction to a **model ensemble** — a
+**Closest of all, and found only during the novelty review: the construction already exists for classifier
+ensembles.** Kwon, Y., Lee, K., and Lee, D. (2024), "Ensemble Prediction Model Using Mixture Design of Experiments",
+*Journal of Society of Korea Industrial and Systems Engineering* 47(4):161–170, DOI 10.11627/jksie.2024.47.4.161,
+treat the weights of five heterogeneous classifiers (kNN, SVC, logistic regression, naive Bayes, decision tree) as
+mixture components, obtain the generalization metric at each point of a mixture design, fit a **Scheffé canonical
+polynomial** with binary interaction terms to Accuracy or F1 as a function of the weights, reduce it by backward
+elimination at α = 0.05, and **maximize the reduced polynomial subject to Σ wᵢ = 1** using SciPy solvers including
+SLSQP, on eleven tabular binary datasets, benchmarked against the base models and against XGBoost/random-forest
+stacking. The English abstract and Sections 2–5 were read from the publisher's full text; the non-negativity
+constraint (their Eq. 5) is rendered as an image and could not be quoted, so `wᵢ ≥ 0` is inferred from the mixture
+framing rather than verified verbatim.
+
+**Consequence: elements 1–3 of the present pipeline — ensemble weights as mixture components on a simplex, a mixture
+design over classifier weights, and a Scheffé surrogate of classifier-ensemble performance — are KNOWN PRIOR WORK for
+classifiers, not merely for forecasts and neural networks.** What Kwon et al. do not do is the entire subject of this
+paper: it is single-objective (one scalar metric at a time), so there is no Pareto front, no payoff matrix and no
+anchors; the polynomial is validated only in-sample, with no external validation on unseen compositions and no
+admissibility gate; there is no independent reference front and no Pareto indicators; there is no cost objective; and
+there is no replication over resampled partitions and no paired inference.
+
+**Also found during the novelty review:** Rocha, Rotella, Balestrassi, Melgani and Zambroni de
+Souza (2025), *IEEE Access* 13:207903–207915, apply the construction to a **model ensemble** — a
 $\{3,5\}$ simplex-lattice mixture design over the probability simplex of the mixing weights of three neural networks,
 factor-analytic reduction of correlated error metrics, NBI over the resulting surrogate objectives, and an
 entropy-based post-Pareto choice. Its stated first contribution is "casting ensemble-weight definition as a structured
@@ -127,9 +147,9 @@ counterpart in the lineage.
 
 | # | Component | Class | Lineage source | What changes here |
 |---|---|---|---|---|
-| 1 | Mixture formulation of combination weights (non-negativity + sum-to-one; simplex as the experimental region) | **INHERITED** | Bacci 2019; Moreira 2021; **Rocha 2025**; Mendes 2016; Leal 2022 | Components are classifiers rather than forecasts, assets or ANNs. The formulation itself is unchanged. |
-| 2 | Mixture design over the weights | **ADAPTED** | Simplex-Lattice in Bacci 2019, **Rocha 2025** and the predecessor; D-optimal reduction in Leal 2022 | A fixed 66-run design combining the {5,3} and {5,2} lattices, the overall centroid, 5 axial points, 5 quaternary centroids and 10 centroid–ternary midpoints, chosen so the pure vertices (single models) and the uniform blend are design points, and augmented by 100 *unseen* Dirichlet compositions reserved for external validation. The lineage designs do not reserve a validation set. |
-| 3 | Scheffé canonical polynomials as the performance surrogate | **ADAPTED** | Bacci 2019 (factor scores); predecessor (post-Pareto metrics) | Fitted directly to ROC-AUC, log-loss and Brier rather than to rotated factor scores, and the order is selected by an explicit parsimony rule (lowest order within 10% of the best external RMSE) rather than fixed a priori. No factor analysis or FMSE agglutination is used: the three objectives are kept explicit and interpretable, which is what makes the anchor analysis possible. |
+| 1 | Mixture formulation of combination weights (non-negativity + sum-to-one; simplex as the experimental region) | **INHERITED** | **Kwon 2024** (classifiers); Bacci 2019; Moreira 2021; Rocha 2025; Mendes 2016; Leal 2022 | Nothing changes. Kwon et al. already apply it to classifier weights. |
+| 2 | Mixture design over the weights | **ADAPTED** | **Kwon 2024** (classifier weights); Simplex-Lattice in Bacci 2019, Rocha 2025 and the predecessor; D-optimal reduction in Leal 2022 | A fixed 66-run design combining the {5,3} and {5,2} lattices, the overall centroid, 5 axial points, 5 quaternary centroids and 10 centroid–ternary midpoints, chosen so the pure vertices (single models) and the uniform blend are design points, and augmented by 100 *unseen* Dirichlet compositions reserved for external validation. The lineage designs do not reserve a validation set. |
+| 3 | Scheffé canonical polynomials as the performance surrogate | **ADAPTED** | **Kwon 2024** (accuracy/F1 of a classifier ensemble); Bacci 2019 (factor scores); predecessor (post-Pareto metrics) | Fitted directly to ROC-AUC, log-loss and Brier rather than to rotated factor scores, and the order is selected by an explicit parsimony rule (lowest order within 10% of the best external RMSE) rather than fixed a priori. No factor analysis or FMSE agglutination is used: the three objectives are kept explicit and interpretable, which is what makes the anchor analysis possible. |
 | 4 | External validation of the surrogate + reliability gate | **NEW** | — | 100 held-out Dirichlet points per replication; a pre-registered gate (external R² ≥ 0.5 **and** Spearman ρ ≥ 0.9) decides whether a surface is usable. The lineage reports in-sample fit statistics; it does not validate the mixture surrogate on unseen compositions, and it has no admissibility criterion. |
 | 5 | NBI construction (payoff matrix, CHIM, quasi-normal, β lattice) | **INHERITED** | Das & Dennis 1998 via the predecessor, Bacci 2019, **Rocha 2025**, Azevedo 2026, Pereira 2026 | Unchanged mathematics on M−1 free variables, with a projection step and a feasible-iterate acceptance rule added for the non-smooth case (see 7). |
 | 6 | Anchors from surrogate optima (NBI-A) | **INHERITED** | The predecessor's payoff matrix; Bacci 2019; Rocha 2025 | This is exactly the lineage's construction; here it is the *control condition* rather than the method. |
@@ -174,7 +194,9 @@ Not acceptable:
 - "We are the first to model ensemble performance over the simplex with Scheffé polynomials." (Bacci 2019 for
   forecasts; Moreira 2021 for ANN ensembles; Rocha 2025 for a neural-network ensemble with NBI on top.)
 - "We are the first to run NBI over the ensemble-weight simplex." (Rocha 2025.)
-- "We cast ensemble-weight selection as a mixture-design problem." (This is the stated contribution of Rocha 2025.)
+- "We cast ensemble-weight selection as a mixture-design problem." (Stated contribution of Rocha 2025 and of Kwon 2024.)
+- "We are the first to fit a Scheffé model to classifier-ensemble performance over the weight simplex." (Kwon 2024.)
+- "We introduce mixture design of experiments to classifier ensembles." (Kwon 2024.)
 - Any phrasing that presents the predecessor as an external competitor rather than as own prior work.
 
 The defensible statement of what is new is the *evaluation architecture*, not the pipeline: real-versus-surrogate

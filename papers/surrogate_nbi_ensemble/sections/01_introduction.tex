@@ -18,15 +18,18 @@ singular under the sum-to-one constraint. This correspondence is exact, and it h
 designs have been used to weight portfolio components \citep{mendes2016portfolio_mde,leal2022portfolio_doptimal_mde},
 to weight the members of a time-series forecast combination, where a simplex lattice over the combination weights feeds
 Scheffé models that are then optimized by Normal Boundary Intersection \citep{bacci2019nbi_mixture}, to weight
-neural-network ensembles \citep{moreira2021ann_ensemble_mde}, and most recently to weight a three-network load-forecasting
-ensemble through a simplex-lattice design, a factor-analytic surrogate and NBI \citep{rocha2025ensemblestlf}. A closely
-related framework combining mixture designs, response-surface metamodels and NBI with a mixture-design post-Pareto
-stage was recently developed for multiobjective engineering optimization \citep{pereira2025hybrid}.
+neural-network ensembles \citep{moreira2021ann_ensemble_mde}, and to weight a three-network load-forecasting ensemble
+through a simplex-lattice design, a factor-analytic surrogate and NBI \citep{rocha2025ensemblestlf}. A closely related
+framework combining mixture designs, response-surface metamodels and NBI with a mixture-design post-Pareto stage was
+developed for multiobjective engineering optimization \citep{pereira2025hybrid}. Most directly,
+\citet{kwon2024ensemble} treat the weights of five heterogeneous \emph{classifiers} as mixture components, fit a
+Scheffé polynomial to accuracy or $F_1$ over the weight simplex, reduce it by backward elimination and maximize it
+under $\sum_i w_i = 1$ on eleven tabular binary datasets.
 
-\textbf{We therefore claim no part of that construction.} The pipeline --- mixture design over combination weights,
-polynomial surrogate of performance over the simplex, NBI on the surrogate --- is established prior work, including for
-model ensembles. What has not been established is whether it remains \emph{trustworthy} when it is transferred from its
-originating setting to classifier ensembles, and that is the question of this paper.
+\textbf{We therefore claim no part of that construction.} Mixture design over combination weights, a Scheffé surrogate
+of performance over the simplex, and NBI on that surrogate are established prior work --- individually, in combination,
+and specifically for classifier ensembles. What has not been established is whether the construction remains
+\emph{trustworthy} once the problem becomes genuinely multiobjective, and that is the question of this paper.
 
 \subsection{Why the transfer is not routine}
 
@@ -107,7 +110,8 @@ predict when this is necessary?
 \item \textbf{A controlled decomposition of a surrogate-assisted multiobjective pipeline into surrogate error, anchor
 misplacement and solver behaviour}, through three NBI variants that differ in exactly two binary choices. To the best
 of our literature search, no prior study computes NBI anchors both from a surrogate and from the true objectives and
-compares the resulting fronts.
+compares the resulting fronts. The nearest precedent for the pipeline itself, \citet{kwon2024ensemble}, optimizes one
+accuracy metric at a time and therefore has no anchors, no front and no such decomposition.
 
 \item \textbf{Evidence that anchor construction, not surrogate accuracy, is the first-order failure mode.} Real anchors
 improve both primary endpoints in 30 of 30 partitions on the two datasets whose ROC-AUC surfaces almost never pass the

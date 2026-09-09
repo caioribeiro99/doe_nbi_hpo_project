@@ -720,3 +720,50 @@ Dataset & Pair & $\hat\beta_{ij}$ & $|\hat\beta_i - \hat\beta_j|$ & criterion me
 
 if __name__ == "__main__":
     tab07_edge_condition()
+
+
+# --------------------------------------------------------------------------------------
+# Post-processing: keep wide tables inside the text block.
+# Several tables are wider than \textwidth in the single-column layout and would be
+# clipped. Wrapping the tabular in \resizebox is the least invasive fix and keeps the
+# generated files self-contained.
+# --------------------------------------------------------------------------------------
+WIDE = ["tab01_datasets", "tab02_gate", "tab03_paired_primary", "tabS01_paired_support",
+        "tab04_r10_vs_r30", "tab05_compute", "tab07_edge_condition"]
+
+
+def fit_wide_tables():
+    for name in WIDE:
+        f = TAB / f"{name}.tex"
+        t = f.read_text()
+        if "resizebox" in t:
+            continue
+        t = t.replace("\\begin{tabular}", "\\resizebox{\\textwidth}{!}{%\n\\begin{tabular}", 1)
+        i = t.rfind("\\end{tabular}")
+        t = t[:i] + "\\end{tabular}}" + t[i + len("\\end{tabular}"):]
+        f.write_text(t)
+        print("fitted", name)
+
+
+def shorten_tab01():
+    """The Source column of Table 1 overflows; shorten it and move the Porto note to the caption."""
+    f = TAB / "tab01_datasets.tex"
+    t = f.read_text()
+    for a, b in [
+        ("Santander Customer Transaction Prediction (Kaggle, 2019)", "Santander Customer Transaction (Kaggle 2019)"),
+        ("BNP Paribas Cardif Claims Management (Kaggle, 2016)", "BNP Paribas Cardif Claims (Kaggle 2016)"),
+        ("Porto Seguro Safe Driver Prediction (Kaggle, 2017); 200,000-row stratified subsample",
+         "Porto Seguro Safe Driver (Kaggle 2017)$^{\\dagger}$"),
+        ("Default of credit card clients (UCI 350; Yeh and Lien, 2009)", "Default of credit card clients (UCI 350)"),
+        ("all selection is done on 5-fold out-of-fold predictions within the training part.",
+         "all selection uses 5-fold out-of-fold predictions within the training part. "
+         "$^{\\dagger}$200,000-row stratified subsample of the 595,212 available rows, drawn once with a recorded seed."),
+    ]:
+        t = t.replace(a, b)
+    f.write_text(t)
+    print("shortened tab01")
+
+
+if __name__ == "__main__":
+    shorten_tab01()
+    fit_wide_tables()

@@ -19,8 +19,8 @@ partitions of each of four datasets, and every comparison is paired by partition
 \subsection{The ensemble-weighting problem is a mixture problem}
 \label{sec:method:problem}
 
-Let $M$ probabilistic base classifiers produce, for a sample $x$, the probability estimates
-$p_1(x),\dots,p_M(x) \in [0,1]$. A weighted soft-voting ensemble predicts
+Let $M$ probabilistic base classifiers produce, for a sample $x$, probability estimates
+$p_1(x),\dots,p_M(x)$ in $[0,1]$. A weighted soft-voting ensemble predicts
 \begin{equation}
 p_{\wvec}(x) \;=\; \sum_{i=1}^{M} w_i\, p_i(x) \;=\; \mathbf{P}\wvec ,
 \label{eq:ensemble}
@@ -128,14 +128,15 @@ replication on the same $\beta$ lattice for all variants, so the arms are compar
 and where the anchors come from --- and in nothing else:
 
 \begin{center}
-\small
+\footnotesize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{llll}
 \toprule
 Variant & Objectives in \cref{eq:nbi} & Anchors / payoff matrix & Real objective evaluations \\
 \midrule
 NBI-A & Scheff\'e surfaces & optima of the Scheff\'e surfaces & 0 \\
-NBI-B & Scheff\'e surfaces & real out-of-fold single-objective optima & 0 (anchors reused) \\
-NBI-C & real out-of-fold objectives & real out-of-fold single-objective optima & $\approx 4.2\times10^{5}$ \\
+NBI-B & Scheff\'e surfaces & real out-of-fold optima & 0 (anchors reused) \\
+NBI-C & real out-of-fold objectives & real out-of-fold optima & $\approx 4.2\times10^{5}$ \\
 \bottomrule
 \end{tabular}
 \end{center}

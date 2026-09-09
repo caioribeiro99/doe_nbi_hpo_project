@@ -66,6 +66,18 @@ proportions of a training-data mixture as a simplex and fits predictive laws ove
 \citep{xie2023doremi,ye2025mixinglaws,liu2025regmix,chen2025aioli,thudi2025mixmin}. These share our formalism but not
 our object: none models the performance of a weighted \emph{prediction} ensemble.
 
+The exception, and the closest prior art to this study, is \citet{kwon2024ensemble}. They treat the weights of five
+heterogeneous classifiers as mixture components, obtain the generalization metric at each point of a mixture design,
+fit a Scheffé canonical polynomial with binary interaction terms to accuracy or $F_1$, reduce it by backward
+elimination at $\alpha = 0.05$, and maximize the reduced polynomial subject to $\sum_i w_i = 1$ with SLSQP and related
+solvers, on eleven tabular binary datasets against stacking meta-models. Elements 1--3 of our own pipeline --- the
+simplex formulation, the mixture design over classifier weights and the Scheffé surrogate of ensemble performance ---
+are therefore established prior art for classifiers, not only for forecasts and neural networks, and we claim none of
+them. What that study does not do is what this paper is about: it optimizes one scalar metric at a time, so it has no
+Pareto front, no anchors and no NBI; it validates the fitted polynomial only in-sample, with no external validation on
+unseen compositions and no admissibility criterion; it has no independent reference front and no Pareto indicators; it
+carries no cost objective; and it reports no replication over resampled partitions and no paired inference.
+
 \subsection{The DoE--RSM--NBI framework and its application to ensemble weights}
 \label{sec:rel:lineage}
 
@@ -140,10 +152,12 @@ inherit that guarantee, and \cref{sec:results:cost} shows the two definitions di
 \subsection{The gap}
 \label{sec:rel:gap}
 
-Ensemble weights on a simplex, mixture designs over them, Scheffé surrogates of ensemble performance, and NBI on those
-surrogates all exist, and in \citet{rocha2025ensemblestlf} they exist together. Multiobjective optimization of
-continuous ensemble weights exists. Cost-aware ensemble selection exists. What does not exist, to the best of our
-literature search, is an evaluation of whether this pipeline can be trusted when it is moved to classifier ensembles:
+Ensemble weights on a simplex, mixture designs over them, and Scheffé surrogates of ensemble performance all exist,
+and for classifier ensembles specifically they exist together in \citet{kwon2024ensemble}; adding NBI on those
+surrogates exists in \citet{rocha2025ensemblestlf} for a regression ensemble and in \citet{bacci2019nbi_mixture} for
+forecast combination. Multiobjective optimization of continuous ensemble weights exists. Cost-aware ensemble selection
+exists. What does not exist, to the best of our literature search, is an evaluation of whether this pipeline can be
+trusted once it is both multiobjective and applied to classifiers:
 no external validation of the mixture surrogate on unseen compositions, no comparison of surrogate-derived against
 real anchors, no metamodel-free control arm, no revalidation of candidates on the true objectives against an
 independent empirical reference, no replicated partition study of the whole pipeline, and no contrast between the cost

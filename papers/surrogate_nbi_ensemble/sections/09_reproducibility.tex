@@ -2,20 +2,20 @@
 
 \paragraph{Code and frozen states.} All code, manifests, aggregated tables, statistics and figures are in the
 repository \texttt{caioribeiro99/doe\_nbi\_hpo\_project}. Two annotated tags freeze the study. The tag
-\texttt{pco213-postwork-r10} marks the completed ten-replication analysis; the tag \texttt{pco213-postwork-r30}
-(commit \texttt{b3ed050}) marks the thirty-replication analysis reported here, and every number in this paper is
-computed from artifacts at that commit. The manuscript, its figures and its tables are on the branch
-\texttt{paper/surrogate-nbi-ensemble-weighting}, cut from that tag. The comparison of the two tags is the content of
+\texttt{pco213\-postwork\-r10} marks the completed ten-replication analysis; the tag
+\texttt{pco213\-postwork\-r30} (commit \texttt{b3ed050}) marks the thirty-replication analysis reported here, and
+every number in this paper is computed from artifacts at that commit. The manuscript, its figures and its tables are
+on the branch \texttt{paper/\allowbreak surrogate\-nbi\-ensemble\-weighting}, cut from that tag. The comparison of the two tags is the content of
 \cref{sec:results:r30}.
 
 \paragraph{Pipeline and resumption.} The benchmark is driven by a single checkpointed runner
-(\texttt{scripts/pco213\_run\_postwork\_benchmark.py}) with ten stages per replication: out-of-fold estimation, mixture
+(\texttt{scripts/\allowbreak pco213\_\allowbreak run\_\allowbreak postwork\_\allowbreak benchmark.py}) with ten stages per replication: out-of-fold estimation, mixture
 design, Scheff\'e fitting, single-objective references, empirical Pareto reference, NBI-A, NBI-B, NBI-C, comparators
 and quality scoring. State is recorded per dataset $\times$ replication $\times$ stage, so an interrupted run resumes
 without recomputation and a completed stage is never silently recomputed. A dry-run mode lists pending work; it was
 used to verify, before the extension was launched, that replications 0--9 were complete and that exactly 80
 replications (800 stages) were pending. Aggregation and statistics are separate scripts
-(\texttt{pco213\_postwork\_benchmark\_report.py}, \texttt{pco213\_postwork\_benchmark\_stats.py}), so the analysis can
+(\texttt{pco213\_\allowbreak postwork\_\allowbreak benchmark\_\allowbreak report.py} and \texttt{\ldots\_\allowbreak stats.py}), so the analysis can
 be rerun without re-executing the experiment. The library has 68 unit tests, including reference implementations
 checked against scikit-learn, exact hypervolume on known cases, the 66-run design, NBI anchor and warm-start
 behaviour, and the resumption planner.

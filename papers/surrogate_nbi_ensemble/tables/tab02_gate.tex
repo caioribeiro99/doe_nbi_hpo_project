@@ -3,6 +3,7 @@
 \caption{Surrogate reliability over 30 partitions. Selected Scheffé order (parsimony rule: lowest order within 10\% of the best external RMSE), reliability-gate passes ($R^2_{\mathrm{ext}} \ge 0.5$ and Spearman $\rho \ge 0.9$ on 100 unseen compositions) with Wilson 95\% intervals, and the median external $R^2$ with its bootstrap interval. Source: \texttt{statistics/reliability\_gate\_r30.csv}.}
 \label{tab:gate}
 \small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llllll r}
 \toprule
 Dataset & Response & Selected order (count) & Pass & Wilson 95\% & Median $R^2_{\mathrm{ext}}$ [95\% CI] & Median $\rho$ \\
@@ -16,5 +17,5 @@ Porto Seguro & log-loss & linear 20, quadratic 8, sp.\,cubic 2 & 12/30 & [0.25, 
 UCI credit & ROC-AUC & quadratic 20, sp.\,cubic 10 & 30/30 & [0.89, 1.00] & 0.992 [0.989, 0.992] & 0.995 \\
 UCI credit & log-loss & quadratic 27, sp.\,cubic 3 & 30/30 & [0.89, 1.00] & 0.993 [0.991, 0.993] & 0.993 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
