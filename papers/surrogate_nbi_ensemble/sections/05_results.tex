@@ -67,27 +67,52 @@ seven of them (the exception is Porto Seguro's ROC-AUC surface, where two $k$-ne
 $19/30$ against $11/30$). Between-partition coefficients of variation for the leading terms lie between $0.011$ and
 $0.17$. As a description of the response surface, the model is reproducible.
 
-The interpretation of those coefficients is the substantive finding. In mixture experiments a positive $\beta_{ij}$ in
-\cref{eq:scheffequad} is conventionally read as synergistic blending of components $i$ and $j$. Transferred to
-ensembles, that reading would identify complementary classifier pairs, which would make the surrogate a diversity
-diagnostic. We tested it directly by evaluating, on the real out-of-fold objectives, the 50/50 blend of the pair with
-the largest $\beta_{ij}$ and comparing it with the better of the two members alone.
+The interpretation of those coefficients is the substantive finding, and stating it precisely requires first stating
+the classical criterion correctly. In mixture experiments a positive $\beta_{ij}$ denotes \emph{synergistic blending}:
+a departure of the $i$--$j$ edge above the chord joining the two pure components \citep{scheffe1958,cornell2002}. It is
+defined against \emph{linear blending}, not against the better component, and the two are not the same question. On the
+edge $w_i = t$, $w_j = 1-t$ the quadratic model of \cref{eq:scheffequad} gives
+$\hat y(t) = \beta_j + (\beta_i - \beta_j)t + \beta_{ij}t(1-t)$, whose stationary point
+$t^{*} = (\beta_i - \beta_j + \beta_{ij})/(2\beta_{ij})$ lies strictly inside $(0,1)$, with
+$\hat y(t^{*}) = \beta_j + (\beta_i - \beta_j + \beta_{ij})^{2}/(4\beta_{ij}) > \max(\beta_i, \beta_j)$, if and only if
+\begin{equation}
+\beta_{ij} \;>\; \lvert \beta_i - \beta_j \rvert .
+\label{eq:edgecond}
+\end{equation}
+\Cref{eq:edgecond} is the criterion a practitioner should apply, and it already guards against the naive reading:
+a large $\beta_{ij}$ on an edge joining two very unequal vertices need not produce a blend that beats the better one.
 
-The reading fails on three of four datasets. The top-$\beta$ blend is \emph{worse} than its better member in $30/30$
-partitions on Santander ($-0.0050$ ROC-AUC), BNP Paribas ($-0.0180$) and UCI credit ($-0.0201$); only on Porto Seguro
-does it beat both members ($+0.0098$, $30/30$), and the same pattern holds on the untouched holdout ($0/30$, $0/30$,
-$29/30$, $0/30$). Optimally weighting the top-$\beta$ pair instead of blending it 50/50 changes little: the best
-attainable gain is $+0.0004$ on BNP Paribas and $+0.0002$ on UCI credit, against $+0.010$ on Porto Seguro.
+Our finding is not that this criterion is unknown, but that \emph{the fitted surfaces pass it and are still wrong}. For
+the largest-$\beta$ pair of every dataset, \cref{eq:edgecond} is satisfied in all thirty partitions
+(\cref{tab:edge}): the fitted quadratic predicts a genuinely superior interior blend on Santander, BNP Paribas, Porto
+Seguro and UCI credit alike. Evaluated on the real out-of-fold objectives, that prediction holds on exactly one of
+them. The real 50/50 blend of the top-$\beta$ pair is \emph{worse} than its better member in $30/30$ partitions on
+Santander ($-0.0050$ ROC-AUC), BNP Paribas ($-0.0180$) and UCI credit ($-0.0201$); only on Porto Seguro does it beat
+both members ($+0.0098$, $30/30$). The same pattern holds on the untouched holdout ($0/30$, $0/30$, $29/30$, $0/30$),
+and optimally weighting the pair rather than blending it 50/50 does not rescue it: the best attainable gain is
+$+0.0004$ on BNP Paribas and $+0.0002$ on UCI credit, against $+0.010$ on Porto Seguro.
 
-The explanation is visible in \cref{fig:beta}. The largest interaction consistently involves the \emph{weakest}
+\input{tables/tab07_edge_condition}
+
+Across all ten pairs the discrepancy is systematic and one-directional. Criterion and reality agree on 6, 4, 7 and 3
+of the ten pairs; in every one of the 20 disagreements the surface predicts a superior blend that the real objectives
+do not deliver, and in none of them does it miss a real one. The surrogate over-predicts blending gains and never
+under-predicts them.
+
+The mechanism is visible in \cref{fig:beta}. The largest interaction consistently attaches to the \emph{weakest}
 vertex --- $k$-nearest neighbours on Santander and Porto Seguro, Gaussian naive Bayes on BNP Paribas and UCI credit ---
-and $\beta_{ij}$ tracks the vertex-quality gap of the pair (0.163, 0.145, 0.022 and 0.107 for the top pair on the four
-datasets). A large positive $\beta_{ij}$ says that the edge between $i$ and $j$ curves \emph{above the chord} joining
-two vertices, one of which is poor. That is a statement about how bad the weak vertex is, not about how much the pair
-gains over the strong one. Consistently with this, the pairs whose real 50/50 blend does beat its better member in at
+and $\beta_{ij}$ tracks the vertex-quality gap of the pair (0.163, 0.145, 0.022 and 0.107 for the top pair). A
+quadratic fitted to a rank statistic on an edge with one poor endpoint absorbs the curvature of that edge into
+$\beta_{ij}$ and overshoots its maximum. Consistently, the pairs whose real blend does beat its better member in at
 least 80\% of partitions are different, smaller-$\beta$ pairs on every dataset except Porto Seguro, and the
 top-$\beta$ pair is jointly active on the reference front in only 9\% (Santander) and 3\% (Porto Seguro) of front
 points, against 51\% and 58\% on BNP Paribas and UCI credit.
+
+The practical consequence is narrower and firmer than ``$\beta_{ij}$ does not mean synergy''. The classical criterion
+is correct and should be used in the form of \cref{eq:edgecond} rather than by reading the sign of $\beta_{ij}$; but
+on these ensembles it inherits the misspecification of the surface it is computed from, and it must therefore be
+confirmed on the real objective before any pair is described as complementary. That confirmation costs one matrix
+product per pair.
 
 \begin{figure}[t]
 \centering

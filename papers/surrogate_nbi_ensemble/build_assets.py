@@ -633,3 +633,90 @@ if __name__ == "__main__":
     tab04_r10_r30()
     tab05_compute()
     tab06_holdout_cost()
+
+
+# --------------------------------------------------------------------------------------
+# Table 7 / analysis: the classical edge condition beta_ij > |beta_i - beta_j|
+#
+# On the binary edge i-j of a quadratic Scheffe model,
+#   yhat(t) = beta_i t + beta_j (1-t) + beta_ij t(1-t),
+# the stationary point t* = (d + b)/(2b), with d = beta_i - beta_j and b = beta_ij,
+# lies strictly inside (0,1) iff b > |d|, and there yhat(t*) = beta_j + (d+b)^2/(4b),
+# which strictly exceeds max(beta_i, beta_j) whenever b > |d|.
+# So the FITTED surface predicts a blend beating both pure components iff beta_ij > |beta_i - beta_j|.
+# This is the classical synergism criterion (departure from linear blending; Scheffe 1958, Cornell 2002),
+# stated against the chord rather than against the better vertex.
+# --------------------------------------------------------------------------------------
+def tab07_edge_condition():
+    rows_pair = []
+    for ds in DATASETS:
+        for rep in range(30):
+            s = json.load(open(EXP / ds / f"rep_{rep:02d}" / "scheffe.json"))["roc_auc"]
+            o = s["orders"]["quadratic"]
+            co = dict(zip(o["terms"], o["coefficients"]))
+            for a in range(5):
+                for b in range(a + 1, 5):
+                    mi, mj = MODELS[a], MODELS[b]
+                    k = f"w_{mi}*w_{mj}" if f"w_{mi}*w_{mj}" in co else f"w_{mj}*w_{mi}"
+                    bi, bj, bij = co[f"w_{mi}"], co[f"w_{mj}"], co[k]
+                    rows_pair.append({"dataset": ds, "rep": rep, "term": f"{mi}*{mj}",
+                                      "beta_ij": bij, "vertex_gap_fitted": abs(bi - bj),
+                                      "predicts_interior_optimum": bij > abs(bi - bj)})
+    pf = pd.DataFrame(rows_pair)
+    pf.to_csv(TAB / "edge_condition_per_replication.csv", index=False)
+
+    cs = pd.read_csv(REP / "statistics" / "coefficient_stability_r30.csv")
+    cs = cs[(cs.kind == "interaction") & (cs.response == "roc_auc")]
+
+    lines, summary = [], []
+    for ds in DATASETS:
+        sub = cs[cs.dataset == ds]
+        top = sub.sort_values("mean", ascending=False).iloc[0]
+        t = pf[(pf.dataset == ds) & (pf.term == top.term)]
+        agree = fp = fn = 0
+        for _, r in sub.iterrows():
+            p = pf[(pf.dataset == ds) & (pf.term == r.term)].predicts_interior_optimum.mean() > 0.5
+            real = r.blend50_beats_best_member_freq > 0.5
+            agree += (p == real); fp += (p and not real); fn += (real and not p)
+        summary.append({"dataset": ds, "top_pair": top.term, "beta": top["mean"],
+                        "gap": t.vertex_gap_fitted.mean(),
+                        "pred_k": int(t.predicts_interior_optimum.sum()),
+                        "real_freq": top.blend50_beats_best_member_freq,
+                        "agree": agree, "fp": fp, "fn": fn})
+        name = top.term.replace("*", "$\\cdot$").replace("gnb", "GNB").replace("knn", "kNN") \
+                       .replace("xgb", "XGB").replace("rf", "RF").replace("lr", "LR")
+        lines.append(f"{DLABEL[ds]} & {name} & {top['mean']:.3f} & {t.vertex_gap_fitted.mean():.3f} & "
+                     f"{int(t.predicts_interior_optimum.sum())}/30 & "
+                     f"{int(round(top.blend50_beats_best_member_freq * 30))}/30 & "
+                     f"{agree}/10 & {fp} & {fn} \\\\")
+    pd.DataFrame(summary).to_csv(TAB / "edge_condition_summary.csv", index=False)
+
+    tex = r"""\begin{table}[t]
+\centering
+\caption{The classical synergism criterion applied correctly, and what the real objectives say. On the binary edge
+$i$--$j$ of a quadratic Scheff\'e model the fitted surface has an interior optimum exceeding both pure components if
+and only if $\hat\beta_{ij} > |\hat\beta_i - \hat\beta_j|$. Columns 3--5 evaluate that criterion for the
+largest-$\hat\beta$ pair of each dataset; column 6 gives the partitions in which the \emph{real} out-of-fold 50/50
+blend of the same pair beats its better member. The last three columns compare criterion and reality across all ten
+pairs: agreements, cases where the surface predicts a superior blend that does not exist, and the reverse. The error
+is systematic and one-directional. Source: \texttt{tables/edge\_condition\_summary.csv}.}
+\label{tab:edge}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{ll rr cc ccc}
+\toprule
+& & \multicolumn{3}{c}{Largest-$\hat\beta$ pair, fitted surface} & Real blend & \multicolumn{3}{c}{All 10 pairs} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-6}\cmidrule(lr){7-9}
+Dataset & Pair & $\hat\beta_{ij}$ & $|\hat\beta_i - \hat\beta_j|$ & criterion met & beats better member & agree & surface over-predicts & under-predicts \\
+\midrule
+""" + "\n".join(lines) + r"""
+\bottomrule
+\end{tabular}
+\end{table}
+"""
+    (TAB / "tab07_edge_condition.tex").write_text(tex)
+    print("wrote tab07")
+
+
+if __name__ == "__main__":
+    tab07_edge_condition()
