@@ -1,0 +1,26 @@
+\begin{table*}[t]
+\centering
+\caption{Robustness from $R = 10$ to $R = 30$: mean hypervolume ratio and IGD$^+$ (weighted cost) of each NBI variant estimated from partitions 0--9 (the frozen $R = 10$ study, tag \texttt{pco213-postwork-r10}) and from all 30 partitions, with the $R = 30$ bootstrap interval and whether the $R = 10$ estimate lies inside it. Source: \texttt{statistics/r10\_vs\_r30\_stability.csv}.}
+\label{tab:r10r30}
+\small
+\begin{tabular}{ll rll rll}
+\toprule
+& & \multicolumn{3}{c}{Hypervolume ratio} & \multicolumn{3}{c}{IGD$^+$} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Dataset & Set & $R=10$ & $R=30$ [95\% CI] & inside & $R=10$ & $R=30$ [95\% CI] & inside \\
+\midrule
+Santander & NBI-A & 0.846 & 0.800 [0.767, 0.833] & no & 0.0954 & 0.1321 [0.1078, 0.1573] & no \\
+ & NBI-B & 0.982 & 0.980 [0.977, 0.982] & yes & 0.0085 & 0.0121 [0.0101, 0.0142] & no \\
+ & NBI-C & 0.991 & 0.987 [0.985, 0.990] & no & 0.0069 & 0.0105 [0.0084, 0.0127] & no \\
+BNP Paribas & NBI-A & 0.717 & 0.695 [0.560, 0.819] & yes & 0.2212 & 0.2502 [0.1234, 0.3877] & yes \\
+ & NBI-B & 0.966 & 0.974 [0.969, 0.978] & no & 0.0138 & 0.0114 [0.0096, 0.0132] & no \\
+ & NBI-C & 0.982 & 0.982 [0.981, 0.984] & yes & 0.0143 & 0.0142 [0.0134, 0.0151] & yes \\
+Porto Seguro & NBI-A & 0.803 & 0.781 [0.750, 0.812] & yes & 0.0751 & 0.0911 [0.0765, 0.1055] & no \\
+ & NBI-B & 0.820 & 0.866 [0.810, 0.913] & yes & 0.0695 & 0.0531 [0.0351, 0.0746] & yes \\
+ & NBI-C & 0.973 & 0.974 [0.964, 0.983] & yes & 0.0113 & 0.0111 [0.0075, 0.0155] & yes \\
+UCI credit & NBI-A & 0.661 & 0.639 [0.589, 0.693] & yes & 0.1854 & 0.2043 [0.1724, 0.2340] & yes \\
+ & NBI-B & 0.670 & 0.699 [0.643, 0.751] & yes & 0.1809 & 0.1681 [0.1383, 0.2008] & yes \\
+ & NBI-C & 0.975 & 0.976 [0.974, 0.979] & yes & 0.0107 & 0.0099 [0.0089, 0.0110] & yes \\
+\bottomrule
+\end{tabular}
+\end{table*}

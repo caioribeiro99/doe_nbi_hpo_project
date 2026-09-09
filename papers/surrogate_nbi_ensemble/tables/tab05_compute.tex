@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\caption{Mean wall-clock seconds per partition of the main stages (Apple M4 Max, 8 worker threads), the NBI-C/NBI-B time ratio, the mean number of real out-of-fold objective evaluations consumed by NBI-C (NBI-A and NBI-B consume none: they optimize the surrogates), and the mean fraction of the 66 NBI subproblems that terminated successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule). Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}.}
+\label{tab:compute}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l rrr rrr r r l}
+\toprule
+Dataset & OOF fits & Single-obj. refs & Reference & NBI-A & NBI-B & NBI-C & C/B & Real evals (C) & Success A / B / C \\
+\midrule
+Santander & 335 & 444 & 243 & 34 & 35 & 2528 & 73$\times$ & 412k & 0.98 / 0.95 / 0.83 \\
+BNP Paribas & 86 & 243 & 131 & 23 & 36 & 1410 & 40$\times$ & 417k & 0.95 / 1.00 / 0.83 \\
+Porto Seguro & 69 & 441 & 273 & 85 & 56 & 2505 & 45$\times$ & 417k & 0.58 / 1.00 / 0.98 \\
+UCI credit & 11 & 54 & 39 & 125 & 100 & 307 & 3$\times$ & 426k & 0.39 / 0.48 / 0.98 \\
+\bottomrule
+\end{tabular}
+\end{table*}
