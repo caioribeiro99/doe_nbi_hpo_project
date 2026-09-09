@@ -1,8 +1,8 @@
 % Merged bibliography for the manuscript.
 % Sources: seven verified literature clusters plus the predecessor-lineage review.
-% Every entry was verified against Crossref, OpenAlex, Semantic Scholar, arXiv or a publisher record
-% and audited for metadata drift. Deduplicated by DOI, then by key.
-% Do not add an entry here without a verification trail.
+% Every entry was verified against Crossref, OpenAlex, Semantic Scholar, arXiv or a publisher record,
+% then adversarially audited for metadata drift (191 entries checked; 0 fabricated citations found).
+% Deduplicated by DOI, then by key. Do not add an entry without a verification trail.
 
 @article{das1998nbi,
   author  = {Das, Indraneel and Dennis, J. E.},
@@ -117,7 +117,8 @@
   number  = {6},
   pages   = {80--83},
   year    = {1945},
-  doi     = {10.2307/3001968}
+  doi     = {10.2307/3001968},
+  note    = {Crossref and OpenAlex give first page 80 only; the 80--83 span is conventional and was not verified here}
 }
 
 @article{cureton1956rank,
@@ -160,7 +161,8 @@
   number  = {2},
   pages   = {101--133},
   year    = {2001},
-  doi     = {10.1214/ss/1009213286}
+  doi     = {10.1214/ss/1009213286},
+  note    = {No page range in the fetched Crossref/OpenAlex records and the Project Euclid page was bot-blocked; the 101--133 span is conventional and was not verified here}
 }
 
 @book{efron1993bootstrap,
@@ -169,7 +171,8 @@
   publisher = {Chapman \& Hall/Springer},
   address = {New York},
   year    = {1993},
-  doi     = {10.1007/978-1-4899-4541-9}
+  doi     = {10.1007/978-1-4899-4541-9},
+  note    = {Crossref lists the publisher as Springer US (eBook reissue, ISBN 9781489945419); the Chapman \& Hall imprint and New York place are conventional, not record-derived}
 }
 
 @article{zitzler1999multiobjective,
@@ -229,7 +232,8 @@
   author  = {Schott, Jason R.},
   title   = {Fault Tolerant Design Using Single and Multicriteria Genetic Algorithm Optimization},
   school  = {Massachusetts Institute of Technology, Department of Aeronautics and Astronautics},
-  year    = {1995}
+  year    = {1995},
+  note    = {Thesis (M.S.); DSpace@MIT handle http://hdl.handle.net/1721.1/11582}
 }
 
 @article{audet2021performance,
@@ -250,7 +254,8 @@
   series  = {International Series in Operations Research \& Management Science},
   address = {Boston, MA},
   year    = {1999},
-  doi     = {10.1007/978-1-4615-5563-6}
+  doi     = {10.1007/978-1-4615-5563-6},
+  note    = {Crossref and OpenAlex both give 1998 and publisher Springer US; 1999/Kluwer is the conventional citation and is not record-derived}
 }
 
 @article{messac2003normalized,
@@ -336,7 +341,8 @@
   address = {Hoboken, NJ},
   edition = {2nd},
   year    = {2014},
-  doi     = {10.1002/9781118914564}
+  doi     = {10.1002/9781118914564},
+  note    = {Crossref reports edition-number 1; the 2nd-edition statement is from the publisher listing and was not confirmed in the fetched record}
 }
 
 @article{kittler1998combining,
@@ -412,7 +418,7 @@
   number  = {1},
   pages   = {1--3},
   year    = {1950},
-  doi     = {10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO}
+  doi     = {10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2}
 }
 
 @article{hanley1982meaning,
@@ -862,10 +868,11 @@
   edition   = {4th},
   publisher = {John Wiley \& Sons},
   address   = {Hoboken, NJ},
+  series    = {Wiley Series in Probability and Statistics},
   year      = {2016},
   isbn      = {9781118916018},
   pages     = {856},
-  note      = {Title, subtitle, edition, publisher, year and extent verified via OpenLibrary (ISBN 9781118916018) and the Journal of Quality Technology review of the 4th edition (Jensen, 2017, 49(2):186--188); the Montgomery and Anderson-Cook co-authorship was NOT confirmed by any fetched record and must be checked against the title page}
+  note      = {Authors, edition (``4, illustrated''), series, publisher, year, ISBN and extent all confirmed by the cached Google Books record for ISBN 9781118916018, and corroborated by OpenLibrary (title, subtitle, 2016, 856 pp.) and the Journal of Quality Technology review of the 4th edition (Jensen, 2017, 49(2):186--188). The book has no Crossref or OpenAlex record}
 }
 
 @book{smith2005formulation,
@@ -876,7 +883,8 @@
   series    = {ASA-SIAM Series on Statistics and Applied Probability},
   year      = {2005},
   isbn      = {9780898715804},
-  doi       = {10.1137/1.9780898718393}
+  doi       = {10.1137/1.9780898718393},
+  note      = {Author, title, publisher, year and ISBNs from the Crossref monograph record; 386 pp. per the cached Google Books record. The ASA-SIAM series line is conventional but appears in none of the consulted records --- confirm before submission}
 }
 
 @article{piepel1982component,
@@ -979,12 +987,12 @@
 @incollection{perrone1995networks,
   author    = {Perrone, Michael P. and Cooper, Leon N.},
   title     = {When Networks Disagree: Ensemble Methods for Hybrid Neural Networks},
-  booktitle = {Neural Networks for Speech and Image Processing},
+  booktitle = {World Scientific Series in 20th Century Physics},
   publisher = {World Scientific},
-  series    = {World Scientific Series in 20th Century Physics},
   year      = {1995},
   pages     = {342--358},
-  doi       = {10.1142/9789812795885_0025}
+  doi       = {10.1142/9789812795885_0025},
+  note      = {Container name as given in the cached OpenAlex record for this DOI; the title of the World Scientific volume is not in any cached record. Originally published in R. J. Mammone (Ed.), Neural Networks for Speech and Image Processing, Chapman and Hall, 1993 (attested by the reference list of the cached Crossref record 10.1016/S0893-6080(96)00098-6).}
 }
 
 @article{leblanc1996combining,
@@ -1171,14 +1179,16 @@
 }
 
 @article{vrugt2006multi,
-  author  = {Vrugt, Jasper A. and Clark, Martyn P. and Diks, Cees G. H. and Duan, Qinyun and Robinson, Bruce A.},
+  author  = {Vrugt, Jasper A. and Clark, Martyn P. and Diks, Cees G. H. and Duan, Qingyun and Robinson, Bruce A.},
   title   = {Multi-Objective Calibration of Forecast Ensembles Using {Bayesian} Model Averaging},
   journal = {Geophysical Research Letters},
   year    = {2006},
   volume  = {33},
   number  = {19},
   pages   = {2006GL027126},
-  doi     = {10.1029/2006GL027126}
+  doi     = {10.1029/2006GL027126},
+  note    = {Crossref deposits no page range (article number 2006GL027126) and misspells the fourth
+             author as ``Qinyun Duan''; the cached OpenAlex record gives ``Qingyun Duan'', used here}
 }
 
 @article{jin2008pareto,
@@ -1486,7 +1496,7 @@
 @incollection{herrmann2026nonextreme,
   author    = {Herrmann-Wicklmayr, Markus and Fla{\ss}kamp, Kathrin},
   title     = {Non-Extreme Individual Minima for Improved {Pareto} Front Sampling Efficiency and Decision-Making},
-  booktitle = {Lecture Notes in Computer Science},
+  booktitle = {Computational Science -- {ICCS} 2026 Workshops, Lecture Notes in Computer Science},
   year      = {2026},
   pages     = {271--284},
   publisher = {Springer Nature Switzerland},
@@ -1570,7 +1580,7 @@
 }
 
 @article{knowles2006parego,
-  author  = {Knowles, Joshua},
+  author  = {Knowles, J.},
   title   = {{ParEGO}: A Hybrid Algorithm with On-Line Landscape Approximation for Expensive Multiobjective Optimization Problems},
   journal = {IEEE Transactions on Evolutionary Computation},
   year    = {2006},
@@ -1701,7 +1711,7 @@
 
 @inproceedings{xu2012greedy,
   author    = {Zhixiang Xu and Kilian Weinberger and Olivier Chapelle},
-  title     = {The Greedy Miser: Learning Under Test-Time Budgets},
+  title     = {The Greedy Miser: Learning under Test-time Budgets},
   booktitle = {Proceedings of the 29th International Conference on Machine Learning ({ICML} 2012)},
   year      = {2012},
   note      = {arXiv:1206.6451}
@@ -1709,7 +1719,7 @@
 
 @article{trapeznikov2013multistage,
   author  = {Kirill Trapeznikov and Venkatesh Saligrama and David Casta{\~n}{\'o}n},
-  title   = {Multi-Stage Classifier Design},
+  title   = {Multi-stage classifier design},
   journal = {Machine Learning},
   year    = {2013},
   volume  = {92},
@@ -1771,7 +1781,7 @@
 
 @article{feurer2022autosklearn,
   author  = {Matthias Feurer and Katharina Eggensperger and Stefan Falkner and Marius Lindauer and Frank Hutter},
-  title   = {{Auto-Sklearn} 2.0: Hands-Free {AutoML} via Meta-Learning},
+  title   = {{Auto-Sklearn} 2.0: Hands-free {AutoML} via Meta-Learning},
   journal = {Journal of Machine Learning Research},
   year    = {2022},
   volume  = {23},
@@ -1793,7 +1803,7 @@
 
 @inproceedings{wang2022committees,
   author    = {Xiaofang Wang and Dan Kondratyuk and Eric Christiansen and Kris M. Kitani and Yair Alon and Elad Eban},
-  title     = {Wisdom of Committees: An Overlooked Approach to Faster and More Accurate Models},
+  title     = {Wisdom of Committees: An Overlooked Approach To Faster and More Accurate Models},
   booktitle = {International Conference on Learning Representations ({ICLR} 2022)},
   year      = {2022},
   note      = {arXiv:2012.01988}
@@ -1809,7 +1819,7 @@
 
 @article{ji2023pruning,
   author  = {Junzhong Ji and Junwei Li},
-  title   = {Tri-Objective Optimization-Based Cascade Ensemble Pruning for Deep Forest},
+  title   = {Tri-objective optimization-based cascade ensemble pruning for deep forest},
   journal = {Pattern Recognition},
   year    = {2023},
   volume  = {143},
@@ -1827,7 +1837,7 @@
 
 @article{ding2025moeec,
   author  = {Xiaojian Ding and Xin Wang and Zihan Xu and Pengcheng Shi and Kaixiang Wang},
-  title   = {Towards a New Perspective on Multi-Objective Enhanced Ensemble Classification},
+  title   = {Towards a new perspective on Multi-Objective Enhanced Ensemble Classification},
   journal = {Neurocomputing},
   year    = {2025},
   volume  = {650},
@@ -1837,7 +1847,7 @@
 
 @misc{gudipaty2025mel,
   author       = {Krishna Praneet Gudipaty and Walid A. Hanafy and Kaan Ozkara and Qianlin Liang and Jesse Milzman and Prashant Shenoy and Suhas Diggavi},
-  title        = {{MEL}: Multi-Level Ensemble Learning for Resource-Constrained Environments},
+  title        = {{MEL}: Multi-level Ensemble Learning for Resource-Constrained Environments},
   year         = {2025},
   howpublished = {arXiv preprint arXiv:2506.20094},
   note         = {arXiv:2506.20094}
