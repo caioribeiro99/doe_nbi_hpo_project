@@ -1,0 +1,26 @@
+\begin{table}[t]
+\centering
+\caption{The classical synergism criterion applied correctly, and what the real objectives say. On the binary edge
+$i$--$j$ of a quadratic Scheff\'e model the fitted surface has an interior optimum exceeding both pure components if
+and only if $\hat\beta_{ij} > |\hat\beta_i - \hat\beta_j|$. Columns 3--5 evaluate that criterion for the
+largest-$\hat\beta$ pair of each dataset; column 6 gives the partitions in which the \emph{real} out-of-fold 50/50
+blend of the same pair beats its better member. The last three columns compare criterion and reality across all ten
+pairs: agreements, cases where the surface predicts a superior blend that does not exist, and the reverse. The error
+is systematic and one-directional. Source: \texttt{tables/edge\_condition\_summary.csv}.}
+\label{tab:edge}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ll rr cc ccc}
+\toprule
+& & \multicolumn{3}{c}{Largest-$\hat\beta$ pair, fitted surface} & Real blend & \multicolumn{3}{c}{All 10 pairs} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-6}\cmidrule(lr){7-9}
+Dataset & Pair & $\hat\beta_{ij}$ & $|\hat\beta_i - \hat\beta_j|$ & criterion met & beats better member & agree & surface over-predicts & under-predicts \\
+\midrule
+Santander & GNB$\cdot$kNN & 0.243 & 0.130 & 30/30 & 0/30 & 6/10 & 4 & 0 \\
+BNP Paribas & GNB$\cdot$XGB & 0.148 & 0.110 & 30/30 & 0/30 & 4/10 & 6 & 0 \\
+Porto Seguro & GNB$\cdot$kNN & 0.071 & 0.025 & 30/30 & 30/30 & 7/10 & 3 & 0 \\
+UCI credit & GNB$\cdot$XGB & 0.130 & 0.100 & 30/30 & 0/30 & 3/10 & 7 & 0 \\
+\bottomrule
+\end{tabular}}
+\end{table}

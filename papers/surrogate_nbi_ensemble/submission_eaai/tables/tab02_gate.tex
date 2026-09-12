@@ -1,0 +1,28 @@
+\begin{table}[t]
+\centering
+\caption{Surrogate reliability over 30 partitions, all quantities measured on the \emph{same} 100 unseen
+compositions: the parsimony rule selects the Scheff\'e order on them (lowest order within 10\% of the best external
+RMSE) and the reliability gate ($\rext \ge 0.5$ and Spearman $\rho \ge 0.9$) is then scored on them, so the gate is
+not independent of order selection. Orders are abbreviated lin./quad./sp.\,cubic. Pass counts carry Wilson 95\%
+intervals and the median external $R^2$ its bootstrap interval. The last two columns give the median external RMSE of
+the selected surface in the response's own units and the median observed range of that response over the same 100
+points: on a flat surface $\rext$ is ill-posed, so the RMSE read against the range is the more informative adequacy
+measure. Sources: \texttt{statistics/reliability\_gate\_r30.csv}, \texttt{tables/scheffe\_orders.csv}.}
+\label{tab:gate}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llllll r r r}
+\toprule
+Dataset & Response & Selected order (count) & Pass & Wilson 95\% & Median $\rext$ [95\% CI] & Median $\rho$ & RMSE$_{\mathrm{ext}}$ & Range \\
+\midrule
+Santander & ROC-AUC & quad. 26, lin. 4 & 0/30 & [0.00, 0.11] & -0.333 [-0.559, -0.199] & 0.830 & 0.0087 & 0.040 \\
+Santander & log-loss & quad. 29, sp.\,cubic 1 & 30/30 & [0.89, 1.00] & 0.971 [0.967, 0.973] & 0.994 & 0.0028 & 0.081 \\
+BNP Paribas & ROC-AUC & lin. 22, quad. 7, sp.\,cubic 1 & 5/30 & [0.07, 0.34] & 0.118 [-0.034, 0.244] & 0.908 & 0.0096 & 0.053 \\
+BNP Paribas & log-loss & lin. 21, quad. 7, sp.\,cubic 2 & 3/30 & [0.03, 0.26] & -0.180 [-0.246, 0.042] & 0.955 & 0.1214 & 0.694 \\
+Porto Seguro & ROC-AUC & quad. 26, sp.\,cubic 2, lin. 2 & 16/30 & [0.36, 0.70] & 0.519 [0.482, 0.581] & 0.924 & 0.0037 & 0.030 \\
+Porto Seguro & log-loss & lin. 20, quad. 8, sp.\,cubic 2 & 12/30 & [0.25, 0.58] & 0.506 [0.492, 0.580] & 0.995 & 0.0582 & 0.448 \\
+UCI credit & ROC-AUC & quad. 20, sp.\,cubic 10 & 30/30 & [0.89, 1.00] & 0.992 [0.989, 0.992] & 0.995 & 0.0015 & 0.077 \\
+UCI credit & log-loss & quad. 27, sp.\,cubic 3 & 30/30 & [0.89, 1.00] & 0.993 [0.991, 0.993] & 0.993 & 0.0066 & 0.427 \\
+\bottomrule
+\end{tabular}}
+\end{table}

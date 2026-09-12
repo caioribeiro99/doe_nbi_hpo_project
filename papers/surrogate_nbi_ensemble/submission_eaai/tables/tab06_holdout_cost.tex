@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Holdout ranking agreement (partitions in which the OOF-best knee pick among NBI-A/B/C and scalarization is also holdout-best, weighted cost) and cost-definition sensitivity (partitions in which the hypervolume-best set differs between the weighted and the support cost; median Spearman correlation of the set rankings). Wilson 95\% intervals. Sources: \texttt{statistics/proportion\_intervals.csv}, \texttt{statistics/cost\_definition\_sensitivity\_r30.csv}.}
+\label{tab:holdout_cost}
+\small
+\begin{tabular}{l l l r}
+\toprule
+Dataset & Holdout ranking agreement & Best set differs (W vs S) & Rank $\rho$ (W vs S) \\
+\midrule
+Santander & 30/30 [0.89, 1.00] & 10/30 [0.19, 0.51] & 0.83 \\
+BNP Paribas & 15/30 [0.33, 0.67] & 24/30 [0.63, 0.90] & 0.89 \\
+Porto Seguro & 23/30 [0.59, 0.88] & 8/30 [0.14, 0.44] & 0.94 \\
+UCI credit & 30/30 [0.89, 1.00] & 20/30 [0.49, 0.81] & 0.66 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,76 @@
+% When Does Surrogate-Assisted Multiobjective Ensemble Weighting Work?
+% Manuscript source. Build with:  tectonic main.tex   (or pdflatex twice + bibtex)
+% Figures are produced by build_assets.py from the frozen R=30 artifacts (tag pco213-postwork-r30).
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,noabbrev]{cleveref}
+\usepackage[round]{natbib}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{caption}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+\bibliographystyle{plainnat}
+
+\newcommand{\wvec}{\mathbf{w}}
+\newcommand{\simplex}{\Delta^{M-1}}
+\newcommand{\igdp}{\mathrm{IGD}^{+}}
+\newcommand{\hv}{\mathrm{HV}}
+\newcommand{\rext}{R^{2}_{\mathrm{ext}}}
+
+\title{\bfseries When Is Surrogate-Assisted Multiobjective Ensemble Weighting Trustworthy?\\[0.3em]
+\large A Replicated Study of Mixture Designs, Scheff\'e Surfaces and Normal Boundary Intersection
+on the Classifier-Weight Simplex}
+
+\author{%
+Caio Tertuliano Ribeiro\thanks{Corresponding author.} \\
+\small Universidade Federal de Itajub\'a\\
+\small \texttt{caio.tertu99@gmail.com}
+% Co-authors to be confirmed before submission; see venue_analysis.md.
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\noindent\textbf{Keywords:} ensemble weighting; mixture design of experiments; Scheff\'e canonical polynomials;
+response surface methodology; normal boundary intersection; surrogate-assisted multiobjective optimization;
+inference cost; replicated evaluation.
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_methodology}
+\input{sections/04_experimental_protocol}
+\input{sections/05_results}
+\input{sections/06_discussion}
+\input{sections/07_limitations}
+\input{sections/08_conclusion}
+
+\section*{Reproducibility statement}
+\input{sections/09_reproducibility}
+
+\section*{Acknowledgements}
+The computational study was executed on a single workstation; no external compute grant was used.
+% Funding and institutional acknowledgements to be added before submission.
+
+\bibliography{references}
+
+\end{document}

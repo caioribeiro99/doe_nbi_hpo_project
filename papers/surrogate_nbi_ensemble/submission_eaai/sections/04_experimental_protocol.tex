@@ -1,0 +1,105 @@
+\section{Experimental protocol}
+\label{sec:protocol}
+
+The protocol was fixed before the replicated study and was not changed after any result was observed; the extension
+from 10 to 30 replications reused it without modification, and \cref{sec:results:r30} reports what that extension
+changed.
+
+\subsection{Datasets}
+\label{sec:protocol:data}
+
+Four public binary tabular classification problems span prevalence, dimensionality and feature type
+(\cref{tab:datasets}): Santander (high-dimensional, anonymized, numeric, 10\% positives); BNP Paribas (numeric plus
+high-cardinality categorical features, 76\% positive); Porto Seguro (strongly imbalanced at 3.6\% positives,
+subsampled to 200{,}000 rows by a single stratified draw with a recorded seed to bound runtime); and UCI credit
+default (small and low-dimensional). For the three Kaggle competition datasets the competition test labels are not
+public and were never used: all training, weighting, thresholding and model selection use only the published training
+file, from which every performance figure in this paper is derived.
+
+\input{tables/tab01_datasets}
+
+\subsection{Base models and leakage control}
+\label{sec:protocol:models}
+
+The ensemble contains $M = 5$ deliberately heterogeneous learners with fixed hyperparameters and no hyperparameter
+search: $\ell_2$-regularized logistic regression; Gaussian naive Bayes; $k$-nearest neighbours with $k = 100$; a
+random forest with 200 trees and a minimum of 20 samples per leaf; and gradient-boosted trees (XGBoost, 400 rounds,
+depth 6, learning rate 0.1, subsample and column subsample 0.8). The zoo spans the accuracy--cost--calibration space
+rather than forming a competitive stack: it deliberately includes a member strong in ranking but poorly calibrated
+(Gaussian naive Bayes) and one accurate but two orders of magnitude more expensive at inference time ($k$-nearest
+neighbours). Preprocessing --- imputation, standardization and encoding, detailed per model in the supplement --- is
+fitted inside each training fold and never on validation data.
+
+Each replication splits the dataset by a stratified 80/20 partition into a training part and an untouched holdout.
+Within the training part, stratified 5-fold cross-validation produces out-of-fold probability estimates $\mathbf{P}$
+for all five models; these are the only quantities the design, the surfaces, the optimizers and the selection rules
+ever see. Each model is then refitted once on the whole training part to produce holdout probabilities $\mathbf{Q}$,
+used exclusively for the confirmation analysis of \cref{sec:results:holdout}. Because \cref{eq:ensemble} is linear in
+$\wvec$, evaluating any weight vector costs one matrix--vector product, which is what makes an empirical reference of
+$10^{5}$ points and a metamodel-free NBI arm affordable.
+
+Inference cost $c_i$ is measured, not assumed: per model and replication, the median of five timed
+\texttt{predict\_proba} calls on a fixed 10{,}000-row batch, including preprocessing, in milliseconds per 1{,}000 rows.
+
+\subsection{Replication, seeds and the statistical unit}
+\label{sec:protocol:replication}
+
+The entire pipeline, from the outer partition through scoring, is executed $R = 30$ times per dataset, giving 120
+replications, with the outer partition, the inner folds and every stochastic component seeded by
+$\text{20260904} + r$ for replication $r$. All seeds are persisted in the manifest, and the checkpointed runner of
+\cref{sec:repro} recomputes any stage exactly.
+
+The statistical unit is \textbf{one outer partition of one dataset}. Because all methods are evaluated on the same
+partition, every comparison is \emph{paired}. Two consequences constrain the analysis throughout.
+
+First, the 30 partitions of a dataset overlap heavily: two independent stratified 80/20 draws have an expected
+intersection of $0.8 \times 0.8 = 64\%$ of the dataset, which is $80\%$ of each training part, a Jaccard index of
+two-thirds. Any two training parts therefore share most of their rows.
+The replication distribution therefore measures \emph{sensitivity to data partitioning}, not sampling from a
+population, and the effective information is far below 30 independent runs. Second, and consequently, the dataset is
+the unit of generalization: results are summarized per dataset and the four dataset-level results are then compared.
+Nothing is pooled across the $4 \times 30$ replications, and no statement of the form ``$N = 120$ independent
+experiments'' is made anywhere in this paper.
+
+\subsection{Statistical analysis}
+\label{sec:protocol:stats}
+
+The primary comparisons were fixed before the replicated benchmark and committed to version control: NBI-B versus
+NBI-A, NBI-C versus NBI-B, NBI-C versus random scalarization, and NBI-C versus the random Dirichlet sample. The
+primary endpoints are $\igdp$ and the hypervolume ratio, computed on the revalidated \emph{out-of-fold objectives of
+the 80\% training part} --- the only quantities the design, the surfaces, the optimizers and the selection rules ever
+see (\cref{sec:protocol:models}) --- against the empirical reference of the same replication, under the weighted cost
+that the optimizers actually minimized; the support-cost repetition is a pre-specified sensitivity analysis. The
+untouched 20\% holdout enters no primary endpoint: it is used only for the confirmation analysis of
+\cref{sec:results:holdout}. All other indicators are descriptive.
+
+Paired differences are signed so that $\Delta > 0$ always favours the second-named method:
+$\Delta\hv = \hv_{\text{new}} - \hv_{\text{ref}}$ and
+$\Delta\igdp = \igdp_{\text{ref}} - \igdp_{\text{new}}$. For each dataset $\times$ comparison $\times$ endpoint we
+report the mean and median with percentile-bootstrap 95\% intervals (10{,}000 resamples, fixed seed), the quartiles
+and range, the win/tie/loss counts with a tie tolerance of $10^{-4}$, the win fraction with a Wilson 95\% interval,
+and the matched-pairs rank-biserial correlation as a distribution-free effect size.
+
+An ordinary paired $t$-test on resampled partitions is anticonservative, so the primary test is the Nadeau--Bengio
+corrected resampled $t$-test \citep{nadeau2003inference}: with $J = 30$ paired differences $d_j$,
+\begin{equation}
+t \;=\; \frac{\bar d}{\sqrt{\operatorname{var}(d)\left(\tfrac{1}{J} + \rho\right)}}, \qquad
+\rho \;=\; \frac{n_{\text{test}}}{n_{\text{train}}} \;=\; \frac{0.20}{0.80} \;=\; 0.25,
+\label{eq:nb}
+\end{equation}
+on $J - 1$ degrees of freedom. The correction inflates the variance by a factor of
+$(1/30 + 0.25)/(1/30) \approx 8.5$, multiplying standard errors by about 2.9 relative to the naive test. One caveat
+attaches to $\rho$ and we state it plainly: the heuristic $\rho = n_{\text{test}}/n_{\text{train}}$ was derived for a
+statistic measured on the held-out portion of each resample, whereas both primary endpoints here are measured on the
+training part, whose rows two replications share to the extent computed above. The value $\rho = 0.25$ is therefore a
+lower bound on the dependence between replications and the corrected test is, if anything, still anticonservative;
+every significance statement below should be read as holding \emph{at} $\rho = 0.25$, with the effect consistency
+that does not depend on $\rho$ reported alongside it. Within each
+dataset the eight primary tests form one family and receive a Holm correction; no correction is applied across
+datasets, because datasets are not pooled. A Wilcoxon signed-rank test is reported alongside as a distribution-free
+check, but it is not corrected for overlap and cannot rescue a non-significant corrected result.
+
+Where a paired-difference distribution is visibly bimodal or heavy-tailed, the mean-based test is uninformative by
+construction and we say so, reporting the median with its bootstrap interval, the win fraction with its Wilson
+interval and the rank-biserial correlation as the evidence instead. Throughout, effect consistency takes precedence
+over $p$-values. Frequencies over replications are reported with Wilson and Jeffreys 95\% intervals.

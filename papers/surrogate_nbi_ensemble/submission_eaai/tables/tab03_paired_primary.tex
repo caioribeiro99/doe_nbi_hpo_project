@@ -1,0 +1,35 @@
+\begin{table*}[t]
+\centering
+\caption{Primary paired comparisons under the weighted cost, 30 partitions per dataset. $\Delta > 0$ favours the
+second-named set ($\Delta\mathrm{IGD}^+ = \mathrm{IGD}^+_{\mathrm{ref}} - \mathrm{IGD}^+_{\mathrm{new}}$,
+$\Delta\mathrm{HV} = \mathrm{HV}_{\mathrm{new}} - \mathrm{HV}_{\mathrm{ref}}$). Median with its percentile-bootstrap
+95\% interval, wins/ties/losses, and the Holm-corrected Nadeau--Bengio significance band ($\rho = 0.25$, family of
+eight tests per dataset; \emph{n.s.} means the corrected test does not reach 0.05, which for a bimodal or heavy-tailed
+difference is expected and is why the median and the win count are reported). Means, rank-biserial effect sizes,
+exact $p$-values, the two floor-check comparisons against random scalarization and random Dirichlet search, and the
+full support-cost repetition are in supplementary Tables~S1 and~S5. Source:
+\texttt{statistics/paired\_primary\_effects.csv}, \texttt{paired\_primary\_tests.csv}.}
+\label{tab:paired}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ll lcc lcc}
+\toprule
+& & \multicolumn{3}{c}{$\Delta \mathrm{IGD}^+$} & \multicolumn{3}{c}{$\Delta$ hypervolume ratio} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Dataset & Comparison & median [95\% CI] & W/T/L & Holm $p$ & median [95\% CI] & W/T/L & Holm $p$ \\
+\midrule
+Santander & NBI-B vs NBI-A & +0.125 [+0.086, +0.145] & 30/0/0 & $<$0.01 & +0.196 [+0.143, +0.216] & 30/0/0 & $<$0.01 \\
+ & NBI-C vs NBI-B & +0.0017 [+0.0011, +0.0020] & 28/0/2 & n.s. & +0.0084 [+0.0072, +0.0093] & 28/0/2 & $<$0.01 \\
+\addlinespace
+BNP Paribas & NBI-B vs NBI-A & +0.0146 [+0.0136, +0.0172] & 30/0/0 & n.s. & +0.058 [+0.051, +0.070] & 30/0/0 & n.s. \\
+ & NBI-C vs NBI-B & -0.0028 [-0.0044, -0.0015] & 6/0/24 & n.s. & +0.0106 [+0.0087, +0.0128] & 24/0/6 & n.s. \\
+\addlinespace
+Porto Seguro & NBI-B vs NBI-A & +0.0296 [+0.0193, +0.0730] & 23/0/7 & n.s. & +0.076 [+0.046, +0.157] & 24/0/6 & n.s. \\
+ & NBI-C vs NBI-B & +0.0244 [+0.0168, +0.0408] & 28/0/2 & n.s. & +0.074 [+0.039, +0.100] & 28/0/2 & n.s. \\
+\addlinespace
+UCI credit & NBI-B vs NBI-A & +0.0499 [+0.0327, +0.0606] & 24/0/6 & n.s. & +0.092 [+0.039, +0.100] & 24/1/5 & n.s. \\
+ & NBI-C vs NBI-B & +0.145 [+0.126, +0.182] & 29/0/1 & $<$0.01 & +0.275 [+0.219, +0.329] & 30/0/0 & $<$0.01 \\
+\bottomrule
+\end{tabular}}
+\end{table*}

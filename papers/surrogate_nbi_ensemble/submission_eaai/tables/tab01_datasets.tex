@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Datasets. Rows used, number of raw features, positive-class prevalence and training/holdout sizes of each outer partition (stratified 80/20). Kaggle test labels are never used; all selection uses 5-fold out-of-fold predictions within the training part. $^{\dagger}$200,000-row stratified subsample of the 595,212 available rows, drawn once with a recorded seed.}
+\label{tab:datasets}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrl}
+\toprule
+Dataset & Source & Rows & Features & Prevalence & Train / holdout rows \\
+\midrule
+Santander & Santander Customer Transaction (Kaggle 2019) & 200,000 & 200 & 0.100 & 160,000 / 40,000 \\
+BNP Paribas & BNP Paribas Cardif Claims (Kaggle 2016) & 114,321 & 131 & 0.761 & 91,456 / 22,865 \\
+Porto Seguro & Porto Seguro Safe Driver (Kaggle 2017)$^{\dagger}$ & 200,000 & 57 & 0.036 & 160,000 / 40,000 \\
+UCI credit & Default of credit card clients (UCI 350) & 30,000 & 23 & 0.221 & 24,000 / 6,000 \\
+\bottomrule
+\end{tabular}}
+\end{table}

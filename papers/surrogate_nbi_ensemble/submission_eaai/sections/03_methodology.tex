@@ -1,0 +1,239 @@
+\section{Methodology}
+\label{sec:method}
+
+\Cref{fig:pipeline} shows the pipeline of this study, marking each element as inherited, adapted for compositional
+decision variables, or new here.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig01_lineage_pipeline.pdf}
+\caption{The predecessor DoE--RSM--NBI framework (top) and its transfer to classifier ensemble weighting (bottom).
+Blue: inherited. Orange: adapted because the decision variables are compositional and the responses are
+machine-learning metrics. Green: introduced in this study.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{The ensemble-weighting problem is a mixture problem}
+\label{sec:method:problem}
+
+Let $M$ probabilistic base classifiers produce, for a sample $x$, probability estimates
+$p_1(x),\dots,p_M(x)$ in $[0,1]$. A weighted soft-voting ensemble predicts
+\begin{equation}
+p_{\wvec}(x) \;=\; \sum_{i=1}^{M} w_i\, p_i(x) \;=\; \mathbf{P}\wvec ,
+\label{eq:ensemble}
+\end{equation}
+where $\mathbf{P} \in [0,1]^{n \times M}$ collects the base-model probabilities for $n$ samples. For
+$p_{\wvec}(x)$ to remain a probability for every input, the weights must satisfy
+\begin{equation}
+w_i \ge 0 \quad (i = 1,\dots,M), \qquad \sum_{i=1}^{M} w_i = 1 ,
+\label{eq:simplex}
+\end{equation}
+that is, $\wvec \in \simplex$, the unit simplex in $\mathbb{R}^{M}$ and the canonical constraint set of a
+\emph{mixture experiment}: the components are the classifiers, the vertices are single models used alone, and the
+centroid is uniform soft voting. The sum-to-one constraint makes an intercept model singular, so the formalism is the
+mixture design with a Scheff\'e canonical polynomial, not a factorial design. This correspondence, rather than any
+performance argument, is why the framework transfers at all.
+
+Three objectives are considered, all functions of $\wvec$ through \cref{eq:ensemble}:
+\begin{align}
+f_1(\wvec) &= -\operatorname{AUC}\!\left(y, \mathbf{P}\wvec\right) && \text{(discrimination, maximized)},\\
+f_2(\wvec) &= \frac{1}{n}\sum_{k=1}^{n}\Big[-y_k \log p_{\wvec}(x_k) - (1-y_k)\log\!\big(1-p_{\wvec}(x_k)\big)\Big] && \text{(calibration, minimized)},\\
+f_3(\wvec) &= c(\wvec) && \text{(inference cost, minimized)}.
+\end{align}
+The log-loss $f_2$ is convex and smooth in $\wvec$, whereas the area under the ROC curve is a rank statistic: $f_1$ is
+piecewise constant in $\wvec$.
+
+\subsection{Two cost models: a relaxation and a deployment cost}
+\label{sec:method:cost}
+
+Let $c_i$ be the measured inference cost of model $i$ (\cref{sec:protocol:models}). Deployment cost is a step
+function of the weight vector: a model receiving \emph{any} non-negligible weight must be loaded and executed; one
+receiving none costs nothing. This gives the \emph{support cost}
+\begin{equation}
+c_{\mathrm{sup}}(\wvec) \;=\; \sum_{i=1}^{M} c_i \,\mathbf{1}\!\left[w_i > \varepsilon\right], \qquad \varepsilon = 10^{-3},
+\label{eq:supportcost}
+\end{equation}
+which is discontinuous; every optimizer here instead sees the continuous relaxation
+\begin{equation}
+c_{\mathrm{w}}(\wvec) \;=\; \sum_{i=1}^{M} w_i c_i ,
+\label{eq:weightedcost}
+\end{equation}
+the natural linear mixture response, which coincides with $c_{\mathrm{sup}}$ at the vertices but not on the
+interior. We therefore optimize \cref{eq:weightedcost} and score the \emph{same} solutions under
+\cref{eq:supportcost}, reporting every comparison under both; \cref{sec:results:cost} shows that the choice changes
+which method wins.
+
+\subsection{Mixture design and Scheff\'e surrogates}
+\label{sec:method:scheffe}
+
+\paragraph{Design.} With $M = 5$ the design is a fixed 66-run mixture design: the union of the $\{5,3\}$ and
+$\{5,2\}$ simplex lattices, the overall centroid, the 5 axial points, the 5 quaternary centroids and the 10 midpoints
+between the overall centroid and the ternary centroids. It therefore places design points on the 5 pure vertices, all
+10 binary edges, the ternary and quaternary faces and uniform voting, supporting the surrogate on every face a sparse
+ensemble could occupy.
+
+\paragraph{Models.} For a response $y$ the Scheff\'e canonical polynomials of order $1$, $2$ and the special cubic are
+\begin{align}
+\text{linear:}\quad & \hat y = \sum_i \beta_i w_i, \\
+\text{quadratic:}\quad & \hat y = \sum_i \beta_i w_i + \sum_{i<j} \beta_{ij} w_i w_j, \label{eq:scheffequad}\\
+\text{special cubic:}\quad & \hat y = \sum_i \beta_i w_i + \sum_{i<j} \beta_{ij} w_i w_j + \sum_{i<j<k} \beta_{ijk} w_i w_j w_k,
+\end{align}
+fitted by ordinary least squares without an intercept and without pure quadratic terms, which $\sum_i w_i = 1$ makes
+redundant. No term elimination is performed: the canonical form is kept intact so that $\beta_i$ is the predicted
+response at vertex $i$.
+
+\paragraph{External validation and the reliability gate.} Each replication also evaluates 100 compositions drawn
+from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and $\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
+external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} uses a parsimony rule --- the lowest
+order whose external RMSE is within 10\% of the best --- so it is driven by out-of-design accuracy rather than
+in-sample fit. The \emph{same} 100 compositions serve both steps: the parsimony rule picks the order on them and the
+gate then scores the selected order on them. The gate is therefore not independent of order selection --- the order it
+judges was chosen to do well on exactly these points --- and its pass rate should be read as an optimistic estimate of
+out-of-design adequacy. We report alongside it the external RMSE of the selected surface in the response's own units
+and the observed range of that response over the same 100 points (\cref{tab:gate}), because on a nearly flat surface
+$\rext$ is ill-posed --- its denominator is the variance of an almost constant response --- so the RMSE read against
+the range is the more informative adequacy measure. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to
+version control before the replicated benchmark was run, and never adjusted afterwards: a surface is reliable only if
+\begin{equation}
+\rext \ge 0.5 \quad\text{and}\quad \rho_{\mathrm{ext}} \ge 0.9 .
+\label{eq:gate}
+\end{equation}
+We describe this as pre-specification rather than preregistration: there is no
+external registry entry, and the evidence is the version-controlled commit history. The gate is a hypothesis under
+test, not a filter applied to the results: surrogate-based optimization is run and reported \emph{regardless} of the
+gate outcome, so that its predictive value can be measured (\cref{sec:results:gate}).
+
+\subsection{Normal Boundary Intersection on the simplex}
+\label{sec:method:nbi}
+
+NBI \citep{das1998nbi} was introduced to obtain a distributed representation of the Pareto boundary
+(\cref{sec:rel:lineage}). Whether that distribution survives the map into revalidated objective space is one of the
+questions this paper tests, and \cref{sec:results:metamodelfree} reports that in our setting it does not. For $m$
+objectives $F = (F_1,\dots,F_m)$ let $\wvec^{*(k)}$ minimize $F_k$; the payoff matrix $\Phi$ has columns $F(\wvec^{*(k)})$, its diagonal is the utopia
+point $F^{\mathrm{u}}$, and objectives are normalized by the utopia and pseudo-nadir points extracted from $\Phi$.
+Writing $\bar\Phi$ for the normalized payoff matrix and $\hat{n} = -\bar\Phi\mathbf{1}$ for the quasi-normal direction,
+each $\beta$ on the unit simplex of \emph{scalarization} weights defines the subproblem
+\begin{equation}
+\max_{\wvec,\,t} \; t \quad \text{s.t.} \quad \bar\Phi\beta + t\,\hat{n} = \bar F(\wvec), \quad \wvec \in \simplex .
+\label{eq:nbi}
+\end{equation}
+The simplex constraint is eliminated by optimizing over $M-1$ free variables with
+$w_M = 1 - \sum_{i<M} w_i$, with a deterministic feasibility-recovery step for iterates that leave the simplex: the
+free variables are clipped to $[0,1]$ and, if they still sum above one, renormalized onto the face $w_M = 0$. This is
+a documented repair, not a Euclidean projection onto the simplex, and a candidate recovered this way is flagged
+infeasible and excluded from the certified set. Without it, subproblems near a vertex terminate outside the feasible
+region. For vertex values of $\beta$ the solution is the corresponding anchor, returned directly rather than
+re-derived. All variants solve 66 subproblems per replication on the same $\beta$ lattice, so the arms are
+compared at identical points of the CHIM.
+
+\paragraph{The three variants.} The variants are defined by two methodological factors --- the source of the
+objectives and the source of the anchors:
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llll}
+\toprule
+Variant & Objectives in \cref{eq:nbi} & Anchors / payoff matrix & Real evaluations, standalone \\
+\midrule
+NBI-A & Scheff\'e surfaces & optima of the Scheff\'e surfaces & $1.7\times10^{2}$ \\
+NBI-B & Scheff\'e surfaces & real out-of-fold optima & $\approx 4.1\times10^{4}$ \\
+NBI-C & real out-of-fold objectives & real out-of-fold optima & $\approx 4.6\times10^{5}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+NBI-A is the lineage construction: everything, including the payoff matrix, comes from the metamodel. NBI-B changes
+only the anchors, which become the real optima of \cref{sec:method:refs}; NBI-C removes the metamodel entirely.
+The last column charges every variant for each real objective evaluation it needs \emph{standalone}: the 66 design
+points and the 100 gate compositions for NBI-A; those plus the real anchors for NBI-B, dominated by the direct
+ROC-AUC search over $4\times10^{4}$ sampled compositions (\cref{sec:method:refs}); and the real anchors plus its own
+solve for NBI-C. Real anchors are not free. NBI-B consumes about $4\times10^{4}$ real evaluations that NBI-A does
+not --- roughly a tenth of NBI-C's entire budget --- and its standalone wall clock is $1.2$--$12.7$ times NBI-A's,
+which is why \cref{tab:compute} prices each arm for the stages it depends on rather than for its solver stage alone.
+Because $f_1$ is piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and
+accepts an iterate whose equality residual is below $10^{-3}$ even without certified optimality,
+whereas NBI-A and NBI-B optimize smooth polynomials and require full SLSQP certification. This asymmetry follows from
+the objective, not from tuning, and it bounds the causal reading. A versus B is not a single-factor contrast:
+replacing the anchors simultaneously moves the utopia point, rescales both normalization axes through the payoff
+matrix, reorients the CHIM and every quasi-normal direction, and---because the three vertex values of $\beta$ return
+their anchor directly---substitutes three returned candidates. \Cref{sec:results:anchors} separates the last of these
+from the rest. B versus C tests removal of
+\emph{surrogate error in the interior} once real anchors are supplied, but is not a perfectly identical numerical
+experiment, because changing the objective from a smooth polynomial to a piecewise-constant rank statistic
+necessarily changes solver semantics. Solver outcomes are therefore reported separately for each arm.
+
+\subsection{References, comparators and revalidation}
+\label{sec:method:refs}
+
+\paragraph{Single-objective references.} Each replication computes the best single model, uniform voting, logistic
+stacking, the SLSQP log-loss optimum (convex, hence global), a derivative-free ROC-AUC optimum over $4\times10^{4}$
+sampled compositions with local refinement, and the optima of the two Scheff\'e surfaces. The log-loss and AUC optima
+double as the real anchors of NBI-B and NBI-C. SLSQP on the convex log-loss remains the correct tool for the
+single-objective problem; NBI is not proposed as a replacement for it.
+
+\paragraph{Comparators.} Two cheap alternatives are run on every replication: random weighted scalarization, which
+draws 66 scalarization weight vectors from $\mathrm{Dirichlet}(\mathbf{1})$ and minimizes the corresponding weighted
+sum of the \emph{same} Scheff\'e surfaces with the same real anchors used by NBI-B; and a 66-point random
+$\mathrm{Dirichlet}(\mathbf{1})$ sample of the weight simplex. The second is matched to the NBI sets only in the
+\emph{number of returned candidates} and is not compute-matched; it functions as a floor check on the geometry of the
+reference front, not as an efficiency baseline.
+
+\paragraph{Revalidation.} Every candidate from every method --- the three NBI arms, both comparators, the 66 design
+runs and the references --- is re-evaluated on the exact out-of-fold objectives before any indicator is computed, with
+non-dominated filtering applied to those revalidated values. No result in this paper is read off a surrogate.
+
+\subsection{Empirical Pareto reference and quality indicators}
+\label{sec:method:reference}
+
+The true Pareto set of \cref{eq:ensemble} over $\simplex$ is unknown, so each replication constructs an
+\emph{empirical Pareto reference}: at least $10^{5}$ compositions
+from $\mathrm{Dirichlet}(\mathbf{1})$ and $\mathrm{Dirichlet}(0.3\cdot\mathbf{1})$ in equal parts, augmented with the
+simplex lattice, all vertices and edges, and a 40-cap $\varepsilon$-constraint sweep, evaluated on the real objectives
+and filtered to the non-dominated set. An independent sample of $2\times10^{4}$ points checks convergence: if it
+displaces more than 5\% of the front, the reference is enlarged and rechecked, up to three rounds. This sampled core
+contains no output of the five methods compared in this study --- NBI-A, NBI-B, NBI-C, random weighted scalarization
+and NSGA-II. It is not, however, free of optimization output: it carries the 40 $\varepsilon$-constraint solutions and
+the seven single-objective references of \cref{sec:method:refs}, among them the real ROC-AUC and log-loss optima that
+NBI-B and NBI-C receive as anchors and the two Scheff\'e-surface optima that NBI-A receives. On Santander the
+$\varepsilon$-constraint sweep supplies a median of 38 of the roughly 135 core-front points and the single-objective
+references a median of 4 (\texttt{tables/reference\_diagnostics.csv}). The final reference used for scoring
+is the non-dominated union of that core with every candidate set of the replication, making it at least as good as
+any method scored against it.
+
+We call this an empirical reference, never a true Pareto front: it is a sample-based upper bound, and because
+candidate sets contribute to it, a method contributing many points is partly graded against itself.
+
+Approximation sets are scored on min--max normalized objectives by generational distance, inverted generational
+distance, $\igdp$ \citep{ishibuchi2015modified}, Schott spacing, the exact hypervolume with reference point $1.1$ on
+each axis, expressed as a ratio to the reference hypervolume, coverage, and the joint non-dominated fraction.
+
+\subsection{The normalization box}
+\label{sec:method:normbox}
+
+Every indicator is computed on objectives mapped into $[0,1]$ by one box, and the box is not a fixed property of the
+problem. Let $\mathcal{F}$ be the empirical reference front of the replication --- the non-dominated union of the
+sampled core with every candidate set --- under one of the two cost definitions. The box is the componentwise
+minimum and maximum of $\mathcal{F}$:
+\begin{equation}
+\ell_k \;=\; \min_{F \in \mathcal{F}} F_k, \qquad u_k \;=\; \max_{F \in \mathcal{F}} F_k, \qquad
+\tilde F_k \;=\; \frac{F_k - \ell_k}{u_k - \ell_k}, \qquad k = 1,2,3 .
+\label{eq:normbox}
+\end{equation}
+Three consequences follow, and each constrains how the numbers in \cref{sec:results} may be read.
+
+\emph{(i) Within a replication the box is common to every arm.} All candidate sets of a replication are scored under
+the same $\ell$ and $u$, so the paired contrast between two arms is a difference of commensurable quantities and is
+unaffected by the choice of box.
+
+\emph{(ii) The box changes when a method is added to the reference,} because a new candidate set can extend
+$\mathcal{F}$. Adding the NSGA-II arm moves every indicator level slightly: on the identical candidate sets, NBI-C's
+median hypervolume ratio is $0.989$, $0.983$, $0.982$ and $0.976$ in \cref{sec:results:metamodelfree}, computed
+without NSGA-II in the reference, and $0.990$, $0.981$, $0.981$ and $0.977$ in \cref{tab:nsga2}, computed with it.
+Absolute indicator levels are therefore only interpretable together with the set of methods that built the reference.
+
+\emph{(iii) The box differs between replications,} since each replication has its own reference front. Absolute
+levels are comparable within a replication but not across partitions, and a mean of $\Delta\hv$ over 30 partitions is
+a mean over 30 different scales. Paired within-replication differences are unaffected, which is why medians, win
+counts and per-partition distributions are reported alongside means; \cref{sec:results:cost} withdraws one earlier
+between-partition reading that this rescaling, not the optimizers, produced.
