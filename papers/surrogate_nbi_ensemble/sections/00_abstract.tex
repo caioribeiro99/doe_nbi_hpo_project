@@ -7,15 +7,17 @@ constant in the weights, the decision variables are themselves the mixture so th
 feasible region, and deployment cost is a step function of the support. We therefore decompose the pipeline into three
 arms differing only in where objectives and anchors come from --- surrogate objectives with surrogate anchors, the
 same surfaces with anchors from real out-of-fold optima, and a metamodel-free arm --- and add four controls the
-framework lacks: external validation of every surface on 100 unseen compositions behind a pre-registered reliability
-gate, revalidation of every candidate on the real objectives, an empirical Pareto reference of at least $10^{5}$
-points built independently of the surrogate, and an untouched holdout. The study is replicated over four public binary
+framework lacks: external validation of every surface on 100 unseen compositions behind a reliability gate
+pre-specified before the replicated benchmark, revalidation of every candidate on the real objectives, an empirical Pareto reference whose sampled core of at least
+$10^{5}$ points is constructed independently of the surrogate and is then augmented with all candidate sets, and an
+untouched holdout. The study is replicated over four public binary
 tabular datasets $\times$ 30 outer partitions, paired by partition with overlap-corrected inference. Surrogate
 adequacy is both dataset- and metric-dependent: ROC-AUC surfaces pass the gate in 0, 5, 16 and 30 of 30 partitions,
-log-loss surfaces in 30, 3, 12 and 30. Anchor construction, not interior surrogate accuracy, is the first-order
-failure mode --- real anchors improve both primary endpoints in every partition of the two datasets whose surfaces
-fail and in 24 of 30 elsewhere --- and the gate detects unusable surfaces but not misplaced anchors, the two actively
-diverging on one dataset. The classical synergism criterion holds for the leading classifier pair everywhere, yet the
+log-loss surfaces in 30, 3, 12 and 30. Among failures attributable to the surrogate pipeline, anchor misplacement has the largest
+observed effect: real anchors improve both primary endpoints in every partition of the two datasets whose surfaces
+fail, and in 23--24 of 30 partitions on Porto Seguro and 24 of 30 on UCI credit. The gate detects unusable surfaces
+but not misplaced anchors, the two actively diverging on one dataset, while a fourth dataset shows subproblem
+convergence dominating even where the surrogate is excellent. The classical synergism criterion holds for the leading classifier pair everywhere, yet the
 real blend beats its better member on only one dataset. Finally, the continuous cost these methods optimize disagrees
 with the step cost deployment pays about which method wins in up to 24 of 30 partitions. The principal limitation is
 that four datasets support statements about partition sensitivity within a dataset, but only a four-point pattern

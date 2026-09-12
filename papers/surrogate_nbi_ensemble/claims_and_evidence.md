@@ -21,8 +21,13 @@ support cost = Σ c_i 1[w_i > 10⁻³], c_i in ms per 1,000 rows.
 |---|---|---|---|---|---|
 | Santander | +0.179 [0.148, 0.210] · 0.196 | +0.120 [0.098, 0.143] · 0.125 | 30/0/0 · 30/0/0 | 1.00 | 0.004 · 0.007 |
 | BNP | +0.279 [0.154, 0.415] · 0.059 | +0.239 [0.111, 0.377] · 0.015 | 30/0/0 · 30/0/0 | 1.00 | 0.66 · 0.66 |
-| Porto | +0.085 [0.037, 0.131] · 0.076 | +0.038 [0.017, 0.058] · 0.030 | 24/0/6 · 23/0/7 | 0.66 · 0.65 | 0.79 · 0.79 |
-| UCI | +0.060 [0.034, 0.083] · 0.092 | +0.036 [0.021, 0.050] · 0.050 | 24/1/5 · 24/0/6 | 0.75 | 0.45 · 0.45 |
+| Porto | +0.085 [0.037, 0.131] · 0.076 | +0.038 [0.017, 0.058] · 0.030 | 24/0/6 · **23/0/7** | 0.66 · 0.65 | 0.79 · 0.79 |
+| UCI | +0.060 [0.034, 0.083] · 0.092 | +0.036 [0.021, 0.050] · 0.050 | **24/1/5** · 24/0/6 | 0.75 | 0.45 · 0.45 |
+
+**Wording rule (added 2026-09-11, verified against `paired_primary_effects.csv`).** The two endpoints do NOT share a
+win count on Porto Seguro or UCI credit. Forbidden: "improves both primary endpoints in 24/30 on Porto Seguro".
+Permitted compact form: "unanimous on Santander and BNP Paribas; 23–24 of 30 on Porto Seguro and 24 of 30 on UCI
+credit". Exact per-endpoint counts: Porto IGD+ 23/0/7, Porto HV 24/0/6, UCI IGD+ 24/0/6, UCI HV 24/1/5.
 
 - Source: `statistics/paired_primary_effects.csv` (cost = weighted, comparison = "nbi_B vs nbi_A"); `statistics/paired_primary_tests.csv`.
 - Figures: manuscript Fig. 4 (paired deltas), Fig. 3 (example fronts); benchmark `r30_fig02_paired_delta_hv.png`, `r30_fig06_win_tie_loss.png`.
@@ -207,7 +212,17 @@ principle as new.** The claim is the empirical one below.
 
 ---
 
-## C11 — Empirical Pareto reference quality — SECONDARY (infrastructure)
+## C11 — Empirical Pareto reference quality and its self-grading — SECONDARY (infrastructure)
+
+**Wording rule (added 2026-09-11).** The reference has two layers and the manuscript must never conflate them.
+(a) The **sampled core** — ≥ 10⁵ Dirichlet points, lattice, vertices, edges and the ε-constraint sweep — is
+constructed independently of the surrogate and of every candidate method. (b) The **final augmented reference** used
+for scoring is the non-dominated union of that core with *every* candidate set. Permitted: "an empirical reference
+whose sampled core is constructed independently of the surrogate and is subsequently augmented with all candidate
+sets". **Forbidden:** "an independent reference", "a reference the methods cannot influence", "independently
+constructed reference", or any phrasing implying the *final* reference is method-independent. The self-grading
+caveat (NBI-B and NBI-C contribute 30–40% of the final front) must accompany any absolute indicator value.
+
 
 - Median 100,564 points per partition; median displacement by an independent 20k check 2.2–3.9%; 116/120 partitions within the 5% tolerance (max 6.0% at the 3-round cap). Median sample-front sizes: weighted 135 / 120 / 94 / 481, support 40 / 39 / 14 / 87. Final reference = non-dominated union of sample and every candidate set (NBI-B/C contribute 30–40% of points). HV effect of residual displacement ≤ 0.2% (HV ratio ≥ 0.998). Source: `tables/reference_diagnostics.csv`, FINAL_REPORT §5.
 - Wording NOT allowed: "true Pareto front".

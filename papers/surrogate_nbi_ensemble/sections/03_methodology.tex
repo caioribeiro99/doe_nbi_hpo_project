@@ -96,20 +96,24 @@ replication here additionally evaluates 100 compositions drawn from $\mathrm{Dir
 $\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
 external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} then uses a parsimony rule --- the lowest
 order whose external RMSE is within 10\% of the best --- so it is driven by out-of-design accuracy rather than
-in-sample fit. \emph{Admissibility} uses a pre-registered \emph{reliability gate}: a surface is reliable only if
+in-sample fit. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to version control
+before the replicated benchmark was run: a surface is reliable only if
 \begin{equation}
 \rext \ge 0.5 \quad\text{and}\quad \rho_{\mathrm{ext}} \ge 0.9 .
 \label{eq:gate}
 \end{equation}
-The thresholds were fixed before the replicated study and were never adjusted. The gate is a hypothesis under test in
-this work, not a filter applied to the results: surrogate-based optimization is run and reported \emph{regardless} of
+They were never adjusted afterwards. We describe this as pre-specification rather than preregistration: there is no
+external registry entry, and the evidence is the version-controlled commit history. The gate is a hypothesis under
+test in this work, not a filter applied to the results: surrogate-based optimization is run and reported \emph{regardless} of
 the gate outcome, precisely so that the gate's predictive value can be measured (\cref{sec:results:gate}).
 
 \subsection{Normal Boundary Intersection on the simplex}
 \label{sec:method:nbi}
 
-NBI \citep{das1998nbi} generates an even spread of Pareto points by intersecting the boundary of the attainable set
-with normals to the convex hull of individual minima. For $m$ objectives $F = (F_1,\dots,F_m)$ let
+NBI \citep{das1998nbi} was introduced to obtain a distributed representation of the Pareto boundary, by advancing
+from the convex hull of individual minima along quasi-normal directions. Whether that distribution survives the map
+into revalidated objective space is one of the questions this paper tests, and \cref{sec:results:metamodelfree}
+reports that in our setting it does not. For $m$ objectives $F = (F_1,\dots,F_m)$ let
 $\wvec^{*(k)}$ minimize $F_k$; the payoff matrix $\Phi$ has columns $F(\wvec^{*(k)})$, its diagonal is the utopia
 point $F^{\mathrm{u}}$, and objectives are normalized by the utopia and pseudo-nadir points extracted from $\Phi$.
 Writing $\bar\Phi$ for the normalized payoff matrix and $\hat{n} = -\bar\Phi\mathbf{1}$ for the quasi-normal direction,
@@ -119,13 +123,16 @@ each $\beta$ on the unit simplex of \emph{scalarization} weights defines the sub
 \label{eq:nbi}
 \end{equation}
 Two implementation points matter. The simplex constraint is eliminated by optimizing over $M-1$ free variables with
-$w_M = 1 - \sum_{i<M} w_i$, with a projection step returning the nearest feasible composition when an iterate leaves
-the simplex; without it, subproblems near a vertex can terminate infeasible. And for vertex values of $\beta$ the
+$w_M = 1 - \sum_{i<M} w_i$, with a deterministic feasibility-recovery step for iterates that leave the simplex: the
+free variables are clipped to $[0,1]$ and, if they still sum above one, renormalized onto the face $w_M = 0$. This is
+a documented repair, not a Euclidean projection onto the simplex, and a candidate recovered this way is flagged
+infeasible and excluded from the certified set. Without it, subproblems near a vertex terminate outside the feasible
+region altogether. And for vertex values of $\beta$ the
 solution is the corresponding anchor, returned directly rather than re-derived. We solve 66 subproblems per
 replication on the same $\beta$ lattice for all variants, so the arms are compared at identical points of the CHIM.
 
-\paragraph{The three variants.} The variants differ in exactly two binary choices --- where the objectives come from,
-and where the anchors come from --- and in nothing else:
+\paragraph{The three variants.} The variants are defined by two methodological factors --- the source of the
+objectives and the source of the anchors:
 
 \begin{center}
 \footnotesize
@@ -147,8 +154,11 @@ isolates \emph{anchor misplacement} with the surfaces held fixed. NBI-C removes 
 isolates the residual effect of \emph{surrogate error in the interior} once anchors are correct. Because $f_1$ is
 piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and accepts an iterate
 whose equality residual is below $10^{-3}$ even without certified optimality, whereas NBI-A and NBI-B optimize smooth
-polynomials and require full SLSQP certification. This asymmetry follows from the objective, not from tuning, and is
-reported with the results.
+polynomials and require full SLSQP certification. This asymmetry follows from the objective, not from tuning, and is reported with the results. It also bounds the
+causal reading: A versus B isolates the anchor source with the surrogate objectives and the solver held fixed, and is
+a clean contrast; B versus C tests removal of the surrogate once real anchors are supplied, but is not a perfectly
+identical numerical experiment, because changing the objective from a smooth polynomial to a piecewise-constant rank
+statistic necessarily changes solver semantics. Solver outcomes are therefore reported separately for each arm.
 
 \subsection{References, comparators and revalidation}
 \label{sec:method:refs}
@@ -189,4 +199,4 @@ candidate sets contribute to it, a method contributing many points is partly gra
 Approximation sets are scored on min--max normalized objectives by generational distance, inverted generational
 distance, $\igdp$ \citep{ishibuchi2015modified}, Schott spacing, the exact hypervolume with reference point $1.1$ on
 each axis, expressed as a ratio to the reference hypervolume, coverage, and the joint non-dominated fraction. $\igdp$
-and the hypervolume ratio are pre-registered as the two primary endpoints; the others are descriptive.
+and the hypervolume ratio were fixed in advance as the two primary endpoints; the others are descriptive.

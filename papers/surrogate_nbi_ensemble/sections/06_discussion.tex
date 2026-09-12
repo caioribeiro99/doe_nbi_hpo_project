@@ -18,8 +18,8 @@ an error of comparable size in the interior perturbs individual solutions but le
 
 That asymmetry predicts what we observe. Replacing surrogate anchors with real ones, holding the surfaces fixed,
 improves both primary endpoints in $30/30$ partitions on the two datasets whose ROC-AUC surfaces almost never pass the
-gate and in $24/30$ on the other two, with hypervolume gains up to $+0.18$. Removing the surrogate entirely, once
-anchors are correct, adds much less. The first-order fix is also the cheap one: real anchors are the single-objective
+gate, and in $23$--$24/30$ on Porto Seguro and $24/30$ on UCI credit, with hypervolume gains up to $+0.18$. Removing
+the surrogate entirely, once anchors are correct, adds much less on three of the four datasets. The first-order fix is also the cheap one: real anchors are the single-objective
 optima a practitioner already computes, and on the convex log-loss that is one SLSQP call, so NBI-B costs essentially
 what NBI-A costs while repairing most of the gap to the metamodel-free arm.
 
@@ -166,6 +166,6 @@ respectively.
 What we would carry forward into any future application of this framework is not a method but a checklist: validate
 the surface on compositions it has not seen and record the result; compare each surrogate argmax against the real
 optimum and prefer the real one; revalidate every candidate on the true objective before scoring; build a reference
-that no method under test can influence; and state which cost you are paying. None of these is expensive relative to
+whose sampled core no method under test can influence; and state which cost you are paying. None of these is expensive relative to
 the pipeline they protect, and in this study each of them changed a conclusion that would otherwise have been
 reported.

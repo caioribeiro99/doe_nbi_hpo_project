@@ -6,8 +6,8 @@ performance over the simplex, Normal Boundary Intersection on that surrogate ---
 settings in which it was developed to classifier ensemble weighting, and asked not whether it produces a Pareto front
 but under which conditions the front it produces can be believed. Answering that required decomposing the pipeline
 into three arms differing only in where the objectives and the anchors come from, revalidating every candidate on the
-true out-of-fold objectives, scoring against an empirical reference the methods cannot influence, and repeating the
-whole procedure on 4 datasets $\times$ 30 partitions.
+true out-of-fold objectives, scoring against an empirical reference whose sampled core the methods cannot influence,
+and repeating the whole procedure on 4 datasets $\times$ 30 partitions.
 
 The framework is not uniformly safe, and it is not uniformly unsafe. Its behaviour is governed by three identifiable
 properties of the problem rather than by anything about the optimizer.
@@ -19,10 +19,13 @@ rank statistic, it can fail completely: the Santander ROC-AUC surface never pass
 $R^{2}$ despite a rank correlation of $0.83$. Surrogate adequacy is a property of the dataset \emph{and} the metric,
 must be tested on compositions the surface has not seen, and cannot be assumed from in-sample fit.
 
-\emph{Geometry.} Anchor construction, not interior surrogate accuracy, is the first-order failure mode. Replacing
-surrogate anchors with real single-objective optima --- changing nothing else --- improved both primary endpoints in
-every one of 30 partitions on the two datasets whose surfaces fail, and in 24 of 30 on the two where they largely
-succeed. Removing the metamodel altogether, once the anchors are right, adds far less. Because NBI derives its utopia
+\emph{Geometry.} Among failures attributable to the surrogate pipeline, anchor misplacement had the largest observed
+effect. Replacing surrogate anchors with real single-objective optima --- changing nothing else --- improved both
+primary endpoints in every one of 30 partitions on the two datasets whose surfaces fail, and in 23 to 24 of 30 on the
+two where they largely succeed. Removing the metamodel altogether, once the anchors are right, adds far less on three
+datasets. The exception is instructive and prevents a universal claim: on UCI credit, whose surfaces pass the gate in
+every partition, the residual gap is a subproblem-convergence effect rather than a surrogate-accuracy one, so solver
+geometry can dominate where the surrogate is excellent. Because NBI derives its utopia
 point, its normalization and its search directions from the payoff matrix, an anchor error relocates the entire
 construction, while an interior error perturbs individual subproblems. The practical consequence is favourable: the
 first-order fix is also the cheapest, since real anchors are the single-objective optima a practitioner already

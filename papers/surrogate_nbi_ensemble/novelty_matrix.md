@@ -214,7 +214,7 @@ true-function evaluation depend on estimated model fidelity. On the ML side, `ch
 statement: it unifies data-mixing methods as each assuming a "mixing law" over the simplex and shows that measuring the
 *fidelity* of that law explains method performance; `ye2025mixinglaws` fits its law on sampled mixtures and uses it to
 predict unseen mixtures; `liu2025regmix` fits a regressor and confirms with real runs. Where they all stop: none
-declares a pre-registered acceptance criterion — here, external R² ≥ 0.5 *and* Spearman ρ ≥ 0.9 on 100 unseen
+declares a pre-specified acceptance criterion — here, external R² ≥ 0.5 *and* Spearman ρ ≥ 0.9 on 100 unseen
 Dirichlet compositions — whose failure disqualifies the surface from being optimized at all.
 
 ## Element 13 — Replicated outer-partition study of surrogate and optimizer stability
@@ -320,7 +320,7 @@ listed in `literature_review.md` §1.
 5. **To the best of our literature search, we found no prior study that** compares a support-based deployment cost
    Σ c_i·1[w_i > ε] against the continuous weighted relaxation Σ w_i c_i for the same weighted ensemble, or reports
    that the two accountings change which method wins. (Element 11.)
-6. **To the best of our literature search, we found no prior study that** applies a pre-registered pass/fail
+6. **To the best of our literature search, we found no prior study that** applies a pre-specified pass/fail
    admissibility criterion, evaluated on unseen compositions of the design simplex, to decide whether a fitted surface
    may be optimized at all. (Element 12; validation of surrogates is common, an admissibility gate is not.)
 7. **To the best of our literature search, we found no prior study that** separates surrogate misspecification, anchor
@@ -381,7 +381,7 @@ p ≈ 0.010 is knife-edge — must all be retained.
 
 **W7 — C5 (the reliability gate) must credit the "validate before you trust" line.** `jin2001metamodelling`,
 `abolghasemian2022haulage`, `deb2020surrogate` and especially `chen2025aioli` make surrogate-fidelity checking
-standard practice. Only the *external-composition, pre-registered, pass/fail* form is distinctive. The existing,
+standard practice. Only the *external-composition, pre-specified, pass/fail* form is distinctive. The existing,
 correctly stated negative result — the gate identifies unusable surfaces but does not predict anchor misplacement — is
 untouched by the literature and remains the most defensible sentence in C5.
 
@@ -430,7 +430,7 @@ Pareto front") is correct and should be retained verbatim.
 > anchors taken from the surrogate, on the surrogate objectives with anchors recomputed from real out-of-fold
 > single-objective optima, and metamodel-free on the real objectives; we re-evaluate every candidate returned by every
 > method on the exact out-of-fold objectives; and we score all of them against an empirical Pareto reference that the
-> surrogate cannot influence. Replicating this over four tabular binary datasets and thirty outer stratified
+> surrogate cannot influence in its sampled core. Replicating this over four tabular binary datasets and thirty outer stratified
 > partitions each, with an external reliability gate on unseen Dirichlet compositions and paired, overlap-corrected
 > inference, lets us separate surrogate misspecification from anchor misplacement, show that the reliability gate
 > identifies unusable surfaces without predicting anchor failure, and show that the choice between a weighted-cost

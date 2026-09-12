@@ -335,7 +335,7 @@ result to XGBoost on bioassay data — a tabular, non-LLM instance.
 **What cluster C leaves open.** The design family, the polynomial family and even the application of both to ensemble
 weights are all prior art. What is not present anywhere in this cluster is an *admissibility* criterion: the LLM
 mixing papers validate the mixture surrogate by predicting or retraining at the selected point, and `chen2025aioli`
-argues that fidelity determines value, but none defines a pre-registered pass/fail gate on held-out compositions that
+argues that fidelity determines value, but none defines a pre-specified pass/fail gate on held-out compositions that
 decides whether a surface may be optimized at all. None of the ML-side entries is multiobjective; none carries a
 deployment-cost objective; none contrasts anchors or runs a metamodel-free control. On the interpretive question — is
 "a large β_ij does not imply the blend beats its better pure component" already known? — the cluster's answer is that

@@ -41,7 +41,8 @@ Multiobjective optimization of continuous ensemble weights is therefore \emph{no
 absent from this cluster is any use of a designed experiment and a fitted response surface over the weight simplex, any
 use of a classical scalarization method such as NBI, and --- with the partial exception of the sparsity term in
 \citet{zhao2018multiobjective} --- any treatment of deployment cost as an objective. The evaluation practice is also
-different: fronts are typically compared between algorithms, not scored against an independently constructed reference,
+different: fronts are typically compared between algorithms, not scored against a separately sampled real-objective
+reference,
 and are rarely replicated over resampled partitions with corrected inference \citep{demsar2006statistical}.
 
 \subsection{Mixture experiments and response surfaces}
@@ -75,14 +76,15 @@ simplex formulation, the mixture design over classifier weights and the Scheffé
 are therefore established prior art for classifiers, not only for forecasts and neural networks, and we claim none of
 them. What that study does not do is what this paper is about: it optimizes one scalar metric at a time, so it has no
 Pareto front, no anchors and no NBI; it validates the fitted polynomial only in-sample, with no external validation on
-unseen compositions and no admissibility criterion; it has no independent reference front and no Pareto indicators; it
+unseen compositions and no admissibility criterion; it has no separately sampled reference front and no Pareto indicators; it
 carries no cost objective; and it reports no replication over resampled partitions and no paired inference.
 
 \subsection{The DoE--RSM--NBI framework and its application to ensemble weights}
 \label{sec:rel:lineage}
 
-Normal Boundary Intersection \citep{das1998nbi} generates well-distributed Pareto points by solving, for each convex
-weight vector, a subproblem that advances from the convex hull of individual minima along a quasi-normal direction. It
+Normal Boundary Intersection \citep{das1998nbi} was introduced to obtain a distributed representation of the Pareto
+boundary, by solving for each convex weight vector a subproblem that advances from the convex hull of individual
+minima along a quasi-normal direction. It
 is widely combined with response-surface metamodels in engineering optimization, and a substantial body of work applies
 NBI to polynomial surfaces fitted from designed experiments
 \citep{brito2014nbimse,costa2016nbimmse,lopes2016rpdmnbi,naves2017nbirfs,belinato2019mnbipca,almeida2022taguchinbi}.
@@ -106,7 +108,7 @@ its stated first contribution is casting ensemble-weight definition as a structu
 
 \textbf{We therefore claim no part of this construction as new.} Our contribution begins where this literature stops:
 none of these studies validates its mixture surrogate on unseen compositions, computes anchors from anything other than
-the surrogate, revalidates its Pareto candidates on the true objectives, scores them against an independently built
+the surrogate, revalidates its Pareto candidates on the true objectives, scores them against a separately sampled
 reference, or replicates over resampled partitions.
 
 \subsection{Surrogate-assisted multiobjective optimization}
@@ -160,7 +162,7 @@ exists. What does not exist, to the best of our literature search, is an evaluat
 trusted once it is both multiobjective and applied to classifiers:
 no external validation of the mixture surrogate on unseen compositions, no comparison of surrogate-derived against
 real anchors, no metamodel-free control arm, no revalidation of candidates on the true objectives against an
-independent empirical reference, no replicated partition study of the whole pipeline, and no contrast between the cost
+empirical reference with a method-independent core, no replicated partition study of the whole pipeline, and no contrast between the cost
 that is optimized and the cost that is paid.
 
 The gap is therefore not a missing method. It is the absence of the controls that would tell a practitioner when the

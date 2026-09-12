@@ -133,8 +133,10 @@ The primary comparisons are in \cref{tab:paired}; \cref{fig:paired} shows the pa
 
 Replacing the surrogate-derived anchors with anchors computed from the real single-objective optima, changing nothing
 else, improves both primary endpoints in every one of the 30 partitions on Santander ($\Delta\hv = +0.179$,
-95\% CI $[0.148, 0.210]$; Holm-corrected $p = 0.004$) and on BNP Paribas ($\Delta\hv$ median $+0.059$), and in
-$24/30$ partitions on Porto Seguro ($+0.085$, $[0.037, 0.131]$) and UCI credit ($+0.060$, $[0.034, 0.083]$). The
+95\% CI $[0.148, 0.210]$; Holm-corrected $p = 0.004$) and on BNP Paribas ($\Delta\hv$ median $+0.059$). On the other
+two datasets the improvement is large but not unanimous, and the two endpoints differ slightly: on Porto Seguro
+$23/30$ partitions on $\igdp$ and $24/30$ on hypervolume ($\Delta\hv = +0.085$, $[0.037, 0.131]$), and on UCI credit
+$24/30$ on $\igdp$ and 24 wins with one tie and five losses on hypervolume ($+0.060$, $[0.034, 0.083]$). The
 rank-biserial effect size is $1.00$ on the two datasets with unanimous wins and $0.65$--$0.75$ on the other two, and
 the Wilson interval for a $30/30$ win fraction is $[0.89, 1.00]$.
 
@@ -150,10 +152,10 @@ small positive differences and a tail of seven partitions where NBI-A collapses.
 Three qualifications keep this from being a stronger claim than the data support. First, the corrected test reaches
 significance only on Santander (and, for NBI-C versus NBI-B, on UCI credit). On BNP Paribas the effect is unanimous in
 sign yet the corrected $p$ is $0.66$, because the differences are bimodal --- the mean $+0.279$ is over four times the
-median $+0.059$ --- so by the pre-registered rule we report the median with its bootstrap interval $[0.051, 0.070]$,
+median $+0.059$ --- so by the rule fixed in advance we report the median with its bootstrap interval $[0.051, 0.070]$,
 the win fraction and the rank-biserial correlation instead. Second, the Porto Seguro and UCI credit win rates are
-driven by the twenty partitions added in the extension ($18/20$ and $19/20$, against $6/10$ and $5/10$ with one tie in
-the first ten; on UCI credit the batch difference is itself significant under an identical protocol, Fisher
+driven by the twenty partitions added in the extension (hypervolume $18/20$ and $19/20$, against $6/10$ and $5/10$
+with one tie in the first ten; on UCI credit the batch difference is itself significant under an identical protocol, Fisher
 $p = 0.009$). The anchor effect there is real in direction, but its magnitude varies enough between draws of ten
 partitions that ten were not enough to see it. Third, the effect depends on the cost definition: under the support
 cost Santander survives unchanged ($30/30$) and Porto Seguro stays positive on $\igdp$ ($29/30$), but BNP Paribas
@@ -230,9 +232,10 @@ Santander, BNP Paribas and Porto Seguro, because uniform random compositions cos
 reference front. The unoptimized 66-run mixture design also beats it $30/30$ everywhere. The comparator is matched to
 the NBI sets only in the number of candidates returned, and no efficiency claim is made from it.
 
-We also record a negative result. NBI is often motivated by the even spread of the points it generates. After
-revalidation on the real objectives, that advantage is not present in our data under any spacing definition we
-computed: the size-matched spacing percentile of NBI-C is $0.99$, $0.54$, $0.96$ and $0.41$ across the four datasets,
+We also record a negative result, which bears directly on the classical motivation for NBI recalled in
+\cref{sec:method:nbi}. NBI distributes its subproblems evenly over the CHIM, and that is often described as producing
+an evenly spread front. After revalidation on the real objectives, no such advantage is present in our data under any
+spacing definition we computed: the size-matched spacing percentile of NBI-C is $0.99$, $0.54$, $0.96$ and $0.41$ across the four datasets,
 while the random Dirichlet sample scores $1.00$, $1.00$, $1.00$ and $0.93$. Even spacing in the CHIM does not survive
 the map to revalidated objective space.
 

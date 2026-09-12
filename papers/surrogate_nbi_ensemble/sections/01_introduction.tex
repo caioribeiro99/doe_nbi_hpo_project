@@ -76,10 +76,11 @@ between B and C isolates the residual effect of \emph{surrogate error in the int
 \end{itemize}
 
 Around this decomposition we place four controls that the lineage does not contain: an external validation of every
-surface on 100 compositions it has never seen, with a pre-registered reliability gate; revalidation of every candidate
-produced by any method on the true objectives before any indicator is computed; an empirical Pareto reference of at
-least $10^{5}$ points per replication, built independently of the surrogate and checked for convergence; and an
-untouched holdout that never participates in fitting, weighting, thresholding or selection.
+surface on 100 compositions it has never seen, with a reliability gate fixed before the
+replicated benchmark; revalidation of every candidate
+produced by any method on the true objectives before any indicator is computed; an empirical Pareto reference whose sampled core of at
+least $10^{5}$ points per replication is constructed independently of the surrogate and checked for convergence,
+and which is then augmented with every candidate set for scoring; and an untouched holdout that never participates in fitting, weighting, thresholding or selection.
 
 The whole pipeline is then replicated. Four public binary tabular datasets are each partitioned 30 times, giving 120
 replications with recorded seeds. Because partitions of one dataset overlap heavily, we treat the replication
@@ -108,15 +109,18 @@ predict when this is necessary?
 
 \begin{enumerate}
 \item \textbf{A controlled decomposition of a surrogate-assisted multiobjective pipeline into surrogate error, anchor
-misplacement and solver behaviour}, through three NBI variants that differ in exactly two binary choices. To the best
+misplacement and solver behaviour}, through three NBI variants defined by two methodological factors. To the best
 of our literature search, no prior study computes NBI anchors both from a surrogate and from the true objectives and
 compares the resulting fronts. The nearest precedent for the pipeline itself, \citet{kwon2024ensemble}, optimizes one
 accuracy metric at a time and therefore has no anchors, no front and no such decomposition.
 
-\item \textbf{Evidence that anchor construction, not surrogate accuracy, is the first-order failure mode.} Real anchors
-improve both primary endpoints in 30 of 30 partitions on the two datasets whose ROC-AUC surfaces almost never pass the
-gate, and in 24 of 30 on the other two. Removing the surrogate entirely, once anchors are correct, adds much less. The
-fix is also the cheap one: real anchors are the single-objective optima a practitioner already computes.
+\item \textbf{Evidence that, among failures attributable to the surrogate pipeline, anchor misplacement has the
+largest observed effect.} Real anchors improve both primary endpoints in 30 of 30 partitions on the two datasets whose
+ROC-AUC surfaces almost never pass the gate, in 23 (IGD$^+$) and 24 (hypervolume) of 30 on Porto Seguro, and in 24 of
+30 on UCI credit. Removing the surrogate entirely, once anchors are correct, adds much less --- except on UCI credit,
+where subproblem convergence rather than surrogate error dominates, which is the counterexample that prevents a
+universal claim. The fix is also the cheap one: real anchors are the single-objective optima a practitioner already
+computes.
 
 \item \textbf{A demonstration that an external reliability gate detects unusable surfaces but not misplaced anchors.}
 On one dataset the two properties actively diverge: the partitions in which surrogate-anchored NBI collapses are
@@ -124,7 +128,7 @@ precisely those in which the parsimony rule selects a surface that fits held-out
 the gate more often. Surface quality and argmax quality are different properties, and only the second governs NBI.
 
 \item \textbf{A replicated evaluation architecture for ensemble-weight optimization} --- external surrogate validation,
-real-objective revalidation of every candidate, an empirical Pareto reference independent of the methods under test,
+real-objective revalidation of every candidate, an empirical Pareto reference with a method-independent sampled core,
 and untouched-holdout confirmation, over 4 datasets $\times$ 30 partitions with overlap-corrected paired inference.
 Three findings that this architecture overturned, including two artifacts that survived an earlier ten-partition
 analysis, are reported explicitly.

@@ -31,7 +31,7 @@ introduces a number that is not already in `reports/pco213_postwork_benchmark/`.
 - S1.2 Base-model hyperparameters and the exact preprocessing pipeline per model (`bench_models.py` extract).
 - S1.3 Seed map: dataset × replication → outer seed, inner seed, component offsets (`manifests/benchmark_manifest.json`).
 - S1.4 Dataset provenance: source, acquisition command, expected invariants, SHA-256 (`manifests/*_dataset_manifest.json`).
-- S1.5 Statistical analysis plan as pre-registered (`STATISTICAL_ANALYSIS_R30.md` in full).
+- S1.5 Statistical analysis plan as pre-specified (`STATISTICAL_ANALYSIS_R30.md` in full).
 
 ### S2. Base models and single-objective references
 - Table S2.1 — per-model OOF AUC, holdout AUC, OOF log-loss, Brier, inference cost, per dataset, mean ± sd over 30 partitions. Source `tables/model_performance.csv`.
