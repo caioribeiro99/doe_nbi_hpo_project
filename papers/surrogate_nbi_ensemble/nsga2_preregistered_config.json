@@ -1,0 +1,225 @@
+{
+  "purpose": "Pre-specified NSGA-II configuration for the evaluation-matched external baseline. Fixed and committed BEFORE the full run and before any benchmark outcome was inspected. This is pre-specification, not formal preregistration: there is no external registry entry; the evidence is this commit.",
+  "frozen_experiment": {
+    "tag": "pco213-postwork-r30",
+    "commit": "b3ed050"
+  },
+  "manuscript_baseline": {
+    "tag": "paper-draft-v1-pre-nsga2"
+  },
+  "library": {
+    "name": "pymoo",
+    "version": "0.6.2",
+    "algorithm": "NSGA2"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "scikit_learn": "1.9.0"
+  },
+  "objectives": {
+    "f1": "-roc_auc (real cached OOF)",
+    "f2": "log_loss (real cached OOF)",
+    "f3": "cost_weighted = sum_i w_i c_i",
+    "note": "Exactly the three real objectives NBI-C optimized. Support cost is NOT optimized; it is scored post hoc only."
+  },
+  "search_space": {
+    "n_var": 5,
+    "encoding": "real vector in [0,1]^5 with deterministic simplex repair",
+    "repair": "clip to [0, inf); if sum <= 0 fall back to the uniform composition; else divide by the sum",
+    "constraints": "w_i >= 0 and sum_i w_i = 1 enforced by repair after sampling, crossover and mutation"
+  },
+  "operators": {
+    "sampling": "Dirichlet(alpha=1) on the 5-simplex, seeded per replication",
+    "crossover": {
+      "type": "SBX",
+      "eta": 15,
+      "prob": 0.9,
+      "source": "pymoo 0.6 default for real-valued NSGA-II"
+    },
+    "mutation": {
+      "type": "PM",
+      "eta": 20,
+      "prob": "1/n_var = 0.2",
+      "source": "pymoo 0.6 default"
+    },
+    "eliminate_duplicates": true,
+    "survival": "rank + crowding distance (canonical NSGA-II)"
+  },
+  "population_size": 66,
+  "population_size_rationale": "Matches the 66 NBI beta directions so the returned candidate set has the same nominal scale. Not tuned.",
+  "termination": {
+    "rule": "objective-evaluation budget matched per dataset x replication to the ACTUAL real-objective evaluation count consumed by NBI-C in the frozen R=30 artifact",
+    "n_gen_formula": "n_gen = max(1, round(target_evals / 66) - 1); pymoo evaluates pop_size*(n_gen+1)",
+    "source_table": "reports/pco213_postwork_benchmark/tables/nbi_runs.csv (variant == 'C', column n_real_objective_evals)"
+  },
+  "seed_policy": {
+    "formula": "nsga2_seed = 20260904 + rep + 770000",
+    "offset": 770000,
+    "offset_rationale": "Chosen once before execution so NSGA-II streams cannot coincide with any seed offset used by the frozen benchmark (which used offsets up to 12000).",
+    "note": "The outer partition, the OOF folds and the cached probabilities are NOT reseeded; they are reused verbatim from the frozen artifacts."
+  },
+  "no_tuning_declaration": "No operator parameter, population size or termination rule was selected by inspecting benchmark performance. Library defaults are used for all variation operators. Only the population size (66) and the evaluation budget (matched to NBI-C) are deliberate, and both were fixed from the frozen artifacts before any run.",
+  "reuse": {
+    "model_training": "none - cached OOF probability matrices P and labels are reused verbatim",
+    "inference_costs": "reused from the frozen per-replication measurements"
+  },
+  "evaluation_budget_per_dataset_replication": {
+    "bnp": {
+      "0": 462334,
+      "1": 450602,
+      "2": 344272,
+      "3": 448128,
+      "4": 411532,
+      "5": 428380,
+      "6": 378684,
+      "7": 424632,
+      "8": 439164,
+      "9": 449466,
+      "10": 418620,
+      "11": 444152,
+      "12": 372950,
+      "13": 456424,
+      "14": 424194,
+      "15": 432090,
+      "16": 400072,
+      "17": 399472,
+      "18": 433062,
+      "19": 389878,
+      "20": 342028,
+      "21": 396140,
+      "22": 453754,
+      "23": 409704,
+      "24": 402164,
+      "25": 380120,
+      "26": 404396,
+      "27": 435002,
+      "28": 448280,
+      "29": 428548
+    },
+    "porto": {
+      "0": 424290,
+      "1": 394176,
+      "2": 416394,
+      "3": 403760,
+      "4": 411652,
+      "5": 399746,
+      "6": 429986,
+      "7": 419586,
+      "8": 414882,
+      "9": 437138,
+      "10": 437838,
+      "11": 405908,
+      "12": 429222,
+      "13": 425086,
+      "14": 421002,
+      "15": 405250,
+      "16": 397808,
+      "17": 399370,
+      "18": 433390,
+      "19": 435478,
+      "20": 390462,
+      "21": 409192,
+      "22": 417604,
+      "23": 401376,
+      "24": 438440,
+      "25": 419784,
+      "26": 429818,
+      "27": 422702,
+      "28": 403090,
+      "29": 430962
+    },
+    "santander": {
+      "0": 414698,
+      "1": 447188,
+      "2": 428142,
+      "3": 438460,
+      "4": 430278,
+      "5": 419824,
+      "6": 425146,
+      "7": 420570,
+      "8": 422800,
+      "9": 440974,
+      "10": 396986,
+      "11": 416244,
+      "12": 402052,
+      "13": 426480,
+      "14": 425958,
+      "15": 368054,
+      "16": 360966,
+      "17": 415668,
+      "18": 417790,
+      "19": 433934,
+      "20": 302976,
+      "21": 360948,
+      "22": 401956,
+      "23": 398670,
+      "24": 413700,
+      "25": 417962,
+      "26": 420358,
+      "27": 450950,
+      "28": 418052,
+      "29": 423282
+    },
+    "uci_credit": {
+      "0": 441648,
+      "1": 430458,
+      "2": 431426,
+      "3": 439512,
+      "4": 430466,
+      "5": 428148,
+      "6": 425058,
+      "7": 431270,
+      "8": 439262,
+      "9": 430538,
+      "10": 422554,
+      "11": 427696,
+      "12": 431960,
+      "13": 439308,
+      "14": 408926,
+      "15": 410480,
+      "16": 414522,
+      "17": 427550,
+      "18": 446504,
+      "19": 424218,
+      "20": 376804,
+      "21": 438886,
+      "22": 425224,
+      "23": 430660,
+      "24": 430134,
+      "25": 417858,
+      "26": 426026,
+      "27": 393632,
+      "28": 423620,
+      "29": 431326
+    }
+  },
+  "budget_summary": {
+    "bnp": {
+      "min": 342028,
+      "median": 424413,
+      "max": 462334,
+      "total": 12508244
+    },
+    "porto": {
+      "min": 390462,
+      "median": 418595,
+      "max": 438440,
+      "total": 12505392
+    },
+    "santander": {
+      "min": 302976,
+      "median": 418938,
+      "max": 450950,
+      "total": 12361066
+    },
+    "uci_credit": {
+      "min": 376804,
+      "median": 429141,
+      "max": 446504,
+      "total": 12775674
+    }
+  },
+  "grand_total_target_evaluations": 50150376
+}
