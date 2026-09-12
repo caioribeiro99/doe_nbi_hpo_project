@@ -40,3 +40,4 @@ reports/pco213/article/*.aux
 reports/pco213/article/*.log
 reports/pco213/article/*.out
 papers/surrogate_nbi_ensemble/__pycache__/
+experiments/pco213_postwork_nsga2/
