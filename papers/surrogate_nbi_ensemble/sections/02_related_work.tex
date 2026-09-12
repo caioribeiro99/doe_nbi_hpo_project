@@ -4,68 +4,56 @@
 \subsection{Classifier ensemble weighting}
 \label{sec:rel:weighting}
 
-Combining classifiers by a weighted vote or a weighted average of probabilities is long established
-\citep{hansen1990neural,kittler1998combining,dietterich2000ensemble,kuncheva2014combining}. The question of how to set
-the weights has two classical answers. Stacked generalization \citep{wolpert1992stacked} learns a meta-model on
-out-of-fold predictions; \citet{breiman1996stacked} showed that constraining the combination coefficients to be
-non-negative --- and, in his formulation, to sum to one --- is what makes stacking stable, an observation extended by
-\citet{leblanc1996combining} and formalized in the super-learner literature
-\citep{vanderlaan2007super,ledell2016auc}. Greedy forward selection with replacement \citep{caruana2004ensemble}
-remains the practical default in automated machine learning. \citet{fumera2005theoretical} give the theoretical
-analysis of weighted averaging, and a broad recent literature optimizes ensemble weights numerically, by convex
-programming, metaheuristics or Bayesian search
-\citep{zhang2011sparse,yao2018stacking,shahhosseini2022optimizing,hassan2026weighted,xu2026pseo}.
-
-Two observations matter for this paper. First, the simplex constraint is standard but is almost always treated as a
-constraint to be respected rather than as an experimental region to be designed over: we found no study in this cluster
-that runs a statistical design over the weight simplex and fits a response surface to it. Second, essentially all of
-this work is single-objective, optimizing one criterion at a time.
+Weighted voting and weighted probability averaging are long established
+\citep{hansen1990neural,kittler1998combining,dietterich2000ensemble,kuncheva2014combining}; the weights are classically
+set by stacked generalization on out-of-fold predictions, stabilized by non-negative coefficients, summing to one in
+Breiman's formulation
+\citep{wolpert1992stacked,breiman1996stacked,leblanc1996combining,vanderlaan2007super,ledell2016auc}, by greedy forward
+selection with replacement --- still the default in automated machine learning \citep{caruana2004ensemble} --- or by
+numerical optimization
+\citep{zhang2011sparse,yao2018stacking,shahhosseini2022optimizing,hassan2026weighted,xu2026pseo};
+\citet{fumera2005theoretical} gives the theoretical analysis of weighted averaging.
+Throughout, the simplex is almost always respected as a constraint rather than designed over as an experimental
+region, and essentially all of this work is single-objective: we found no study in this cluster that fits a response
+surface to a statistical design over the weight simplex.
 
 \subsection{Multiobjective ensemble optimization}
 \label{sec:rel:moo}
 
-Multiobjective formulations of ensemble learning divide by what the decision variables are. A large family evolves the
-\emph{members} under accuracy-versus-diversity objectives \citep{abbass2003pareto,chandra2006ensemble,jin2008pareto}.
-A second family selects a \emph{subset}, with binary membership variables, trading error against ensemble size or
-confidence \citep{dossantos2008dynamic,qian2015pareto}. A third, and the one relevant here, optimizes
-\emph{continuous combination weights} under conflicting criteria: \citet{ekbal2011multiobjective} and
-\citet{ekbal2013combining} optimize per-class vote weights with multiobjective simulated annealing
-\citep{bandyopadhyay2008amosa} under recall against precision; \citet{onan2016multiobjective} and
-\citet{rezaei2019multi} use multiobjective differential evolution on classifier weights; \citet{zhao2018multiobjective}
-add a sparsity ratio as a third objective; \citet{vrugt2006multi} optimize Bayesian model-averaging weights, which lie
-on a simplex by construction, against several forecast-skill metrics; and \citet{galvan2026simultaneous} optimize
-voting weights jointly with feature selection. Surveys organize the field by generation, selection and combination
-\citep{ribeiro2020ensemble}.
+Multiobjective formulations of ensemble learning divide by their decision variables: the \emph{members}, evolved under
+accuracy-versus-diversity objectives \citep{abbass2003pareto,chandra2006ensemble,jin2008pareto}; a \emph{subset}, with
+binary membership variables \citep{dossantos2008dynamic,qian2015pareto}; or --- the family relevant here ---
+\emph{continuous combination weights} under conflicting criteria, optimized by multiobjective simulated annealing,
+differential evolution, sparsity-augmented or joint weight--feature search, including over the simplex-constrained
+weights of Bayesian model averaging
+\citep{ekbal2011multiobjective,ekbal2013combining,bandyopadhyay2008amosa,onan2016multiobjective,rezaei2019multi,zhao2018multiobjective,vrugt2006multi,galvan2026simultaneous}.
+Surveys organize the field by generation, selection and combination \citep{ribeiro2020ensemble}.
 
-Multiobjective optimization of continuous ensemble weights is therefore \emph{not} new, and we do not claim it. What is
-absent from this cluster is any use of a designed experiment and a fitted response surface over the weight simplex, any
-use of a classical scalarization method such as NBI, and --- with the partial exception of the sparsity term in
-\citet{zhao2018multiobjective} --- any treatment of deployment cost as an objective. The evaluation practice is also
-different: fronts are typically compared between algorithms, not scored against a separately sampled real-objective
-reference,
-and are rarely replicated over resampled partitions with corrected inference \citep{demsar2006statistical}.
+Multiobjective optimization of continuous ensemble weights is therefore \emph{not} new, and we do not claim it. Absent
+from this cluster is any designed experiment and fitted response surface over the weight simplex, any classical
+scalarization method such as NBI, and --- with the partial exception of the sparsity term in
+\citet{zhao2018multiobjective} --- any treatment of deployment cost as an objective. Fronts are typically compared
+between algorithms rather than scored against a separately sampled real-objective reference, and are rarely replicated
+over resampled partitions with corrected inference \citep{demsar2006statistical}.
 
 \subsection{Mixture experiments and response surfaces}
 \label{sec:rel:mixture}
 
-Mixture experiments address exactly the constraint set of \cref{eq:simplex}. \citet{scheffe1958mixtures} introduced the
-simplex-lattice designs and the canonical polynomials that carry his name, followed by the simplex-centroid design
-\citep{scheffe1963simplexcentroid}; \citet{cornell2002mixtures} is the standard reference, and
-\citet{myers2016rsm} places mixture designs within response-surface methodology. \citet{piepel1982component} is
-directly relevant to how we read our coefficients: because $\sum_i w_i = 1$, mixture-model coefficients are not
-component effects in the ordinary sense, and separate measures are needed to interpret them.
+Mixture experiments address exactly the constraint set of \cref{eq:simplex}, through simplex-lattice designs and the
+canonical polynomials that carry Scheffé's name
+\citep{scheffe1958mixtures,scheffe1963simplexcentroid,cornell2002mixtures,myers2016rsm}. Because $\sum_i w_i = 1$,
+mixture-model coefficients are not component effects in the ordinary sense and separate measures are needed to
+interpret them \citep{piepel1982component}; this governs how we read ours.
 
 The classical reading of a positive interaction coefficient is \emph{synergistic blending}, defined as a departure of
 the blend above the linear (additive) prediction from the pure components \citep{cornell2002mixtures}. That is a
 statement relative to the chord, not relative to the better pure component, and the distinction turns out to matter
 (\cref{sec:results:coefficients}).
 
-Mixture designs are beginning to appear in machine learning. \citet{karl2023svem} apply self-validated ensemble
-modelling to mixture designs; \citet{leal2025mixtureweights} estimate the weights of a Gaussian mixture model through a
-simplex-lattice design and a response surface on the log-likelihood; and a fast-growing literature treats the
-proportions of a training-data mixture as a simplex and fits predictive laws over it
-\citep{xie2023doremi,ye2025mixinglaws,liu2025regmix,chen2025aioli,thudi2025mixmin}. These share our formalism but not
-our object: none models the performance of a weighted \emph{prediction} ensemble.
+Mixture designs are beginning to appear in machine learning --- in self-validated ensemble modelling, in estimating
+the weights of a Gaussian mixture model, and in predictive laws fitted over training-data mixture proportions
+\citep{karl2023svem,leal2025mixtureweights,xie2023doremi,ye2025mixinglaws,liu2025regmix,chen2025aioli,thudi2025mixmin}
+--- but share our formalism and not our object: none models the performance of a weighted \emph{prediction} ensemble.
 
 The exception, and the closest prior art to this study, is \citet{kwon2024ensemble}. They treat the weights of five
 heterogeneous classifiers as mixture components, obtain the generalization metric at each point of a mixture design,
@@ -115,36 +103,35 @@ reference, or replicates over resampled partitions.
 \label{sec:rel:surrogate}
 
 The broader surrogate-assisted literature is well surveyed
-\citep{jin2011surrogate,tabatabaei2015survey,chugh2019survey,deb2019taxonomy}, with prominent methods including ParEGO
-\citep{knowles2006parego}, MOEA/D-EGO \citep{zhang2010moeadego} and SMS-EGO \citep{ponweiser2008smsego}. This
-literature is acutely aware that a surrogate may mislead, and addresses it primarily through \emph{model management}:
-deciding which points to evaluate expensively so that the surrogate improves where it matters. The reliability of the
-extreme points themselves has been studied for the true objectives --- the difficulty of estimating the nadir point is
-a recognized problem \citep{deb2010nadir}, normalization strategies are known to affect performance
+\citep{jin2011surrogate,tabatabaei2015survey,chugh2019survey,deb2019taxonomy}, with ParEGO, MOEA/D-EGO and SMS-EGO
+prominent \citep{knowles2006parego,zhang2010moeadego,ponweiser2008smsego}; it is acutely aware that a surrogate may
+mislead, and answers primarily with \emph{model management}: deciding which points to evaluate expensively so that the
+surrogate improves where it matters. Extreme-point reliability has been studied for the true objectives: nadir
+estimation is a recognized problem \citep{deb2010nadir}, normalization affects performance
 \citep{he2021normalization}, and the normalized normal constraint was introduced partly to make anchor-based
 normalization better behaved \citep{messac2003normalized}.
 
-What we did not find, in this cluster or any other, is a study that computes the anchors of a CHIM-based method both
-from a surrogate and from the true objectives and compares the resulting fronts, or one that revalidates a complete
+What we did not find, in this cluster or any other, is a study that computes a CHIM method's anchors both from a
+surrogate and from the true objectives and compares the resulting fronts, or that revalidates a complete
 surrogate-generated Pareto set on the true objectives and scores it with $\igdp$ and hypervolume against an
-\emph{empirically constructed} reference. The closest external analogue we located is
-\citet{abolghasemian2022haulage}, which fits regression metamodels from a designed experiment, validates the metamodels
-by fit statistics, and runs a modified NBI on them without re-evaluating the resulting Pareto solutions on the
-simulation --- precisely the NBI-A pattern this study is built to expose.
+\emph{empirically constructed} reference. The closest external analogue we located, \citet{abolghasemian2022haulage},
+runs a modified NBI on regression metamodels fitted from a designed experiment and validated by fit statistics, without
+re-evaluating the resulting Pareto solutions on the simulation --- precisely the NBI-A pattern this study is built to
+expose.
 
 \subsection{Cost-aware ensemble deployment}
 \label{sec:rel:cost}
 
-Prediction-time cost has been an explicit objective since \citet{turney2000types}. The literature prices it in three
-ways: as the cost of a fixed \emph{deployed set}, as in ensemble pruning and hardware-aware or energy-aware ensemble
-selection \citep{zhou2002ensembling,ji2023pruning,maier2024hardware,gunasekaran2022cocktail,moreira2026energy}; as
+Prediction-time cost has been an explicit objective since \citet{turney2000types}, priced in three ways: as a fixed
+\emph{deployed set}, in ensemble pruning and hardware- or energy-aware selection
+\citep{zhou2002ensembling,ji2023pruning,maier2024hardware,gunasekaran2022cocktail,moreira2026energy}; as
 \emph{per-example adaptive execution} through cascades and early exits
 \citep{xu2013cstc,trapeznikov2013multistage,nan2017adaptive,chen2020frugalml}; and as a \emph{continuous penalty}
 inside a scalarized training objective \citep{xu2012greedy,zhang2011sparse}. Automated machine-learning systems
 increasingly expose inference-time constraints during ensemble construction
 \citep{erickson2020autogluon,feurer2022autosklearn,borchert2022paretoselect}.
 
-The distinction we need falls between these categories. Our weights induce a support, so deployment pays a step cost,
+The distinction we need falls between these categories: our weights induce a support, so deployment pays a step cost,
 while the optimizers can only minimize its continuous relaxation. To the best of our literature search, no prior work
 contrasts these two cost functions for the same weighted ensemble and reports that they disagree about which method
 wins. Where a related question has been settled it went the other way: for budgeted learning with feature re-use, the

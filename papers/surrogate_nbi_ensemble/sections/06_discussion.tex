@@ -1,171 +1,145 @@
 \section{Discussion}
 \label{sec:discussion}
 
-The results support a single organizing claim: on the classifier-weight simplex, the mixture-design response surface
-is a good \emph{description} of ensemble performance and an unreliable \emph{optimization substrate}, and the dominant
-term in that unreliability is not error in the interior of the surface but error in the points used to build the
-geometry of the search. This section works through the mechanisms, then states what transfers from the engineering
-setting where the framework originated and what does not.
+One claim organizes the results: on the classifier-weight simplex the mixture-design response surface is a good
+\emph{description} of ensemble performance and an unreliable \emph{optimization substrate}, and the dominant error is
+not inside the surface but in the points that build the geometry of the search.
 
 \subsection{Why anchors dominate}
 \label{sec:disc:anchors}
 
-NBI builds its search geometry from the payoff matrix: the utopia point, the objective normalization, the convex hull
-of individual minima and the quasi-normal direction all derive from the individual optima, and every subproblem in
-\cref{eq:nbi} is posed relative to that construction. An anchor error is therefore not local --- it relocates the
-CHIM, redirects every quasi-normal and rescales the objective space in which all 66 subproblems are solved --- whereas
-an error of comparable size in the interior perturbs individual solutions but leaves the frame intact.
+NBI derives its whole search geometry from the payoff matrix --- utopia point, normalization, convex hull of
+individual minima, quasi-normal directions --- so every subproblem in \cref{eq:nbi} is posed relative to the
+individual optima. An anchor error is therefore global rather than local: it relocates the CHIM, redirects every
+quasi-normal and rescales the objective space of all 66 subproblems, while an interior error of the same size perturbs
+single solutions and leaves the frame intact.
 
-That asymmetry predicts what we observe. Replacing surrogate anchors with real ones, holding the surfaces fixed,
-improves both primary endpoints in $30/30$ partitions on the two datasets whose ROC-AUC surfaces almost never pass the
-gate, and in $23$--$24/30$ on Porto Seguro and $24/30$ on UCI credit, with hypervolume gains up to $+0.18$. Removing
-the surrogate entirely, once anchors are correct, adds much less on three of the four datasets. The first-order fix is also the cheap one: real anchors are the single-objective
-optima a practitioner already computes, and on the convex log-loss that is one SLSQP call, so NBI-B costs essentially
-what NBI-A costs while repairing most of the gap to the metamodel-free arm.
+The asymmetry predicts what we observe. Replacing surrogate anchors with real ones, surfaces held fixed, improves both
+primary endpoints in $30/30$ partitions on the two datasets whose ROC-AUC surfaces almost never pass the gate, and in
+$23$--$24/30$ on Porto Seguro and $24/30$ on UCI credit, with hypervolume gains up to $+0.18$; removing the surrogate
+entirely, once anchors are correct, adds much less on three of the four datasets. The fix is also cheap: real anchors
+are single-objective optima a practitioner already computes, and on the convex log-loss that is one SLSQP call, so
+NBI-B costs essentially what NBI-A costs while repairing most of the gap to the metamodel-free arm.
 
-BNP Paribas shows the mechanism clearly. When the parsimony rule selects a quadratic ROC-AUC surface, that surface
-places its maximum at an interior mixture rather than at the gradient-boosting vertex where the real maximum lies. The
-anchor moves off the vertex, the CHIM is built between a false utopia point and the true remaining anchors, and the
-front is dominated almost everywhere by the empirical reference, hypervolume ratio falling from about $0.91$ to
-$0.04$--$0.12$. The failure is geometric rather than numerical --- the solver certifies these subproblems --- and it
-is invisible to any diagnostic computed on the surface alone.
+BNP Paribas shows it concretely: where the parsimony rule selects a quadratic ROC-AUC surface, the surrogate maximum
+sits at an interior mixture instead of the gradient-boosting vertex, so the CHIM is built from a false utopia point
+and the hypervolume ratio falls from about $0.91$ to $0.04$--$0.12$ --- a geometric failure, not a numerical one,
+since the solver certifies these subproblems, and invisible to any diagnostic computed on the surface alone.
 
 \subsection{Why the reliability gate does not catch it}
 \label{sec:disc:gate}
 
-The gate asks whether a surface predicts unseen compositions well on average. Anchor placement depends on where the
-surface puts its \emph{argmax} --- a different and much more local property. A surface can be globally accurate and
-still misplace an extremum, or globally poor with its argmax on the right vertex.
+The gate asks whether a surface predicts unseen compositions well on average; anchor placement depends on where the
+surface puts its \emph{argmax}, a far more local property. A surface can be globally accurate and still misplace an
+extremum, or globally poor with its argmax on the right vertex.
 
-On BNP Paribas the two diverge actively. The parsimony rule selects the quadratic order precisely when it predicts
+On BNP Paribas they diverge actively: the parsimony rule selects the quadratic order precisely when it predicts
 held-out points better, so the collapse partitions have higher external $R^2$ (median $0.46$ against $0.08$) and pass
-the gate more often ($3$ of $7$ against $2$ of $23$) than the partitions where the surrogate anchor is right: selecting
-a better-fitting surface makes the optimization worse. This is not a paradox. A linear Scheffé surface has its maximum
-at a vertex by construction, so the \emph{less} flexible model is accidentally protected, while the more flexible one
-is free to place an interior maximum the data do not support.
+the gate more often ($3$ of $7$ against $2$ of $23$) than the partitions where the surrogate anchor is right. A linear
+Scheff\'e surface has its maximum at a vertex by construction, so the \emph{less} flexible model is accidentally
+protected while the more flexible one may place an interior maximum the data do not support.
 
-The practical conclusion is a division of labour. An external gate is worth its 100 extra evaluations, cleanly
-separating unusable surfaces from excellent ones, but it must be paired with an anchor check that is cheaper still:
-compare each surrogate argmax against the real optimum and prefer the real one. That check is exactly what
-distinguishes NBI-B from NBI-A, and it removes the failure rather than merely diagnosing it.
+Hence a division of labour: the gate is worth its 100 extra evaluations for separating unusable surfaces from
+excellent ones, but only the cheaper anchor check that distinguishes NBI-B from NBI-A removes the failure instead of
+diagnosing it.
 
 \subsection{Smooth surrogates against a rank statistic}
 \label{sec:disc:smooth}
 
 Two of the three objectives behave as the framework's engineering origins assume: log-loss is convex and smooth in
-$\wvec$, and the Brier score is exactly quadratic in $\wvec$, reproduced with $R^2_{\mathrm{ext}} = 1.000$ in all 120
-replications. The ROC-AUC is not. It is a rank statistic, constant wherever the induced ordering does not change, with
-kinks at the boundaries between orderings, and a low-order polynomial cannot represent a piecewise-constant function
-with many small steps --- it smooths across them. That is why the Santander ROC-AUC surface achieves a Spearman
-correlation of $0.830$ while its external $R^2$ is negative: it gets the ordering broadly right and the values wrong.
+$\wvec$, the Brier score exactly quadratic ($R^2_{\mathrm{ext}} = 1.000$ in all 120 replications). The ROC-AUC is not:
+a rank statistic, constant wherever the induced ordering does not change and kinked between orderings, which a
+low-order polynomial smooths across instead of representing. Hence the Santander ROC-AUC surface reaches a Spearman
+correlation of $0.830$ with a negative external $R^2$ --- ordering broadly right, values wrong.
 
-The consequences propagate. \Cref{sec:results:coefficients} shows a systematic, one-directional bias: on 20 of 40
-dataset-pair cells the surface predicts an edge blend superior to both pure components where the real objective
-delivers none, and in no case does it miss a real one. A quadratic fitted over an edge with one weak endpoint absorbs
-that curvature into $\beta_{ij}$ and overshoots its maximum --- the same over-prediction of interior optima that
-displaces surrogate anchors off vertices.
+The resulting bias is one-directional: on 20 of 40 dataset-pair cells (\cref{sec:results:coefficients}) the surface
+predicts an edge blend superior to both pure components where the real objective delivers none, and in no case does it
+miss a real one. A quadratic fitted over an edge with one weak endpoint absorbs that curvature into $\beta_{ij}$ and
+overshoots its maximum --- the same over-prediction of interior optima that displaces surrogate anchors off vertices.
 
-This is the concrete sense in which the transfer is non-trivial. In the originating application the responses are
-physical measurements, genuinely smooth in the process factors, for which a quadratic is a defensible local model.
-Discrimination metrics are not, and no experimental design repairs a misspecified model class. Where the objective
-\emph{is} smooth in the weights, the inherited machinery works as advertised: Santander's log-loss surface passes the
-gate in every partition.
+In the originating application the responses are physical measurements, smooth in the process factors, where a
+quadratic is a defensible local model; discrimination metrics are not, and no experimental design repairs a
+misspecified model class. Where the objective \emph{is} smooth in the weights the machinery works as advertised:
+Santander's log-loss surface passes the gate in every partition.
 
 \subsection{Non-smoothness also constrains the optimizer}
 \label{sec:disc:solver}
 
-The same property that defeats the surrogate constrains the metamodel-free arm. SLSQP on a piecewise-constant
-objective cannot certify optimality, because the gradient is zero almost everywhere. NBI-C therefore accepts a
-feasible iterate whose equality residual is below $10^{-3}$, which is a weaker guarantee than the certification NBI-A
-and NBI-B obtain on their smooth polynomials. The reported success rates are not on a common scale across arms, and
-we have been careful not to read the difference as evidence about surrogate quality.
+The same property constrains the metamodel-free arm: SLSQP cannot certify optimality on a piecewise-constant
+objective, whose gradient is zero almost everywhere, so NBI-C accepts a feasible iterate with equality residual below
+$10^{-3}$, a weaker guarantee than the certification NBI-A and NBI-B obtain on smooth polynomials. Success rates are
+therefore not on a common scale across arms, and we do not read the difference as evidence about surrogate quality.
 
-The UCI credit result is the sharpest illustration of why that care is needed. It looks like the strongest evidence in
-the paper for metamodel-free NBI: a $+0.277$ hypervolume gain over NBI-B with a Holm-corrected $p$ of $0.010$. But
-UCI credit is the dataset whose surfaces pass the gate in every partition, so surrogate error cannot be the
-explanation. It is not: NBI-B certifies a median of 29 of its 66 subproblems there, the gap correlates with the number
-of converged subproblems at Spearman $-0.92$, and in the three partitions where NBI-B converges fully the gap
-disappears. A study that reported only the headline number would have drawn exactly the wrong mechanistic conclusion.
+UCI credit shows why that care is needed: its $+0.277$ hypervolume gain for NBI-C over NBI-B, at Holm-corrected
+$p = 0.010$, looks like the strongest evidence here for the metamodel-free arm, yet UCI credit's surfaces pass the
+gate in every partition, so surrogate error cannot explain it: NBI-B certifies a median of 29 of its 66 subproblems,
+the gap correlates with the converged count at Spearman $-0.92$, and in the three partitions where NBI-B converges
+fully it disappears.
 
 \subsection{Compute against fidelity}
 \label{sec:disc:compute}
 
 Metamodel-free NBI reaches median hypervolume ratios of $0.976$--$0.989$ and is best or tied-best on the primary
-endpoints, so it is a defensible default. But it consumes about $4.2\times10^{5}$ real evaluations per replication
-against none for the surrogate arms, at 3 to 73 times the wall-clock cost, and that spend is strongly conditional: on
-UCI credit the threefold premium buys the largest gain, while on Santander a seventy-three-fold premium buys $+0.008$
+endpoints, so it is a defensible default, but it spends about $4.2\times10^{5}$ real evaluations per replication
+against none for the surrogate arms, at 3 to 73 times the wall-clock cost. That spend is strongly conditional: on UCI
+credit the threefold premium buys the largest gain, while on Santander a seventy-three-fold premium buys $+0.008$
 hypervolume on a dataset whose log-loss surface is already exact.
 
-Its affordability is specific to this problem and should not be generalized. Because the ensemble is linear in $\wvec$
-and the base-model probabilities are cached, one evaluation is a matrix--vector product plus a sort --- $0.37$ to
-$2.13$~ms here. Where each evaluation requires refitting a model the ordering reverses and the surrogate is the only
-viable route, which is the regime the framework was designed for. The recommendation is therefore conditional on
-evaluation cost: when real evaluations are cheap, use them, at least for the anchors; when they are expensive, use a
-surrogate but validate it externally and anchor it on whatever real information is affordable, because anchors are
-where surrogate error hurts most and they are the smallest number of real evaluations one can spend.
+Its affordability is specific to this problem: the ensemble is linear in $\wvec$ and the base-model probabilities are
+cached, so one evaluation is a matrix--vector product plus a sort, $0.37$ to $2.13$~ms here. Where each evaluation
+needs a model refit the ordering reverses and the surrogate is the only viable route --- the regime the framework was
+designed for. The recommendation is therefore conditional on evaluation cost: cheap evaluations should be used
+directly, at least for the anchors; expensive ones argue for an externally validated surrogate, anchored on whatever
+real evaluations are affordable.
 
 \subsection{Response surfaces as descriptions rather than optimizers}
 \label{sec:disc:description}
 
-The surfaces are strikingly reproducible. Over 30 resampled partitions the sign of each of the four leading
-interaction coefficients is constant in all eight dataset--response cells, the leading term is identical at $R = 10$
-and $R = 30$ in all eight, and coefficient means move by at most 6\%. As a description of how ensemble performance
-varies over the simplex, and in particular of which vertices are weak and which regions are flat, the model is stable
-and interpretable in a way that a black-box optimizer is not. That interpretability is a genuine benefit of the
-mixture-design formalism and it survives everything else in this paper.
-
-What does not survive is the step from description to inference about blends. The classical synergism criterion,
-$\beta_{ij} > |\beta_i - \beta_j|$, is correct as stated and correctly guards against reading the sign of
-$\beta_{ij}$ alone; but it is computed \emph{from the surface}, and on these ensembles it inherits the surface's
-systematic over-prediction of interior optima. Confirming a candidate pair on the real objective costs one matrix
-product, and that confirmation should be treated as part of the interpretation rather than as an optional check.
+The surfaces themselves are reproducible --- over 30 resampled partitions the four leading interaction coefficients
+keep their sign in all eight dataset--response cells, the leading term is identical at $R = 10$ and $R = 30$ in all
+eight, and coefficient means move by at most 6\% (\cref{sec:results:coefficients}) --- and as a description of which
+vertices are weak and which regions flat the model is interpretable in a way a black-box optimizer is not. What does
+not survive is the step from that description to inference about blends: the classical synergism criterion
+$\beta_{ij} > |\beta_i - \beta_j|$ is correct as stated and guards against reading the sign of $\beta_{ij}$ alone, but
+it is computed \emph{from the surface}, so on these ensembles it inherits the surface's systematic over-prediction of
+interior optima, and a candidate pair must be confirmed on the real objective --- one matrix product.
 
 \subsection{Deployment cost is not the cost that was optimized}
 \label{sec:disc:cost}
 
-Every method here minimized the continuous relaxation $\sum_i w_i c_i$, because a step cost is not differentiable and
-cannot enter a gradient-based multiobjective formulation. Deployment pays the step cost. The two are not monotonically
-related on the interior of the simplex, and the consequence is not cosmetic: the hypervolume-best method changes
-between the two definitions in $10$, $24$, $8$ and $20$ of 30 partitions, and several paired conclusions reverse,
-including the anchor effect on UCI credit.
+Every method here minimized the continuous relaxation $\sum_i w_i c_i$, since a step cost is not differentiable and
+cannot enter a gradient-based formulation; deployment pays the step cost. The two are not monotonically related inside
+the simplex, and the consequence is not cosmetic: the hypervolume-best method changes between the definitions in $10$,
+$24$, $8$ and $20$ of 30 partitions, and several paired conclusions reverse, including the anchor effect on UCI
+credit.
 
-The mechanism is that a linear cost gives no incentive to zero a component. A weight of $0.01$ on a model costing
-$200$~ms adds $2$~ms under the relaxation and $200$~ms in deployment. Methods that optimize the relaxation therefore
-drift into the interior and systematically miss the cheap low-support solutions --- the pure vertices and two-model
-faces --- that the unoptimized 66-run design contains by construction, which is why that design wins the support-cost
-hypervolume outright in 13 of 30 BNP Paribas partitions.
+The mechanism is that a linear cost gives no incentive to zero a component: a weight of $0.01$ on a model costing
+$200$~ms adds $2$~ms under the relaxation and $200$~ms in deployment. Methods optimizing the relaxation drift into the
+interior and miss the cheap low-support solutions --- pure vertices and two-model faces --- that the unoptimized
+66-run design contains by construction, which is why that design wins the support-cost hypervolume outright in 13 of
+30 BNP Paribas partitions.
 
-The related literature prices deployment either as a support cost over a fixed selected set or as a per-example
-cascade, and the sparsity-inducing formulations that do use a continuous relaxation of a support count generally do
-not audit whether the relaxation and the support agree. Where that question has been examined in a related setting, the
-answer went the other way: for budgeted learning with feature re-use, a support-cost programme can be shown to be
-solved exactly by its linear relaxation \citep{nan2015budgeted}. Our setting does not inherit that guarantee, and the
-practical recommendations are concrete. Report which cost model is used; add a cleaning step that zeroes weights below
-the activity threshold and re-evaluates, since an inert weight just above $\varepsilon$ produced a spurious
-$250$~ms difference in our own analysis before we caught it; and if deployment cost is the real objective, consider
-optimizing over supports explicitly rather than hoping the relaxation lands on a cheap one.
+Related work prices deployment as a support cost over a fixed selected set or as a per-example cascade, and the
+sparsity-inducing formulations that do use a continuous relaxation of a support count rarely audit whether the
+relaxation and the support agree. Where that question has been examined in a related setting, the answer went the
+other way: for budgeted learning with feature re-use, a support-cost programme is solved exactly by its linear
+relaxation \citep{nan2015budgeted} --- a guarantee our setting does not inherit. Report which cost model is used; zero
+weights below the activity threshold and re-evaluate, since an inert weight just above $\varepsilon$ produced a
+spurious $250$~ms difference in our own analysis; and optimize over supports explicitly where deployment cost is the
+real objective.
 
 \subsection{What the framework's transfer teaches}
 \label{sec:disc:transfer}
 
-The pipeline transfers cleanly where its assumptions hold and fails where they do not, and the assumptions are
-identifiable in advance rather than only in hindsight.
+The pipeline transfers where the response is smooth in the mixture components, a condition identifiable in advance.
+Where the ROC-AUC surface is adequate too --- UCI credit, which passes in $30/30$ --- surrogate NBI with real anchors
+is within $0.03$ hypervolume of the metamodel-free arm, and random scalarization on those surfaces is statistically
+indistinguishable from it: there the inherited machinery is the efficient choice. It does not transfer unexamined to a
+rank-statistic response, to anchors that are vertices of the feasible region rather than interior points, or to an
+objective that is a step function of the support --- three generic properties that break model class, geometry and
+objective definition respectively.
 
-It transfers when the response is smooth in the mixture components. Log-loss and Brier behave exactly as the
-engineering responses do, and on the datasets where the ROC-AUC surface is also adequate --- UCI credit, where it
-passes in $30/30$ --- surrogate NBI with real anchors is within $0.03$ hypervolume of the metamodel-free arm and
-random scalarization on the same surfaces is statistically indistinguishable from it. In that regime the inherited
-machinery is not merely usable, it is the efficient choice.
-
-It does not transfer unexamined when the response is a rank statistic, when the decision variables are the mixture
-itself so that anchors are vertices of the feasible region rather than interior points, or when an objective is a step
-function of the support. These are not exotic special cases; they are generic properties of machine-learning
-objectives, and each of them breaks a different part of the pipeline: model class, geometry, and objective definition
-respectively.
-
-What we would carry forward into any future application of this framework is not a method but a checklist: validate
-the surface on compositions it has not seen and record the result; compare each surrogate argmax against the real
-optimum and prefer the real one; revalidate every candidate on the true objective before scoring; build a reference
-whose sampled core no method under test can influence; and state which cost you are paying. None of these is expensive relative to
-the pipeline they protect, and in this study each of them changed a conclusion that would otherwise have been
-reported.
+What we would carry forward is not a method but a checklist: validate the surface on compositions it has not seen;
+compare each surrogate argmax against the real optimum and prefer the real one; revalidate every candidate on the true
+objective before scoring; build a reference whose sampled core no method under test can influence; and state which
+cost you are paying. Each of them changed a conclusion that would otherwise have been reported.

@@ -1,74 +1,66 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We transferred an established DoE--RSM--NBI framework --- mixture design over combination weights, Scheffé surrogate of
-performance over the simplex, Normal Boundary Intersection on that surrogate --- from the engineering and forecasting
-settings in which it was developed to classifier ensemble weighting, and asked not whether it produces a Pareto front
-but under which conditions the front it produces can be believed. Answering that required decomposing the pipeline
-into three arms differing only in where the objectives and the anchors come from, revalidating every candidate on the
-true out-of-fold objectives, scoring against an empirical reference whose sampled core the methods cannot influence,
-and repeating the whole procedure on 4 datasets $\times$ 30 partitions.
+We transferred an established DoE--RSM--NBI framework from engineering and forecasting to classifier ensemble weighting,
+and asked not whether it produces a Pareto front but when that front can be believed. Answering that required three arms
+defined by two methodological factors --- the source of the objectives and the source of the anchors --- revalidation on
+the true out-of-fold objectives, an empirical reference whose sampled core the methods cannot influence, and 4 datasets
+$\times$ 30 partitions.
 
-The framework is not uniformly safe, and it is not uniformly unsafe. Its behaviour is governed by three identifiable
-properties of the problem rather than by anything about the optimizer.
+The framework is neither uniformly safe nor uniformly unsafe: its behaviour is governed by three properties of the
+problem, not by anything about the optimizer.
 
 \emph{Model class.} Where the response is smooth in the weights, the surrogate is excellent: log-loss surfaces pass an
-external reliability gate in every partition on two of four datasets, and the Brier score, which is exactly quadratic
-in the weights, is reproduced with $R^{2}_{\mathrm{ext}} = 1.000$ in all 120 replications. Where the response is a
-rank statistic, it can fail completely: the Santander ROC-AUC surface never passes the gate and has negative external
-$R^{2}$ despite a rank correlation of $0.83$. Surrogate adequacy is a property of the dataset \emph{and} the metric,
-must be tested on compositions the surface has not seen, and cannot be assumed from in-sample fit.
+external reliability gate in every partition on two of four datasets, and the Brier score, exactly quadratic in the
+weights, is reproduced with $R^{2}_{\mathrm{ext}} = 1.000$ in all 120 replications. Where the response is a rank
+statistic, it can fail completely: the Santander ROC-AUC surface never passes the gate and has negative external $R^{2}$
+despite a rank correlation of $0.83$. Surrogate adequacy is a property of the dataset \emph{and} the metric, and cannot
+be assumed from in-sample fit.
 
 \emph{Geometry.} Among failures attributable to the surrogate pipeline, anchor misplacement had the largest observed
 effect. Replacing surrogate anchors with real single-objective optima --- changing nothing else --- improved both
-primary endpoints in every one of 30 partitions on the two datasets whose surfaces fail, and in 23 to 24 of 30 on the
-two where they largely succeed. Removing the metamodel altogether, once the anchors are right, adds far less on three
-datasets. The exception is instructive and prevents a universal claim: on UCI credit, whose surfaces pass the gate in
-every partition, the residual gap is a subproblem-convergence effect rather than a surrogate-accuracy one, so solver
-geometry can dominate where the surrogate is excellent. Because NBI derives its utopia
-point, its normalization and its search directions from the payoff matrix, an anchor error relocates the entire
-construction, while an interior error perturbs individual subproblems. The practical consequence is favourable: the
-first-order fix is also the cheapest, since real anchors are the single-objective optima a practitioner already
-computes.
+primary endpoints in all 30 partitions of the two datasets whose surfaces fail, and in 23 to 24 of 30 on the two where
+they largely succeed; removing the metamodel altogether, once the anchors are right, adds far less on three datasets.
+The exception prevents a universal claim: on UCI credit, whose surfaces pass the gate in every partition, the residual
+gap is a subproblem-convergence effect rather than a surrogate-accuracy one, so solver geometry can dominate where the
+surrogate is excellent. Because NBI takes its utopia point, normalization and search directions from the payoff matrix,
+an anchor error relocates the entire construction; an interior error perturbs single subproblems. The first-order fix is
+also the cheapest: real anchors are the single-objective optima a practitioner already computes.
 
-\emph{Diagnosis.} An external gate on surface quality is worth its 100 extra evaluations and cleanly separates usable
-from unusable surfaces, but it does not predict anchor failure, and on one dataset the two properties actively
-diverge: the partitions in which surrogate-anchored NBI collapses are exactly those in which the parsimony rule selects
-a surface that fits held-out compositions better and passes the gate more often. Surface accuracy and argmax accuracy
-are different properties, and only the second governs NBI. The gate should therefore be paired with an anchor check
-that compares each surrogate argmax against the real optimum --- which is simply the difference between our two
-surrogate arms.
+\emph{Diagnosis.} An external gate on surface quality is worth its 100 extra evaluations and separates usable from
+unusable surfaces, but it does not predict anchor failure, and on one dataset the two properties diverge: the partitions
+where surrogate-anchored NBI collapses are exactly those where the parsimony rule selects a surface that fits held-out
+compositions better and passes the gate more often. Surface accuracy and argmax accuracy are different properties, and
+only the second governs NBI; the gate should therefore be paired with an anchor check --- simply the difference between
+our two surrogate arms.
 
-Two further results are practical rather than methodological. The classical synergism criterion
-$\beta_{ij} > |\beta_i - \beta_j|$ is satisfied by the fitted surfaces for the leading classifier pair on all four
-datasets in every partition, yet the real 50/50 blend beats its better member on only one of them; across all pairs the
-surface over-predicts blending gains twenty times and under-predicts none. A large interaction coefficient is a
-statement about the fitted surface, and on these ensembles the surface systematically overstates what blending buys,
-so a candidate pair must be confirmed on the real objective before it is called complementary. Separately, the
-continuous cost that a differentiable method can optimize and the step cost that deployment pays disagree about the
-best method in 10, 24, 8 and 20 of 30 partitions across the four datasets, and several conclusions reverse between
-them; any claim about ensemble cost must name which cost it means, and a weight-cleaning step is necessary because an
-inert weight just above the activity threshold produced a spurious 250~ms difference in our own analysis before we
-caught it.
+Two further results are practical. The classical synergism criterion $\beta_{ij} > |\beta_i - \beta_j|$ is satisfied by
+the fitted surfaces for the leading classifier pair in every partition of all four datasets, yet the real 50/50 blend
+beats its better member on only one of them, and across all pairs the surface over-predicts blending gains twenty times
+and under-predicts none: on these ensembles a large interaction coefficient is a statement about the fit, not evidence
+of complementarity, so a candidate pair must be confirmed on the real objective. Separately, the continuous cost a
+differentiable method can optimize and the step cost deployment pays disagree about the best method in 10, 24, 8 and 20
+of 30 partitions across the four datasets, and several conclusions reverse between them: any cost claim must name which
+cost it means, and weight cleaning is necessary --- an inert weight just above the activity threshold produced a
+spurious 250~ms difference in our own analysis before we caught it.
 
-Tripling the replications from 10 to 30 changed no directional conclusion. It converted three undecided findings into
-quantified ones, exposed two apparent phenomena as artifacts, and supplied intervals; it did not alter what the study
-says. We report that explicitly because it is evidence about how much replication such a study needs, and the answer
-appears to be that ten partitions identify the conclusions while thirty are required to defend their magnitudes.
+Tripling the replications from 10 to 30 changed no directional conclusion: it converted three undecided findings into
+quantified ones, exposed two apparent phenomena as artifacts and supplied intervals. We report this because it is
+evidence about how much replication such a study needs: ten partitions appear to identify the conclusions, while thirty
+are needed to defend their magnitudes.
 
-One external check bounds the framework's standing. A canonical evolutionary optimizer, NSGA-II, given the same three
-objectives and the same number of real objective evaluations per replication, produced a better approximation than the
-metamodel-free arm on all four datasets and on both endpoints, by small but consistent margins, and produced markedly
-more evenly spaced revalidated fronts. Where evaluations are cheap enough to run either, that is the better choice,
-and the even spread NBI is classically credited with is attainable on these problems by a different construction. This
-does not disturb the diagnosis above, because the evolutionary optimizer is not part of the surrogate pipeline being
-diagnosed; it settles what the pipeline is worth relative to the conventional alternative.
+One external check bounds the framework's standing: NSGA-II, given the same three objectives and the same number of real
+objective evaluations per replication, produced a better approximation than the metamodel-free arm on all four datasets
+and both endpoints, by small but consistent margins, and markedly more evenly spaced revalidated fronts. Where
+evaluations are cheap enough to run either, that is the better choice, and the even spread NBI is classically credited
+with is attainable here by a different construction. It does not disturb the diagnosis above --- NSGA-II is not part of
+the pipeline being diagnosed --- but it settles what that pipeline is worth against the conventional alternative.
 
-What we would carry into any future use of this framework is not a method but a set of controls: validate the surface
-on compositions it has not seen; compare each surrogate argmax against the real optimum and prefer the real one;
-revalidate every candidate on the true objective before scoring; build a reference that no method under test can
-influence; and state which cost is being paid. Each is inexpensive relative to the pipeline it protects, and in this
-study each of them changed a conclusion that would otherwise have been reported. The framework remains a good
-\emph{description} of the ensemble-weight simplex --- its coefficients are stable to a few percent across thirty
-resamplings and they say something interpretable about which components are weak. Whether it is also a good
-\emph{optimizer} there depends on conditions that can now be stated in advance and checked cheaply.
+What we carry forward is not a method but a set of controls: validate the surface on compositions it has not seen;
+compare each surrogate argmax against the real optimum and prefer the real one; revalidate every candidate on the true
+objective before scoring; build a reference whose sampled core no method under test can influence; and state which cost
+is being paid. Each is cheap relative to the pipeline it protects, and each changed a conclusion that would otherwise
+have been reported. The framework remains a good \emph{description} of the ensemble-weight simplex: its coefficients are
+stable to a few percent across thirty resamplings, and they say something interpretable about which components are weak.
+Whether it is also a good \emph{optimizer} there depends on conditions that can now be stated in advance and checked
+cheaply.

@@ -1,102 +1,89 @@
 \section{Introduction}
 \label{sec:intro}
 
-Combining several trained classifiers by a weighted average of their predicted probabilities is one of the oldest and
-most reliable devices in applied machine learning \citep{hansen1990neural,wolpert1992stacked,kittler1998combining,
-caruana2004ensemble}. The weights that govern such a combination are not free parameters in a box. For the combined
-output to remain a probability they must be non-negative and sum to one, a constraint recognized as beneficial in its
-own right since \citet{breiman1996stacked} showed that non-negativity, and in practice normalization, is what makes
-stacked combinations stable. The feasible set is therefore the unit simplex, and choosing ensemble weights is a
-\emph{compositional} optimization problem.
+A weighted average of several classifiers' predicted probabilities is among the oldest and most reliable devices in
+applied machine learning \citep{hansen1990neural,wolpert1992stacked,kittler1998combining,caruana2004ensemble}. Its
+weights are not free parameters: to keep the output a probability they must be non-negative and sum to one, and
+non-negativity with normalization is what makes stacked combinations stable \citep{breiman1996stacked}. The feasible
+set is the unit simplex, so ensemble weighting is a \emph{compositional} optimization problem.
 
-That observation has a direct methodological consequence. Optimization over a simplex is the subject of a mature branch
-of experimental design: mixture experiments, whose canonical polynomial models were introduced by
-\citet{scheffe1958mixtures,scheffe1963simplexcentroid} and developed into standard practice by \citet{cornell2002mixtures}.
-The components are the classifiers, a pure vertex is a single model used alone, the centroid is uniform soft voting,
-and a Scheffé canonical polynomial is the natural response surface, because ordinary polynomials with an intercept are
-singular under the sum-to-one constraint. This correspondence is exact, and it has already been exploited: mixture
-designs have been used to weight portfolio components \citep{mendes2016portfolio_mde,leal2022portfolio_doptimal_mde},
-to weight the members of a time-series forecast combination, where a simplex lattice over the combination weights feeds
-Scheffé models that are then optimized by Normal Boundary Intersection \citep{bacci2019nbi_mixture}, to weight
-neural-network ensembles \citep{moreira2021ann_ensemble_mde}, and to weight a three-network load-forecasting ensemble
-through a simplex-lattice design, a factor-analytic surrogate and NBI \citep{rocha2025ensemblestlf}. A closely related
-framework combining mixture designs, response-surface metamodels and NBI with a mixture-design post-Pareto stage was
-developed for multiobjective engineering optimization \citep{pereira2025hybrid}. Most directly,
-\citet{kwon2024ensemble} treat the weights of five heterogeneous \emph{classifiers} as mixture components, fit a
-Scheffé polynomial to accuracy or $F_1$ over the weight simplex, reduce it by backward elimination and maximize it
-under $\sum_i w_i = 1$ on eleven tabular binary datasets.
+That has a methodological consequence: optimization over a simplex is the subject of mixture experiments, a mature
+branch of experimental design \citep{scheffe1958mixtures,scheffe1963simplexcentroid,cornell2002mixtures}. The
+classifiers are the components, a pure vertex is a single model, the centroid uniform soft voting, and a Scheffé
+polynomial the natural response surface. The correspondence is exact and already exploited for portfolio weights
+\citep{mendes2016portfolio_mde,leal2022portfolio_doptimal_mde} and neural-network ensembles
+\citep{moreira2021ann_ensemble_mde}, and combined with Normal Boundary Intersection for forecast combination
+\citep{bacci2019nbi_mixture}, load forecasting \citep{rocha2025ensemblestlf} and multiobjective engineering
+optimization \citep{pereira2025hybrid}. Most directly, \citet{kwon2024ensemble} treat five heterogeneous
+\emph{classifiers}' weights as mixture components and maximize a Scheffé polynomial of accuracy or $F_1$ on eleven
+tabular binary datasets.
 
-\textbf{We therefore claim no part of that construction.} Mixture design over combination weights, a Scheffé surrogate
-of performance over the simplex, and NBI on that surrogate are established prior work --- individually, in combination,
-and specifically for classifier ensembles. What has not been established is whether the construction remains
-\emph{trustworthy} once the problem becomes genuinely multiobjective, and that is the question of this paper.
+\textbf{We therefore claim no part of that construction:} mixture design over combination weights, a Scheffé surrogate
+over the simplex, and NBI on that surrogate are established prior work, individually and for classifier ensembles.
+What is not established is whether the construction stays \emph{trustworthy} once the problem becomes genuinely
+multiobjective --- this paper's question.
 
 \subsection{Why the transfer is not routine}
 
-The engineering applications in which this framework matured share three properties that classifier ensembles do not.
+The applications in which this framework matured share three properties that classifier ensembles do not.
 
-First, \emph{the responses are smooth}. Tool life, surface roughness and process cost vary smoothly with cutting speed
-or feed rate, and a low-order polynomial is a defensible local model. The area under the ROC curve is a rank statistic:
-it is piecewise constant in the weights, with zero gradient almost everywhere and kinks where the induced ordering of
-samples changes. No experimental design repairs a misspecified model class, and a smooth surrogate fitted to a
-step-like response will misrepresent it in a specific, systematic direction.
+First, \emph{the responses are smooth}: tool life or process cost varies smoothly with cutting speed, where a
+low-order polynomial is a defensible local model. The area under the ROC curve is instead a rank statistic, piecewise
+constant in the weights. No experimental design repairs a misspecified model class, and a smooth surrogate fitted to a
+step-like response misrepresents it systematically.
 
-Second, \emph{the decision variables are the mixture}. When the simplex holds scalarization weights, as in most of the
-lineage above, the anchors that NBI needs are optima of the surrogate in some other space. When the simplex holds the
-decision variables themselves, the anchors are points of the feasible region --- frequently its vertices --- and an
-anchor error is a displacement of the geometry within which every subproblem is posed. NBI derives its utopia point,
-its objective normalization and its quasi-normal directions from the payoff matrix of individual optima
-\citep{das1998nbi}, so errors there propagate globally rather than locally. The unreliability of ideal and nadir
-estimates is known in the classical multiobjective literature \citep{messac2003normalized,deb2010nadir}, but it is
-posed there as a question about estimating the true objectives, not about a surrogate standing in for them.
+Second, \emph{the decision variables are the mixture}. When the simplex holds scalarization weights, as in the lineage
+above, NBI's anchors are optima of the surrogate in another space; when it holds the decision variables themselves,
+the anchors are feasible-region points --- often vertices --- so an anchor error displaces the geometry in which every
+subproblem is posed. NBI derives its whole search geometry from the payoff matrix of individual optima
+\citep{das1998nbi}, so errors there propagate globally; the classical ideal/nadir literature
+\citep{messac2003normalized,deb2010nadir} asks about estimating the true objectives, not about a surrogate standing in
+for them.
 
-Third, \emph{one objective is a step function}. Deployment cost is not paid in proportion to a weight: a model that
-receives any non-negligible weight must be loaded and executed, and one that receives none costs nothing. A
-multiobjective method that requires differentiable objectives can only ever optimize a continuous relaxation of that
-cost, and there is no guarantee that the relaxation and the quantity actually paid agree about which solution is best.
+Third, \emph{one objective is a step function}: a model with any non-negligible weight must be loaded and executed,
+one with none costs nothing, so deployment cost is not proportional to a weight. A method requiring differentiable
+objectives can only optimize a continuous relaxation, with no guarantee that it and the quantity actually paid agree
+about which solution is best.
 
-Each of these breaks a different part of the pipeline --- the model class, the search geometry, and the objective
-definition --- and none of them is visible from the aggregate fit statistics that such studies conventionally report.
+Each breaks a different part of the pipeline --- the model class, the search geometry, the objective definition ---
+and none is visible in the aggregate fit statistics such studies conventionally report.
 
 \subsection{Approach}
 
-We evaluate the framework by decomposing it. Because the ensemble output is linear in the weights and the base-model
-probabilities can be cached, evaluating any weight vector on the true out-of-fold objectives costs one matrix--vector
-product, between $0.4$ and $2.1$~milliseconds in our setting. This unusual affordability lets us do something that is
-normally out of reach in surrogate-assisted optimization: run the \emph{same} NBI three times per replication, changing
-only where the objectives and the anchors come from.
+We decompose the framework. Because the ensemble output is linear in the weights and base-model probabilities can be
+cached, evaluating a weight vector on the true objectives costs one matrix--vector product ($0.4$ to
+$2.1$~milliseconds here) --- cheap enough to run the \emph{same} NBI three times per replication, changing only where
+objectives and anchors come from.
 
 \begin{itemize}
-\item \textbf{NBI-A} optimizes the Scheffé surfaces with anchors taken from the surfaces' own optima. This is the
-inherited construction and serves as the control condition.
-\item \textbf{NBI-B} optimizes the same surfaces but takes its anchors from the real single-objective optima. The
-difference between A and B isolates \emph{anchor misplacement}.
-\item \textbf{NBI-C} discards the metamodel and runs the same NBI on the exact out-of-fold objectives. The difference
-between B and C isolates the residual effect of \emph{surrogate error in the interior}.
+\item \textbf{NBI-A} optimizes the Scheffé surfaces with anchors from their own optima: the inherited construction and
+our control.
+\item \textbf{NBI-B} optimizes the same surfaces with anchors from the real single-objective optima; A versus B
+isolates \emph{anchor misplacement}.
+\item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives; B versus C
+isolates residual \emph{interior surrogate error}.
 \end{itemize}
 
-We additionally run one external optimizer, NSGA-II, on the same objectives at a matched real-objective evaluation
-budget, so that the pipeline's standing against the conventional multiobjective toolbox is measured rather than
-assumed. Around this decomposition we place four controls that the lineage does not contain: an external validation of every
-surface on 100 compositions it has never seen, with a reliability gate fixed before the
-replicated benchmark; revalidation of every candidate
-produced by any method on the true objectives before any indicator is computed; an empirical Pareto reference whose sampled core of at
-least $10^{5}$ points per replication is constructed independently of the surrogate and checked for convergence,
-and which is then augmented with every candidate set for scoring; and an untouched holdout that never participates in fitting, weighting, thresholding or selection.
+We also run NSGA-II on the same objectives at a matched real-objective evaluation budget. Four controls the lineage
+does not contain surround the decomposition: external validation of every surface on 100 unseen compositions, with a
+reliability gate fixed before the replicated benchmark; revalidation of every candidate on the true objectives before
+any indicator; an empirical Pareto reference whose sampled core of at least $10^{5}$ points per replication is built
+independently of the surrogate and checked for convergence, then augmented with every candidate set for scoring; and
+an untouched holdout never used for fitting, weighting, thresholding or selection.
 
-The whole pipeline is then replicated. Four public binary tabular datasets are each partitioned 30 times, giving 120
-replications with recorded seeds. Because partitions of one dataset overlap heavily, we treat the replication
-distribution as a measure of partition sensitivity rather than as a sample from a population: all comparisons are
-paired by partition and tested with the Nadeau--Bengio correction \citep{nadeau2003inference}, the dataset is the unit
-of generalization, and nothing is pooled across the 120 replications.
+Four public binary tabular datasets are partitioned 30 times each, giving 120 replications with recorded seeds.
+Because partitions of one dataset overlap heavily, we treat the replication distribution as partition sensitivity, not
+a sample from a population: comparisons are paired by partition and tested with the Nadeau--Bengio correction
+\citep{nadeau2003inference}, the dataset is the unit of generalization, and nothing is pooled across the 120
+replications.
 
 \subsection{Research questions}
 
 \begin{enumerate}
-\item[\textbf{RQ1}] How accurately do Scheffé surfaces predict ensemble performance on compositions they have not seen,
-and does this depend on the dataset, on the metric, or on both?
-\item[\textbf{RQ2}] How stable are the fitted surfaces across resampling, and does the classical mixture-design reading
-of the interaction coefficients survive confrontation with the real objectives?
+\item[\textbf{RQ1}] How accurately do Scheffé surfaces predict ensemble performance on compositions they have not
+seen, and does this depend on the dataset, on the metric, or on both?
+\item[\textbf{RQ2}] How stable are the fitted surfaces across resampling, and does the classical mixture-design
+reading of the interaction coefficients survive confrontation with the real objectives?
 \item[\textbf{RQ3}] What goes wrong when NBI is anchored on surrogate optima?
 \item[\textbf{RQ4}] Does replacing surrogate anchors with real ones repair the front, and does the reliability gate
 predict when this is necessary?
@@ -112,39 +99,36 @@ and how do both compare with a canonical evolutionary optimizer at a matched eva
 
 \begin{enumerate}
 \item \textbf{A controlled decomposition of a surrogate-assisted multiobjective pipeline into surrogate error, anchor
-misplacement and solver behaviour}, through three NBI variants defined by two methodological factors. To the best
-of our literature search, no prior study computes NBI anchors both from a surrogate and from the true objectives and
-compares the resulting fronts. The nearest precedent for the pipeline itself, \citet{kwon2024ensemble}, optimizes one
-accuracy metric at a time and therefore has no anchors, no front and no such decomposition.
+misplacement and solver behaviour}, through three NBI variants defined by two methodological factors. No prior study
+we found computes NBI anchors from both a surrogate and the true objectives and compares the fronts; the nearest
+precedent \citep{kwon2024ensemble} optimizes one metric at a time and has no anchors or front.
 
 \item \textbf{Evidence that, among failures attributable to the surrogate pipeline, anchor misplacement has the
 largest observed effect.} Real anchors improve both primary endpoints in 30 of 30 partitions on the two datasets whose
 ROC-AUC surfaces almost never pass the gate, in 23 (IGD$^+$) and 24 (hypervolume) of 30 on Porto Seguro, and in 24 of
 30 on UCI credit. Removing the surrogate entirely, once anchors are correct, adds much less --- except on UCI credit,
-where subproblem convergence rather than surrogate error dominates, which is the counterexample that prevents a
-universal claim. The fix is also the cheap one: real anchors are the single-objective optima a practitioner already
-computes.
+where subproblem convergence rather than surrogate error dominates, the counterexample that prevents a universal
+claim.
 
 \item \textbf{A demonstration that an external reliability gate detects unusable surfaces but not misplaced anchors.}
-On one dataset the two properties actively diverge: the partitions in which surrogate-anchored NBI collapses are
-precisely those in which the parsimony rule selects a surface that fits held-out compositions \emph{better} and passes
-the gate more often. Surface quality and argmax quality are different properties, and only the second governs NBI.
+On one dataset the two properties diverge: the partitions where surrogate-anchored NBI collapses are precisely those
+where the parsimony rule selects a surface that fits held-out compositions \emph{better} and passes the gate more
+often. Surface quality and argmax quality are different properties, and only the second governs NBI.
 
-\item \textbf{A replicated evaluation architecture for ensemble-weight optimization} --- external surrogate validation,
-real-objective revalidation of every candidate, an empirical Pareto reference with a method-independent sampled core,
-and untouched-holdout confirmation, over 4 datasets $\times$ 30 partitions with overlap-corrected paired inference.
-Three findings that this architecture overturned, including two artifacts that survived an earlier ten-partition
-analysis, are reported explicitly.
+\item \textbf{A replicated evaluation architecture for ensemble-weight optimization} --- external surrogate
+validation, real-objective revalidation, a reference with a method-independent sampled core and holdout confirmation,
+over 4 datasets $\times$ 30 partitions with overlap-corrected paired inference. Three findings it overturned --- two
+of them artifacts that survived an earlier ten-partition analysis --- are reported explicitly.
 
-\item \textbf{Two findings about how these surfaces should be read.} The classical synergism criterion
-$\beta_{ij} > |\beta_i - \beta_j|$ is satisfied by the fitted surfaces for the leading pair on all four datasets in
-every partition, yet the real blend beats its better member on only one; across all pairs the surrogate over-predicts
-blending gains 20 times and under-predicts none. And the continuous cost that these methods can optimize disagrees with
-the step cost that deployment pays often enough to change the winning method in up to 24 of 30 partitions.
+\item \textbf{Two findings about how these surfaces should be read.} The classical synergism criterion $\beta_{ij} >
+|\beta_i - \beta_j|$ holds for the leading pair's fitted surfaces on all four datasets in every partition, yet the
+real blend beats its better member on only one; across all pairs the surrogate over-predicts blending gains 20 times
+and under-predicts none. And the continuous cost these methods optimize disagrees with the step cost deployment pays
+often enough to change the winning method in up to 24 of 30 partitions.
 \end{enumerate}
 
-We deliberately do not claim that NBI outperforms other multiobjective optimizers --- at a matched evaluation budget
-NSGA-II outperforms its metamodel-free arm on all four datasets --- nor that it produces more uniformly spaced fronts,
-nor that any method here is a general-purpose recommendation. The
-contribution is a set of conditions under which an established framework can and cannot be trusted in a new problem
-class, and the controls needed to tell the difference.
+We claim neither that NBI outperforms other multiobjective optimizers --- at a matched evaluation budget NSGA-II
+outperforms its metamodel-free arm on all four datasets --- nor that it produces more uniformly spaced fronts, nor
+that any method here is a general-purpose recommendation. The contribution is the set of conditions under which an
+established framework can and cannot be trusted in a new problem class, and the controls needed to tell the
+difference.

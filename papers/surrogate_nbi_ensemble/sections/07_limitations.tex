@@ -4,74 +4,73 @@
 \paragraph{Four datasets is the binding constraint.} The statistical unit is one outer partition, but the unit of
 \emph{generalization} is the dataset, and there are four. Every replication-level interval here describes partition
 sensitivity within a dataset, not uncertainty about a population of datasets, so every cross-dataset mechanism
-statement --- most importantly ``real anchors matter most where the surrogate is unreliable'' --- is an association
-over four points rather than a tested hypothesis. All four are binary tabular problems of $3\times10^{4}$ to
-$2\times10^{5}$ rows, three from Kaggle credit- and insurance-risk competitions. Nothing here establishes behaviour on
-multiclass problems, on text or image data, on very small samples, or on ensembles of more than five members, where
-the simplex dimension and the design size grow quickly.
+statement --- above all ``real anchors matter most where the surrogate is unreliable'' --- is an association over four
+points, not a tested hypothesis. All four are binary tabular problems of $3\times10^{4}$ to $2\times10^{5}$ rows,
+three of them from Kaggle credit- and insurance-risk competitions; nothing here establishes behaviour on multiclass
+problems, text or image data, on very small samples, or on ensembles of more than five members, where the simplex and
+design grow quickly.
 
 \paragraph{The model zoo is fixed and shapes the coefficient findings.} Base learners and hyperparameters were fixed
-in advance with no search, so the study measures the weighting layer with the model layer held constant. The zoo
-deliberately contains a poorly calibrated member and an expensive one, which is what makes the cost objective
-non-trivial and also what drives the $\beta_{ij}$ result of \cref{sec:results:coefficients}, since the largest
-interactions attach to the weakest vertex. A more homogeneous zoo would produce smaller interaction coefficients and
-less for the vertex-gap explanation to explain. That finding is therefore conditional on component heterogeneity, and
-these data cannot say how it behaves for a zoo of near-equal members.
+in advance with no search: the study measures the weighting layer with the model layer held constant. The zoo
+deliberately contains a poorly calibrated member and an expensive one, which makes the cost objective non-trivial and
+also drives the $\beta_{ij}$ result of \cref{sec:results:coefficients}: the largest interactions attach to the weakest
+vertex. A more homogeneous zoo would produce smaller interaction coefficients and a smaller vertex gap to explain, so
+that finding is conditional on component heterogeneity; these data cannot say how it behaves for a zoo of near-equal
+members.
 
-\paragraph{The Pareto reference is empirical.} With no analytical front available, all convergence and coverage
-indicators are computed against a sample-based reference of about $10^{5}$ points per replication with a displacement
-check. Residual displacement is small but non-zero: 116 of 120 replications met the 5\% tolerance, four stopped at the
-three-round cap with at most 6\%, and the objective-space effect is bounded at 0.2\% of hypervolume. More importantly,
-the reference is the non-dominated union of the sample with all candidate sets, so methods contributing many points
---- NBI-B and NBI-C contribute 30--40\% --- are partly graded against their own output. This inflates their absolute
-indicator values without affecting the paired contrasts on which every primary claim rests, but absolute statements
-about hypervolume ratio should be read with it in mind.
+\paragraph{The Pareto reference is empirical.} With no analytical front, all convergence and coverage indicators are
+computed against a sample-based reference of about $10^{5}$ points per replication. Residual displacement is small but
+non-zero: 116 of 120 replications met the 5\% tolerance and four stopped at the three-round cap with at most 6\%,
+bounding the objective-space effect at 0.2\% of hypervolume. More importantly, the final reference is the
+non-dominated union of the sampled core with all candidate sets, so methods contributing many points --- NBI-B and
+NBI-C contribute 30--40\% --- are partly graded against their own output. This inflates their absolute indicator
+values without affecting the paired contrasts on which every primary claim rests; absolute hypervolume ratios should
+be read with that in mind.
 
 \paragraph{The three NBI arms are not compute-matched, and NBI-C is not matched to anything.} NBI-A and NBI-B consume
 no real objective evaluations; NBI-C consumes about $4.2\times10^{5}$ per replication and 3 to 77 times the wall-clock
 time of NBI-B; the two cheap comparators consume about 66 evaluations and a few seconds. The comparison is therefore
-between \emph{methods as specified}, not between methods at equal budget, and no efficiency claim is made from it.
-The random Dirichlet comparator in particular is matched only in the number of candidates returned and is degenerate
-under the weighted cost; it is a floor check on the reference geometry. A properly budget-matched study --- for
-instance, random search or an evolutionary method given $4\times10^{5}$ real evaluations --- would answer a different
-and also worthwhile question, and we do not answer it here.
+between \emph{methods as specified}, not at equal budget, and supports no efficiency claim. The random Dirichlet
+comparator is matched only in candidate count and is degenerate under the weighted cost; it is a floor check on the
+reference geometry. A budget-matched comparison --- random search or an evolutionary method given $4\times10^{5}$
+real evaluations --- would answer a different, worthwhile question that we do not answer here.
 
-\paragraph{Solver semantics differ between the arms.} NBI-A and NBI-B optimize smooth polynomials and their subproblems
-are counted as successful only when SLSQP certifies optimality. NBI-C optimizes a piecewise-constant ROC-AUC, where
-such certification is generically unattainable, so a subproblem is accepted when its equality residual falls below
-$10^{-3}$, under a reduced iteration budget. The reported ``success rates'' are therefore not on a common scale across
-arms, and the UCI credit gap between NBI-C and NBI-B is substantially a convergence artifact of NBI-B rather than
-evidence about surrogate quality (\cref{sec:results:metamodelfree}). We report both the filtered and unfiltered
-versions of that comparison for this reason.
+\paragraph{Solver semantics differ between the arms.} NBI-A and NBI-B optimize smooth polynomials, and their
+subproblems count as successful only when SLSQP certifies optimality. NBI-C optimizes a piecewise-constant ROC-AUC,
+where such certification is generically unattainable, so a subproblem is accepted when its equality residual falls
+below $10^{-3}$ under a reduced iteration budget. The reported ``success rates'' are therefore not on a common scale
+across arms, and the UCI credit gap between NBI-C and NBI-B is substantially a convergence artifact of NBI-B rather
+than evidence about surrogate quality (\cref{sec:results:metamodelfree}); we therefore report both the filtered and
+unfiltered versions of that comparison.
 
-\paragraph{The support cost is a threshold approximation.} Deployment cost is modelled by
-\cref{eq:supportcost} with $\varepsilon = 10^{-3}$, chosen before the study and never changed. It is a proxy: real
-deployment costs include memory, batching, model loading and shared preprocessing, and it treats a weight of
-$1.1\times10^{-3}$ as a full model and one of $0.9\times10^{-3}$ as free. \Cref{sec:results:conflict} shows this is
-not hypothetical --- an AUC-inert $k$-nearest-neighbour weight just above the threshold produced a spurious
-$250$~ms cost difference. Any use of a support cost needs a weight-cleaning step, and conclusions that depend on it
-are sensitive to $\varepsilon$ and to the cost range that sets the normalization box.
+\paragraph{The support cost is a threshold approximation.} Deployment cost is modelled by \cref{eq:supportcost} with
+$\varepsilon = 10^{-3}$, fixed before the study and never changed. It is a proxy that ignores memory, batching, model
+loading and shared preprocessing, and treats a weight of $1.1\times10^{-3}$ as a full model and one of
+$0.9\times10^{-3}$ as free. \Cref{sec:results:conflict} shows this is not hypothetical: an AUC-inert
+$k$-nearest-neighbour weight just above the threshold produced a spurious $250$~ms difference. Any support cost
+therefore needs a weight-cleaning step, and conclusions that depend on it are sensitive to $\varepsilon$ and to the
+cost range that sets the normalization box.
 
 \paragraph{Cost measurements are single-machine and single-implementation.} All $c_i$ are wall-clock medians on one
-workstation with a fixed library stack and batch size, and would change with hardware, batch size, a compiled
-inference runtime, or an approximate-nearest-neighbour index replacing brute-force search --- which would remove the
-largest cost asymmetry in the study. The cost objective is realistic for the setting measured, not universal.
+workstation with a fixed library stack and batch size; they would change with hardware, batching, a compiled inference
+runtime, or an approximate-nearest-neighbour index replacing brute-force search, which would remove the study's
+largest cost asymmetry. The cost objective is realistic for the setting measured, not universal.
 
 \paragraph{No claim of universal dominance, and confounded comparators.} NBI-C is best or tied-best on the primary
 endpoints under the weighted cost on these four datasets; it ties with random scalarization on UCI credit, loses to it
 on Santander $\igdp$, and loses its support-cost advantage on BNP Paribas and UCI credit. Its advantage over
-scalarization on BNP Paribas and Porto Seguro is confounded with the objective source, since NBI-C optimizes exact
-objectives and scalarization optimizes surrogates; disentangling the NBI construction from the objective source would
-require a scalarization arm run on the cached out-of-fold objectives, which we did not run.
+scalarization on BNP Paribas and Porto Seguro is confounded with the objective source: NBI-C optimizes exact
+objectives, scalarization optimizes surrogates. Separating the NBI construction from the objective source would
+require a scalarization arm on the cached out-of-fold objectives, which we did not run.
 
 \paragraph{Selection rules and the holdout analysis.} Holdout transfer is reported for a knee rule under the weighted
-cost, with TOPSIS and the support cost as sensitivity analyses, and the agreement rates differ noticeably between
-these configurations. They characterize how close the candidates are relative to holdout noise, not the general
-reliability of out-of-fold selection.
+cost, with TOPSIS and the support cost as sensitivity analyses, and agreement rates differ noticeably between these
+configurations. They characterize how close the candidates are relative to holdout noise, not the general reliability
+of out-of-fold selection.
 
-\paragraph{Only one external optimizer was evaluated.} We added a single canonical evolutionary baseline, NSGA-II at
-a matched real-objective evaluation budget, and it outperformed the metamodel-free arm on every dataset. That is one
-algorithm at one configuration on one problem class; the study is not a competition among multiobjective optimizers,
+\paragraph{Only one external optimizer was evaluated.} We added a single canonical evolutionary baseline, NSGA-II at a
+matched real-objective evaluation budget, and it outperformed the metamodel-free arm on every dataset. That is one
+algorithm at one configuration on one problem class: the study is not a competition among multiobjective optimizers,
 and nothing here ranks NSGA-II against MOEA/D, NSGA-III or a surrogate-assisted evolutionary method. Nor is the
-comparison time-matched: NSGA-II costs about $2.2\times$ the wall clock at equal evaluation count in our
-implementation, and a differently batched implementation would shift that ratio.
+comparison time-matched --- at equal evaluation count NSGA-II costs about $2.2\times$ the wall clock in our
+implementation, and a differently batched one would shift that ratio.

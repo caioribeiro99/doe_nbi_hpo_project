@@ -2,9 +2,9 @@
 \label{sec:method}
 
 This section states the optimization problem, the mixture-design and response-surface machinery inherited from the
-predecessor framework, and the three Normal Boundary Intersection (NBI) variants that separate the effect of surrogate
-fidelity from the effect of anchor construction. \Cref{fig:pipeline} shows the pipeline and marks each element as
-inherited from the predecessor framework, adapted for compositional decision variables, or new in this study.
+predecessor framework, and the three Normal Boundary Intersection (NBI) variants that separate surrogate fidelity from
+anchor construction; \cref{fig:pipeline} shows the resulting pipeline, marking each element as inherited, adapted for
+compositional decision variables, or new here.
 
 \begin{figure}[t]
 \centering
@@ -31,12 +31,11 @@ $p_{\wvec}(x)$ to remain a probability for every input, the weights must satisfy
 w_i \ge 0 \quad (i = 1,\dots,M), \qquad \sum_{i=1}^{M} w_i = 1 ,
 \label{eq:simplex}
 \end{equation}
-that is, $\wvec \in \simplex$, the unit simplex in $\mathbb{R}^{M}$. \Cref{eq:simplex} is the canonical
-constraint set of a \emph{mixture experiment}: the components are the classifiers, the pure vertex $w_i = 1$ is the
-single model $i$ used alone, and the centroid is uniform soft voting. The experimental region is a simplex, not a box,
-so factorial designs and ordinary polynomials with an intercept are inapplicable --- the sum-to-one constraint makes
-the design matrix singular --- and the appropriate formalism is the mixture design with a Scheff\'e canonical
-polynomial. This correspondence, rather than any performance argument, is why the framework transfers at all.
+that is, $\wvec \in \simplex$, the unit simplex in $\mathbb{R}^{M}$ and the canonical constraint set of a
+\emph{mixture experiment}: the components are the classifiers, the vertices are single models used alone, and the
+centroid is uniform soft voting. The sum-to-one constraint makes an intercept model singular, so the formalism is the
+mixture design with a Scheff\'e canonical polynomial, not a factorial design. This correspondence, rather than any
+performance argument, is why the framework transfers at all.
 
 Three objectives are considered, all functions of $\wvec$ through \cref{eq:ensemble}:
 \begin{align}
@@ -44,18 +43,17 @@ f_1(\wvec) &= -\operatorname{AUC}\!\left(y, \mathbf{P}\wvec\right) && \text{(dis
 f_2(\wvec) &= \frac{1}{n}\sum_{k=1}^{n}\Big[-y_k \log p_{\wvec}(x_k) - (1-y_k)\log\!\big(1-p_{\wvec}(x_k)\big)\Big] && \text{(calibration, minimized)},\\
 f_3(\wvec) &= c(\wvec) && \text{(inference cost, minimized)}.
 \end{align}
-The three differ qualitatively, and that heterogeneity is the point of the study. The log-loss $f_2$ is convex and
-smooth in $\wvec$. The area under the ROC curve is a rank statistic: $f_1$ is piecewise constant in $\wvec$, with
-gradients that are zero almost everywhere and undefined on the boundaries between orderings, so it is not merely
-non-convex but non-smooth in a way that defeats gradient-based certification. The cost $f_3$ is discussed next.
+Their qualitative heterogeneity is the point of the study. The log-loss $f_2$ is convex and smooth in $\wvec$, whereas
+the area under the ROC curve is a rank statistic: $f_1$ is piecewise constant in $\wvec$, with gradients that are zero
+almost everywhere and undefined on the boundaries between orderings, so it is not merely non-convex but non-smooth in
+a way that defeats gradient-based certification.
 
 \subsection{Two cost models: a relaxation and a deployment cost}
 \label{sec:method:cost}
 
 Let $c_i$ be the measured inference cost of model $i$ in milliseconds per 1{,}000 predictions, including its
-preprocessing. Deployment cost is a step function of the weight vector: a model that receives \emph{any} non-negligible
-weight must be loaded, fed and executed, and one that receives none costs nothing. This gives the
-\emph{support cost}
+preprocessing. Deployment cost is a step function of the weight vector: a model receiving \emph{any} non-negligible
+weight must be loaded and executed; one receiving none costs nothing. This gives the \emph{support cost}
 \begin{equation}
 c_{\mathrm{sup}}(\wvec) \;=\; \sum_{i=1}^{M} c_i \,\mathbf{1}\!\left[w_i > \varepsilon\right], \qquad \varepsilon = 10^{-3},
 \label{eq:supportcost}
@@ -68,9 +66,9 @@ c_{\mathrm{w}}(\wvec) \;=\; \sum_{i=1}^{M} w_i c_i ,
 \end{equation}
 the natural linear mixture response, which coincides with $c_{\mathrm{sup}}$ at the vertices but not on the
 interior: spreading a little mass over an expensive model is cheap under \cref{eq:weightedcost} and fully priced under
-\cref{eq:supportcost}. We therefore optimize \cref{eq:weightedcost} and additionally score the \emph{same} solutions
-under \cref{eq:supportcost}, reporting every comparison under both. \Cref{sec:results:cost} shows that the choice
-changes which method wins.
+\cref{eq:supportcost}. We therefore optimize \cref{eq:weightedcost} and score the \emph{same} solutions under
+\cref{eq:supportcost}, reporting every comparison under both; \cref{sec:results:cost} shows that the choice changes
+which method wins.
 
 \subsection{Mixture design and Scheff\'e surrogates}
 \label{sec:method:scheffe}
@@ -78,8 +76,8 @@ changes which method wins.
 \paragraph{Design.} With $M = 5$ the design is a fixed 66-run mixture design: the union of the $\{5,3\}$ and
 $\{5,2\}$ simplex lattices, the overall centroid, the 5 axial points, the 5 quaternary centroids and the 10 midpoints
 between the overall centroid and the ternary centroids. It therefore places design points on the 5 pure vertices, all
-10 binary edges, the ternary and quaternary faces and uniform voting, giving the surrogate support on every face a
-sparse ensemble could occupy.
+10 binary edges, the ternary and quaternary faces and uniform voting, supporting the surrogate on every face a sparse
+ensemble could occupy.
 
 \paragraph{Models.} For a response $y$ the Scheff\'e canonical polynomials of order $1$, $2$ and the special cubic are
 \begin{align}
@@ -87,25 +85,25 @@ sparse ensemble could occupy.
 \text{quadratic:}\quad & \hat y = \sum_i \beta_i w_i + \sum_{i<j} \beta_{ij} w_i w_j, \label{eq:scheffequad}\\
 \text{special cubic:}\quad & \hat y = \sum_i \beta_i w_i + \sum_{i<j} \beta_{ij} w_i w_j + \sum_{i<j<k} \beta_{ijk} w_i w_j w_k,
 \end{align}
-fitted by ordinary least squares without an intercept and without pure quadratic terms, since $\sum_i w_i = 1$ makes
-them redundant. No term elimination is performed: the canonical form is kept intact so that $\beta_i$ is the predicted
+fitted by ordinary least squares without an intercept and without pure quadratic terms, which $\sum_i w_i = 1$ makes
+redundant. No term elimination is performed: the canonical form is kept intact so that $\beta_i$ is the predicted
 response at vertex $i$ and $\beta_{ij}$ measures the departure of the $i$--$j$ edge from linear blending.
 
-\paragraph{External validation and the reliability gate.} Where the lineage reports in-sample fit statistics, each
-replication here additionally evaluates 100 compositions drawn from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and
+\paragraph{External validation and the reliability gate.} Where the lineage reports in-sample fit, each
+replication here also evaluates 100 compositions drawn from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and
 $\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
-external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} then uses a parsimony rule --- the lowest
+external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} uses a parsimony rule --- the lowest
 order whose external RMSE is within 10\% of the best --- so it is driven by out-of-design accuracy rather than
 in-sample fit. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to version control
-before the replicated benchmark was run: a surface is reliable only if
+before the replicated benchmark was run, and never adjusted afterwards: a surface is reliable only if
 \begin{equation}
 \rext \ge 0.5 \quad\text{and}\quad \rho_{\mathrm{ext}} \ge 0.9 .
 \label{eq:gate}
 \end{equation}
-They were never adjusted afterwards. We describe this as pre-specification rather than preregistration: there is no
+We describe this as pre-specification rather than preregistration: there is no
 external registry entry, and the evidence is the version-controlled commit history. The gate is a hypothesis under
-test in this work, not a filter applied to the results: surrogate-based optimization is run and reported \emph{regardless} of
-the gate outcome, precisely so that the gate's predictive value can be measured (\cref{sec:results:gate}).
+test, not a filter applied to the results: surrogate-based optimization is run and reported \emph{regardless} of the
+gate outcome, so that its predictive value can be measured (\cref{sec:results:gate}).
 
 \subsection{Normal Boundary Intersection on the simplex}
 \label{sec:method:nbi}
@@ -122,14 +120,14 @@ each $\beta$ on the unit simplex of \emph{scalarization} weights defines the sub
 \max_{\wvec,\,t} \; t \quad \text{s.t.} \quad \bar\Phi\beta + t\,\hat{n} = \bar F(\wvec), \quad \wvec \in \simplex .
 \label{eq:nbi}
 \end{equation}
-Two implementation points matter. The simplex constraint is eliminated by optimizing over $M-1$ free variables with
+The simplex constraint is eliminated by optimizing over $M-1$ free variables with
 $w_M = 1 - \sum_{i<M} w_i$, with a deterministic feasibility-recovery step for iterates that leave the simplex: the
 free variables are clipped to $[0,1]$ and, if they still sum above one, renormalized onto the face $w_M = 0$. This is
 a documented repair, not a Euclidean projection onto the simplex, and a candidate recovered this way is flagged
 infeasible and excluded from the certified set. Without it, subproblems near a vertex terminate outside the feasible
-region altogether. And for vertex values of $\beta$ the
-solution is the corresponding anchor, returned directly rather than re-derived. We solve 66 subproblems per
-replication on the same $\beta$ lattice for all variants, so the arms are compared at identical points of the CHIM.
+region. For vertex values of $\beta$ the solution is the corresponding anchor, returned directly rather than
+re-derived. All variants solve 66 subproblems per replication on the same $\beta$ lattice, so the arms are
+compared at identical points of the CHIM.
 
 \paragraph{The three variants.} The variants are defined by two methodological factors --- the source of the
 objectives and the source of the anchors:
@@ -148,17 +146,16 @@ NBI-C & real out-of-fold objectives & real out-of-fold optima & $\approx 4.2\tim
 \end{tabular}
 \end{center}
 
-NBI-A is the construction used throughout the lineage: everything, including the payoff matrix, comes from the
-metamodel. NBI-B changes one thing --- the anchors are the real optima of \cref{sec:method:refs} --- so A versus B
-isolates \emph{anchor misplacement} with the surfaces held fixed. NBI-C removes the metamodel entirely, so B versus C
-isolates the residual effect of \emph{surrogate error in the interior} once anchors are correct. Because $f_1$ is
-piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and accepts an iterate
-whose equality residual is below $10^{-3}$ even without certified optimality, whereas NBI-A and NBI-B optimize smooth
-polynomials and require full SLSQP certification. This asymmetry follows from the objective, not from tuning, and is reported with the results. It also bounds the
-causal reading: A versus B isolates the anchor source with the surrogate objectives and the solver held fixed, and is
-a clean contrast; B versus C tests removal of the surrogate once real anchors are supplied, but is not a perfectly
-identical numerical experiment, because changing the objective from a smooth polynomial to a piecewise-constant rank
-statistic necessarily changes solver semantics. Solver outcomes are therefore reported separately for each arm.
+NBI-A is the lineage construction: everything, including the payoff matrix, comes from the metamodel. NBI-B changes
+only the anchors, which become the real optima of \cref{sec:method:refs}; NBI-C removes the metamodel entirely.
+Because $f_1$ is piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and
+accepts an iterate whose equality residual is below $10^{-3}$ even without certified optimality,
+whereas NBI-A and NBI-B optimize smooth polynomials and require full SLSQP certification. This asymmetry follows from
+the objective, not from tuning, and it bounds the causal reading: A versus B isolates \emph{anchor misplacement} with
+the surrogate objectives and the solver held fixed, and is a clean contrast; B versus C tests removal of
+\emph{surrogate error in the interior} once real anchors are supplied, but is not a perfectly identical numerical
+experiment, because changing the objective from a smooth polynomial to a piecewise-constant rank statistic
+necessarily changes solver semantics. Solver outcomes are therefore reported separately for each arm.
 
 \subsection{References, comparators and revalidation}
 \label{sec:method:refs}
@@ -174,23 +171,23 @@ draws 66 scalarization weight vectors from $\mathrm{Dirichlet}(\mathbf{1})$ and 
 sum of the \emph{same} Scheff\'e surfaces with the same real anchors used by NBI-B; and a 66-point random
 $\mathrm{Dirichlet}(\mathbf{1})$ sample of the weight simplex. The second is matched to the NBI sets only in the
 \emph{number of returned candidates} and is not compute-matched; it functions as a floor check on the geometry of the
-reference front, not as an efficiency baseline, and is reported as such throughout.
+reference front, not as an efficiency baseline.
 
-\paragraph{Revalidation.} Every candidate from every method --- both NBI variants on surrogates, NBI-C, both
-comparators, the 66 design runs and the references --- is re-evaluated on the exact out-of-fold objectives before any
-indicator is computed, with non-dominated filtering applied to those revalidated values. No result in this paper is
-read off a surrogate.
+\paragraph{Revalidation.} Every candidate from every method --- the three NBI arms, both comparators, the 66 design
+runs and the references --- is re-evaluated on the exact out-of-fold objectives before any indicator is computed, with
+non-dominated filtering applied to those revalidated values. No result in this paper is read off a surrogate.
 
 \subsection{Empirical Pareto reference and quality indicators}
 \label{sec:method:reference}
 
-Comparing approximation sets requires a reference, and the true Pareto set of \cref{eq:ensemble} over $\simplex$ is
-unknown. Each replication therefore constructs an \emph{empirical Pareto reference}: at least $10^{5}$ compositions
+The true Pareto set of \cref{eq:ensemble} over $\simplex$ is unknown, so each replication constructs an
+\emph{empirical Pareto reference}: at least $10^{5}$ compositions
 from $\mathrm{Dirichlet}(\mathbf{1})$ and $\mathrm{Dirichlet}(0.3\cdot\mathbf{1})$ in equal parts, augmented with the
 simplex lattice, all vertices and edges, and a 40-cap $\varepsilon$-constraint sweep, evaluated on the real objectives
 and filtered to the non-dominated set. An independent sample of $2\times10^{4}$ points checks convergence: if it
-displaces more than 5\% of the front, the reference is enlarged and rechecked, up to three rounds. The final reference
-is the non-dominated union of this sample with every candidate set of the replication, making it at least as good as
+displaces more than 5\% of the front, the reference is enlarged and rechecked, up to three rounds. This sampled core
+is constructed independently of the surrogate and of every candidate method; the final reference used for scoring
+is the non-dominated union of that core with every candidate set of the replication, making it at least as good as
 any method scored against it.
 
 We call this an empirical reference, never a true Pareto front: it is a sample-based upper bound, and because
