@@ -1,0 +1,2 @@
+dataset,n,nsga2_evals_total,nbi_c_evals_total,eval_ratio_min,eval_ratio_median,eval_ratio_max,nsga2_seconds_mean,nbi_c_seconds_mean,time_ratio_median,n_nondominated_median
+uci_credit,1,441672,441648,1.000054,1.000054,1.000054,665.973306,314.914479,2.114775,66.0
