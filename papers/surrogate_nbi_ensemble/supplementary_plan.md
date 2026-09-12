@@ -107,6 +107,37 @@ budget-matched; (iv) the reading of the gate-conditional anchor gain on BNP Pari
 advantage of NBI after revalidation. Including this list is a deliberate choice: each correction is traceable in the
 repository history and reviewers should be able to see what changed.
 
+### S13. Evaluation-matched NSGA-II baseline (new)
+
+Source: `reports/pco213_postwork_benchmark/nsga2/`. The full report is `NSGA2_BASELINE_REPORT.md`.
+
+- **Table S2 (main numbering)** — `tabS02_nsga2_sensitivity.tex`: NSGA-II vs NBI-C under the sample-core reference
+  (weighted cost) and under the support cost (augmented reference). Referenced from the main text in RQ5b.
+- Table S13.1 — `nsga2_pareto_quality.csv` in full: 3,840 rows (8 sets × 2 costs × 2 references × 4 datasets × 30
+  partitions).
+- Table S13.2 — `nsga2_paired_effects.csv` and `nsga2_paired_tests.csv`: all paired effects and Holm-corrected tests,
+  including NSGA-II against NBI-B and against random scalarization, which the main text mentions only in passing.
+- Table S13.3 — `nsga2_budget_runtime.csv`: realized evaluation and wall-clock ratios against NBI-C per dataset.
+- Table S13.4 — `nsga2_runs.csv`: per-run seed, target and realized evaluation count, generations, runtime, front size.
+- S13.5 — the pre-specified configuration (`nsga2_preregistered_config.json`) reproduced verbatim, with the statement
+  that it was committed at `3e64804` before the first run.
+- S13.6 — the ten verification checks of §8 of the baseline report, including the contribution of each method to the
+  augmented reference front (NSGA-II 8–29%, NBI-C 8–23%, sample core 43–75%).
+- S13.7 — the spacing comparison in full: NSGA-II's crowding-distance spacing CV against NBI-C's and scalarization's,
+  which converts the main text's negative spacing result into a statement about the CHIM construction.
+
+### Material moved out of the main text during compression
+
+Recorded here so a reader can find it:
+
+| Moved from | Content | Now in |
+|---|---|---|
+| Results RQ6 | full AUC-vs-log-loss analysis: per-dataset log-loss costs, holdout gaps with sign counts, support-Jaccard values, and the complete near-threshold kNN artifact derivation | S9 and `statistics/auc_logloss_conflict_r30.csv` |
+| Results RQ9 | the per-quantity R = 10 → R = 30 table beyond hypervolume and IGD+, and the batch-comparison detail (6/12 and 5/12 against partitions 10–29 alone, the Fisher test) | S11 and `statistics/r10_vs_r30_stability.csv` |
+| Related work 2.1–2.2 | per-paper narration of the ensemble-weighting and multiobjective-ensemble literature | `literature_review.md`, supplied as a supplementary document |
+| Methodology | implementation narrative duplicated by the reproducibility statement | S1 |
+| Protocol | per-model preprocessing detail | S1.2 |
+
 ## Format and delivery
 
 - Supplementary tables that exceed one page are supplied as CSV attachments as well as typeset tables, with the exact
