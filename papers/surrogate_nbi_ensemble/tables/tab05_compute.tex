@@ -1,18 +1,46 @@
 \begin{table*}[t]
 \centering
-\caption{Mean wall-clock seconds per partition of the main stages (Apple M4 Max, 8 worker threads), the NBI-C/NBI-B time ratio, the mean number of real out-of-fold objective evaluations consumed by NBI-C (NBI-A and NBI-B consume none: they optimize the surrogates), and the mean fraction of the 66 NBI subproblems that terminated successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule). Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}.}
+\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 8 worker threads)
+and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own.
+NBI-A is charged the 66-run design, the 100 gate compositions and the Scheff\'e fit (``design\,+\,fit''), since its
+anchors are the optima of the fitted surfaces; NBI-B is charged the same \emph{plus} the single-objective reference
+stage, which is where its real anchors come from and which is dominated by the direct ROC-AUC search over
+$4\times10^{4}$ sampled compositions; NBI-C is charged the reference stage and its own solve, and needs neither the
+design nor the surfaces. Real anchors are therefore not free: NBI-B costs 1.2--12.7$\times$
+the standalone wall clock of NBI-A, and the standalone premium of NBI-C over NBI-B is 6.2, 5.9, 5.9 and 2.3$\times$
+(Santander, BNP Paribas, Porto Seguro, UCI credit), not the solver-stage ratio. Charging the whole reference stage to
+NBI-B and NBI-C is an upper bound, since that stage also computes references the arms do not consume, and the SLSQP
+log-loss anchor's evaluations are not separately instrumented. Not charged to any arm: the shared out-of-fold stage
+(335, 86, 69, 11~s) and the study's own instrumentation --- empirical reference, quality scoring and
+comparators (270, 154, 302, 74~s). ``Success'' is the mean fraction of the 66 subproblems that terminated
+successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule of \cref{sec:method:nbi}).
+Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}, \texttt{references.json} and
+\texttt{design\_points.npz} of the frozen replications.}
 \label{tab:compute}
 \small
 \setlength{\tabcolsep}{4pt}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{l rrr rrr r r l}
+\begin{tabular}{l l rrr r r r r}
 \toprule
-Dataset & OOF fits & Single-obj. refs & Reference & NBI-A & NBI-B & NBI-C & C/B & Real evals (C) & Success A / B / C \\
+& & \multicolumn{3}{c}{Stage means (s)} & \multicolumn{2}{c}{Standalone} & Real & \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+Dataset & Arm & Design\,+\,fit & Single-obj.\ refs & NBI solve & total (s) & vs.\ NBI-A & evals & Success \\
 \midrule
-Santander & 335 & 444 & 243 & 34 & 35 & 2528 & 73$\times$ & 412k & 0.98 / 0.95 / 0.83 \\
-BNP Paribas & 86 & 243 & 131 & 23 & 36 & 1410 & 40$\times$ & 417k & 0.95 / 1.00 / 0.83 \\
-Porto Seguro & 69 & 441 & 273 & 85 & 56 & 2505 & 45$\times$ & 417k & 0.58 / 1.00 / 0.98 \\
-UCI credit & 11 & 54 & 39 & 125 & 100 & 307 & 3$\times$ & 426k & 0.39 / 0.48 / 0.98 \\
+\multirow{3}{*}{Santander} & NBI-A & 4.1 & --- & 34.0 & 38.1 & 1.0$\times$ & 166 & 0.98 \\
+ & NBI-B & 4.1 & 444.5 & 34.6 & 483.1 & 12.7$\times$ & $4.1\times10^{4}$ & 0.95 \\
+ & NBI-C & --- & 444.5 & 2528.4 & 2972.9 & 78.0$\times$ & $4.5\times10^{5}$ & 0.83 \\
+\addlinespace
+\multirow{3}{*}{BNP Paribas} & NBI-A & 2.2 & --- & 23.1 & 25.3 & 1.0$\times$ & 166 & 0.95 \\
+ & NBI-B & 2.2 & 243.2 & 35.6 & 281.1 & 11.1$\times$ & $4.1\times10^{4}$ & 1.00 \\
+ & NBI-C & --- & 243.2 & 1409.8 & 1653.0 & 65.2$\times$ & $4.6\times10^{5}$ & 0.83 \\
+\addlinespace
+\multirow{3}{*}{Porto Seguro} & NBI-A & 4.0 & --- & 84.8 & 88.8 & 1.0$\times$ & 166 & 0.58 \\
+ & NBI-B & 4.0 & 441.2 & 55.8 & 501.0 & 5.6$\times$ & $4.1\times10^{4}$ & 1.00 \\
+ & NBI-C & --- & 441.2 & 2504.5 & 2945.7 & 33.2$\times$ & $4.6\times10^{5}$ & 0.98 \\
+\addlinespace
+\multirow{3}{*}{UCI credit} & NBI-A & 0.5 & --- & 124.8 & 125.3 & 1.0$\times$ & 166 & 0.39 \\
+ & NBI-B & 0.5 & 54.1 & 99.7 & 154.4 & 1.2$\times$ & $4.1\times10^{4}$ & 0.48 \\
+ & NBI-C & --- & 54.1 & 306.6 & 360.7 & 2.9$\times$ & $4.7\times10^{5}$ & 0.98 \\
 \bottomrule
 \end{tabular}}
 \end{table*}

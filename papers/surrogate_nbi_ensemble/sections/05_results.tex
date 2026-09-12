@@ -103,13 +103,28 @@ denote pairs whose blend wins in at least 80\% of partitions; the largest-$\beta
 \input{tables/tab03_paired_primary}
 
 Replacing the surrogate-derived anchors with anchors computed from the real single-objective optima, changing nothing
-else, improves both primary endpoints in all 30 partitions on Santander ($\Delta\hv = +0.179$, 95\% CI $[0.148,
-0.210]$; Holm-corrected $p = 0.004$) and on BNP Paribas ($\Delta\hv$ median $+0.059$). On the other two the
-improvement is large but not unanimous, and the endpoints differ: Porto Seguro $23/30$ partitions on $\igdp$ and
-$24/30$ on hypervolume ($\Delta\hv = +0.085$, $[0.037, 0.131]$), UCI credit $24/30$ on $\igdp$ and 24 wins with one
-tie and five losses on hypervolume ($+0.060$, $[0.034, 0.083]$). The rank-biserial effect size is $1.00$ on the two
-unanimous datasets and $0.65$--$0.75$ on the others, and the Wilson interval for a $30/30$ win fraction is $[0.89,
-1.00]$ (\cref{tab:paired}, \cref{fig:paired}, \cref{fig:fronts}).
+else, improves both primary endpoints in all 30 partitions on Santander (median $\Delta\hv = +0.196$, median
+$\Delta\igdp = +0.125$; Holm-corrected $p = 0.004$ and $0.007$) and in all 30 on BNP Paribas (medians $+0.058$ and
+$+0.0146$). On the other two the improvement is not unanimous and the endpoints differ: Porto Seguro $23/30$
+partitions on $\igdp$ (median $+0.0296$) and $24/30$ on hypervolume (median $+0.076$), UCI credit $24/30$ on $\igdp$
+(median $+0.0499$) and 24 wins with one tie and five losses on hypervolume (median $+0.092$). Bootstrap intervals for
+every median are in \cref{tab:paired} (\cref{fig:paired}, \cref{fig:fronts}).
+
+Two readings the win counts invite are not supported by the magnitudes. First, a unanimous count is not a large
+effect: Santander and BNP Paribas are both $30/30$, yet the median hypervolume gain is $+0.196$ on the first and
+$+0.058$ on the second. Second, the benefit does not track surrogate reliability. Ranked by median hypervolume gain
+the datasets are Santander $+0.196$ (ROC-AUC gate $0/30$), UCI credit $+0.092$ ($30/30$), Porto Seguro $+0.076$
+($16/30$) and BNP Paribas $+0.058$ ($5/30$): the dataset whose ROC-AUC surface never passes the gate shows the
+largest effect and the dataset whose surfaces always pass shows the second largest. Real anchors helped on all four
+datasets, including the one whose surfaces are excellent; what is confined to the unreliable end is the collapse mode
+described below, not the typical magnitude of the benefit.
+
+\Cref{tab:paired} scores every set against the augmented reference of its own replication
+(\cref{sec:method:reference}). The sample-core repetition of all four primary comparisons is in the supplement
+(supplementary Section~S5, computed from \texttt{nsga2/nsga2\_pareto\_quality.csv}, which scores every candidate set
+under both reference definitions). It moves the magnitudes without changing any direction here --- the Santander
+hypervolume median falls from $+0.196$ to $+0.145$ and the BNP Paribas median rises from $+0.058$ to $+0.070$ --- and
+leaves the ordering above inverted in the same way ($+0.145$, $+0.089$, $+0.078$ and $+0.070$).
 
 \begin{figure}[t]
 \centering
@@ -120,17 +135,26 @@ differences plus a tail of seven partitions where NBI-A collapses.}
 \label{fig:paired}
 \end{figure}
 
-Three qualifications bound this. First, the corrected test reaches significance only on Santander (and, for NBI-C
-versus NBI-B, on UCI credit); on BNP Paribas the effect is unanimous in sign yet the corrected $p$ is $0.66$, because
-the differences are bimodal --- the mean $+0.279$ is over four times the median $+0.059$ --- so by the rule fixed in
-advance the median with its bootstrap interval $[0.051, 0.070]$, the win fraction and the rank-biserial correlation
-are the evidence. Second, the Porto Seguro and UCI credit win rates are driven by the twenty partitions added in the
-extension (hypervolume $18/20$ and $19/20$ against $6/10$ and $5/10$ with one tie in the first ten; on UCI credit the
-batch difference is itself significant under an identical protocol, Fisher $p = 0.009$): the effect is real in
-direction, but its magnitude varies enough between draws of ten partitions that ten were not enough to see it. Third,
-it depends on the cost definition: under the support cost Santander is unchanged ($30/30$) and Porto Seguro stays
-positive on $\igdp$ ($29/30$), but BNP Paribas weakens to $19$--$20/30$ and UCI credit \emph{reverses}, NBI-B being
-worse in $26$--$27/30$ partitions (full support-cost repetition in supplementary Table~S1).
+Three qualifications bound this. First, corrected significance is the exception here, not the rule. Of the sixteen
+primary tests that carry the two NBI comparisons --- two comparisons $\times$ two endpoints $\times$ four datasets,
+weighted cost --- five reach Holm-corrected $p < 0.05$: NBI-B versus NBI-A on Santander ($\igdp$ $0.007$, hypervolume
+$0.004$), and NBI-C versus NBI-B on Santander hypervolume ($0.003$) and on UCI credit ($\igdp$ $0.010$, hypervolume
+$0.010$). The other eleven do not --- every test on BNP Paribas and Porto Seguro, both UCI credit anchor tests, and
+Santander $\igdp$ for NBI-C versus NBI-B. On BNP Paribas the effect is unanimous in sign yet the corrected $p$ is
+$0.66$, because the differences are bimodal --- the mean $+0.279$ is over four times the median $+0.058$ --- so by the
+rule fixed in advance we report the median with its bootstrap interval $[+0.051, +0.070]$, the win fraction with its
+Wilson interval ($[0.89, 1.00]$ for a $30/30$ fraction) and the rank-biserial correlation ($1.00$ on the two unanimous
+datasets, $0.65$--$0.75$ on the other two). Those three quantities describe how \emph{consistent} a difference is
+across the 30 partitions of a dataset; none of them corrects for the partition overlap of \cref{sec:protocol:stats},
+which is what the corrected test exists to handle, so they do not establish significance and are not offered in its
+place. Where the corrected test does not reach $0.05$ we report the comparison as consistent in direction and not
+statistically established. Second, the Porto Seguro and UCI credit win rates are driven by the twenty partitions added
+in the extension (hypervolume $18/20$ and $19/20$ against $6/10$ and $5/10$ with one tie in the first ten; on UCI
+credit the batch difference is itself significant under an identical protocol, Fisher $p = 0.009$): the effect is real
+in direction, but its magnitude varies enough between draws of ten partitions that ten were not enough to see it.
+Third, it depends on the cost definition: under the support cost Santander is unchanged ($30/30$) and Porto Seguro
+stays positive on $\igdp$ ($29/30$), but BNP Paribas weakens to $19$--$20/30$ and UCI credit \emph{reverses}, NBI-B
+being worse in $26$--$27/30$ partitions (full support-cost repetition in supplementary Table~S1).
 
 \paragraph{How much of this is the relocated geometry?} Because a vertex value of $\beta$ returns its anchor
 directly, NBI-B's returned set \emph{contains} the three real single-objective optima, which are also points of the
@@ -180,21 +204,38 @@ NBI-C gives the best or tied-best approximation among the surrogate-derived meth
 better still). NBI-C's median hypervolume ratio is $0.989$, $0.983$, $0.982$ and $0.976$. It exceeds $0.97$ in every
 partition of Santander and BNP Paribas but only in $24/30$ and $25/30$ partitions of Porto Seguro and UCI credit;
 uniformly, it exceeds $0.95$ in all thirty partitions of three datasets and in $26/30$ on Porto Seguro (worst
-partition $0.877$). Against NBI-B it wins on hypervolume in $28$, $24$, $28$ and $30$ of 30 partitions, the corrected
-test reaching significance on Santander ($p = 0.003$) and UCI credit ($p = 0.010$).
+partition $0.877$). Against NBI-B it wins on hypervolume in $28$, $24$, $28$ and $30$ of 30 partitions, at medians of
+$+0.0084$, $+0.0106$, $+0.074$ and $+0.275$, the corrected test reaching significance on Santander ($p = 0.003$) and
+UCI credit ($p = 0.010$).
 
-Three caveats bound this. On BNP Paribas the arms genuinely split: NBI-C covers more volume ($24/30$) while NBI-B is
-closer to the reference in $\igdp$ ($24/30$, $\Delta = -0.003$). The large UCI credit gap is not a surrogate-accuracy
-effect --- those surfaces pass the gate in every partition --- but a convergence effect: NBI-B certifies a median of
-29 of its 66 subproblems, indicators use converged candidates only, and the gap correlates with that count at Spearman
-$-0.92$; retaining NBI-B's unconverged iterates preserves the direction ($30/30$) but cuts the mean gap from $+0.277$
-to $+0.108$, and in the three partitions where NBI-B converged fully the gap is at most $0.01$. Neither observation
-supports a claim that interior surrogate error dominates once anchors are right. Third, the premium is large and
-uneven (\cref{tab:compute}): NBI-C consumes about $4.2\times10^{5}$ real objective evaluations per replication where
-the surrogate arms consume none, at 73, 40, 45 and 3 times the wall-clock time of NBI-B --- smallest on UCI credit,
-where it buys the largest gain, and 73-fold on Santander for $+0.008$ hypervolume on a dataset whose log-loss surface
-is already exact. Metamodel-free NBI is the safe default, justified where the surfaces or the anchors fail, not
-uniformly preferable.
+Set beside the anchor effect of \cref{sec:results:anchors}, these medians do not order the two steps the same way on
+the four datasets. Removing the metamodel adds far less than moving the anchors on Santander ($+0.0084$ against
+$+0.196$ hypervolume) and on BNP Paribas ($+0.0106$ against $+0.058$); on Porto Seguro the two are a near-tie on the
+median ($+0.074$ against $+0.076$) and reverse on the mean ($+0.108$ against $+0.085$); and on UCI credit the ordering
+reverses outright, removal adding three times what the anchors add ($+0.275$ against $+0.092$; on the mean, $+0.277$
+against $+0.060$). Two clean datasets, one tie and one reversal over four datasets is an observation about these
+problems, not a tested ordering, and it is weakened further by the confound of \cref{sec:method:nbi}: NBI-C differs
+from NBI-B in the solver acceptance rule as well as in the objective source, so the \emph{ratio} of the two effects is
+weaker evidence than either effect on its own.
+
+Three caveats bound the NBI-C result. On BNP Paribas the two endpoints disagree, but the disagreement is a property of
+the reference definition rather than of the arms. Against the augmented reference of \cref{tab:paired}, NBI-C covers
+more volume ($24/30$, median $+0.0106$) while NBI-B is closer in $\igdp$ ($24/30$, median $-0.0028$); against the
+method-independent sample core the $\igdp$ comparison reverses --- NBI-C is closer in $20/30$, median $+0.0025$ ---
+while the hypervolume direction is unchanged ($24/30$, median $+0.0077$) (\texttt{nsga2/nsga2\_pareto\_quality.csv}).
+We therefore withdraw the earlier reading of this as a genuine hypervolume/$\igdp$ trade-off between the arms and
+record it as reference-dependent. The large UCI credit gap is not a surrogate-accuracy effect --- those surfaces pass
+the gate in every partition --- but a convergence effect: NBI-B certifies a median of 29 of its 66 subproblems,
+indicators use converged candidates only, and the gap correlates with that count at Spearman $-0.92$; retaining
+NBI-B's unconverged iterates preserves the direction ($30/30$) but cuts the mean gap from $+0.277$ to $+0.108$, and in
+the three partitions where NBI-B converged fully the gap is at most $0.01$. Neither observation supports a claim that
+interior surrogate error dominates once anchors are right. Third, the premium is large and uneven
+(\cref{tab:compute}): NBI-C consumes about $4.2\times10^{5}$ real objective evaluations per replication where the
+surrogate arms consume none. Charged standalone, so that each arm carries the stages it depends on
+(\cref{tab:compute}), the premium of NBI-C over NBI-B is $6.2$, $5.9$, $5.9$ and $2.3\times$ --- smallest on UCI credit, where
+it buys the largest gain, and 73-fold on Santander for $+0.008$ hypervolume on a dataset whose log-loss surface is
+already exact. Metamodel-free NBI is the safe default, justified where the surfaces or the anchors fail, not uniformly
+preferable.
 
 \input{tables/tab05_compute}
 
@@ -245,12 +286,19 @@ Paribas and UCI credit hypervolume; on Porto Seguro the paired differences are h
 median $+0.011$), so by the rule fixed in advance the median, the win fraction and the effect size are the evidence
 there, and all three agree.
 
-Three qualifications matter. The margins are small in absolute terms: median hypervolume-ratio gains of $+0.006$ to
-$+0.013$, on a scale where NBI-C already reaches $0.977$--$0.990$. NSGA-II costs about $2.2\times$ the wall clock of
-NBI-C at equal evaluation count, because a generation of 66 evaluations amortizes fixed costs less well than NBI's
-batched subproblem solves. And NSGA-II contributes 8--29\% of the augmented reference front, so like NBI-B and NBI-C
-it is partly graded against its own output there --- which is why the sample-core reference, where it contributes
-nothing, is reported alongside and gives the same answer.
+Four qualifications matter. The margins are small in absolute terms: median hypervolume-ratio gains of $+0.006$ to
+$+0.013$, on a scale where NBI-C already reaches $0.977$--$0.990$. The comparison is evaluation-matched but not
+cardinality-matched: NSGA-II returns exactly 66 mutually non-dominated points in all 120 runs, against NBI-C
+revalidated front sizes whose medians are $35$, $34$, $56$ and $65$. Hypervolume is monotone under set inclusion and
+$\igdp$ improves with additional points near the reference, so the larger returned set mechanically helps NSGA-II on
+both endpoints, and within datasets the per-partition cardinality gap correlates with the hypervolume-ratio gap at
+Pearson $+0.50$, $-0.37$, $+0.57$ and $+0.68$. That bounds the margin rather than removing it --- the hypervolume gap
+is $+0.0114$ on UCI credit, where the two sets differ by a median of one point, and the BNP Paribas correlation is
+negative --- but the reported margins should be read as an upper bound on NSGA-II's advantage. NSGA-II costs about
+$2.2\times$ the wall clock of NBI-C at equal evaluation count, because a generation of 66 evaluations amortizes fixed
+costs less well than NBI's batched subproblem solves. And NSGA-II contributes 8--29\% of the augmented reference
+front, so like NBI-B and NBI-C it is partly graded against its own output there --- which is why the sample-core
+reference, where it contributes nothing, is reported alongside and gives the same answer.
 
 This also settles what the surrogate-only comparison could not: whether NBI's lost spacing advantage reflects the
 objective geometry or the CHIM construction. NSGA-II's crowding-distance selection produces markedly more evenly
@@ -345,12 +393,13 @@ both sample sizes (right). Points on the diagonal are unchanged estimates.}
 Tripling the number of replications changed no directional conclusion (\cref{tab:r10r30}, \cref{fig:r10r30}): the $R =
 10$ estimate lies inside the $R = 30$ bootstrap interval in 9 of 12 hypervolume cells, 7 of 12 $\igdp$ cells and all 8
 gate frequencies, and the sign of the median paired effect is identical in all 32 primary cells. What the extension
-delivered is a change of status for four findings --- the Porto Seguro and UCI credit anchor effect went from an
+delivered is a change of status for three findings --- the Porto Seguro and UCI credit anchor effect went from an
 undecidable $6/10$ and $5/10$ to $24/30$ with intervals excluding zero; the BNP Paribas anchor collapse became a
-quantified rate ($7/30$) with an identified trigger (quadratic order selection); the NBI-C versus NBI-B split on BNP
-Paribas resolved into a genuine hypervolume/$\igdp$ trade-off; and the BNP Paribas support-cost bimodality and the
-Santander deployment-cost gap were exposed as artifacts. The criterion is itself lenient, because partitions 0--9 are
-one third of the $R = 30$ sample: against the twenty new partitions alone only 6 of 12 hypervolume and 5 of 12 $\igdp$
-cells agree, and the Porto Seguro and UCI credit anchor win rates differ between batches under an identical protocol.
-That disagreement is the magnitude of partition sensitivity the replication was designed to measure (supplementary
-Section~S11).
+quantified rate ($7/30$) with an identified trigger (quadratic order selection); and the BNP Paribas support-cost
+bimodality and the Santander deployment-cost gap were exposed as artifacts. A fourth item on that list has since been
+withdrawn: the NBI-C versus NBI-B hypervolume/$\igdp$ split on BNP Paribas is a property of the reference definition
+and reverses under the sample core (\cref{sec:results:metamodelfree}), so the extension sharpened that estimate
+without settling a finding. The criterion is itself lenient, because partitions 0--9 are one third of the $R = 30$
+sample: against the twenty new partitions alone only 6 of 12 hypervolume and 5 of 12 $\igdp$ cells agree, and the
+Porto Seguro and UCI credit anchor win rates differ between batches under an identical protocol. That disagreement is
+the magnitude of partition sensitivity the replication was designed to measure (supplementary Section~S11).

@@ -52,7 +52,9 @@ $\text{20260904} + r$ for replication $r$. All seeds are persisted in the manife
 The statistical unit is \textbf{one outer partition of one dataset}. Because all methods are evaluated on the same
 partition, every comparison is \emph{paired}. Two consequences constrain the analysis throughout.
 
-First, the 30 partitions of a dataset overlap heavily: any two training parts share on average 75\% of their rows.
+First, the 30 partitions of a dataset overlap heavily: two independent stratified 80/20 draws have an expected
+intersection of $0.8 \times 0.8 = 64\%$ of the dataset, which is $80\%$ of each training part, a Jaccard index of
+two-thirds. Any two training parts therefore share most of their rows.
 The replication distribution therefore measures \emph{sensitivity to data partitioning}, not sampling from a
 population, and the effective information is far below 30 independent runs. Second, and consequently, the dataset is
 the unit of generalization: results are summarized per dataset and the four dataset-level results are then compared.
@@ -64,9 +66,12 @@ experiments'' is made anywhere in this paper.
 
 The primary comparisons were fixed before the replicated benchmark and committed to version control: NBI-B versus
 NBI-A, NBI-C versus NBI-B, NBI-C versus random scalarization, and NBI-C versus the random Dirichlet sample. The
-primary endpoints are $\igdp$ and the hypervolume ratio, computed on revalidated objectives against the empirical
-reference of the same replication, under the weighted cost that the optimizers actually minimized; the support-cost
-repetition is a pre-specified sensitivity analysis. All other indicators are descriptive.
+primary endpoints are $\igdp$ and the hypervolume ratio, computed on the revalidated \emph{out-of-fold objectives of
+the 80\% training part} --- the only quantities the design, the surfaces, the optimizers and the selection rules ever
+see (\cref{sec:protocol:models}) --- against the empirical reference of the same replication, under the weighted cost
+that the optimizers actually minimized; the support-cost repetition is a pre-specified sensitivity analysis. The
+untouched 20\% holdout enters no primary endpoint: it is used only for the confirmation analysis of
+\cref{sec:results:holdout}. All other indicators are descriptive.
 
 Paired differences are signed so that $\Delta > 0$ always favours the second-named method:
 $\Delta\hv = \hv_{\text{new}} - \hv_{\text{ref}}$ and
@@ -83,7 +88,13 @@ t \;=\; \frac{\bar d}{\sqrt{\operatorname{var}(d)\left(\tfrac{1}{J} + \rho\right
 \label{eq:nb}
 \end{equation}
 on $J - 1$ degrees of freedom. The correction inflates the variance by a factor of
-$(1/30 + 0.25)/(1/30) \approx 8.5$, multiplying standard errors by about 2.9 relative to the naive test. Within each
+$(1/30 + 0.25)/(1/30) \approx 8.5$, multiplying standard errors by about 2.9 relative to the naive test. One caveat
+attaches to $\rho$ and we state it plainly: the heuristic $\rho = n_{\text{test}}/n_{\text{train}}$ was derived for a
+statistic measured on the held-out portion of each resample, whereas both primary endpoints here are measured on the
+training part, whose rows two replications share to the extent computed above. The value $\rho = 0.25$ is therefore a
+lower bound on the dependence between replications and the corrected test is, if anything, still anticonservative;
+every significance statement below should be read as holding \emph{at} $\rho = 0.25$, with the effect consistency
+that does not depend on $\rho$ reported alongside it. Within each
 dataset the eight primary tests form one family and receive a Holm correction; no correction is applied across
 datasets, because datasets are not pooled. A Wilcoxon signed-rank test is reported alongside as a distribution-free
 check, but it is not corrected for overlap and cannot rescue a non-significant corrected result.

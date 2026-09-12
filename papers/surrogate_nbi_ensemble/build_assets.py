@@ -433,24 +433,37 @@ Dataset & Source & Rows & Features & Prevalence & Train / holdout rows \\
 
 def tab02_gate():
     g = pd.read_csv(REP / "statistics" / "reliability_gate_r30.csv")
+    so = pd.read_csv(REP / "tables" / "scheffe_orders.csv")
+    so = so[so.selected == True].copy()                      # noqa: E712 - the selected order only
+    so["response_range"] = so.rmse_external / so.rmse_rel_range
+    med = so.groupby(["dataset", "response"])[["rmse_external", "response_range"]].median()
     rows = []
     for ds in DATASETS:
         for resp, rl in [("roc_auc", "ROC-AUC"), ("log_loss", "log-loss")]:
             r = g[(g.dataset == ds) & (g.response == resp)].iloc[0]
             orders = eval(r.orders)
-            SPC = "sp.\\,cubic"
-            od = ", ".join(f"{k.replace('special_cubic', SPC)} {v}" for k, v in sorted(orders.items(), key=lambda kv: -kv[1]))
+            SHORT = {"special_cubic": "sp.\\,cubic", "quadratic": "quad.", "linear": "lin."}
+            od = ", ".join(f"{SHORT.get(k, k)} {v}" for k, v in sorted(orders.items(), key=lambda kv: -kv[1]))
+            m = med.loc[(ds, resp)]
             rows.append(f"{DLABEL[ds]} & {rl} & {od} & {int(r['pass'])}/30 & [{r.wilson_lo:.2f}, {r.wilson_hi:.2f}] & "
-                        f"{r.r2_external_median:.3f} [{r.r2_external_ci95_lo:.3f}, {r.r2_external_ci95_hi:.3f}] & {r.spearman_median:.3f} \\\\")
+                        f"{r.r2_external_median:.3f} [{r.r2_external_ci95_lo:.3f}, {r.r2_external_ci95_hi:.3f}] & "
+                        f"{r.spearman_median:.3f} & {m.rmse_external:.4f} & {m.response_range:.3f} \\\\")
     body = "\n".join(rows)
     tex = r"""\begin{table}[t]
 \centering
-\caption{Surrogate reliability over 30 partitions. Selected Scheffé order (parsimony rule: lowest order within 10\% of the best external RMSE), reliability-gate passes ($R^2_{\mathrm{ext}} \ge 0.5$ and Spearman $\rho \ge 0.9$ on 100 unseen compositions) with Wilson 95\% intervals, and the median external $R^2$ with its bootstrap interval. Source: \texttt{statistics/reliability\_gate\_r30.csv}.}
+\caption{Surrogate reliability over 30 partitions, all quantities measured on the \emph{same} 100 unseen
+compositions: the parsimony rule selects the Scheff\'e order on them (lowest order within 10\% of the best external
+RMSE) and the reliability gate ($\rext \ge 0.5$ and Spearman $\rho \ge 0.9$) is then scored on them, so the gate is
+not independent of order selection. Orders are abbreviated lin./quad./sp.\,cubic. Pass counts carry Wilson 95\%
+intervals and the median external $R^2$ its bootstrap interval. The last two columns give the median external RMSE of
+the selected surface in the response's own units and the median observed range of that response over the same 100
+points: on a flat surface $\rext$ is ill-posed, so the RMSE read against the range is the more informative adequacy
+measure. Sources: \texttt{statistics/reliability\_gate\_r30.csv}, \texttt{tables/scheffe\_orders.csv}.}
 \label{tab:gate}
 \small
-\begin{tabular}{llllll r}
+\begin{tabular}{llllll r r r}
 \toprule
-Dataset & Response & Selected order (count) & Pass & Wilson 95\% & Median $R^2_{\mathrm{ext}}$ [95\% CI] & Median $\rho$ \\
+Dataset & Response & Selected order (count) & Pass & Wilson 95\% & Median $\rext$ [95\% CI] & Median $\rho$ & RMSE$_{\mathrm{ext}}$ & Range \\
 \midrule
 """ + body + r"""
 \bottomrule
@@ -550,25 +563,81 @@ Dataset & Set & $R=10$ & $R=30$ [95\% CI] & inside & $R=10$ & $R=30$ [95\% CI] &
 
 
 def tab05_compute():
+    """Standalone compute accounting: charge every arm for what it needs to run on its own.
+
+    NBI-A needs the 66-run design, the 100 gate compositions, the Scheffe fit, and its
+    own solve; its anchors are the optima of the two fitted surfaces, obtained by
+    minimizing polynomials at negligible cost.
+    NBI-B needs all of that PLUS the single-objective reference stage, because its
+    anchors are the REAL optima -- dominated by the direct ROC-AUC search over about
+    4e4 sampled compositions.
+    NBI-C needs the single-objective reference stage and its own solve; it uses neither
+    the design nor the surfaces.
+    The out-of-fold stage is shared (it produces the probability matrix that defines the
+    problem) and the reference, quality and comparator stages are study instrumentation;
+    neither is charged to any arm. Charging the whole refs stage to NBI-B and NBI-C is an
+    upper bound: that stage also computes references the arms do not consume.
+    """
     st = pd.read_csv(REP / "tables" / "stage_times.csv")
     nr = pd.read_csv(REP / "tables" / "nbi_runs.csv")
-    rows = []
+
+    def fmt_ev(x):
+        if x < 1000:
+            return f"{x:.0f}"
+        e = int(np.floor(np.log10(x)))
+        return f"${x / 10 ** e:.1f}\\times10^{{{e}}}$"
+
+    rows, oof_s, instr_s, prem_cb, prem_ba = [], [], [], [], []
     for ds in DATASETS:
         s = st[st.dataset == ds].groupby("stage")["seconds"].mean()
-        n = nr[nr.dataset == ds].groupby("variant")["n_real_objective_evals"].mean()
-        succ = nr[nr.dataset == ds].groupby("variant").apply(lambda d: (d.n_success / d.n_subproblems).mean())
-        rows.append(f"{DLABEL[ds]} & {s['oof']:.0f} & {s['refs']:.0f} & {s['reference']:.0f} & {s['nbi_A']:.0f} & {s['nbi_B']:.0f} & {s['nbi_C']:.0f} & "
-                    f"{s['nbi_C']/s['nbi_B']:.0f}$\\times$ & {n['C']/1e3:.0f}k & {succ['A']:.2f} / {succ['B']:.2f} / {succ['C']:.2f} \\\\")
-    body = "\n".join(rows)
+        nb = nr[nr.dataset == ds]
+        succ = nb.groupby("variant").apply(lambda d: (d.n_success / d.n_subproblems).mean())
+        c_evals = nb[nb.variant == "C"].n_real_objective_evals.mean()
+        z = np.load(EXP / ds / "rep_00" / "design_points.npz", allow_pickle=False)
+        n_fit = int(len(z["W_design"]) + len(z["W_val"]))  # design points + gate compositions
+        auc = float(np.mean([json.load(open(EXP / ds / f"rep_{r:02d}" / "references.json"))["counts"]["direct_auc_evals"]
+                             for r in range(30)]))
+        surr = float(s["design"] + s["scheffe"])           # design evaluation + surface fit + gate
+        tot = {"A": surr + s["nbi_A"], "B": surr + s["refs"] + s["nbi_B"], "C": s["refs"] + s["nbi_C"]}
+        ev = {"A": n_fit, "B": n_fit + auc, "C": auc + c_evals}
+        pre = {"A": (f"{surr:.1f}", "---"), "B": (f"{surr:.1f}", f"{s['refs']:.1f}"),
+               "C": ("---", f"{s['refs']:.1f}")}
+        for i, v in enumerate(["A", "B", "C"]):
+            head = f"\\multirow{{3}}{{*}}{{{DLABEL[ds]}}}" if i == 0 else ""
+            rows.append(f"{head} & NBI-{v} & {pre[v][0]} & {pre[v][1]} & {s['nbi_' + v]:.1f} & {tot[v]:.1f} & "
+                        f"{tot[v] / tot['A']:.1f}$\\times$ & {fmt_ev(ev[v])} & {succ[v]:.2f} \\\\")
+        rows.append(r"\addlinespace")
+        oof_s.append(f"{s['oof']:.0f}")
+        instr_s.append(f"{s['reference'] + s['quality'] + s['comparators']:.0f}")
+        prem_cb.append(f"{tot['C'] / tot['B']:.1f}")
+        prem_ba.append(float(tot["B"] / tot["A"]))
+    body = "\n".join(rows[:-1])
     tex = r"""\begin{table*}[t]
 \centering
-\caption{Mean wall-clock seconds per partition of the main stages (Apple M4 Max, 8 worker threads), the NBI-C/NBI-B time ratio, the mean number of real out-of-fold objective evaluations consumed by NBI-C (NBI-A and NBI-B consume none: they optimize the surrogates), and the mean fraction of the 66 NBI subproblems that terminated successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule). Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}.}
+\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 8 worker threads)
+and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own.
+NBI-A is charged the 66-run design, the 100 gate compositions and the Scheff\'e fit (``design\,+\,fit''), since its
+anchors are the optima of the fitted surfaces; NBI-B is charged the same \emph{plus} the single-objective reference
+stage, which is where its real anchors come from and which is dominated by the direct ROC-AUC search over
+$4\times10^{4}$ sampled compositions; NBI-C is charged the reference stage and its own solve, and needs neither the
+design nor the surfaces. Real anchors are therefore not free: NBI-B costs """ + f"{min(prem_ba):.1f}--{max(prem_ba):.1f}" + r"""$\times$
+the standalone wall clock of NBI-A, and the standalone premium of NBI-C over NBI-B is """ + ", ".join(prem_cb[:-1]) + r""" and """ + prem_cb[-1] + r"""$\times$
+(Santander, BNP Paribas, Porto Seguro, UCI credit), not the solver-stage ratio. Charging the whole reference stage to
+NBI-B and NBI-C is an upper bound, since that stage also computes references the arms do not consume, and the SLSQP
+log-loss anchor's evaluations are not separately instrumented. Not charged to any arm: the shared out-of-fold stage
+(""" + ", ".join(oof_s) + r"""~s) and the study's own instrumentation --- empirical reference, quality scoring and
+comparators (""" + ", ".join(instr_s) + r"""~s). ``Success'' is the mean fraction of the 66 subproblems that terminated
+successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule of \cref{sec:method:nbi}).
+Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}, \texttt{references.json} and
+\texttt{design\_points.npz} of the frozen replications.}
 \label{tab:compute}
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{l rrr rrr r r l}
+\begin{tabular}{l l rrr r r r r}
 \toprule
-Dataset & OOF fits & Single-obj. refs & Reference & NBI-A & NBI-B & NBI-C & C/B & Real evals (C) & Success A / B / C \\
+& & \multicolumn{3}{c}{Stage means (s)} & \multicolumn{2}{c}{Standalone} & Real & \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+Dataset & Arm & Design\,+\,fit & Single-obj.\ refs & NBI solve & total (s) & vs.\ NBI-A & evals & Success \\
 \midrule
 """ + body + r"""
 \bottomrule
@@ -843,8 +912,11 @@ Dataset & NBI-C & NSGA-II & median [95\% CI] & W/T/L & $p$ & median [95\% CI] & 
         rows.append(f"{DLABEL[ds]} & " + " & ".join(cells) + " & " + " & ".join(sup) + r" \\")
     tex2 = r"""\begin{table*}[t]
 \centering
-\caption{NSGA-II versus NBI-C under the sample-core reference (left), which contains the search output of no optimizer,
-and under the support cost scored post hoc (right). The direction matches Table~\ref{tab:nsga2} in every cell except
+\caption{NSGA-II versus NBI-C under the sample-core reference (left) and under the support cost scored post hoc
+(right). The sample core contains no output of the five methods compared in this study --- NBI-A, NBI-B, NBI-C,
+random weighted scalarization and NSGA-II --- but it is not free of optimization output: it carries the 40
+$\varepsilon$-constraint solutions and the seven single-objective references of \cref{sec:method:refs}, among them the
+real anchors supplied to NBI-B and NBI-C (\cref{sec:method:reference}). The direction matches Table~\ref{tab:nsga2} in every cell except
 Santander IGD$^+$ under the support cost. Source: \texttt{nsga2\_paired\_effects.csv}.}
 \label{tab:nsga2_supp}
 \small

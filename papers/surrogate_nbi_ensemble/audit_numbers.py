@@ -66,6 +66,14 @@ def artifact_values() -> np.ndarray:
                 walk(_json.loads(f.read_text()))
             except Exception:
                 pass
+    for extra in [REP / "anchor_injection_control.csv"]:
+        if extra.exists():
+            try:
+                df = pd.read_csv(extra)
+                for c in df.columns:
+                    vals.extend(pd.to_numeric(df[c], errors="coerce").dropna().tolist())
+            except Exception:
+                pass
     globs = [REP / "tables", REP / "statistics", REP / "nsga2",
              Path(__file__).parent / "tables"]
     for g in globs:

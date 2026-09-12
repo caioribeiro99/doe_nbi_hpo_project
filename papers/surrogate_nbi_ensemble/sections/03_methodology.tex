@@ -86,7 +86,13 @@ response at vertex $i$.
 from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and $\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
 external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} uses a parsimony rule --- the lowest
 order whose external RMSE is within 10\% of the best --- so it is driven by out-of-design accuracy rather than
-in-sample fit. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to
+in-sample fit. The \emph{same} 100 compositions serve both steps: the parsimony rule picks the order on them and the
+gate then scores the selected order on them. The gate is therefore not independent of order selection --- the order it
+judges was chosen to do well on exactly these points --- and its pass rate should be read as an optimistic estimate of
+out-of-design adequacy. We report alongside it the external RMSE of the selected surface in the response's own units
+and the observed range of that response over the same 100 points (\cref{tab:gate}), because on a nearly flat surface
+$\rext$ is ill-posed --- its denominator is the variance of an almost constant response --- so the RMSE read against
+the range is the more informative adequacy measure. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to
 version control before the replicated benchmark was run, and never adjusted afterwards: a surface is reliable only if
 \begin{equation}
 \rext \ge 0.5 \quad\text{and}\quad \rho_{\mathrm{ext}} \ge 0.9 .
@@ -128,17 +134,23 @@ objectives and the source of the anchors:
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{llll}
 \toprule
-Variant & Objectives in \cref{eq:nbi} & Anchors / payoff matrix & Real objective evaluations \\
+Variant & Objectives in \cref{eq:nbi} & Anchors / payoff matrix & Real evaluations, standalone \\
 \midrule
-NBI-A & Scheff\'e surfaces & optima of the Scheff\'e surfaces & 0 \\
-NBI-B & Scheff\'e surfaces & real out-of-fold optima & 0 (anchors reused) \\
-NBI-C & real out-of-fold objectives & real out-of-fold optima & $\approx 4.2\times10^{5}$ \\
+NBI-A & Scheff\'e surfaces & optima of the Scheff\'e surfaces & $1.7\times10^{2}$ \\
+NBI-B & Scheff\'e surfaces & real out-of-fold optima & $\approx 4.1\times10^{4}$ \\
+NBI-C & real out-of-fold objectives & real out-of-fold optima & $\approx 4.6\times10^{5}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 NBI-A is the lineage construction: everything, including the payoff matrix, comes from the metamodel. NBI-B changes
 only the anchors, which become the real optima of \cref{sec:method:refs}; NBI-C removes the metamodel entirely.
+The last column charges every variant for each real objective evaluation it needs \emph{standalone}: the 66 design
+points and the 100 gate compositions for NBI-A; those plus the real anchors for NBI-B, dominated by the direct
+ROC-AUC search over $4\times10^{4}$ sampled compositions (\cref{sec:method:refs}); and the real anchors plus its own
+solve for NBI-C. Real anchors are not free. NBI-B consumes about $4\times10^{4}$ real evaluations that NBI-A does
+not --- roughly a tenth of NBI-C's entire budget --- and its standalone wall clock is $1.2$--$12.7$ times NBI-A's,
+which is why \cref{tab:compute} prices each arm for the stages it depends on rather than for its solver stage alone.
 Because $f_1$ is piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and
 accepts an iterate whose equality residual is below $10^{-3}$ even without certified optimality,
 whereas NBI-A and NBI-B optimize smooth polynomials and require full SLSQP certification. This asymmetry follows from
@@ -180,7 +192,12 @@ from $\mathrm{Dirichlet}(\mathbf{1})$ and $\mathrm{Dirichlet}(0.3\cdot\mathbf{1}
 simplex lattice, all vertices and edges, and a 40-cap $\varepsilon$-constraint sweep, evaluated on the real objectives
 and filtered to the non-dominated set. An independent sample of $2\times10^{4}$ points checks convergence: if it
 displaces more than 5\% of the front, the reference is enlarged and rechecked, up to three rounds. This sampled core
-is constructed independently of the surrogate and of every candidate method; the final reference used for scoring
+contains no output of the five methods compared in this study --- NBI-A, NBI-B, NBI-C, random weighted scalarization
+and NSGA-II. It is not, however, free of optimization output: it carries the 40 $\varepsilon$-constraint solutions and
+the seven single-objective references of \cref{sec:method:refs}, among them the real ROC-AUC and log-loss optima that
+NBI-B and NBI-C receive as anchors and the two Scheff\'e-surface optima that NBI-A receives. On Santander the
+$\varepsilon$-constraint sweep supplies a median of 38 of the roughly 135 core-front points and the single-objective
+references a median of 4 (\texttt{tables/reference\_diagnostics.csv}). The final reference used for scoring
 is the non-dominated union of that core with every candidate set of the replication, making it at least as good as
 any method scored against it.
 
@@ -190,3 +207,33 @@ candidate sets contribute to it, a method contributing many points is partly gra
 Approximation sets are scored on min--max normalized objectives by generational distance, inverted generational
 distance, $\igdp$ \citep{ishibuchi2015modified}, Schott spacing, the exact hypervolume with reference point $1.1$ on
 each axis, expressed as a ratio to the reference hypervolume, coverage, and the joint non-dominated fraction.
+
+\subsection{The normalization box}
+\label{sec:method:normbox}
+
+Every indicator is computed on objectives mapped into $[0,1]$ by one box, and the box is not a fixed property of the
+problem. Let $\mathcal{F}$ be the empirical reference front of the replication --- the non-dominated union of the
+sampled core with every candidate set --- under one of the two cost definitions. The box is the componentwise
+minimum and maximum of $\mathcal{F}$:
+\begin{equation}
+\ell_k \;=\; \min_{F \in \mathcal{F}} F_k, \qquad u_k \;=\; \max_{F \in \mathcal{F}} F_k, \qquad
+\tilde F_k \;=\; \frac{F_k - \ell_k}{u_k - \ell_k}, \qquad k = 1,2,3 .
+\label{eq:normbox}
+\end{equation}
+Three consequences follow, and each constrains how the numbers in \cref{sec:results} may be read.
+
+\emph{(i) Within a replication the box is common to every arm.} All candidate sets of a replication are scored under
+the same $\ell$ and $u$, so the paired contrast between two arms is a difference of commensurable quantities and is
+unaffected by the choice of box.
+
+\emph{(ii) The box changes when a method is added to the reference,} because a new candidate set can extend
+$\mathcal{F}$. Adding the NSGA-II arm moves every indicator level slightly: on the identical candidate sets, NBI-C's
+median hypervolume ratio is $0.989$, $0.983$, $0.982$ and $0.976$ in \cref{sec:results:metamodelfree}, computed
+without NSGA-II in the reference, and $0.990$, $0.981$, $0.981$ and $0.977$ in \cref{tab:nsga2}, computed with it.
+Absolute indicator levels are therefore only interpretable together with the set of methods that built the reference.
+
+\emph{(iii) The box differs between replications,} since each replication has its own reference front. Absolute
+levels are comparable within a replication but not across partitions, and a mean of $\Delta\hv$ over 30 partitions is
+a mean over 30 different scales. Paired within-replication differences are unaffected, which is why medians, win
+counts and per-partition distributions are reported alongside means; \cref{sec:results:cost} withdraws one earlier
+between-partition reading that this rescaling, not the optimizers, produced.

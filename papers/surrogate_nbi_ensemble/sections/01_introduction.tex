@@ -36,9 +36,12 @@ Second, \emph{the decision variables are the mixture}. When the simplex holds sc
 above, NBI's anchors are optima of the surrogate in another space; when it holds the decision variables themselves,
 the anchors are feasible-region points --- often vertices --- so an anchor error displaces the geometry in which every
 subproblem is posed. NBI derives its whole search geometry from the payoff matrix of individual optima
-\citep{das1998nbi}, so errors there propagate globally; the classical ideal/nadir literature
-\citep{messac2003normalized,deb2010nadir} asks about estimating the true objectives, not about a surrogate standing in
-for them.
+\citep{das1998nbi}, so errors there propagate globally. That misplaced anchors damage the construction is established:
+payoff-table minima can differ substantially from the true minimum criterion values over the efficient set
+\citep{isermann1988payoff}, the nadir point is hard to estimate \citep{deb2010nadir}, and the choice of the individual
+minima has itself been treated as a design lever \citep{herrmann2026nonextreme}. What that literature, and the
+normalization remedies built on it \citep{messac2003normalized}, asks about is estimating the \emph{true} objectives;
+none of it is about a surrogate standing in for them.
 
 Third, \emph{one objective is a step function}: a model with any non-negligible weight must be loaded and executed,
 one with none costs nothing, so deployment cost is not proportional to a weight. A method requiring differentiable
@@ -60,9 +63,17 @@ objectives and anchors come from.
 our control.
 \item \textbf{NBI-B} optimizes the same surfaces with anchors from the real single-objective optima; A versus B
 isolates \emph{anchor misplacement}.
-\item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives; B versus C
-isolates residual \emph{interior surrogate error}.
+\item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives --- a
+metamodel-free NBI in the published sense of \citet{gellerich2023doenbi}, whose subproblems are physical experiments;
+B versus C isolates residual \emph{interior surrogate error}.
 \end{itemize}
+
+All three arms fit their surfaces once from a fixed design and then optimize. This is the \emph{sequential} form of
+surrogate-assisted optimization \citep{tabatabaei2015survey} --- one-shot, with no infill --- and it is the form the
+lineage above uses; nothing here tests model-managed, infill-based surrogate-assisted optimizers such as ParEGO,
+MOEA/D-EGO or SMS-EGO \citep{knowles2006parego,zhang2010moeadego,ponweiser2008smsego}, which evaluate new points on
+the true objectives inside the search loop and exist precisely to repair the kind of surrogate error diagnosed here.
+Every conclusion in this paper is scoped to the one-shot, no-infill case (\cref{sec:rel:surrogate}).
 
 We also run NSGA-II on the same objectives at a matched real-objective evaluation budget. Four controls the lineage
 does not contain surround the decomposition: external validation of every surface on 100 unseen compositions, with a
@@ -71,7 +82,10 @@ any indicator; an empirical Pareto reference whose sampled core of at least $10^
 independently of the surrogate and checked for convergence, then augmented with every candidate set for scoring; and
 an untouched holdout never used for fitting, weighting, thresholding or selection.
 
-Four public binary tabular datasets are partitioned 30 times each, giving 120 replications with recorded seeds.
+Four public binary tabular datasets --- customer-transaction prediction (Santander), insurance-claim processing (BNP
+Paribas Cardif), auto-insurance claim prediction (Porto Seguro) and consumer-credit default (UCI credit) --- are
+partitioned 30 times each, giving 120 replications with recorded seeds. The four prediction tasks differ, but all four
+come from financial-services applications, so any cross-dataset statement is made within a single application domain.
 Because partitions of one dataset overlap heavily, we treat the replication distribution as partition sensitivity, not
 a sample from a population: comparisons are paired by partition and tested with the Nadeau--Bengio correction
 \citep{nadeau2003inference}, the dataset is the unit of generalization, and nothing is pooled across the 120
@@ -98,10 +112,16 @@ and how do both compare with a canonical evolutionary optimizer at a matched eva
 \subsection{Contributions}
 
 \begin{enumerate}
-\item \textbf{A controlled decomposition of a surrogate-assisted multiobjective pipeline into surrogate error, anchor
-misplacement and solver behaviour}, through three NBI variants defined by two methodological factors. No prior study
-we found computes NBI anchors from both a surrogate and the true objectives and compares the fronts; the nearest
-precedent \citep{kwon2024ensemble} optimizes one metric at a time and has no anchors or front.
+\item \textbf{A controlled decomposition of a one-shot surrogate-assisted multiobjective pipeline into surrogate
+error, anchor misplacement and solver behaviour}, through three NBI variants defined by two methodological factors.
+The ingredients are not new and are not claimed: anchor and ideal/nadir misestimation is an established failure mode
+\citep{isermann1988payoff,deb2010nadir,he2021normalization}, the choice of individual minima has already been treated
+as a design lever \citep{herrmann2026nonextreme}, and NBI run metamodel-free on measured objectives with real anchors
+is published \citep{gellerich2023doenbi}. What we did not find is a study that computes the anchors of a CHIM method
+both from a fitted surrogate and from the true objectives on the same problem and compares the resulting fronts, so
+what is new here is the surrogate \emph{provenance} of the anchor error and the controlled comparison of the two
+constructions; the nearest ensemble-weighting precedent \citep{kwon2024ensemble} optimizes one metric at a time and
+has no anchors or front.
 
 \item \textbf{Evidence that, among failures attributable to the surrogate pipeline, anchor misplacement has the
 largest observed effect.} Real anchors improve both primary endpoints in 30 of 30 partitions on the two datasets whose
@@ -124,11 +144,13 @@ of them artifacts that survived an earlier ten-partition analysis --- are report
 |\beta_i - \beta_j|$ holds for the leading pair's fitted surfaces on all four datasets in every partition, yet the
 real blend beats its better member on only one; across all pairs the surrogate over-predicts blending gains 20 times
 and under-predicts none. And the continuous cost these methods optimize disagrees with the step cost deployment pays
-often enough to change the winning method in up to 24 of 30 partitions.
+often enough to change the winning method in up to 24 of 30 partitions. That a change of cost accounting can reorder
+a comparison is known across ensemble and cascade architectures \citep{wang2022committees}; what is reported here is
+the disagreement between two accountings applied to one and the same weight vector.
 \end{enumerate}
 
 We claim neither that NBI outperforms other multiobjective optimizers --- at a matched evaluation budget NSGA-II
 outperforms its metamodel-free arm on all four datasets --- nor that it produces more uniformly spaced fronts, nor
 that any method here is a general-purpose recommendation. The contribution is the set of conditions under which an
 established framework can and cannot be trusted in a new problem class, and the controls needed to tell the
-difference.
+difference --- stated for the one-shot, no-infill form of that framework, since no arm here performs iterative infill.

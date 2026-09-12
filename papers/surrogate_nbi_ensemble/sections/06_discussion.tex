@@ -13,17 +13,36 @@ to the individual optima. An anchor error is therefore global rather than local:
 every quasi-normal and rescales the objective space of all 66 subproblems, while an interior error of the same size
 perturbs single solutions and leaves the frame intact.
 
-The asymmetry predicts what we observe. Replacing surrogate anchors with real ones, surfaces held fixed, improves both
-primary endpoints in $30/30$ partitions on the two datasets whose ROC-AUC surfaces almost never pass the gate, and in
-$23$--$24/30$ on Porto Seguro and $24/30$ on UCI credit, with hypervolume gains up to $+0.18$; removing the surrogate
-entirely, once anchors are correct, adds much less on three of the four datasets. The fix is also cheap: on the
-convex log-loss the real anchors are one SLSQP call, so NBI-B costs essentially what NBI-A costs while repairing most
-of the gap to the metamodel-free arm.
+The asymmetry predicts part of what we observe, but not all of the measured gap is geometry. Replacing surrogate
+anchors with real ones, surfaces held fixed, improves both primary endpoints in $30/30$ partitions on the two datasets
+whose ROC-AUC surfaces almost never pass the gate, and in $23$--$24/30$ on Porto Seguro and $24/30$ on UCI credit,
+with hypervolume gains up to $+0.18$. That substitution changes four things at once (\cref{sec:method:nbi}), and one
+of them is not geometric: because the three vertex values of $\beta$ return their anchor directly, NBI-B's candidate
+set \emph{contains} the real single-objective optima, which are themselves points of the empirical reference. The
+injection control of \cref{sec:results:anchors} separates that channel from the rest. Adding those same three points
+to NBI-A's own candidate set, changing nothing else, already closes a median $80\%$ of the A-to-B hypervolume gap on
+Santander and $90\%$ on BNP Paribas, against $49\%$ on Porto Seguro and $1\%$ on UCI credit. On Santander and BNP
+Paribas --- the two datasets with the largest raw effect, and the first of them the only Holm-significant one --- most
+of what the headline numbers measure is therefore the returned extreme solutions rather than the relocated CHIM. The
+relocated-CHIM effect is cleanest on UCI credit, where it accounts for essentially the whole $+0.097$ hypervolume
+residual; it is present but small elsewhere, positive in $30/30$ Santander and BNP Paribas partitions at a median
+$+0.038$ and $+0.005$. The mechanism therefore survives at a smaller size than the raw contrast suggests, and the
+practical recommendation is if anything simpler: compute the real single-objective optima and make sure they reach the
+returned set, whether by re-anchoring or by adding them.
 
-BNP Paribas shows it concretely: where the parsimony rule selects a quadratic ROC-AUC surface, the surrogate maximum
-sits at an interior mixture instead of the gradient-boosting vertex, so the CHIM is built from a false utopia point
-and the front collapses (\cref{sec:results:anchors}) --- a geometric failure, not a numerical one, since the solver
-certifies these subproblems, and invisible to any diagnostic computed on the surface alone.
+How much the surrogate still costs once the anchors are right is dataset-dependent, and no single ordering covers the
+four. Removing the metamodel entirely adds far less than real anchors did on Santander (median $+0.008$ hypervolume
+against $+0.196$) and on BNP Paribas ($+0.011$ against $+0.059$); on Porto Seguro the two effects are the same size on
+the median ($+0.074$ against $+0.076$) and reverse on the mean ($+0.108$ against $+0.085$); and on UCI credit the
+ordering reverses outright ($+0.275$ against $+0.092$). Two clean cases, one tie and one reversal over four datasets
+make that an observation rather than a tested claim, and because B versus C also changes the solver acceptance rule
+(\cref{sec:method:nbi}), the \emph{ratio} of the two effects is weaker evidence than either effect on its own.
+
+BNP Paribas shows how the anchors go wrong in the first place: where the parsimony rule selects a quadratic ROC-AUC
+surface, the surrogate maximum sits at an interior mixture instead of the gradient-boosting vertex, so the CHIM is
+built from a false utopia point and the front collapses (\cref{sec:results:anchors}) --- a geometric failure, not a
+numerical one, since the solver certifies these subproblems, and invisible to any diagnostic computed on the surface
+alone.
 
 \subsection{Why the reliability gate does not catch it}
 \label{sec:disc:gate}
@@ -46,15 +65,27 @@ diagnosing it.
 \label{sec:disc:smooth}
 
 Two of the three objectives behave as the framework's engineering origins assume: log-loss is convex and smooth in
-$\wvec$, the Brier score exactly quadratic ($R^2_{\mathrm{ext}} = 1.000$ in all 120 replications). The ROC-AUC is not:
-a rank statistic, constant wherever the induced ordering does not change and kinked between orderings, which a
+$\wvec$, and the Brier score is exactly quadratic in $\wvec$, so its surface reproduces it at $\rext = 1.000$ in all
+120 replications --- an algebraic identity that checks the fitting code, not evidence about adequacy. The ROC-AUC is
+not: a rank statistic, constant wherever the induced ordering does not change and kinked between orderings, which a
 low-order polynomial smooths across instead of representing. Hence the Santander ROC-AUC surface reaches a Spearman
 correlation of $0.830$ with a negative external $R^2$ --- ordering broadly right, values wrong.
 
 The resulting bias is one-directional (\cref{sec:results:coefficients}): a quadratic fitted over an edge with one weak
 endpoint absorbs that curvature into $\beta_{ij}$ and overshoots its maximum --- the same over-prediction of interior
 optima that displaces surrogate anchors off vertices. Where the objective \emph{is} smooth in the weights the
-machinery works as advertised: Santander's log-loss surface passes the gate in every partition.
+machinery can work as advertised: Santander's log-loss surface passes the gate in every partition.
+
+Non-smoothness is a contributing factor, not the explanation. Were it the explanation, the smooth convex objective
+would be the reliable one everywhere, and it is not: log-loss surfaces pass the gate in $30/30$ partitions on
+Santander and UCI credit but in only $3/30$ on BNP Paribas and $12/30$ on Porto Seguro. On BNP Paribas the smooth
+objective does \emph{worse} than the rank statistic ($3/30$ against $5/30$; median external $\rext$ of $-0.180$
+against $+0.118$), and its external RMSE of $0.121$ nats is $17.7\%$ of the response range, the worst relative
+external fit anywhere in this study; on Porto Seguro the two are effectively tied ($12$ against $16$). Only Santander
+shows the sharp separation the smoothness account predicts ($\rext$ $0.971$ for log-loss against $-0.333$ for
+ROC-AUC), and one dataset is an illustration rather than a mechanism. What these data establish is that adequacy
+varies by dataset \emph{and} by metric and has to be measured on unseen compositions; they do not identify what,
+besides the shape of the response in $\wvec$, makes a given dataset--metric pair fittable by a low-order polynomial.
 
 \subsection{Non-smoothness also constrains the optimizer}
 \label{sec:disc:solver}
@@ -74,7 +105,7 @@ fully it disappears.
 \label{sec:disc:compute}
 
 Metamodel-free NBI is best or tied-best on the primary endpoints, so it is a defensible default, but it spends about
-$4.2\times10^{5}$ real evaluations per replication against none for the surrogate arms, at 3 to 73 times the
+$4.2\times10^{5}$ real evaluations per replication against none for the surrogate arms, at 2.3 to 6.2 times the
 wall-clock cost. That spend is strongly conditional: on UCI credit the threefold premium buys the largest gain, while
 on Santander a seventy-three-fold premium buys $+0.008$ hypervolume on a dataset whose log-loss surface is already
 exact.
@@ -101,9 +132,9 @@ matrix product.
 
 Every method here minimized the continuous relaxation $\sum_i w_i c_i$, since a step cost is not differentiable and
 cannot enter a gradient-based formulation; deployment pays the step cost. The two are not monotonically related inside
-the simplex, and the consequence is not cosmetic: the hypervolume-best method changes between the definitions in up to
-$24$ of 30 partitions (\cref{sec:results:cost}), and several paired conclusions reverse, including the anchor effect
-on UCI credit.
+the simplex, and the consequence is not cosmetic: which of the six candidate sets attains the best hypervolume changes
+between the definitions in 10, 23--24, 8 and 20 of 30 partitions (\cref{sec:results:cost}), and several paired
+conclusions reverse, including the anchor effect on UCI credit.
 
 The mechanism is that a linear cost gives no incentive to zero a component: a weight of $0.01$ on a model costing
 $200$~ms adds $2$~ms under the relaxation and $200$~ms in deployment. Methods optimizing the relaxation drift into the
@@ -121,13 +152,36 @@ real objective.
 \label{sec:disc:transfer}
 
 The pipeline transfers where the response is smooth in the mixture components, a condition identifiable in advance.
-Where the ROC-AUC surface is adequate too --- UCI credit, which passes in $30/30$ --- surrogate NBI with real anchors
-is within $0.03$ hypervolume of the metamodel-free arm, and random scalarization on those surfaces is statistically
-indistinguishable from it: there the inherited machinery is the efficient choice. It does not transfer unexamined to a
-rank-statistic response, to anchors that are vertices of the feasible region rather than interior points, or to an
-objective that is a step function of the support.
+Where the ROC-AUC surface is adequate too --- UCI credit, which passes in $30/30$ --- the cheap route is competitive:
+random scalarization on those externally validated surfaces is statistically indistinguishable from the
+metamodel-free arm (median hypervolume ratio $0.978$ against $0.976$; mean $\Delta\hv = +0.0015$ with bootstrap
+interval $[-0.003, 0.007]$, better in $16/30$). Surrogate-assisted NBI with real anchors is not --- its median ratio there is $0.706$ --- but that
+residual gap is a subproblem-convergence effect of NBI-B rather than surrogate error
+(\cref{sec:disc:solver}). The stronger reason to stop early on UCI credit is that there is very little to win: the
+out-of-fold gain of the log-loss optimum over the best single model is $+0.0007$ ROC-AUC and only $+0.0005$ on the
+untouched holdout, better in $23$ of 30 partitions at an overlap-corrected $p = 0.24$, against holdout gains of
+$+0.0076$, $+0.0038$ and $+0.0053$ (in $30/30$, $30/30$ and $29/30$) on the other three datasets. What UCI credit
+therefore shows is not that the inherited machinery is efficient but that on that dataset \emph{no} weighting method
+separates from the best single model on held-out data, so the cheapest adequate one suffices. The pipeline does not
+transfer unexamined to a rank-statistic response, to anchors that are vertices of the feasible region rather than
+interior points, or to an objective that is a step function of the support.
+
+One connection this study does not establish is between front quality and the decision taken from the front.
+\Cref{sec:results:holdout} shows that out-of-fold selection \emph{within} a candidate set transfers to the holdout in
+level, and that the out-of-fold-best of the four knee picks is also holdout-best in $30/30$, $15/30$, $23/30$ and
+$30/30$ partitions. The cross-method comparison is much weaker. Comparing the knee-selected solutions of two arms
+directly, paired by partition under the weighted cost, the two contrasts that carry our only Holm-significant primary
+results have \emph{worse} single-objective holdout accuracy at the selected point: Santander NBI-B minus NBI-A is
+$-0.0047$ holdout ROC-AUC, better in $15$ of 30 partitions, with holdout log-loss worse in $16$ of 30; UCI credit
+NBI-C minus NBI-B is $-0.0119$, better in $6$ of 30, with log-loss worse in $24$ of 30. Both selected points are also
+materially cheaper ($0.97$ and $2.84$~ms per 1{,}000 rows), so these are different points of the same trade-off rather
+than a contradiction of indicator results computed over whole fronts. They do not support the converse either: on
+these four datasets a better approximation of the front does not reliably buy a better selected solution, and the
+contrasts where the pick does improve (BNP Paribas NBI-B minus NBI-A, $+0.0029$ in $28/30$; Santander NBI-C minus
+NBI-B, $+0.0016$ in $26/30$) are the ones with the smaller indicator effects. Any statement that out-of-fold selection
+transfers must therefore be read as within-method and in level, not as evidence that better fronts give better picks.
 
 What we would carry forward is not a method but a checklist: external validation on unseen compositions, an argmax
-check against the real optimum, revalidation on the true objective before scoring, a reference whose sampled core no
-method under test can influence, and an explicit statement of which cost is paid. Each of them changed a conclusion
-that would otherwise have been reported.
+check against the real optimum, revalidation on the true objective before scoring, a reference whose sampled core is
+constructed independently of the surrogate and of every candidate method, and an explicit statement of which cost is
+paid. Each of them changed a conclusion that would otherwise have been reported.

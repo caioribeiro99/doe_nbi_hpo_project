@@ -1,25 +1,16 @@
-The weights of a soft-voting classifier ensemble are non-negative and sum to one, so choosing them is a mixture
-experiment on a simplex. Building on an established framework combining mixture designs of experiments,
-response-surface metamodels and Normal Boundary Intersection --- already applied to forecast-combination and
-neural-network ensemble weights --- we ask not whether that pipeline yields a Pareto front for classifier ensembles,
-but when the front it yields can be trusted. The transfer is not routine: the area under the ROC curve is piecewise
-constant in the weights, the decision variables are themselves the mixture so that anchor points are vertices of the
-feasible region, and deployment cost is a step function of the support. We therefore decompose the pipeline into three
-arms differing only in where objectives and anchors come from --- surrogate objectives with surrogate anchors, the
-same surfaces with anchors from real out-of-fold optima, and a metamodel-free arm --- and add four controls the
-framework lacks: external validation of every surface on 100 unseen compositions behind a reliability gate
-pre-specified before the replicated benchmark, revalidation of every candidate on the real objectives, an empirical Pareto reference whose sampled core of at least
-$10^{5}$ points is constructed independently of the surrogate and is then augmented with all candidate sets, and an
-untouched holdout. The study is replicated over four public binary
-tabular datasets $\times$ 30 outer partitions, paired by partition with overlap-corrected inference. Surrogate
-adequacy is both dataset- and metric-dependent: ROC-AUC surfaces pass the gate in 0, 5, 16 and 30 of 30 partitions,
-log-loss surfaces in 30, 3, 12 and 30. Among failures attributable to the surrogate pipeline, anchor misplacement has the largest
-observed effect: real anchors improve both primary endpoints in every partition of the two datasets whose surfaces
-fail, and in 23--24 of 30 partitions on Porto Seguro and 24 of 30 on UCI credit. The gate detects unusable surfaces
-but not misplaced anchors, the two actively diverging on one dataset, while a fourth dataset shows subproblem
-convergence dominating even where the surrogate is excellent. The classical synergism criterion holds for the leading classifier pair everywhere, yet the
-real blend beats its better member on only one dataset. Finally, the continuous cost these methods optimize disagrees
-with the step cost deployment pays about which method wins in up to 24 of 30 partitions. Adding a canonical evolutionary baseline, NSGA-II at a matched real-objective evaluation budget on the same
-objectives, shows it outperforming the metamodel-free arm on all four datasets by small but consistent margins, which
-bounds the pipeline's standing without affecting the diagnosis of it. The principal limitation is that four datasets
-support statements about partition sensitivity within a dataset, but only a four-point pattern across them.
+Choosing soft-voting ensemble weights is a mixture experiment on a simplex, already addressed by an established
+mixture-design, response-surface and Normal Boundary Intersection pipeline. We ask not whether that pipeline yields a
+Pareto front, but when the front can be trusted. Three arms defined by two methodological factors --- the source of
+the objectives and the source of the anchors --- run over four public binary tabular datasets $\times$ 30 partitions, paired
+and overlap-corrected, behind controls the framework lacks: a pre-specified external reliability gate; revalidation of
+every candidate on the real objectives; an empirical reference whose sampled core is constructed independently of the
+surrogate and then augmented with all candidate sets; and an untouched holdout. Surrogate adequacy is dataset- and
+metric-dependent: ROC-AUC surfaces pass the gate in 0, 5, 16 and 30 of 30 partitions, log-loss in 30, 3, 12 and 30.
+Among failures attributable to the surrogate pipeline, anchor misplacement has the largest observed effect: real
+anchors improve both primary endpoints in all 30 partitions of the two datasets whose surfaces fail, in 23--24 of 30
+on Porto Seguro and 24 of 30 on UCI credit. A control injecting only those anchors attributes most of that gap to the
+returned extreme solutions on the first two, and to the relocated construction on UCI credit, where subproblem
+convergence, not surrogate error, dominates. The gate detects unusable surfaces but not misplaced anchors. Continuous
+and step deployment costs disagree about which of six candidate sets wins in 10 to 24 of 30 partitions; at a matched
+budget NSGA-II beats the metamodel-free arm. The diagnosis concerns one-shot, no-infill pipelines; four datasets give
+a four-point cross-dataset pattern, not a tested claim.

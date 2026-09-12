@@ -4,11 +4,26 @@
 \paragraph{Four datasets is the binding constraint.} The statistical unit is one outer partition, but the unit of
 \emph{generalization} is the dataset, and there are four. Every replication-level interval here describes partition
 sensitivity within a dataset, not uncertainty about a population of datasets, so every cross-dataset mechanism
-statement --- above all ``real anchors matter most where the surrogate is unreliable'' --- is an association over four
-points, not a tested hypothesis. All four are binary tabular problems of $3\times10^{4}$ to $2\times10^{5}$ rows,
-three of them from Kaggle credit- and insurance-risk competitions; nothing here establishes behaviour on multiclass
-problems, text or image data, on very small samples, or on ensembles of more than five members, where the simplex and
-design grow quickly.
+statement is an association over four points and not a tested hypothesis. The ordering ``real anchors matter most
+where the surrogate is unreliable'' is not one we can claim at all: the median anchor effect is largest on Santander,
+whose ROC-AUC surfaces never pass the gate, and second largest on UCI credit, whose surfaces always pass
+(\cref{sec:results:anchors}). All four datasets are binary tabular problems of $3\times10^{4}$ to $2\times10^{5}$
+rows, and all four are financial-risk problems --- retail banking, insurance claims, motor insurance and consumer
+credit --- three of them from Kaggle competitions, so the four points are not four independent domains. Nothing here
+establishes behaviour on multiclass problems, text or image data, on very small samples, or on ensembles of more than
+five members, where the simplex and design grow quickly.
+
+\paragraph{The A-to-B contrast changes four things at once.} Replacing the surrogate anchors with the real
+single-objective optima simultaneously moves the utopia point, rescales both normalization axes through the payoff
+matrix, reorients the CHIM and all 66 quasi-normal directions, and --- because the three vertex values of $\beta$
+return their anchor directly --- substitutes three returned candidates that are themselves points of the empirical
+reference (\cref{sec:method:nbi}). It is a contrast between two \emph{specifications} of the anchor source, not a
+single-factor experiment. The injection control of \cref{sec:results:anchors} separates the fourth of these from the
+other three by rescoring NBI-A's own candidate set augmented with the same three anchors, and shows that the split is
+dataset-dependent: the injected points alone account for a median $80\%$ of the hypervolume gap on Santander and
+$90\%$ on BNP Paribas, but $49\%$ on Porto Seguro and $1\%$ on UCI credit. It does not separate the first three from
+one another, and no control in this study does; doing so would require an NBI implementation in which the utopia
+point, the normalization and the direction set can be varied independently.
 
 \paragraph{The model zoo is fixed and shapes the coefficient findings.} Base learners and hyperparameters were fixed
 in advance with no search: the study measures the weighting layer with the model layer held constant. The zoo
@@ -27,13 +42,17 @@ NBI-C contribute 30--40\% --- are partly graded against their own output. This i
 values without affecting the paired contrasts on which every primary claim rests; absolute hypervolume ratios should
 be read with that in mind.
 
-\paragraph{The three NBI arms are not compute-matched, and NBI-C is not matched to anything.} NBI-A and NBI-B consume
-no real objective evaluations; NBI-C consumes about $4.2\times10^{5}$ per replication and 3 to 77 times the wall-clock
-time of NBI-B; the two cheap comparators consume about 66 evaluations and a few seconds. The comparison is therefore
-between \emph{methods as specified}, not at equal budget, and supports no efficiency claim. The random Dirichlet
-comparator is matched only in candidate count and is degenerate under the weighted cost; it is a floor check on the
-reference geometry. A budget-matched comparison --- random search or an evolutionary method given $4\times10^{5}$
-real evaluations --- would answer a different, worthwhile question that we do not answer here.
+\paragraph{The three NBI arms are not compute-matched, and NBI-C is not matched to anything.} Neither NBI-A nor NBI-B
+spends real objective evaluations inside the optimizer, but NBI-B is not free: its anchors are produced by the
+single-objective reference stage (\cref{sec:method:refs}), whose derivative-free ROC-AUC search alone evaluates
+$4\times10^{4}$ compositions per replication. NBI-C consumes about $4.2\times10^{5}$ per replication and 2.3 to 6.2 times
+the wall-clock time of NBI-B; the two cheap comparators consume about 66 evaluations and a few seconds. The comparison
+is therefore between \emph{methods as specified}, not at equal budget, and supports no efficiency claim. The random
+Dirichlet comparator is matched only in candidate count and is degenerate under the weighted cost; it is a floor check
+on the reference geometry. The budget-matched question is answered only at the high end, by the NSGA-II baseline of
+\cref{sec:results:nsga2}; the low-budget question --- what an evolutionary method or a random-search ladder achieves
+on the 66 design points and 100 gate points the surrogate arms use --- is the one a surrogate paper most needs and the
+one we do not answer.
 
 \paragraph{Solver semantics differ between the arms.} NBI-A and NBI-B optimize smooth polynomials, and their
 subproblems count as successful only when SLSQP certifies optimality. NBI-C optimizes a piecewise-constant ROC-AUC,
@@ -66,7 +85,11 @@ require a scalarization arm on the cached out-of-fold objectives, which we did n
 \paragraph{Selection rules and the holdout analysis.} Holdout transfer is reported for a knee rule under the weighted
 cost, with TOPSIS and the support cost as sensitivity analyses, and agreement rates differ noticeably between these
 configurations. They characterize how close the candidates are relative to holdout noise, not the general reliability
-of out-of-fold selection.
+of out-of-fold selection. What we verify is transfer \emph{within} a candidate set and in level. The cross-method
+question --- whether the arm with the better front also yields the better selected solution --- is answered only
+descriptively, and on the two contrasts that carry our Holm-significant primary results it is answered in the negative
+at the selected point (\cref{sec:disc:transfer}); no statement here should be read as ``better fronts give better
+picks''.
 
 \paragraph{Only one external optimizer was evaluated.} We added a single canonical evolutionary baseline, NSGA-II at a
 matched real-objective evaluation budget, and it outperformed the metamodel-free arm on every dataset. That is one

@@ -4,28 +4,38 @@
 We transferred an established DoE--RSM--NBI framework from engineering and forecasting to classifier ensemble weighting,
 and asked not whether it produces a Pareto front but when that front can be believed. Answering that required three arms
 defined by two methodological factors --- the source of the objectives and the source of the anchors --- revalidation on
-the true out-of-fold objectives, an empirical reference whose sampled core the methods cannot influence, and 4 datasets
-$\times$ 30 partitions.
+the true out-of-fold objectives, an empirical reference whose sampled core is constructed independently of the
+surrogate and of every candidate method, and 4 datasets $\times$ 30 partitions.
 
 The framework is neither uniformly safe nor uniformly unsafe: its behaviour is governed by three properties of the
 problem, not by anything about the optimizer.
 
-\emph{Model class.} Where the response is smooth in the weights, the surrogate is excellent: log-loss surfaces pass an
-external reliability gate in every partition on two of four datasets, and the Brier score, exactly quadratic in the
-weights, is reproduced with $R^{2}_{\mathrm{ext}} = 1.000$ in all 120 replications. Where the response is a rank
-statistic, it can fail completely: the Santander ROC-AUC surface never passes the gate and has negative external $R^{2}$
-despite a rank correlation of $0.83$. Surrogate adequacy is a property of the dataset \emph{and} the metric, and cannot
-be assumed from in-sample fit.
+\emph{Model class.} Surrogate adequacy is a property of the dataset \emph{and} the metric and cannot be assumed from
+in-sample fit: ROC-AUC surfaces pass an external reliability gate in 0, 5, 16 and 30 of 30 partitions, log-loss
+surfaces in 30, 3, 12 and 30. Smoothness in the weights is one contributing factor and not the whole explanation. It
+accounts for Santander, where the rank statistic never passes the gate and has negative external $R^{2}$ despite a
+rank correlation of $0.83$ while the convex log-loss passes in every partition; it does not account for BNP Paribas,
+where the smooth objective does \emph{worse} than the rank statistic (3 of 30 against 5 of 30, median external
+$R^{2}$ of $-0.180$ against $+0.118$) with the worst relative external fit in the study, or for Porto Seguro, where
+the two are effectively tied. These data establish that adequacy varies and must be measured on unseen compositions,
+not what makes a dataset--metric pair fittable.
 
 \emph{Geometry.} Among failures attributable to the surrogate pipeline, anchor misplacement had the largest observed
-effect. Replacing surrogate anchors with real single-objective optima --- changing nothing else --- improved both
-primary endpoints in all 30 partitions of the two datasets whose surfaces fail, and in 23 to 24 of 30 on the two where
-they largely succeed; removing the metamodel altogether, once the anchors are right, adds far less on three datasets.
-The exception prevents a universal claim: on UCI credit, whose surfaces pass the gate in every partition, the residual
-gap is a subproblem-convergence effect rather than a surrogate-accuracy one, so solver geometry can dominate where the
-surrogate is excellent. Because NBI takes its utopia point, normalization and search directions from the payoff matrix,
-an anchor error relocates the entire construction; an interior error perturbs single subproblems. The first-order fix is
-also the cheapest: real anchors are the single-objective optima a practitioner already computes.
+effect. Replacing surrogate anchors with real single-objective optima improved both primary endpoints in all 30
+partitions of Santander and BNP Paribas, whose ROC-AUC surfaces pass the gate in 0 and 5 of 30, in 23 to 24 of 30 on
+Porto Seguro, which passes in 16 of 30, and in 24 of 30 on UCI credit, which passes in all 30. That substitution
+changes four things at once, and a control that injects only the three real optima into the surrogate-anchored arm
+shows how the effect divides: the injected points alone close a median 80\% of the hypervolume gap on Santander and
+90\% on BNP Paribas, but 49\% on Porto Seguro and 1\% on UCI credit. On the two datasets with the largest raw effect
+most of what is measured is therefore the returned extreme solutions. The relocated construction --- NBI takes its
+utopia point, normalization and search directions from the payoff matrix, so an anchor error moves the whole frame
+while an interior error perturbs single subproblems --- is the cleanest reading on UCI credit and is positive but
+small elsewhere. Removing the metamodel altogether, once the anchors are right, adds far less than the anchors did on
+Santander and BNP Paribas, about the same on Porto Seguro, and three times as much on UCI credit, where a
+subproblem-convergence effect of the surrogate-anchored arm rather than surrogate error dominates: solver geometry can
+dominate where the surrogate is excellent. With four datasets, one tie and one reversal, that ordering is an
+observation and not a tested claim. The first-order fix is in any case the cheapest available: make sure the real
+single-objective optima a practitioner already computes reach the returned set.
 
 \emph{Diagnosis.} An external gate on surface quality is worth its 100 extra evaluations and separates usable from
 unusable surfaces, but it does not predict anchor failure, and on one dataset the two properties diverge: the partitions
@@ -39,9 +49,12 @@ the fitted surfaces for the leading classifier pair in every partition of all fo
 beats its better member on only one of them, and across all pairs the surface over-predicts blending gains twenty times
 and under-predicts none: on these ensembles a large interaction coefficient is a statement about the fit, not evidence
 of complementarity, so a candidate pair must be confirmed on the real objective. Separately, the continuous cost a
-differentiable method can optimize and the step cost deployment pays disagree about the best method in 10, 24, 8 and 20
-of 30 partitions across the four datasets, and several conclusions reverse between them: any cost claim must name which
-cost it means, and weight cleaning is necessary --- an inert weight just above the activity threshold produced a
+differentiable method can optimize and the step cost deployment pays disagree about which of six candidate sets
+attains the best hypervolume in 10, 23 to 24, 8 and 20 of 30 partitions across the four datasets (the single-objective
+references are excluded from that pool), and several conclusions reverse between them. The size of the penalty depends
+on the cost range that sets the normalization box, so what we claim is the qualitative statement: sets optimized on
+the linear relaxation omit the cheapest supports the unoptimized design already contains. Any cost claim must name
+which cost it means, and weight cleaning is necessary --- an inert weight just above the activity threshold produced a
 spurious 250~ms difference in our own analysis before we caught it.
 
 Tripling the replications from 10 to 30 changed no directional conclusion: it converted three undecided findings into
@@ -52,15 +65,16 @@ are needed to defend their magnitudes.
 One external check bounds the framework's standing: NSGA-II, given the same three objectives and the same number of real
 objective evaluations per replication, produced a better approximation than the metamodel-free arm on all four datasets
 and both endpoints, by small but consistent margins, and markedly more evenly spaced revalidated fronts. Where
-evaluations are cheap enough to run either, that is the better choice, and the even spread NBI is classically credited
-with is attainable here by a different construction. It does not disturb the diagnosis above --- NSGA-II is not part of
-the pipeline being diagnosed --- but it settles what that pipeline is worth against the conventional alternative.
+evaluations are cheap enough to run either, that is the better choice, and the distributed representation NBI is
+classically credited with is attainable here by a different construction. It does not disturb the diagnosis above ---
+NSGA-II is not part of the pipeline being diagnosed --- but it settles what that pipeline is worth against the
+conventional alternative.
 
 What we carry forward is not a method but a set of controls: validate the surface on compositions it has not seen;
 compare each surrogate argmax against the real optimum and prefer the real one; revalidate every candidate on the true
-objective before scoring; build a reference whose sampled core no method under test can influence; and state which cost
-is being paid. Each is cheap relative to the pipeline it protects, and each changed a conclusion that would otherwise
-have been reported. The framework remains a good \emph{description} of the ensemble-weight simplex: its coefficients are
+objective before scoring; build a reference whose sampled core is constructed independently of the surrogate and of
+every candidate method; and state which cost is being paid. Each is cheap relative to the pipeline it protects, and
+each changed a conclusion that would otherwise have been reported. The framework remains a good \emph{description} of the ensemble-weight simplex: its coefficients are
 stable to a few percent across thirty resamplings, and they say something interpretable about which components are weak.
 Whether it is also a good \emph{optimizer} there depends on conditions that can now be stated in advance and checked
 cheaply.
