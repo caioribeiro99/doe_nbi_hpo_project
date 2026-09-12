@@ -146,7 +146,18 @@ def main() -> int:
         seen.add(key)
         print(f"  [{kind}] {val}\n      ...{ctx}...")
     print(f"\n{len(seen)} distinct flags to resolve by hand.")
-    return 0
+
+    # structural assertion: every printed interval must contain its point estimate
+    bad = []
+    for s_ in sentences(Path(args.pdf)):
+        for m in re.finditer(r"(?<![<>])([+-]\d+\.\d+)\s*\[\s*([+-]?\d+\.\d+)\s*,\s*([+-]?\d+\.\d+)\s*\]", s_):
+            pt_, lo, hi = (float(x) for x in m.groups())
+            if not (min(lo, hi) - 1e-9 <= pt_ <= max(lo, hi) + 1e-9):
+                bad.append(m.group(0))
+    print(f"\nINTERVAL CONSISTENCY: {len(bad)} printed intervals do not contain their point estimate")
+    for b in sorted(set(bad)):
+        print(f"   BAD  {b}")
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":

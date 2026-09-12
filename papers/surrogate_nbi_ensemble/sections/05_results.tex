@@ -132,6 +132,21 @@ it depends on the cost definition: under the support cost Santander is unchanged
 positive on $\igdp$ ($29/30$), but BNP Paribas weakens to $19$--$20/30$ and UCI credit \emph{reverses}, NBI-B being
 worse in $26$--$27/30$ partitions (full support-cost repetition in supplementary Table~S1).
 
+\paragraph{How much of this is the relocated geometry?} Because a vertex value of $\beta$ returns its anchor
+directly, NBI-B's returned set \emph{contains} the three real single-objective optima, which are also points of the
+empirical reference. Part of the gain is therefore the injection of those extreme solutions rather than the relocated
+CHIM. We separate the two by rescoring NBI-A's own candidate set augmented with the same three anchors, changing
+nothing else (\texttt{scripts/pco213\_anchor\_injection\_control.py}). Injecting the anchors alone closes a median
+$80\%$ of the A-to-B hypervolume gap on Santander, $90\%$ on BNP Paribas, $49\%$ on Porto Seguro and $1\%$ on UCI
+credit. The residual, which is the part attributable to the relocated geometry, is $+0.038$, $+0.005$, $+0.068$ and
+$+0.097$ hypervolume respectively.
+
+This materially qualifies the headline. On the two datasets with the largest raw effect the mechanism is mostly the
+returned extreme points, not the CHIM; on UCI credit it is almost entirely the CHIM; Porto Seguro is intermediate. The
+practical recommendation is unchanged and if anything simpler---compute the real single-objective optima and make sure
+they reach the returned set, whether by re-anchoring or by adding them---but the causal story must be stated at this
+resolution rather than as ``relocating the CHIM repairs the front''.
+
 \paragraph{What goes wrong when anchors come from the surrogate.} NBI-A's BNP Paribas hypervolume ratio splits into 21
 partitions at $0.89$--$0.93$, two intermediate and seven collapsing to $0.04$--$0.12$, and the seven are exactly those
 in which the parsimony rule selects the \emph{quadratic} ROC-AUC order ($7/7$ against $0/22$ of the linear-selected

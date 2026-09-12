@@ -142,8 +142,11 @@ only the anchors, which become the real optima of \cref{sec:method:refs}; NBI-C 
 Because $f_1$ is piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and
 accepts an iterate whose equality residual is below $10^{-3}$ even without certified optimality,
 whereas NBI-A and NBI-B optimize smooth polynomials and require full SLSQP certification. This asymmetry follows from
-the objective, not from tuning, and it bounds the causal reading: A versus B isolates \emph{anchor misplacement} with
-the surrogate objectives and the solver held fixed, and is a clean contrast; B versus C tests removal of
+the objective, not from tuning, and it bounds the causal reading. A versus B is not a single-factor contrast:
+replacing the anchors simultaneously moves the utopia point, rescales both normalization axes through the payoff
+matrix, reorients the CHIM and every quasi-normal direction, and---because the three vertex values of $\beta$ return
+their anchor directly---substitutes three returned candidates. \Cref{sec:results:anchors} separates the last of these
+from the rest. B versus C tests removal of
 \emph{surrogate error in the interior} once real anchors are supplied, but is not a perfectly identical numerical
 experiment, because changing the objective from a smooth polynomial to a piecewise-constant rank statistic
 necessarily changes solver semantics. Solver outcomes are therefore reported separately for each arm.

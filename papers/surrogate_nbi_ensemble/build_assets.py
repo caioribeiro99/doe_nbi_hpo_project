@@ -790,7 +790,7 @@ def tab08_nsga2():
                    (t.comparison == "nsga2 vs nbi_C") & (t.dataset == ds) & (t.endpoint == ep)]
             p = tt.iloc[0].p_nb_holm_family_dataset if len(tt) else float("nan")
             ptxt = "$<$0.001" if p < 0.001 else f"{p:.3f}"
-            cells.append(f"{r['median']:+.4f} [{r.ci95_mean_lo:+.4f}, {r.ci95_mean_hi:+.4f}] & "
+            cells.append(f"{r['median']:+.4f} [{r.ci95_median_lo:+.4f}, {r.ci95_median_hi:+.4f}] & "
                          f"{int(r.wins)}/{int(r.ties)}/{int(r.losses)} & {ptxt}")
         hv_c = lv[(lv.reference == "augmented_union") & (lv.cost == "weighted") &
                   (lv.dataset == ds) & (lv.set == "nbi_C")].hv_ratio.iloc[0]
@@ -833,7 +833,7 @@ Dataset & NBI-C & NSGA-II & median [95\% CI] & W/T/L & $p$ & median [95\% CI] & 
         for ep in ["igd_plus", "hv_ratio"]:
             r = e[(e.reference == "sample_core") & (e.cost == "weighted") &
                   (e.comparison == "nsga2 vs nbi_C") & (e.dataset == ds) & (e.endpoint == ep)].iloc[0]
-            cells.append(f"{r['median']:+.4f} [{r.ci95_mean_lo:+.4f}, {r.ci95_mean_hi:+.4f}] & "
+            cells.append(f"{r['median']:+.4f} [{r.ci95_median_lo:+.4f}, {r.ci95_median_hi:+.4f}] & "
                          f"{int(r.wins)}/{int(r.ties)}/{int(r.losses)}")
         sup = []
         for ep in ["igd_plus", "hv_ratio"]:
