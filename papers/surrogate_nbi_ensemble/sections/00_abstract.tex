@@ -19,6 +19,7 @@ fail, and in 23--24 of 30 partitions on Porto Seguro and 24 of 30 on UCI credit.
 but not misplaced anchors, the two actively diverging on one dataset, while a fourth dataset shows subproblem
 convergence dominating even where the surrogate is excellent. The classical synergism criterion holds for the leading classifier pair everywhere, yet the
 real blend beats its better member on only one dataset. Finally, the continuous cost these methods optimize disagrees
-with the step cost deployment pays about which method wins in up to 24 of 30 partitions. The principal limitation is
-that four datasets support statements about partition sensitivity within a dataset, but only a four-point pattern
-across them.
+with the step cost deployment pays about which method wins in up to 24 of 30 partitions. Adding a canonical evolutionary baseline, NSGA-II at a matched real-objective evaluation budget on the same
+objectives, shows it outperforming the metamodel-free arm on all four datasets by small but consistent margins, which
+bounds the pipeline's standing without affecting the diagnosis of it. The principal limitation is that four datasets
+support statements about partition sensitivity within a dataset, but only a four-point pattern across them.

@@ -193,7 +193,8 @@ the cost axis.}
 \label{sec:results:metamodelfree}
 
 Removing the metamodel and running the identical NBI on the exact out-of-fold objectives gives the best or tied-best
-approximation on every dataset. NBI-C attains a median hypervolume ratio of $0.989$, $0.983$, $0.982$ and $0.976$ on
+approximation among the surrogate-derived methods on every dataset; \cref{sec:results:nsga2} shows that an external
+evolutionary optimizer does better still. NBI-C attains a median hypervolume ratio of $0.989$, $0.983$, $0.982$ and $0.976$ on
 Santander, BNP Paribas, Porto Seguro and UCI credit. It exceeds $0.97$ in every partition of Santander and BNP
 Paribas but in $24/30$ and $25/30$ partitions of Porto Seguro and UCI credit; the weaker but uniform statement is that
 it exceeds $0.95$ in all thirty partitions of three datasets and in $26/30$ on Porto Seguro, whose worst partition
@@ -237,7 +238,61 @@ We also record a negative result, which bears directly on the classical motivati
 an evenly spread front. After revalidation on the real objectives, no such advantage is present in our data under any
 spacing definition we computed: the size-matched spacing percentile of NBI-C is $0.99$, $0.54$, $0.96$ and $0.41$ across the four datasets,
 while the random Dirichlet sample scores $1.00$, $1.00$, $1.00$ and $0.93$. Even spacing in the CHIM does not survive
-the map to revalidated objective space.
+the map to revalidated objective space. \Cref{sec:results:nsga2} shows that this is a property of the construction
+rather than of the objective geometry.
+
+\subsection{RQ5b: Comparison with an evaluation-matched evolutionary baseline}
+\label{sec:results:nsga2}
+
+Everything above compares methods within one methodological family. The obvious external question is whether a
+canonical evolutionary multiobjective optimizer, given the same objectives and the same budget, would behave
+differently. We therefore ran NSGA-II \citep{deb2002nsga2} in pymoo \citep{blank2020pymoo} on exactly the three real
+out-of-fold objectives NBI-C optimizes, with a population of 66 matching the 66 NBI directions, library-default
+variation operators, a deterministic simplex repair, and a termination budget set \emph{per replication} to the number
+of real objective evaluations NBI-C actually consumed there. The configuration was fixed and committed before any run,
+so no operator setting was chosen by inspecting performance. Across the 120 replications the realized budget ratio is
+$0.999996$ overall and lies in $[0.99992, 1.00010]$ per run, so the comparison is genuinely evaluation-matched. It is
+not time-matched, and the wall-clock ratio is reported separately.
+
+Because the empirical reference is augmented with candidate sets, adding a method changes it. We therefore score twice:
+against a \emph{sample-core} reference containing the search output of no optimizer, and against a \emph{common
+augmented union} that includes NSGA-II and against which every method's indicators are recomputed.
+
+\input{tables/tab08_nsga2}
+
+The answer is unambiguous and we state it plainly: \textbf{NSGA-II attains a better approximation than NBI-C on both
+primary endpoints, on all four datasets, under both reference definitions} (\cref{tab:nsga2}; the sample-core
+repetition is supplementary Table~S2). All 16 dataset $\times$ endpoint $\times$ reference cells favour NSGA-II, with
+rank-biserial correlations between $+0.87$ and $+1.00$. The corrected test reaches significance on Santander, BNP
+Paribas and UCI credit hypervolume; on Porto Seguro the paired differences are heavy-tailed (mean $+0.021$ against
+median $+0.011$), so by the rule fixed in advance the median, the win fraction and the effect size are the evidence
+there, and all three agree.
+
+Three qualifications matter. The margins are small in absolute terms: median hypervolume-ratio gains of $+0.006$ to
+$+0.013$, on a scale where NBI-C already reaches $0.977$--$0.990$. NSGA-II costs about $2.2\times$ the wall clock of
+NBI-C at equal evaluation count, because a generation of 66 evaluations amortizes fixed costs less well than NBI's
+batched subproblem solves. And NSGA-II contributes 8--29\% of the augmented reference front, so like NBI-B and NBI-C it
+is partly graded against its own output there --- which is why the sample-core reference, where it contributes nothing,
+is reported alongside and gives the same answer.
+
+One further result resolves a question the surrogate-only comparison could not settle. \Cref{sec:results:metamodelfree}
+reported that NBI's even spread does not survive revalidation, but could not say whether that reflects the objective
+geometry or the CHIM construction. NSGA-II's crowding-distance selection produces markedly more evenly spaced
+revalidated fronts on every dataset --- median spacing coefficient of variation $0.74$, $0.62$, $0.60$ and $0.65$
+against NBI-C's $2.28$, $0.88$, $1.56$ and $1.92$. Even spacing on these problems is therefore attainable; CHIM-based
+construction simply does not deliver it after the map into revalidated objective space.
+
+Scored post hoc under the support cost, which NSGA-II never optimized, the advantage largely transfers (supplementary
+Table~S2), most strongly on BNP Paribas where linear-cost optimizers are known to miss the cheapest supports. The one
+reversal is Santander IGD$^+$, where NBI-C is marginally closer in 17 of 30 partitions.
+
+What this does and does not change is worth stating explicitly. It bounds one claim: NBI-C is best or tied-best
+\emph{among the surrogate-derived methods}, not among multiobjective optimizers generally. It leaves untouched every
+conclusion about the surrogate pipeline itself --- surrogate reliability, anchor misplacement, the gate's blind spot,
+the interaction-coefficient result and the cost-definition result --- because NSGA-II is not part of that pipeline and
+was never proposed as a component of it. The purpose of this arm is to remove the question of whether a conventional
+optimizer would behave differently on the same objectives. It would, modestly and consistently, and a practitioner
+whose evaluations are cheap enough to run either should prefer it.
 
 \subsection{RQ6: What is the actual multiobjective conflict?}
 \label{sec:results:conflict}

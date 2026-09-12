@@ -767,3 +767,102 @@ def shorten_tab01():
 if __name__ == "__main__":
     shorten_tab01()
     fit_wide_tables()
+
+
+# --------------------------------------------------------------------------------------
+# Table 8: the evaluation-matched NSGA-II baseline (one compact main-text block)
+# --------------------------------------------------------------------------------------
+NSGA = REP / "nsga2"
+
+
+def tab08_nsga2():
+    e = pd.read_csv(NSGA / "nsga2_paired_effects.csv")
+    t = pd.read_csv(NSGA / "nsga2_paired_tests.csv")
+    lv = pd.read_csv(NSGA / "nsga2_indicator_levels.csv")
+    br = pd.read_csv(NSGA / "nsga2_budget_runtime.csv").set_index("dataset")
+    rows = []
+    for ds in DATASETS:
+        cells = []
+        for ep in ["igd_plus", "hv_ratio"]:
+            r = e[(e.reference == "augmented_union") & (e.cost == "weighted") &
+                  (e.comparison == "nsga2 vs nbi_C") & (e.dataset == ds) & (e.endpoint == ep)].iloc[0]
+            tt = t[(t.reference == "augmented_union") & (t.cost == "weighted") &
+                   (t.comparison == "nsga2 vs nbi_C") & (t.dataset == ds) & (t.endpoint == ep)]
+            p = tt.iloc[0].p_nb_holm_family_dataset if len(tt) else float("nan")
+            ptxt = "$<$0.001" if p < 0.001 else f"{p:.3f}"
+            cells.append(f"{r['median']:+.4f} [{r.ci95_mean_lo:+.4f}, {r.ci95_mean_hi:+.4f}] & "
+                         f"{int(r.wins)}/{int(r.ties)}/{int(r.losses)} & {ptxt}")
+        hv_c = lv[(lv.reference == "augmented_union") & (lv.cost == "weighted") &
+                  (lv.dataset == ds) & (lv.set == "nbi_C")].hv_ratio.iloc[0]
+        hv_n = lv[(lv.reference == "augmented_union") & (lv.cost == "weighted") &
+                  (lv.dataset == ds) & (lv.set == "nsga2")].hv_ratio.iloc[0]
+        b = br.loc[ds]
+        rows.append(f"{DLABEL[ds]} & {hv_c:.3f} & {hv_n:.3f} & " + " & ".join(cells) +
+                    f" & {b.time_ratio_median:.1f}$\\times$ \\\\")
+    body = "\n".join(rows)
+    tex = r"""\begin{table*}[t]
+\centering
+\caption{Evaluation-matched NSGA-II against metamodel-free NBI (NBI-C), weighted cost, scored against the common
+augmented reference. Both optimize the same three real out-of-fold objectives and consume a matched number of real
+objective evaluations per replication (realized ratio 0.999996 overall, 0.99992--1.00010 per run). $\Delta$ is the
+paired difference signed so that $\Delta > 0$ favours NSGA-II, with its percentile-bootstrap 95\% interval, the
+win/tie/loss count over 30 partitions and the Holm-corrected Nadeau--Bengio $p$. The last column is the wall-clock
+ratio, which is \emph{not} matched. The direction is the same under the sample-core reference
+(supplementary Table~S2). Source: \texttt{reports/pco213\_postwork\_benchmark/nsga2/}.}
+\label{tab:nsga2}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l rr lcc lcc c}
+\toprule
+& \multicolumn{2}{c}{Median HV ratio} & \multicolumn{3}{c}{$\Delta \mathrm{IGD}^+$} & \multicolumn{3}{c}{$\Delta$ HV ratio} & Time \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-6}\cmidrule(lr){7-9}
+Dataset & NBI-C & NSGA-II & median [95\% CI] & W/T/L & $p$ & median [95\% CI] & W/T/L & $p$ & ratio \\
+\midrule
+""" + body + r"""
+\bottomrule
+\end{tabular}}
+\end{table*}
+"""
+    (TAB / "tab08_nsga2.tex").write_text(tex)
+
+    # supplementary: the sample-core repetition
+    rows = []
+    for ds in DATASETS:
+        cells = []
+        for ep in ["igd_plus", "hv_ratio"]:
+            r = e[(e.reference == "sample_core") & (e.cost == "weighted") &
+                  (e.comparison == "nsga2 vs nbi_C") & (e.dataset == ds) & (e.endpoint == ep)].iloc[0]
+            cells.append(f"{r['median']:+.4f} [{r.ci95_mean_lo:+.4f}, {r.ci95_mean_hi:+.4f}] & "
+                         f"{int(r.wins)}/{int(r.ties)}/{int(r.losses)}")
+        sup = []
+        for ep in ["igd_plus", "hv_ratio"]:
+            r = e[(e.reference == "augmented_union") & (e.cost == "support") &
+                  (e.comparison == "nsga2 vs nbi_C") & (e.dataset == ds) & (e.endpoint == ep)].iloc[0]
+            sup.append(f"{r['median']:+.4f} & {int(r.wins)}/{int(r.ties)}/{int(r.losses)}")
+        rows.append(f"{DLABEL[ds]} & " + " & ".join(cells) + " & " + " & ".join(sup) + r" \\")
+    tex2 = r"""\begin{table*}[t]
+\centering
+\caption{NSGA-II versus NBI-C under the sample-core reference (left), which contains the search output of no optimizer,
+and under the support cost scored post hoc (right). The direction matches Table~\ref{tab:nsga2} in every cell except
+Santander IGD$^+$ under the support cost. Source: \texttt{nsga2\_paired\_effects.csv}.}
+\label{tab:nsga2_supp}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l lc lc lc lc}
+\toprule
+& \multicolumn{4}{c}{Sample-core reference, weighted cost} & \multicolumn{4}{c}{Augmented reference, support cost} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Dataset & $\Delta \mathrm{IGD}^+$ [CI] & W/T/L & $\Delta$ HV [CI] & W/T/L & $\Delta \mathrm{IGD}^+$ & W/T/L & $\Delta$ HV & W/T/L \\
+\midrule
+""" + "\n".join(rows) + r"""
+\bottomrule
+\end{tabular}}
+\end{table*}
+"""
+    (TAB / "tabS02_nsga2_sensitivity.tex").write_text(tex2)
+    print("wrote tab08 + tabS02")
+
+
+if __name__ == "__main__":
+    tab08_nsga2()

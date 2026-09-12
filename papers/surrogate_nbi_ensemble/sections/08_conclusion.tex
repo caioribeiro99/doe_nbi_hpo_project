@@ -56,6 +56,14 @@ quantified ones, exposed two apparent phenomena as artifacts, and supplied inter
 says. We report that explicitly because it is evidence about how much replication such a study needs, and the answer
 appears to be that ten partitions identify the conclusions while thirty are required to defend their magnitudes.
 
+One external check bounds the framework's standing. A canonical evolutionary optimizer, NSGA-II, given the same three
+objectives and the same number of real objective evaluations per replication, produced a better approximation than the
+metamodel-free arm on all four datasets and on both endpoints, by small but consistent margins, and produced markedly
+more evenly spaced revalidated fronts. Where evaluations are cheap enough to run either, that is the better choice,
+and the even spread NBI is classically credited with is attainable on these problems by a different construction. This
+does not disturb the diagnosis above, because the evolutionary optimizer is not part of the surrogate pipeline being
+diagnosed; it settles what the pipeline is worth relative to the conventional alternative.
+
 What we would carry into any future use of this framework is not a method but a set of controls: validate the surface
 on compositions it has not seen; compare each surrogate argmax against the real optimum and prefer the real one;
 revalidate every candidate on the true objective before scoring; build a reference that no method under test can

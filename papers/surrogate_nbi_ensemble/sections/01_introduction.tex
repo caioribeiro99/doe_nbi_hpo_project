@@ -75,7 +75,9 @@ difference between A and B isolates \emph{anchor misplacement}.
 between B and C isolates the residual effect of \emph{surrogate error in the interior}.
 \end{itemize}
 
-Around this decomposition we place four controls that the lineage does not contain: an external validation of every
+We additionally run one external optimizer, NSGA-II, on the same objectives at a matched real-objective evaluation
+budget, so that the pipeline's standing against the conventional multiobjective toolbox is measured rather than
+assumed. Around this decomposition we place four controls that the lineage does not contain: an external validation of every
 surface on 100 compositions it has never seen, with a reliability gate fixed before the
 replicated benchmark; revalidation of every candidate
 produced by any method on the true objectives before any indicator is computed; an empirical Pareto reference whose sampled core of at
@@ -98,7 +100,8 @@ of the interaction coefficients survive confrontation with the real objectives?
 \item[\textbf{RQ3}] What goes wrong when NBI is anchored on surrogate optima?
 \item[\textbf{RQ4}] Does replacing surrogate anchors with real ones repair the front, and does the reliability gate
 predict when this is necessary?
-\item[\textbf{RQ5}] How does surrogate-assisted NBI compare with metamodel-free NBI, and what does the difference cost?
+\item[\textbf{RQ5}] How does surrogate-assisted NBI compare with metamodel-free NBI, what does the difference cost,
+and how do both compare with a canonical evolutionary optimizer at a matched evaluation budget?
 \item[\textbf{RQ6}] How large is the actual conflict between discrimination and calibration?
 \item[\textbf{RQ7}] Does the definition of deployment cost change which method wins?
 \item[\textbf{RQ8}] Do solutions selected on out-of-fold data transfer to an untouched holdout?
@@ -140,7 +143,8 @@ blending gains 20 times and under-predicts none. And the continuous cost that th
 the step cost that deployment pays often enough to change the winning method in up to 24 of 30 partitions.
 \end{enumerate}
 
-We deliberately do not claim that NBI outperforms other multiobjective optimizers, that it produces more uniformly
-spaced fronts --- it does not, after revalidation --- or that any method here is a general-purpose recommendation. The
+We deliberately do not claim that NBI outperforms other multiobjective optimizers --- at a matched evaluation budget
+NSGA-II outperforms its metamodel-free arm on all four datasets --- nor that it produces more uniformly spaced fronts,
+nor that any method here is a general-purpose recommendation. The
 contribution is a set of conditions under which an established framework can and cannot be trusted in a new problem
 class, and the controls needed to tell the difference.

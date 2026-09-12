@@ -69,9 +69,9 @@ cost, with TOPSIS and the support cost as sensitivity analyses, and the agreemen
 these configurations. They characterize how close the candidates are relative to holdout noise, not the general
 reliability of out-of-fold selection.
 
-\paragraph{No evolutionary multiobjective baseline.} The comparators are the ones needed to decompose the pipeline
-(surrogate versus real objectives, surrogate versus real anchors, scalarization on the same surfaces, random search as
-a floor). A canonical evolutionary baseline such as NSGA-II or MOEA/D is absent. Our goal is diagnostic rather than
-competitive, and adding one would not change any claim made here, but its absence limits what can be said about how
-this pipeline compares with the standard multiobjective toolbox. We assess the case for adding one in the
-supplementary baseline-gap assessment.
+\paragraph{Only one external optimizer was evaluated.} We added a single canonical evolutionary baseline, NSGA-II at
+a matched real-objective evaluation budget, and it outperformed the metamodel-free arm on every dataset. That is one
+algorithm at one configuration on one problem class; the study is not a competition among multiobjective optimizers,
+and nothing here ranks NSGA-II against MOEA/D, NSGA-III or a surrogate-assisted evolutionary method. Nor is the
+comparison time-matched: NSGA-II costs about $2.2\times$ the wall clock at equal evaluation count in our
+implementation, and a differently batched implementation would shift that ratio.
