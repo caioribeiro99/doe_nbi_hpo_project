@@ -866,3 +866,64 @@ Dataset & $\Delta \mathrm{IGD}^+$ [CI] & W/T/L & $\Delta$ HV [CI] & W/T/L & $\De
 
 if __name__ == "__main__":
     tab08_nsga2()
+
+
+# --------------------------------------------------------------------------------------
+# Table 3, main-text version: load-bearing quantities only.
+# Mean, rank-biserial, Wilcoxon and the two floor-check comparisons move to the supplement.
+# --------------------------------------------------------------------------------------
+def tab03_main_compact():
+    e = pd.read_csv(REP / "statistics" / "paired_primary_effects.csv")
+    t = pd.read_csv(REP / "statistics" / "paired_primary_tests.csv")
+    e = e[e.cost == "weighted"]
+    t = t[t.cost == "weighted"]
+    comps = [("nbi_B vs nbi_A", "NBI-B vs NBI-A"), ("nbi_C vs nbi_B", "NBI-C vs NBI-B")]
+    rows = []
+    for ds in DATASETS:
+        first = True
+        for ck, cl in comps:
+            cells = []
+            for ep in ["igd_plus", "hv_ratio"]:
+                r = e[(e.dataset == ds) & (e.comparison == ck) & (e.endpoint == ep)].iloc[0]
+                p = t[(t.dataset == ds) & (t.comparison == ck) & (t.endpoint == ep)].iloc[0]
+                nd = 4 if abs(r["median"]) < 0.05 else 3
+                ptxt = "$<$0.01" if p.p_nb_holm_family_dataset < 0.01 else (
+                    "$<$0.05" if p.p_nb_holm_family_dataset < 0.05 else "n.s.")
+                cells.append(f"{r['median']:+.{nd}f} [{r.ci95_median_lo:+.{nd}f}, {r.ci95_median_hi:+.{nd}f}] & "
+                             f"{int(r.wins)}/{int(r.ties)}/{int(r.losses)} & {ptxt}")
+            rows.append(f"{DLABEL[ds] if first else ''} & {cl} & " + " & ".join(cells) + r" \\")
+            first = False
+        rows.append(r"\addlinespace")
+    body = "\n".join(rows[:-1])
+    tex = r"""\begin{table*}[t]
+\centering
+\caption{Primary paired comparisons under the weighted cost, 30 partitions per dataset. $\Delta > 0$ favours the
+second-named set ($\Delta\mathrm{IGD}^+ = \mathrm{IGD}^+_{\mathrm{ref}} - \mathrm{IGD}^+_{\mathrm{new}}$,
+$\Delta\mathrm{HV} = \mathrm{HV}_{\mathrm{new}} - \mathrm{HV}_{\mathrm{ref}}$). Median with its percentile-bootstrap
+95\% interval, wins/ties/losses, and the Holm-corrected Nadeau--Bengio significance band ($\rho = 0.25$, family of
+eight tests per dataset; \emph{n.s.} means the corrected test does not reach 0.05, which for a bimodal or heavy-tailed
+difference is expected and is why the median and the win count are reported). Means, rank-biserial effect sizes,
+exact $p$-values, the two floor-check comparisons against random scalarization and random Dirichlet search, and the
+full support-cost repetition are in supplementary Tables~S1 and~S5. Source:
+\texttt{statistics/paired\_primary\_effects.csv}, \texttt{paired\_primary\_tests.csv}.}
+\label{tab:paired}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ll lcc lcc}
+\toprule
+& & \multicolumn{3}{c}{$\Delta \mathrm{IGD}^+$} & \multicolumn{3}{c}{$\Delta$ hypervolume ratio} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Dataset & Comparison & median [95\% CI] & W/T/L & Holm $p$ & median [95\% CI] & W/T/L & Holm $p$ \\
+\midrule
+""" + body + r"""
+\bottomrule
+\end{tabular}}
+\end{table*}
+"""
+    (TAB / "tab03_paired_primary.tex").write_text(tex)
+    print("wrote compact tab03 (main); full version remains in statistics CSVs")
+
+
+if __name__ == "__main__":
+    tab03_main_compact()

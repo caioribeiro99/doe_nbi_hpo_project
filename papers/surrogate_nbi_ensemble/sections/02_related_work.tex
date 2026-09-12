@@ -6,16 +6,13 @@
 
 Weighted voting and weighted probability averaging are long established
 \citep{hansen1990neural,kittler1998combining,dietterich2000ensemble,kuncheva2014combining}; the weights are classically
-set by stacked generalization on out-of-fold predictions, stabilized by non-negative coefficients, summing to one in
-Breiman's formulation
+set by stacked generalization on out-of-fold predictions
 \citep{wolpert1992stacked,breiman1996stacked,leblanc1996combining,vanderlaan2007super,ledell2016auc}, by greedy forward
-selection with replacement --- still the default in automated machine learning \citep{caruana2004ensemble} --- or by
-numerical optimization
+selection with replacement \citep{caruana2004ensemble}, or by numerical optimization
 \citep{zhang2011sparse,yao2018stacking,shahhosseini2022optimizing,hassan2026weighted,xu2026pseo};
 \citet{fumera2005theoretical} gives the theoretical analysis of weighted averaging.
 Throughout, the simplex is almost always respected as a constraint rather than designed over as an experimental
-region, and essentially all of this work is single-objective: we found no study in this cluster that fits a response
-surface to a statistical design over the weight simplex.
+region, and essentially all of this work is single-objective.
 
 \subsection{Multiobjective ensemble optimization}
 \label{sec:rel:moo}
@@ -23,18 +20,15 @@ surface to a statistical design over the weight simplex.
 Multiobjective formulations of ensemble learning divide by their decision variables: the \emph{members}, evolved under
 accuracy-versus-diversity objectives \citep{abbass2003pareto,chandra2006ensemble,jin2008pareto}; a \emph{subset}, with
 binary membership variables \citep{dossantos2008dynamic,qian2015pareto}; or --- the family relevant here ---
-\emph{continuous combination weights} under conflicting criteria, optimized by multiobjective simulated annealing,
-differential evolution, sparsity-augmented or joint weight--feature search, including over the simplex-constrained
-weights of Bayesian model averaging
+\emph{continuous combination weights} under conflicting criteria, optimized by metaheuristics
 \citep{ekbal2011multiobjective,ekbal2013combining,bandyopadhyay2008amosa,onan2016multiobjective,rezaei2019multi,zhao2018multiobjective,vrugt2006multi,galvan2026simultaneous}.
 Surveys organize the field by generation, selection and combination \citep{ribeiro2020ensemble}.
 
-Multiobjective optimization of continuous ensemble weights is therefore \emph{not} new, and we do not claim it. Absent
-from this cluster is any designed experiment and fitted response surface over the weight simplex, any classical
-scalarization method such as NBI, and --- with the partial exception of the sparsity term in
-\citet{zhao2018multiobjective} --- any treatment of deployment cost as an objective. Fronts are typically compared
-between algorithms rather than scored against a separately sampled real-objective reference, and are rarely replicated
-over resampled partitions with corrected inference \citep{demsar2006statistical}.
+This family is therefore \emph{not} new, and we do not claim it. Absent from this cluster is any designed experiment
+and fitted response surface over the weight simplex, any classical scalarization method such as NBI, and --- with the
+partial exception of the sparsity term in \citet{zhao2018multiobjective} --- any treatment of deployment cost as an
+objective. Fronts are rarely replicated over resampled partitions with corrected inference
+\citep{demsar2006statistical}.
 
 \subsection{Mixture experiments and response surfaces}
 \label{sec:rel:mixture}
@@ -43,29 +37,23 @@ Mixture experiments address exactly the constraint set of \cref{eq:simplex}, thr
 canonical polynomials that carry Scheffé's name
 \citep{scheffe1958mixtures,scheffe1963simplexcentroid,cornell2002mixtures,myers2016rsm}. Because $\sum_i w_i = 1$,
 mixture-model coefficients are not component effects in the ordinary sense and separate measures are needed to
-interpret them \citep{piepel1982component}; this governs how we read ours.
+interpret them \citep{piepel1982component}.
 
-The classical reading of a positive interaction coefficient is \emph{synergistic blending}, defined as a departure of
-the blend above the linear (additive) prediction from the pure components \citep{cornell2002mixtures}. That is a
-statement relative to the chord, not relative to the better pure component, and the distinction turns out to matter
-(\cref{sec:results:coefficients}).
+The classical reading of a positive interaction coefficient is \emph{synergistic blending}
+\citep{cornell2002mixtures}: a statement relative to the chord, not relative to the better pure component, and the
+distinction turns out to matter (\cref{sec:results:coefficients}).
 
-Mixture designs are beginning to appear in machine learning --- in self-validated ensemble modelling, in estimating
-the weights of a Gaussian mixture model, and in predictive laws fitted over training-data mixture proportions
-\citep{karl2023svem,leal2025mixtureweights,xie2023doremi,ye2025mixinglaws,liu2025regmix,chen2025aioli,thudi2025mixmin}
---- but share our formalism and not our object: none models the performance of a weighted \emph{prediction} ensemble.
+Mixture designs are beginning to appear in machine learning
+\citep{karl2023svem,leal2025mixtureweights,xie2023doremi,ye2025mixinglaws,liu2025regmix,chen2025aioli,thudi2025mixmin},
+but share our formalism and not our object: none models the performance of a weighted \emph{prediction} ensemble.
 
-The exception, and the closest prior art to this study, is \citet{kwon2024ensemble}. They treat the weights of five
-heterogeneous classifiers as mixture components, obtain the generalization metric at each point of a mixture design,
-fit a Scheffé canonical polynomial with binary interaction terms to accuracy or $F_1$, reduce it by backward
-elimination at $\alpha = 0.05$, and maximize the reduced polynomial subject to $\sum_i w_i = 1$ with SLSQP and related
-solvers, on eleven tabular binary datasets against stacking meta-models. Elements 1--3 of our own pipeline --- the
-simplex formulation, the mixture design over classifier weights and the Scheffé surrogate of ensemble performance ---
-are therefore established prior art for classifiers, not only for forecasts and neural networks, and we claim none of
-them. What that study does not do is what this paper is about: it optimizes one scalar metric at a time, so it has no
-Pareto front, no anchors and no NBI; it validates the fitted polynomial only in-sample, with no external validation on
-unseen compositions and no admissibility criterion; it has no separately sampled reference front and no Pareto indicators; it
-carries no cost objective; and it reports no replication over resampled partitions and no paired inference.
+The exception, and the closest prior art to this study, is \citet{kwon2024ensemble}: the weights of five heterogeneous
+classifiers as mixture components, a Scheffé canonical polynomial of accuracy or $F_1$ fitted over a mixture design,
+reduced by backward elimination and maximized subject to $\sum_i w_i = 1$, on eleven tabular binary datasets. The
+simplex formulation, the mixture design over classifier weights and the Scheffé surrogate are therefore established
+prior art for classifiers, and we claim none of them. What that study does not do is what this paper is about: it
+optimizes one scalar metric at a time, so it has no Pareto front, no anchors and no NBI; it validates the fitted
+polynomial only in-sample, against no separately sampled reference front; and it carries no cost objective.
 
 \subsection{The DoE--RSM--NBI framework and its application to ensemble weights}
 \label{sec:rel:lineage}
@@ -111,13 +99,11 @@ estimation is a recognized problem \citep{deb2010nadir}, normalization affects p
 \citep{he2021normalization}, and the normalized normal constraint was introduced partly to make anchor-based
 normalization better behaved \citep{messac2003normalized}.
 
-What we did not find, in this cluster or any other, is a study that computes a CHIM method's anchors both from a
-surrogate and from the true objectives and compares the resulting fronts, or that revalidates a complete
-surrogate-generated Pareto set on the true objectives and scores it with $\igdp$ and hypervolume against an
-\emph{empirically constructed} reference. The closest external analogue we located, \citet{abolghasemian2022haulage},
-runs a modified NBI on regression metamodels fitted from a designed experiment and validated by fit statistics, without
-re-evaluating the resulting Pareto solutions on the simulation --- precisely the NBI-A pattern this study is built to
-expose.
+We found no study that computes a CHIM method's anchors both from a surrogate and from the true objectives. The
+closest external analogue we located, \citet{abolghasemian2022haulage}, runs a modified NBI on regression metamodels
+fitted from a designed experiment and
+validated by fit statistics, without re-evaluating the resulting Pareto solutions on the simulation --- precisely the
+NBI-A pattern this study is built to expose.
 
 \subsection{Cost-aware ensemble deployment}
 \label{sec:rel:cost}
@@ -131,12 +117,12 @@ inside a scalarized training objective \citep{xu2012greedy,zhang2011sparse}. Aut
 increasingly expose inference-time constraints during ensemble construction
 \citep{erickson2020autogluon,feurer2022autosklearn,borchert2022paretoselect}.
 
-The distinction we need falls between these categories: our weights induce a support, so deployment pays a step cost,
-while the optimizers can only minimize its continuous relaxation. To the best of our literature search, no prior work
-contrasts these two cost functions for the same weighted ensemble and reports that they disagree about which method
-wins. Where a related question has been settled it went the other way: for budgeted learning with feature re-use, the
-support-cost programme is provably solved by its linear relaxation \citep{nan2015budgeted}. Our setting does not
-inherit that guarantee, and \cref{sec:results:cost} shows the two definitions disagreeing in up to 24 of 30 partitions.
+The distinction we need falls between these categories: to the best of our literature search, no prior work contrasts
+the step cost a deployed support pays with the continuous relaxation the optimizers minimize, for the same weighted
+ensemble, and reports that they disagree about which method wins. Where a related question has been settled it went
+the other way: for budgeted learning with feature re-use, the support-cost programme is provably solved by its linear
+relaxation \citep{nan2015budgeted}. Our setting does not
+inherit that guarantee, and \cref{sec:results:cost} shows the two definitions disagreeing.
 
 \subsection{The gap}
 \label{sec:rel:gap}

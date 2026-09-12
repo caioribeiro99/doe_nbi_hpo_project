@@ -247,6 +247,32 @@ caveat (NBI-B and NBI-C contribute 30–40% of the final front) must accompany a
 
 ---
 
+## Numerical claim audit (run 2026-09-12 on the compiled PDF)
+
+`audit_numbers.py` extracts every quantitative sentence from the compiled manuscript and checks each number against
+the union of values in the frozen R = 30 tables, the statistics outputs, the NSGA-II tables, `summary.json`, the
+manifests and the NSGA-II configuration — 136,940 distinct source values.
+
+| Item | Result |
+|---|---|
+| Non-trivial numbers checked | 616 |
+| x/y count claims checked | 150 |
+| Flags after excluding citation years, documented seed offsets and W/T/L triples | **12** |
+| Flags that are invented or untraceable numbers | **0** |
+
+All twelve resolved:
+
+- Nine are table cells that the PDF text extractor splits across columns — Table 5's NBI success triples
+  ("0.98 / 0.95 / 0.83") read as "98/0", "95/1" and so on, and Table 1's train/holdout counts. They are not prose
+  claims and each value is present in `tables/nbi_runs.csv`.
+- `800` is derived in prose: 80 pending replications × 10 stages, stated in the reproducibility section.
+- `829` is the megabyte size of the unversioned raw artifact tree, stated in the reproducibility section.
+- `0/22` is the tail of "7/7 against 0/22 of the linear-selected ones", a genuine count verified in
+  `tables/scheffe_orders.csv` (7 quadratic-selected collapse partitions, 22 linear-selected non-collapse).
+
+The audit is a screen for transcription drift and invented figures. It cannot detect a real number attached to the
+wrong claim; that is what this document's per-claim mapping is for.
+
 ## Claim blacklist (must not appear as positive claims)
 
 1. NBI produces more uniformly spaced real fronts (spacing percentiles: NBI-C 0.99 / 0.54 / 0.96 / 0.41 vs random 1.00 — not supported).

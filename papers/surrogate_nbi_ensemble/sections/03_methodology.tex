@@ -1,18 +1,15 @@
 \section{Methodology}
 \label{sec:method}
 
-This section states the optimization problem, the mixture-design and response-surface machinery inherited from the
-predecessor framework, and the three Normal Boundary Intersection (NBI) variants that separate surrogate fidelity from
-anchor construction; \cref{fig:pipeline} shows the resulting pipeline, marking each element as inherited, adapted for
-compositional decision variables, or new here.
+\Cref{fig:pipeline} shows the pipeline of this study, marking each element as inherited, adapted for compositional
+decision variables, or new here.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{fig01_lineage_pipeline.pdf}
 \caption{The predecessor DoE--RSM--NBI framework (top) and its transfer to classifier ensemble weighting (bottom).
 Blue: inherited. Orange: adapted because the decision variables are compositional and the responses are
-machine-learning metrics. Green: introduced in this study. The entire lower lane is repeated on 30 outer
-partitions of each of four datasets, and every comparison is paired by partition.}
+machine-learning metrics. Green: introduced in this study.}
 \label{fig:pipeline}
 \end{figure}
 
@@ -43,30 +40,26 @@ f_1(\wvec) &= -\operatorname{AUC}\!\left(y, \mathbf{P}\wvec\right) && \text{(dis
 f_2(\wvec) &= \frac{1}{n}\sum_{k=1}^{n}\Big[-y_k \log p_{\wvec}(x_k) - (1-y_k)\log\!\big(1-p_{\wvec}(x_k)\big)\Big] && \text{(calibration, minimized)},\\
 f_3(\wvec) &= c(\wvec) && \text{(inference cost, minimized)}.
 \end{align}
-Their qualitative heterogeneity is the point of the study. The log-loss $f_2$ is convex and smooth in $\wvec$, whereas
-the area under the ROC curve is a rank statistic: $f_1$ is piecewise constant in $\wvec$, with gradients that are zero
-almost everywhere and undefined on the boundaries between orderings, so it is not merely non-convex but non-smooth in
-a way that defeats gradient-based certification.
+The log-loss $f_2$ is convex and smooth in $\wvec$, whereas the area under the ROC curve is a rank statistic: $f_1$ is
+piecewise constant in $\wvec$.
 
 \subsection{Two cost models: a relaxation and a deployment cost}
 \label{sec:method:cost}
 
-Let $c_i$ be the measured inference cost of model $i$ in milliseconds per 1{,}000 predictions, including its
-preprocessing. Deployment cost is a step function of the weight vector: a model receiving \emph{any} non-negligible
-weight must be loaded and executed; one receiving none costs nothing. This gives the \emph{support cost}
+Let $c_i$ be the measured inference cost of model $i$ (\cref{sec:protocol:models}). Deployment cost is a step
+function of the weight vector: a model receiving \emph{any} non-negligible weight must be loaded and executed; one
+receiving none costs nothing. This gives the \emph{support cost}
 \begin{equation}
 c_{\mathrm{sup}}(\wvec) \;=\; \sum_{i=1}^{M} c_i \,\mathbf{1}\!\left[w_i > \varepsilon\right], \qquad \varepsilon = 10^{-3},
 \label{eq:supportcost}
 \end{equation}
-which is discontinuous and therefore unusable by a gradient-based method. Every optimizer here instead sees the
-continuous relaxation
+which is discontinuous; every optimizer here instead sees the continuous relaxation
 \begin{equation}
 c_{\mathrm{w}}(\wvec) \;=\; \sum_{i=1}^{M} w_i c_i ,
 \label{eq:weightedcost}
 \end{equation}
 the natural linear mixture response, which coincides with $c_{\mathrm{sup}}$ at the vertices but not on the
-interior: spreading a little mass over an expensive model is cheap under \cref{eq:weightedcost} and fully priced under
-\cref{eq:supportcost}. We therefore optimize \cref{eq:weightedcost} and score the \emph{same} solutions under
+interior. We therefore optimize \cref{eq:weightedcost} and score the \emph{same} solutions under
 \cref{eq:supportcost}, reporting every comparison under both; \cref{sec:results:cost} shows that the choice changes
 which method wins.
 
@@ -87,15 +80,14 @@ ensemble could occupy.
 \end{align}
 fitted by ordinary least squares without an intercept and without pure quadratic terms, which $\sum_i w_i = 1$ makes
 redundant. No term elimination is performed: the canonical form is kept intact so that $\beta_i$ is the predicted
-response at vertex $i$ and $\beta_{ij}$ measures the departure of the $i$--$j$ edge from linear blending.
+response at vertex $i$.
 
-\paragraph{External validation and the reliability gate.} Where the lineage reports in-sample fit, each
-replication here also evaluates 100 compositions drawn from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and
-$\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
+\paragraph{External validation and the reliability gate.} Each replication also evaluates 100 compositions drawn
+from $\mathrm{Dirichlet}(\mathbf{1})$ (60) and $\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$ (40) that are not in the design and never used for fitting, giving an
 external $\rext$ and Spearman $\rho_{\mathrm{ext}}$. \emph{Order selection} uses a parsimony rule --- the lowest
 order whose external RMSE is within 10\% of the best --- so it is driven by out-of-design accuracy rather than
-in-sample fit. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to version control
-before the replicated benchmark was run, and never adjusted afterwards: a surface is reliable only if
+in-sample fit. \emph{Admissibility} uses a \emph{reliability gate} whose thresholds were fixed and committed to
+version control before the replicated benchmark was run, and never adjusted afterwards: a surface is reliable only if
 \begin{equation}
 \rext \ge 0.5 \quad\text{and}\quad \rho_{\mathrm{ext}} \ge 0.9 .
 \label{eq:gate}
@@ -108,11 +100,10 @@ gate outcome, so that its predictive value can be measured (\cref{sec:results:ga
 \subsection{Normal Boundary Intersection on the simplex}
 \label{sec:method:nbi}
 
-NBI \citep{das1998nbi} was introduced to obtain a distributed representation of the Pareto boundary, by advancing
-from the convex hull of individual minima along quasi-normal directions. Whether that distribution survives the map
-into revalidated objective space is one of the questions this paper tests, and \cref{sec:results:metamodelfree}
-reports that in our setting it does not. For $m$ objectives $F = (F_1,\dots,F_m)$ let
-$\wvec^{*(k)}$ minimize $F_k$; the payoff matrix $\Phi$ has columns $F(\wvec^{*(k)})$, its diagonal is the utopia
+NBI \citep{das1998nbi} was introduced to obtain a distributed representation of the Pareto boundary
+(\cref{sec:rel:lineage}). Whether that distribution survives the map into revalidated objective space is one of the
+questions this paper tests, and \cref{sec:results:metamodelfree} reports that in our setting it does not. For $m$
+objectives $F = (F_1,\dots,F_m)$ let $\wvec^{*(k)}$ minimize $F_k$; the payoff matrix $\Phi$ has columns $F(\wvec^{*(k)})$, its diagonal is the utopia
 point $F^{\mathrm{u}}$, and objectives are normalized by the utopia and pseudo-nadir points extracted from $\Phi$.
 Writing $\bar\Phi$ for the normalized payoff matrix and $\hat{n} = -\bar\Phi\mathbf{1}$ for the quasi-normal direction,
 each $\beta$ on the unit simplex of \emph{scalarization} weights defines the subproblem
@@ -195,5 +186,4 @@ candidate sets contribute to it, a method contributing many points is partly gra
 
 Approximation sets are scored on min--max normalized objectives by generational distance, inverted generational
 distance, $\igdp$ \citep{ishibuchi2015modified}, Schott spacing, the exact hypervolume with reference point $1.1$ on
-each axis, expressed as a ratio to the reference hypervolume, coverage, and the joint non-dominated fraction. $\igdp$
-and the hypervolume ratio were fixed in advance as the two primary endpoints; the others are descriptive.
+each axis, expressed as a ratio to the reference hypervolume, coverage, and the joint non-dominated fraction.
