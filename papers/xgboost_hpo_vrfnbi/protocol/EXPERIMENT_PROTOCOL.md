@@ -5,6 +5,14 @@ applied, only after `protocol_adversarial_review.md` records every MUST FIX as r
 the campaign runs before that, except the pilot, whose purpose is to supply the numbers this
 document still leaves open.
 
+**Tag lineage.** `xgboost-hpo-protocol-v1` froze this document before pilot Stage A ran.
+Stage A then revised two parameters — the surrogate gate's external set and, through it, the budget
+and the NSGA-II settings — and closed the question of how many objectives to run. Those revisions are
+frozen at `xgboost-hpo-protocol-v2`. **`v1` is not moved.** It records what was pre-registered before
+any measurement, which is exactly the thing a reader should be able to check the revisions against.
+Every difference between the two tags is a measurement reported in
+`audits/PILOT_STAGE_A_FINDINGS.md`, not a preference.
+
 **Pre-registration rule.** Every threshold, budget and decision rule below is fixed before any
 campaign result is seen. Anything decided after seeing a result is reported as post hoc, in those
 words.
