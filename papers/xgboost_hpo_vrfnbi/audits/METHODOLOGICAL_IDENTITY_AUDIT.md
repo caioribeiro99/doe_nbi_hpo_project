@@ -57,7 +57,30 @@ Every structural element of NBI is missing from the frozen solver:
 Searching the frozen module for `Phi`, `chim`, `n_hat`, `anchor`, `payoff` and `max t` returns
 nothing. `β` in this code indexes a weight grid, not a CHIM coordinate.
 
-### 2.3 Where the reference point comes from
+### 2.3 The weight grid is asymmetric
+
+Found while specifying the shared weight grid for Paper 2, and not previously recorded anywhere.
+
+```python
+b_values = np.arange(beta_step, 1.0 + 1e-9, beta_step)          # 0.05 ... 1.00
+betas_grid = [(round(1.0 - float(b), 2), round(float(b), 2)) for b in b_values]
+```
+
+The grid runs `b` from 0.05 to 1.00 and forms `(1 - b, b)`. The twenty resulting pairs therefore
+have `beta_1` ranging from 0.95 down to 0.00: the pair `(0.00, 1.00)` is present and the pair
+`(1.00, 0.00)` is **absent**.
+
+The historical method thus solves the subproblem at the pure-cost vertex but never at the pure-quality
+vertex. Its returned set is systematically short at the quality end, by construction, on every run.
+The omission is off-by-one in the grid start, not a deliberate choice, and nothing in the pipeline
+reports it.
+
+This is small and easy to state, and it must be stated: any comparison between the historical arm
+and an arm with a symmetric grid would otherwise attribute the difference to the method. Paper 2's
+shared grid is symmetric and includes both vertices, and `HISTORICAL-WS-asrun` keeps the asymmetric
+grid, because its purpose is to be faithful.
+
+### 2.4 Where the reference point comes from
 
 `scripts/run_nbi.py` at the same tag:
 
@@ -72,7 +95,7 @@ is what a payoff matrix supplies. This matters for Paper 2 because it means the 
 differs from a canonical NBI in *two* independent respects, not one: the scalarization structure and
 the reference construction.
 
-### 2.4 The discrepancy was already documented by the author
+### 2.5 The discrepancy was already documented by the author
 
 `docs/METHODOLOGY_DECISIONS.md`, entry **D1**, on the `repo-publication-readiness` branch, records
 it directly: the dissertation text describes `max t s.t. F(x) = F^c(β) + t·n` with anchors, a CHIM

@@ -60,6 +60,15 @@
   "weighted_sum_objective_source": "return -float(np.dot(betas_arr, norm))",
   "minmax_normalization_found": true,
   "reference_box_from_observed_extremes": true,
+  "weight_grid": {
+    "beta_step": 0.05,
+    "n_weights": 20,
+    "reaches_vertex_1_0": false,
+    "reaches_vertex_0_1": true,
+    "beta1_min": 0.0,
+    "beta1_max": 0.95,
+    "symmetric": false
+  },
   "reference_box_source": {
     "utopia": "utopia = (float(df[\"Score_Quality\"].max()), float(df[\"Score_Cost\"].max()))",
     "nadir": "nadir = (float(df[\"Score_Quality\"].min()), float(df[\"Score_Cost\"].min()))"

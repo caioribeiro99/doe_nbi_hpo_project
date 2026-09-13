@@ -69,6 +69,24 @@ def main() -> int:
     ws_signature = re.search(r"return\s+-float\(\s*np\.dot\(\s*betas_arr\s*,\s*norm\s*\)\s*\)", nbi_src)
     minmax = re.search(r"norm\s*=\s*\(preds\s*-\s*nadir\)\s*/\s*denom", nbi_src)
 
+    # The weight grid: does it reach both vertices of the simplex?
+    import numpy as _np
+    step = re.search(r"beta_step:\s*float\s*=\s*([0-9.]+)", nbi_src)
+    grid_asym = None
+    if step:
+        s = float(step.group(1))
+        bs = _np.arange(s, 1.0 + 1e-9, s)
+        pairs = [(round(1.0 - float(b), 2), round(float(b), 2)) for b in bs]
+        grid_asym = {
+            "beta_step": s,
+            "n_weights": len(pairs),
+            "reaches_vertex_1_0": (1.0, 0.0) in pairs,
+            "reaches_vertex_0_1": (0.0, 1.0) in pairs,
+            "beta1_min": min(p[0] for p in pairs),
+            "beta1_max": max(p[0] for p in pairs),
+            "symmetric": ((1.0, 0.0) in pairs) and ((0.0, 1.0) in pairs),
+        }
+
     # Where the reference box comes from, in the driver script.
     # Match to end of line: the assignment contains nested parentheses, so a
     # non-greedy bracket class stops inside float(... .max() and misses the call.
@@ -89,6 +107,7 @@ def main() -> int:
         "weighted_sum_objective_source": ws_signature.group(0) if ws_signature else None,
         "minmax_normalization_found": bool(minmax),
         "reference_box_from_observed_extremes": observed_extremes,
+        "weight_grid": grid_asym,
         "reference_box_source": {
             "utopia": utopia_line.group(0).strip() if utopia_line else None,
             "nadir": nadir_line.group(0).strip() if nadir_line else None,
@@ -108,6 +127,10 @@ def main() -> int:
     print(f"NBI structural elements absent: {absent}")
     print(f"weighted-sum objective present: {bool(ws_signature)}")
     print(f"reference box from observed extremes: {observed_extremes}")
+    if grid_asym:
+        print(f"weight grid: {grid_asym['n_weights']} pairs, beta1 in "
+              f"[{grid_asym['beta1_min']}, {grid_asym['beta1_max']}], "
+              f"symmetric: {grid_asym['symmetric']}")
     print(f"\n{report['verdict']}")
     ok = bool(absent) and bool(ws_signature) and observed_extremes
     return 0 if ok else 1

@@ -1,0 +1,60 @@
+{
+  "reference": "Time_MeanFold, measured, from audits/provenance/doe_results.csv",
+  "n_design_rows": 88,
+  "closed_form": {
+    "n_estimators": {
+      "spearman_vs_measured_time": 0.8456,
+      "range_ratio": 14.0,
+      "deterministic": true
+    },
+    "n_estimators x max_depth": {
+      "spearman_vs_measured_time": 0.8059,
+      "range_ratio": 84.0,
+      "deterministic": true
+    },
+    "n_estimators x 2^min(max_depth,12)": {
+      "spearman_vs_measured_time": 0.6114,
+      "range_ratio": 7168.0,
+      "deterministic": true
+    },
+    "n_estimators x max_depth x subsample": {
+      "spearman_vs_measured_time": 0.5573,
+      "range_ratio": 1680.0,
+      "deterministic": true
+    },
+    "n_estimators x max_depth x subsample x colsample_bytree": {
+      "spearman_vs_measured_time": 0.4753,
+      "range_ratio": 33600.0,
+      "deterministic": true
+    },
+    "n_estimators x max_depth x subsample x colsample_bytree x colsample_bylevel": {
+      "spearman_vs_measured_time": 0.4654,
+      "range_ratio": 672000.0,
+      "deterministic": true
+    }
+  },
+  "fitted": {
+    "total node count": {
+      "spearman_vs_measured_time": 0.8461,
+      "range_ratio": 422.7,
+      "deterministic": true,
+      "n_configurations_fitted_twice": 22
+    },
+    "total leaf count": {
+      "spearman_vs_measured_time": 0.8619,
+      "range_ratio": 338.9,
+      "deterministic": true,
+      "n_configurations_fitted_twice": 22
+    }
+  },
+  "wall_clock_self_agreement": {
+    "median_relative_difference_between_two_fits": 0.01307,
+    "reading": "The reference quantity disagrees with itself at this level between two fits of one configuration, which bounds how well any deterministic proxy could agree with it."
+  },
+  "decision": {
+    "primary_cost_objective": "total leaf count",
+    "why": "Deterministic given seed and data, machine-independent, widest dynamic range among the deterministic candidates, tracks measured training time as well as any of them, and is itself a deployment quantity: it is the model's size.",
+    "secondary_reported": "mean per-fold wall-clock training time, with its run-to-run variation",
+    "caution": "No deterministic proxy tracks wall-clock time better than about 0.86 Spearman, and elaborating a closed-form proxy with the sampling hyperparameters makes it markedly worse. The two objectives are related, not interchangeable."
+  }
+}
