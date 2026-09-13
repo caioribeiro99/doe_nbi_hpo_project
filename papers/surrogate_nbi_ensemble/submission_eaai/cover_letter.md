@@ -7,11 +7,13 @@ Dear Editors,
 We submit **"When Is Surrogate-Assisted Multiobjective Ensemble Weighting Trustworthy? A Replicated Study of Mixture
 Designs, Scheffé Surfaces and Normal Boundary Intersection on the Classifier-Weight Simplex"** for consideration.
 
-**We begin with a disclosure.** This manuscript stress-tests a framework that one of us co-developed and that this
-journal published: Pereira, Tertuliano Ribeiro, Mendes, Campos and de Paiva, *EAAI* **162**, 112510 (2025). One of the
-three configurations we study, NBI-A — surrogate objectives with anchors taken from the surrogate's own optima — is
-that paper's construction, and we report it failing on two of our four datasets. We claim no part of the
-DoE–RSM–NBI pipeline as new. That construction is prior art four times over: for classifier ensembles specifically in
+**We begin with a disclosure.** This manuscript stress-tests a framework that we developed and that this journal
+published: Pereira, Tertuliano Ribeiro, Mendes, Campos and de Paiva, *EAAI* **162**, 112510 (2025). Two of the three
+authors here are authors of that paper — M. C. Pereira was its first author and A. P. de Paiva its senior author —
+and the present first author was a co-author there. The overlap is substantial and deliberate. One of the three
+configurations we study, NBI-A — surrogate objectives with anchors taken from the surrogate's own optima — **is that
+paper's construction, and we report it failing on two of our four datasets.** We claim no part of the DoE–RSM–NBI
+pipeline as new. That construction is prior art four times over: for classifier ensembles specifically in
 Kwon, Lee and Lee (2024), for a neural-network ensemble with NBI in Rocha et al. (2025), for forecast combination in
 Bacci et al. (2019), and in our own 2025 paper. A dimension-by-dimension self-overlap analysis accompanies the
 submission.
@@ -55,11 +57,13 @@ seeded, datasets carry checksums and acquisition commands, the runners are check
 has 83 unit tests, and one script regenerates every figure and table from the frozen artifacts.
 
 We suggest reviewers with expertise in surrogate-assisted multiobjective optimization, in mixture experiments and
-response-surface methodology, and in empirical machine-learning evaluation. We would ask the editor to avoid
-reviewers who are co-authors of the 2025 predecessor.
+response-surface methodology, and in empirical machine-learning evaluation. Given the author overlap with the 2025
+predecessor, we ask that reviewers be drawn from outside that collaboration network — in particular that the
+remaining co-authors of that paper and of Rocha et al. (2025, *IEEE Access*) not be invited.
 
 Thank you for your consideration.
 
 Sincerely,
 
 Caio Tertuliano Ribeiro, on behalf of the authors
+Caio Tertuliano Ribeiro, Matheus Costa Pereira and Anderson Paulo de Paiva

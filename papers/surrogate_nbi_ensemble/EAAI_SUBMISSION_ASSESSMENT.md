@@ -61,8 +61,9 @@ the authors' own, and that reporting its failure modes with this much control is
 Highest-salience risk, since the predecessor is in the same journal and shares an author.
 
 Mitigations already in place: a dimension-by-dimension comparison in `self_overlap_assessment.md` (13 dimensions, 2
-overlapping, both labelled inherited); the competing-interest declaration names the predecessor and tells the editor
-that NBI-A *is* that paper's construction and is reported here failing on two of four datasets; no prose, figure or
+overlapping, both labelled inherited); the competing-interest declaration names the predecessor, states that two of
+the three authors here are authors of it, and tells the editor that NBI-A *is* that paper's construction and is
+reported here failing on two of four datasets; no prose, figure or
 table is reused; the predecessor's full text was never accessible to the authors of this manuscript beyond its
 abstract and first page.
 
@@ -133,9 +134,15 @@ Quality Technology would find that specific contribution novel, at the cost of a
 
 ## 8. Remaining blockers before a human can submit
 
-1. **Authorship and funding are unresolved.** The author list is a placeholder. Whether the co-authors of Pereira et
-   al. (2025) are co-authors here, and which grants supported this work, are decisions only the corresponding author
-   can make. See `submission_eaai/author_contributions.md`.
+1. **Authorship resolved; funding, affiliations and ORCIDs still open.** The author list is now Caio Tertuliano
+   Ribeiro (corresponding), Matheus Costa Pereira and Anderson Paulo de Paiva. Still to confirm: the per-author
+   affiliation mapping (the predecessor lists three institutions without a public mapping), an ORCID for the first
+   author, and whether CNPq/FAPEMIG/CAPES support should be declared. See
+   `submission_eaai/author_contributions.md`.
+
+   Note that the author overlap **strengthens** the self-overlap position rather than weakening it: the manuscript's
+   central corrective finding is directed at the authors' own published construction, which is a legitimate and
+   recognizable reason to publish the follow-up in the same venue.
 2. **One lineage paper remains unread** (Rocha et al. 2020, *Engineering with Computers*), flagged in
    `research_lineage.md`.
 3. **Length option 3** above, if the author agrees.
