@@ -136,6 +136,12 @@ def external_points(n: int, seed: int, kind: str = "spanning") -> pd.DataFrame:
     it is meant to validate. An R-squared computed against it is dominated by a
     near-zero denominator and says nothing about the surface.
 
+    ``kind="complement"`` is the complementary half fraction of the design's own
+    factorial, plus axial runs at half the design's axial distance. It is the only
+    construction here that reproduces the design's response spread, because that
+    spread comes from specific corner *combinations* which no independent sampling
+    scheme reaches in seven dimensions.
+
     ``kind="spanning"`` mixes half a Latin hypercube with half an arcsine-marginal
     sample, whose Beta(0.5, 0.5) coordinates concentrate near the ends of each range.
     The result spans the response range the design spans, which is the condition an
@@ -143,7 +149,31 @@ def external_points(n: int, seed: int, kind: str = "spanning") -> pd.DataFrame:
     """
     lo = np.array([BOUNDS[p][0] for p in PARAMS])
     hi = np.array([BOUNDS[p][1] for p in PARAMS])
-    if kind == "uniform":
+    if kind == "complement":
+        # The 88-run design is a face-centred central composite: a 64-run half
+        # fraction of the 2^7 factorial defined by the generator "product of all
+        # seven signs = +1", plus 14 axial and 10 centre runs. Its complementary
+        # half fraction -- the 64 corners whose sign product is -1 -- is disjoint
+        # from it by construction, has identical corner structure and therefore
+        # identical response spread, and is itself a resolution-VII design.
+        #
+        # Corners alone cannot test curvature: on a two-level set every squared
+        # coordinate equals one, so the quadratic terms collapse into the
+        # intercept. Axial runs at half the design's axial distance are added so
+        # the surface is also validated away from its own axial points.
+        import itertools
+        corners = np.array([s for s in itertools.product([-1.0, 1.0], repeat=len(PARAMS))
+                            if np.prod(s) < 0], dtype=float)
+        axial = np.zeros((2 * len(PARAMS), len(PARAMS)))
+        for i in range(len(PARAMS)):
+            axial[2 * i, i] = -0.5
+            axial[2 * i + 1, i] = +0.5
+        coded = np.vstack([corners, axial])
+        if n < len(coded):
+            rng = np.random.default_rng(seed)
+            coded = coded[rng.choice(len(coded), size=n, replace=False)]
+        u = (coded + 1.0) / 2.0
+    elif kind == "uniform":
         u = qmc.LatinHypercube(d=len(PARAMS), seed=seed).random(n)
     elif kind == "spanning":
         n_lhs = n // 2
@@ -202,23 +232,38 @@ class FactorModel:
         lam = pca.explained_variance_
         loadings = pca.components_.T * np.sqrt(lam)               # scaled, not eigenvectors
         self.rot_, self.R_ = varimax(loadings)
-        # A principal component's sign is arbitrary, and Varimax does not fix it. Left
-        # alone, the quality composite's sign is arbitrary too, so its correlation with
-        # the cost factor can come out either way: on one dataset a change of transform
-        # flipped the measured objective conflict from -0.66 to +0.69 for this reason
-        # alone. Orient each factor so the response that loads most heavily on it has a
-        # positive loading. Every response is already canonicalized to minimization, so
-        # this makes a larger score mean a worse configuration on every factor.
-        self.flip_ = np.sign(self.rot_[np.argmax(np.abs(self.rot_), axis=0),
-                                       np.arange(self.k)])
-        self.flip_ = np.where(self.flip_ == 0, 1.0, self.flip_)
-        self.rot_ = self.rot_ * self.flip_
-        self.R_ = self.R_ * self.flip_
+
+        # A principal component's sign is arbitrary and Varimax does not fix it, so an
+        # orientation rule is required or the quality composite's sign -- and with it
+        # the measured objective conflict -- comes out either way.
+        #
+        # Orienting by each factor's single largest loading is the obvious rule and it
+        # is wrong here. Specificity anti-correlates with accuracy, recall, the area
+        # under the curve and log loss, because they trade off across the decision
+        # threshold, and on three of the four candidate datasets specificity is the
+        # dominant loading on the leading quality factor. That rule therefore pointed
+        # the quality composite at specificity-badness, and reported the objectives as
+        # agreeing on datasets where the raw metrics plainly show them trading off.
+        #
+        # Orient instead by the mean loading over the responses in the factor's own
+        # role block, which is the rule the dissertation used. Every response is
+        # canonicalized to minimization, so after orientation a larger score means a
+        # worse configuration on a quality factor and a more expensive one on the cost
+        # factor.
+        cost_col = self.cols.index("Leaves_Mean")
+        q_rows = [i for i, c in enumerate(self.cols) if RESPONSES[c]["role"] == "quality"]
+        self.cost_idx_ = int(np.argmax(np.abs(self.rot_[cost_col])))   # sign-independent
+        self.q_idx_ = [j for j in range(self.k) if j != self.cost_idx_]
+        flip = np.ones(self.k)
+        flip[self.cost_idx_] = np.sign(self.rot_[cost_col, self.cost_idx_]) or 1.0
+        for j in self.q_idx_:
+            flip[j] = np.sign(self.rot_[q_rows, j].mean()) or 1.0
+        self.flip_ = flip
+        self.rot_ = self.rot_ * flip
+        self.R_ = self.R_ * flip
         scores = pca.transform(Z) @ self.R_
         self.score_mu_, self.score_sd_ = scores.mean(0), scores.std(0, ddof=1)
         self.score_sd_ = np.where(self.score_sd_ == 0, 1.0, self.score_sd_)
-        self.cost_idx_ = int(np.argmax(np.abs(self.rot_[self.cols.index("Leaves_Mean")])))
-        self.q_idx_ = [j for j in range(self.k) if j != self.cost_idx_]
         share = lam / lam.sum()
         self.share_ = share
         self.w_ = share[self.q_idx_] / share[self.q_idx_].sum()   # variance weighting
@@ -248,6 +293,22 @@ def factor_stage(df: pd.DataFrame, k: int = 3) -> dict:
 
 
 # -------------------------------------------------------------------- screening
+
+def raw_conflict(df: pd.DataFrame) -> float:
+    """Objective conflict measured without the factor stage.
+
+    The factor stage involves an extraction, a rotation and an orientation, any of
+    which can invert the composite. This computes the same quantity from the
+    canonicalized responses directly -- an unweighted mean of the standardized
+    quality responses against the standardized cost response -- so that the factor
+    stage has something independent to be checked against.
+    """
+    M = apply_transforms(df)
+    cols = list(RESPONSES)
+    q = [i for i, c in enumerate(cols) if RESPONSES[c]["role"] == "quality"]
+    z = np.column_stack([(M[:, i] - M[:, i].mean()) / M[:, i].std(ddof=1) for i in q])
+    return float(spearmanr(z.mean(1), M[:, cols.index("Leaves_Mean")]).statistic)
+
 
 def nondominated(q: np.ndarray, c: np.ndarray) -> np.ndarray:
     """Indices minimizing both canonicalized objectives."""
@@ -373,7 +434,8 @@ def main() -> int:
                     default=["magic", "spambase", "adult", "bank_marketing"])
     ap.add_argument("--seed", type=int, default=20260913)
     ap.add_argument("--n-valid", type=int, default=100)
-    ap.add_argument("--external-set", choices=["spanning", "uniform"], default="spanning",
+    ap.add_argument("--external-set", choices=["complement", "spanning", "uniform"],
+                    default="complement",
                     help="how the surrogate gate's held-out set is drawn")
     ap.add_argument("--reuse", action="store_true",
                     help="recompute the screening from cached evaluations")
@@ -382,7 +444,8 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     design = pd.read_csv(DESIGN, sep=";", decimal=",", encoding="utf-8-sig")
     design.columns = [str(c).strip().strip('"') for c in design.columns]
-    valid = external_points(args.n_valid, args.seed, kind=args.external_set)
+    n_valid = args.n_valid if args.external_set != "complement" else 10**6
+    valid = external_points(n_valid, args.seed, kind=args.external_set)
 
     report: dict = {"seed": args.seed, "n_design": int(len(design)),
                     "n_valid": args.n_valid, "datasets": {}}
@@ -399,25 +462,30 @@ def main() -> int:
         # them is itself a pilot finding, so one must not overwrite the other.
         d_path = OUT / f"{ds}_design.csv"
         v_path = OUT / f"{ds}_validation_{args.external_set}.csv"
-        if args.reuse and d_path.exists() and v_path.exists():
-            d_df, v_df = pd.read_csv(d_path), pd.read_csv(v_path)
-            if len(v_df) != args.n_valid:
-                raise SystemExit(f"{ds}: cached validation set has {len(v_df)} rows, "
-                                 f"not {args.n_valid}; rerun without --reuse")
-            elapsed, n_eval = float("nan"), len(d_df) + len(v_df)
-            print(f"{ds:16s} reusing cached evaluations ({n_eval} rows)")
+        # The design and the external set are cached independently, so changing the
+        # external-set construction does not force the design to be re-evaluated.
+        spent = 0
+        if args.reuse and d_path.exists():
+            d_df = pd.read_csv(d_path)
         else:
-            rows = [evaluate(cast(design.iloc[i]), Xtr, ytr, kf, args.seed)
-                    for i in range(len(design))]
             d_df = pd.concat([design[PARAMS].reset_index(drop=True),
-                              pd.DataFrame(rows)], axis=1)
-            v_rows = [evaluate(cast(valid.iloc[i]), Xtr, ytr, kf, args.seed)
-                      for i in range(len(valid))]
-            v_df = pd.concat([valid.reset_index(drop=True), pd.DataFrame(v_rows)], axis=1)
-            elapsed = time.perf_counter() - t0
-            n_eval = len(d_df) + len(v_df)
+                              pd.DataFrame([evaluate(cast(design.iloc[i]), Xtr, ytr,
+                                                     kf, args.seed)
+                                            for i in range(len(design))])], axis=1)
             d_df.to_csv(d_path, index=False)
+            spent += len(d_df)
+        if args.reuse and v_path.exists():
+            v_df = pd.read_csv(v_path)
+        else:
+            v_df = pd.concat([valid.reset_index(drop=True),
+                              pd.DataFrame([evaluate(cast(valid.iloc[i]), Xtr, ytr,
+                                                     kf, args.seed)
+                                            for i in range(len(valid))])], axis=1)
             v_df.to_csv(v_path, index=False)
+            spent += len(v_df)
+        elapsed = (time.perf_counter() - t0) if spent else float("nan")
+        n_eval = len(d_df) + len(v_df)
+        per_eval = elapsed / spent if spent else float("nan")
 
         model = FactorModel().fit(d_df)          # the method only ever sees the design
         fs = model.transform(d_df)
@@ -426,6 +494,14 @@ def main() -> int:
         summ["loadings"].to_csv(OUT / f"{ds}_loadings.csv")
 
         rho_conf = float(spearmanr(fs["quality"], fs["cost"]).statistic)
+        rho_raw = raw_conflict(d_df)
+        if np.sign(rho_conf) != np.sign(rho_raw):
+            raise SystemExit(
+                f"{ds}: the factor stage reports objective conflict {rho_conf:+.3f} while "
+                f"the responses themselves give {rho_raw:+.3f}. A sign disagreement means "
+                "the quality composite is inverted relative to the metrics it is built "
+                "from, and no screening number below it can be trusted. Fix the factor "
+                "orientation rather than the threshold.")
         curv = front_curvature(fs["quality"], fs["cost"])
         r2q, sq, nq = external_scores(d_df, fs["quality"], v_df, fs_v["quality"])
         r2c, sc, nc = external_scores(d_df, fs["cost"], v_df, fs_v["cost"])
@@ -438,6 +514,7 @@ def main() -> int:
             "prevalence": float(y.mean()),
             "screening": {
                 "objective_conflict_spearman": round(rho_conf, 4),
+                "objective_conflict_from_raw_responses": round(rho_raw, 4),
                 "front_curvature": round(curv, 4),
                 "external_r2_quality": round(r2q, 4),
                 "external_spearman_quality": round(sq, 4),
@@ -463,11 +540,12 @@ def main() -> int:
             "cost": {
                 "evaluations": n_eval,
                 "seconds_total": None if np.isnan(elapsed) else round(elapsed, 1),
-                "seconds_per_evaluation": None if np.isnan(elapsed) else round(elapsed / n_eval, 3),
+                "seconds_per_evaluation": None if np.isnan(per_eval) else round(per_eval, 3),
+                "evaluations_performed_this_run": int(spent),
             },
         }
         timing = ("cached" if np.isnan(elapsed)
-                  else f"{elapsed/60:5.1f} min ({elapsed/n_eval:.2f} s/eval)")
+                  else f"{elapsed/60:5.1f} min ({per_eval:.2f} s/eval, {spent} new)")
         print(f"{ds:16s} {n_eval} evals, {timing} | "
               f"conflict {rho_conf:+.3f} curv {curv:.3f} "
               f"R2q {r2q:+.3f} SpRq {sq:+.3f} ({nq} terms) "

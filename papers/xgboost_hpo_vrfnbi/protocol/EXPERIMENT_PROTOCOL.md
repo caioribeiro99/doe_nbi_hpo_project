@@ -36,17 +36,18 @@ Random search, NSGA-II, Bayesian optimization, tree-structured Parzen estimator 
 `baseline_gap_assessment.md`, all at the `B_total_solution` of the most expensive arm, with the
 realized ratio reported. NSGA-II is treated as **likely required**, not optional.
 
-**NSGA-II budget — DECIDED (resolution of review finding A2).** Population and generations are fixed
-jointly in advance so that their product matches the budget exactly and the generation count is at
-least ten: at q = 2 the budget is 408, so **population 34 for 12 generations** (34 x 12 = 408, no
-shortfall). At q = 3 the budget is 508 and the setting is **population 42 for 12 generations**
-(504, a shortfall of 4 reported as such).
+**NSGA-II budget — DECIDED (resolution of review finding A2), revised by the pilot.** Population and
+generations are fixed jointly in advance so that their product matches the budget as closely as the
+arithmetic allows and the generation count is at least ten. At the revised q = 2 budget of 386 the
+setting is **population 32 for 12 generations** (384, a shortfall of 2 evaluations, 0.5%, reported as
+such; 386 = 2 x 193 admits no exact factorization with ten or more generations).
 
-A starved population method is a budget artifact, not a finding. NSGA-II is therefore run a **second**
-time at **ten times** the matched budget (4,080 evaluations at q = 2), reported separately and
-labelled as unmatched, so a reader sees both the like-for-like comparison and what the method does
-when not starved. Both runs use the same deterministic box repair with integer rounding and the same
-seed policy as the arms.
+A starved population method is a budget artifact, not a finding. NSGA-II is therefore also run at
+**ten times** the matched budget, 3,860 evaluations, reported separately and labelled as unmatched.
+Pilot Stage A measured that doing so on every replication would cost 180 hours by itself, so the
+unmatched run is scoped to **one replication per dataset**, about 6 hours, and is reported as a
+single-replication check on whether budget starvation explains the matched result. Both runs use the
+same deterministic box repair with integer rounding and the same seed policy as the arms.
 
 **Single-objective comparators are not scored as fronts (resolution of A4).** Bayesian optimization
 and the tree-structured Parzen estimator as the dissertation configured them produce two
@@ -159,18 +160,25 @@ Quadratic response surface per objective, backward elimination at α = 0.05, hie
 An external reliability gate is applied. Paper 1's central finding was that an unvalidated surrogate
 fails in ways nothing else detects, and the dissertation pipeline has no such check at all.
 
-**DECIDED.** The held-out set is **100 hyperparameter vectors per replication**, drawn by a
-Latin-hypercube design over the same box, with a recorded seed, disjoint from the 88 design rows and
-evaluated on the real objectives. The gate passes when **external R² ≥ 0.5 and Spearman ≥ 0.9** on
-that set, per response.
+**DECIDED, and revised by the pilot.** The held-out set is the design's **complementary half
+fraction plus axial runs at half the design's axial distance**: 78 points per replication, disjoint
+from the 88 design rows by construction and evaluated on the real objectives. The gate passes when
+**external R² ≥ 0.5 and Spearman ≥ 0.9** per response.
 
-Thresholds and set size are inherited from Paper 1 rather than re-derived. Stating that is important:
-they were pre-specified there for a different problem, and adopting them here is a transfer, not a
-calibration. If the pilot shows every response passing or every response failing on every dataset, the
-gate is uninformative on this problem and the manuscript says so rather than quietly retuning the
-threshold. Retuning after seeing campaign results is forbidden.
+The original specification was 100 Latin-hypercube points, inherited from Paper 1. Pilot Stage A
+showed that construction does not transfer: in seven dimensions uniform sampling reaches almost no
+corner combinations, so the held-out set carried 2.0 to 9.8 times less response spread than the
+design, and R² against it was dominated by a near-zero denominator rather than by the surface. The
+same surfaces score R² of 0.775 to 0.953 against the complementary fraction and −23.99 to +0.468
+against random sets. See `audits/PILOT_STAGE_A_FINDINGS.md` Finding 4.
 
-`protocol/budget_accounting.md` charges this as `B_surrogate_validation = 100` per replication for
+The thresholds are still Paper 1's, and adopting them remains a transfer rather than a calibration.
+Measured pre-campaign they now pass 7 of 8 dataset-by-response cells, failing only Spambase's quality
+surface at Spearman 0.847. **The threshold is not moved.** The honest reading, which goes in the
+manuscript, is that on this problem the surrogate is adequate nearly everywhere and the gate is a
+check rather than a discriminator. Retuning after seeing campaign results is forbidden.
+
+`protocol/budget_accounting.md` charges this as `B_surrogate_validation = 78` per replication for
 every arm that uses a surrogate.
 
 ## 8. Budget
@@ -185,10 +193,10 @@ reported and charged to no arm.
 | Term | HISTORICAL-WS | WS-S | NBI-S | NBI-R |
 |---|---:|---:|---:|---:|
 | `B_design` | 88 | 88 | 88 | 88 |
-| `B_surrogate_validation` | 0 | 100 | 100 | 100 |
+| `B_surrogate_validation` | 0 | 78 | 78 | 78 |
 | `B_anchor` | 0 | 0 | 0 | **200** |
 | `B_candidate_validation` | 20 | 20 | 20 | 20 |
-| **`B_total_solution`** | **108** | **208** | **208** | **408** |
+| **`B_total_solution`** | **108** | **186** | **186** | **386** |
 
 `B_anchor` is **100 real evaluations per objective**, spent by NBI-R's direct search for each
 objective's real optimum. The figure is fixed in advance and is identical across datasets and
@@ -198,10 +206,24 @@ NBI-R's total 508.
 HISTORICAL-WS is charged no surrogate validation because the dissertation pipeline has no gate; that
 is a property of the historical method, not a concession to it, and the manuscript says so.
 
-**The comparator budget is 408** (at q = 2), the `B_total_solution` of the most expensive arm, so no
+**The comparator budget is 386** (at q = 2), the `B_total_solution` of the most expensive arm, so no
 comparator is handicapped. The realized ratio is reported per run. Note the asymmetry this creates
-and state it: the cheaper arms are compared against comparators that received up to four times their
+and state it: the cheaper arms are compared against comparators that received up to 3.6 times their
 budget. That is the conservative direction for the paper's own claims and the honest one to report.
+
+**Measured campaign cost (pilot Stage A).** Per-evaluation cost is 1.02 to 1.69 seconds on eight
+threads, mean 1.40 s. Evaluations actually performed per replication per dataset are 446 for the arms
+and 1,930 for the five comparators, 2,376 in total; over 30 replications and 4 datasets that is
+**285,120 evaluations, about 111 hours, 4.6 days run serially**. The same accounting at q = 3 gives
+357,120 evaluations and 5.8 days.
+
+**The campaign therefore runs at q = 2.** This closes the open question of whether to use three
+objectives with a measurement rather than a preference, and the manuscript reports it that way.
+
+The serial figure assumes no parallelism across replications and is the pessimistic bound. Paper 1
+met the same arithmetic and found that running independent replications across eight processes with
+single-threaded evaluators cut a projected 106 hours to 15.5 actual. Stage B measures the parallel
+throughput before the campaign launches.
 
 ## 9. Scoring
 
@@ -319,20 +341,20 @@ before any campaign result. What remains does not block the freeze.
 | 1 | The cost objective | resolved | §6.1 — total leaf count, primary; wall-clock time, secondary |
 | 2 | The quality objective list | resolved | §6.2 — four threshold metrics plus ROC-AUC and log loss |
 | 3 | The aggregation weighting and its sensitivity | resolved | §6.3 — explained-variance weighting, equal weighting as the sensitivity |
-| 4 | Gate thresholds and held-out set size | resolved | §7 — 100 Latin-hypercube points, R² ≥ 0.5 and Spearman ≥ 0.9 |
-| 5 | `B_anchor` per objective | resolved | §8 — 100 real evaluations per objective |
-| 6 | NSGA-II population and generations | resolved | §3 — 34 x 12 at q = 2, plus an unmatched run at ten times the budget |
+| 4 | Gate thresholds and held-out set size | resolved, **revised by the pilot** | §7 — 78 points, the design's complementary half fraction plus half-distance axial runs; R² ≥ 0.5 and Spearman ≥ 0.9, unchanged |
+| 5 | `B_anchor` per objective | resolved | §8 — 100 real evaluations per objective; `B_total_solution` 108 / 186 / 186 / 386 |
+| 6 | NSGA-II population and generations | resolved, **revised by the pilot** | §3 — 32 x 12 at the revised q = 2 budget, plus an unmatched ten-times run on one replication per dataset |
 | 12 | The disagreement fraction for the weighting sensitivity | resolved | §11.1 — 0.20 |
 
 | # | Remaining item | Blocks? | Disposition |
 |---|---|---|---|
-| 7 | Dataset panel confirmed by the screening measurements | no | pilot Stage A decides; replacements recorded with the measurement that caused them |
+| 7 | Dataset panel confirmed by the screening measurements | **closed** | Stage A: all four datasets pass all four criteria; no replacement needed. `audits/PILOT_STAGE_A_FINDINGS.md` |
 | 8 | Thesis equation numbering, §2.9 Eqs 2.107–2.114 against §4.4.3 Eq 4.16 | no | needed before submission. The chapters are not on this machine; see `protocol/original_thesis_protocol.md` §13 |
 | 9 | Whether `pepper_species` exists and is public | no | the panel does not depend on it; see `protocol/dataset_selection.md` |
 | 10 | Self-overlap assessment against Pereira et al. (2025) and Paper 1 | no | needed before submission; see §13b |
 | 11 | Five failing tests in `test_stage0_extreme_lane_plan.py` | no | a wall-clock staleness gate refusing a 120-day-old summary, unrelated to this work; must not be left failing at submission |
-| 13 | Panel size beyond four, and the detectable effect size at R = 30 | no | pilot supplies both; §12 |
-| 14 | Whether to run at q = 3 rather than q = 2 | no | review finding M5; pilot budget decides; both budgets are specified in §8 |
+| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | Stage A measured 4.6 days serial for the four-dataset panel at q = 2, so the panel does not grow; the detectable effect size still comes from Stage B |
+| 14 | Whether to run at q = 3 rather than q = 2 | **closed** | Stage A: q = 3 costs 5.8 days against a 5-day ceiling, so the campaign runs at q = 2. §8 |
 
 Items 8 and 9 both need the dissertation chapters, which are on a OneDrive path under a different
 user account. Neither affects the experiment.
@@ -365,3 +387,7 @@ established.
   descriptive only.
 - The outcome-contingent framings in `protocol/protocol_adversarial_review.md` were written before
   the campaign and are what the manuscript uses, whichever outcome occurs.
+- Each response declares its transform as well as its direction; the cost response declares `log1p`.
+- Factor signs are oriented by the mean loading over the factor's own role block, and the screening
+  refuses to report when the composite's objective conflict disagrees in sign with the same quantity
+  measured from the responses directly. Both come from `audits/PILOT_STAGE_A_FINDINGS.md`.

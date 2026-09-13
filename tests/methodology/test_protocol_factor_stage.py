@@ -199,3 +199,81 @@ def test_measured_conflict_sign_is_stable_under_a_benign_respecification() -> No
         finally:
             pilot.RESPONSES["LogLoss_Mean"]["transform"] = original
     assert signs[0] == signs[1], f"conflict sign flipped between transforms: {signs}"
+
+
+def _coded(pts) -> np.ndarray:
+    lo = np.array([pilot.BOUNDS[p][0] for p in pilot.PARAMS])
+    hi = np.array([pilot.BOUNDS[p][1] for p in pilot.PARAMS])
+    return 2 * (pts[pilot.PARAMS].to_numpy(dtype=float) - lo) / (hi - lo) - 1
+
+
+def test_complement_external_set_is_disjoint_from_the_design() -> None:
+    """The gate's external set must share no run with the design it validates."""
+    import pandas as pd
+
+    pts = pilot.external_points(10**6, seed=1, kind="complement")
+    design = pd.read_csv(REPO / "data" / "design" / "hyperparameter_design.csv",
+                         sep=";", decimal=",", encoding="utf-8-sig")
+    design.columns = [str(c).strip().strip('"') for c in design.columns]
+    ext = {tuple(r) for r in np.round(_coded(pts), 6)}
+    des = {tuple(r) for r in np.round(_coded(design), 6)}
+    assert not (ext & des), f"{len(ext & des)} runs are shared with the design"
+
+
+def test_complement_is_the_opposite_half_fraction() -> None:
+    """The design's corners have sign product +1; the external set's must be -1.
+
+    That is what makes the two halves complementary rather than merely different.
+    """
+    pts = pilot.external_points(10**6, seed=1, kind="complement")
+    C = _coded(pts)
+    is_corner = (np.abs(np.abs(C) - 1) < 1e-9).all(axis=1)
+    assert is_corner.sum() == 64, f"expected 64 corner runs, got {int(is_corner.sum())}"
+    assert set(np.sign(C[is_corner]).prod(axis=1)) == {-1.0}
+    # Axial runs are present so that curvature is still testable: on a two-level set
+    # every squared coordinate is one and the quadratic terms collapse into the
+    # intercept.
+    assert (~is_corner).sum() == 14
+
+
+def test_uniform_external_set_spans_less_than_the_complement() -> None:
+    """The reason the protocol changed construction, asserted rather than recalled.
+
+    Corner *combinations* carry the design's response range, and no scheme with
+    independent coordinates reaches them in seven dimensions.
+    """
+    comp = _coded(pilot.external_points(10**6, seed=1, kind="complement"))
+    unif = _coded(pilot.external_points(78, seed=1, kind="uniform"))
+    # Distance from the box centre is the relevant summary: the design's extremes
+    # live at the corners, which are the farthest points of the box.
+    assert np.linalg.norm(comp, axis=1).mean() > 1.5 * np.linalg.norm(unif, axis=1).mean()
+
+
+def test_quality_composite_agrees_with_the_raw_responses_on_a_conflicting_problem() -> None:
+    """The factor stage must not invert the objective it is built from.
+
+    Orienting each factor by its single largest loading looks reasonable and fails
+    here: within the quality block, specificity trades off against accuracy, recall
+    and the area under the curve, so the dominant loading on the leading factor can
+    belong to a response that runs opposite to the rest. The composite then reports
+    the objectives as agreeing on a problem where they conflict.
+    """
+    from scipy.stats import spearmanr
+
+    df = _frame(n=120, seed=5)
+    # Make the anti-correlated response dominant, which is the case that broke the
+    # dominant-loading rule on three of the four candidate datasets.
+    df["Specificity_Mean"] = 0.9 - 0.30 * (df["Recall_Mean"] - df["Recall_Mean"].mean())
+    out = pilot.factor_stage(df)
+    composite = float(spearmanr(out["quality"], out["cost"]).statistic)
+    raw = pilot.raw_conflict(df)
+    assert np.sign(composite) == np.sign(raw), (
+        f"composite conflict {composite:+.3f} disagrees in sign with the raw-response "
+        f"conflict {raw:+.3f}; the quality composite is inverted"
+    )
+
+
+def test_cost_factor_is_oriented_so_larger_means_more_expensive() -> None:
+    out = pilot.factor_stage(_frame(n=100, seed=6))
+    L = out["loadings"]
+    assert L.loc["Leaves_Mean", f"F{out['cost_factor']}"] > 0

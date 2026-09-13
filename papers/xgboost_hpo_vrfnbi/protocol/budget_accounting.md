@@ -58,6 +58,22 @@ From the frozen code and the reproduction in `audits/provenance/`:
 The dissertation's fairness rule is therefore already evaluation-matched, and correctly so. Paper 2
 keeps the rule and extends it to the terms the dissertation had no need for.
 
+## Measured, by pilot Stage A
+
+| Term | Value | Source |
+|---|---|---|
+| `B_surrogate_validation` | **78** | the design's complementary half fraction (64 corners) plus 14 axial runs at half the axial distance |
+| `B_total_solution` | 108 / 186 / 186 / 386 for HISTORICAL-WS / WS-S / NBI-S / NBI-R at q = 2 | the ledger above |
+| comparator budget | 386 | the most expensive arm |
+| seconds per real evaluation, 8 threads | 1.02 to 1.69, mean 1.40 | measured on all four panel datasets |
+| campaign total at q = 2 | 285,120 evaluations, 111 hours, 4.6 days serial | 2,376 per replication per dataset x 30 x 4 |
+| campaign total at q = 3 | 357,120 evaluations, 5.8 days serial | over the ceiling; the campaign runs at q = 2 |
+
+The original ledger assumed 100 validation evaluations, copied from Paper 1. Stage A found that a
+random held-out set cannot validate a surface fitted to a factorial design, and replaced it with the
+design's complementary half fraction, which is both correct and 22 evaluations cheaper. See
+`../audits/PILOT_STAGE_A_FINDINGS.md` Finding 4.
+
 ## What must be decided before the freeze
 
 1. **`B_surrogate_validation`.** Paper 1 used 100 held-out compositions per replication and a
@@ -81,8 +97,9 @@ keeps the rule and extends it to the terms the dissertation had no need for.
 
 ## Wall-clock anchor
 
-The reproduction measured 4.6 minutes for 88 evaluations on MAGIC, eight threads, Apple M4 Max,
-about 3.1 seconds per evaluation. A first-order projection for a campaign of `D` datasets and
+Superseded by the measured figures above. The original projection, retained so the estimate can be
+compared against what happened: the dissertation reproduction measured 4.6 minutes for 88 evaluations
+on MAGIC, about 3.1 seconds per evaluation. A first-order projection for a campaign of `D` datasets and
 `R = 30` replications:
 
 ```

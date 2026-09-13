@@ -1,0 +1,179 @@
+{
+  "seed": 20260913,
+  "n_design": 88,
+  "n_valid": 100,
+  "datasets": {
+    "magic": {
+      "rows": 19020,
+      "columns_after_encoding": 10,
+      "categorical_columns_one_hot_encoded": 0,
+      "prevalence": 0.3516298633017876,
+      "screening": {
+        "objective_conflict_spearman": -0.2843,
+        "objective_conflict_from_raw_responses": -0.2509,
+        "front_curvature": 0.4378,
+        "external_r2_quality": 0.7753,
+        "external_spearman_quality": 0.9162,
+        "external_r2_cost": 0.9175,
+        "external_spearman_cost": 0.9403,
+        "surface_terms_quality": 17,
+        "surface_terms_cost": 18,
+        "gate_pass_quality": true,
+        "gate_pass_cost": true,
+        "cost_range_ratio": 2590.2,
+        "external_set_kind": "complement",
+        "quality_sd_design": 0.6542,
+        "quality_sd_external": 0.6903,
+        "quality_spread_ratio_design_over_external": 0.95
+      },
+      "factor_stage": {
+        "explained_variance_share": [
+          0.61,
+          0.2537,
+          0.1363
+        ],
+        "cost_factor": 3,
+        "quality_weights_variance": [
+          0.7063,
+          0.2937
+        ],
+        "spearman_variance_vs_equal_weighting": 0.865
+      },
+      "cost": {
+        "evaluations": 166,
+        "seconds_total": null,
+        "seconds_per_evaluation": null,
+        "evaluations_performed_this_run": 0
+      }
+    },
+    "spambase": {
+      "rows": 4601,
+      "columns_after_encoding": 57,
+      "categorical_columns_one_hot_encoded": 0,
+      "prevalence": 0.39404477287546186,
+      "screening": {
+        "objective_conflict_spearman": -0.428,
+        "objective_conflict_from_raw_responses": -0.4621,
+        "front_curvature": 0.2224,
+        "external_r2_quality": 0.9534,
+        "external_spearman_quality": 0.8468,
+        "external_r2_cost": 0.9422,
+        "external_spearman_cost": 0.9652,
+        "surface_terms_quality": 15,
+        "surface_terms_cost": 15,
+        "gate_pass_quality": false,
+        "gate_pass_cost": true,
+        "cost_range_ratio": 591.2,
+        "external_set_kind": "complement",
+        "quality_sd_design": 0.8936,
+        "quality_sd_external": 0.9038,
+        "quality_spread_ratio_design_over_external": 0.99
+      },
+      "factor_stage": {
+        "explained_variance_share": [
+          0.6947,
+          0.1703,
+          0.1349
+        ],
+        "cost_factor": 2,
+        "quality_weights_variance": [
+          0.8374,
+          0.1626
+        ],
+        "spearman_variance_vs_equal_weighting": 0.8738
+      },
+      "cost": {
+        "evaluations": 166,
+        "seconds_total": null,
+        "seconds_per_evaluation": null,
+        "evaluations_performed_this_run": 0
+      }
+    },
+    "adult": {
+      "rows": 30162,
+      "columns_after_encoding": 104,
+      "categorical_columns_one_hot_encoded": 8,
+      "prevalence": 0.24892248524633645,
+      "screening": {
+        "objective_conflict_spearman": -0.5616,
+        "objective_conflict_from_raw_responses": -0.3977,
+        "front_curvature": 0.2884,
+        "external_r2_quality": 0.9109,
+        "external_spearman_quality": 0.9245,
+        "external_r2_cost": 0.9345,
+        "external_spearman_cost": 0.955,
+        "surface_terms_quality": 9,
+        "surface_terms_cost": 17,
+        "gate_pass_quality": true,
+        "gate_pass_cost": true,
+        "cost_range_ratio": 3401.6,
+        "external_set_kind": "complement",
+        "quality_sd_design": 0.9657,
+        "quality_sd_external": 1.0083,
+        "quality_spread_ratio_design_over_external": 0.96
+      },
+      "factor_stage": {
+        "explained_variance_share": [
+          0.7548,
+          0.1344,
+          0.1108
+        ],
+        "cost_factor": 2,
+        "quality_weights_variance": [
+          0.872,
+          0.128
+        ],
+        "spearman_variance_vs_equal_weighting": 0.8839
+      },
+      "cost": {
+        "evaluations": 166,
+        "seconds_total": null,
+        "seconds_per_evaluation": null,
+        "evaluations_performed_this_run": 0
+      }
+    },
+    "bank_marketing": {
+      "rows": 30488,
+      "columns_after_encoding": 57,
+      "categorical_columns_one_hot_encoded": 10,
+      "prevalence": 0.1265743899239045,
+      "screening": {
+        "objective_conflict_spearman": -0.6883,
+        "objective_conflict_from_raw_responses": -0.41,
+        "front_curvature": 0.1442,
+        "external_r2_quality": 0.9168,
+        "external_spearman_quality": 0.9146,
+        "external_r2_cost": 0.9423,
+        "external_spearman_cost": 0.9578,
+        "surface_terms_quality": 8,
+        "surface_terms_cost": 17,
+        "gate_pass_quality": true,
+        "gate_pass_cost": true,
+        "cost_range_ratio": 4273.0,
+        "external_set_kind": "complement",
+        "quality_sd_design": 0.957,
+        "quality_sd_external": 0.9825,
+        "quality_spread_ratio_design_over_external": 0.97
+      },
+      "factor_stage": {
+        "explained_variance_share": [
+          0.7594,
+          0.1389,
+          0.1017
+        ],
+        "cost_factor": 3,
+        "quality_weights_variance": [
+          0.8454,
+          0.1546
+        ],
+        "spearman_variance_vs_equal_weighting": 0.9642
+      },
+      "cost": {
+        "evaluations": 166,
+        "seconds_total": null,
+        "seconds_per_evaluation": null,
+        "evaluations_performed_this_run": 0
+      }
+    }
+  }
+}
