@@ -124,3 +124,78 @@ def test_latin_hypercube_validation_points_lie_in_the_declared_box() -> None:
         assert pts[p].min() >= lo - 1e-9 and pts[p].max() <= hi + 1e-9
     # A held-out set that repeats a design row is not held out.
     assert pts.round(6).duplicated().sum() == 0
+
+
+def test_factor_model_is_fitted_once_and_applied_not_refitted() -> None:
+    """Refitting on a second sample is not the same as applying the first fit.
+
+    A screening that refits the factor stage on the held-out set compares a surface
+    against targets in a different coordinate system: different standardization,
+    different rotation, different sign orientation. The two must therefore be
+    measurably different, or the distinction the API draws is decorative.
+    """
+    a, b = _frame(n=80, seed=1), _frame(n=80, seed=2)
+    m = pilot.FactorModel().fit(a)
+
+    # Applying the fitted model reproduces its own fit exactly.
+    np.testing.assert_allclose(m.transform(a)["quality"],
+                               pilot.factor_stage(a)["quality"], atol=1e-12)
+
+    applied = m.transform(b)["quality"]          # correct: a's model, applied to b
+    refitted = pilot.factor_stage(b)["quality"]  # the bug: b gets its own model
+    assert not np.allclose(applied, refitted, atol=1e-6), (
+        "applying and refitting gave identical composites, so this test cannot "
+        "detect the coordinate-system error it exists to catch"
+    )
+
+
+def test_transform_uses_the_fitted_standardization() -> None:
+    """Shifting the held-out responses must move the transformed scores.
+
+    If transform re-standardized its input, a uniform shift would cancel and the
+    held-out points would be scored on their own scale rather than the design's.
+    """
+    a = _frame(n=80, seed=3)
+    m = pilot.FactorModel().fit(a)
+    b = a.copy()
+    b["Leaves_Mean"] = b["Leaves_Mean"] + 5000.0
+    assert not np.allclose(m.transform(a)["cost"], m.transform(b)["cost"], atol=1e-6)
+
+
+def test_factor_signs_are_oriented_deterministically() -> None:
+    """Each factor's dominant response must load positively.
+
+    A principal component's sign is arbitrary and Varimax does not fix it, so without
+    an explicit orientation rule the quality composite's sign is arbitrary and its
+    measured conflict with the cost factor can come out either way.
+    """
+    out = pilot.factor_stage(_frame(n=90, seed=7))
+    L = out["loadings"].to_numpy()
+    for j in range(L.shape[1]):
+        dominant = int(np.argmax(np.abs(L[:, j])))
+        assert L[dominant, j] > 0, (
+            f"factor {j+1}'s dominant loading is negative; the orientation rule did "
+            "not run"
+        )
+
+
+def test_measured_conflict_sign_is_stable_under_a_benign_respecification() -> None:
+    """Changing a transform must not flip the sign of the objective conflict.
+
+    Every response is canonicalized to minimization, so a positive correlation between
+    the quality composite and the cost factor means the objectives agree and a negative
+    one means they conflict. That reading has to survive a change that does not alter
+    which configurations are good.
+    """
+    df = _frame(n=90, seed=11)
+    from scipy.stats import spearmanr
+    signs = []
+    for transform in ("none", "log1p"):
+        original = pilot.RESPONSES["LogLoss_Mean"]["transform"]
+        pilot.RESPONSES["LogLoss_Mean"]["transform"] = transform
+        try:
+            out = pilot.factor_stage(df)
+            signs.append(np.sign(spearmanr(out["quality"], out["cost"]).statistic))
+        finally:
+            pilot.RESPONSES["LogLoss_Mean"]["transform"] = original
+    assert signs[0] == signs[1], f"conflict sign flipped between transforms: {signs}"

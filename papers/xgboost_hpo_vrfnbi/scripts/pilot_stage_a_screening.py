@@ -49,16 +49,37 @@ BOUNDS = {"subsample": (0.05, 1.0), "colsample_bytree": (0.05, 1.0),
           "colsample_bylevel": (0.05, 1.0), "learning_rate": (0.01, 0.30),
           "max_depth": (3, 18), "gamma": (0.05, 5.0), "n_estimators": (50, 700)}
 
-# Protocol section 6.2. "minimize" says which direction the canonicalization flips.
+# Protocol sections 6.2 and 6.3. Each response declares its direction and its
+# transform; neither is inferred. "minimize" says which way the canonicalization
+# flips the sign, "transform" is applied before standardization.
+#
+# The cost response is log-transformed, as the dissertation transformed its own cost
+# response (time_transform="log1p" is the frozen default). It is not cosmetic: leaf
+# count spans three orders of magnitude over the design box, and a quadratic surface
+# fitted to it raw reaches an in-sample R-squared of only 0.49 to 0.65, against 0.95
+# on every dataset once transformed.
 RESPONSES = {
-    "Accuracy_Mean":    {"minimize": False, "role": "quality"},
-    "Precision_Mean":   {"minimize": False, "role": "quality"},
-    "Recall_Mean":      {"minimize": False, "role": "quality"},
-    "Specificity_Mean": {"minimize": False, "role": "quality"},
-    "RocAuc_Mean":      {"minimize": False, "role": "quality"},
-    "LogLoss_Mean":     {"minimize": True,  "role": "quality"},
-    "Leaves_Mean":      {"minimize": True,  "role": "cost"},
+    "Accuracy_Mean":    {"minimize": False, "role": "quality", "transform": "none"},
+    "Precision_Mean":   {"minimize": False, "role": "quality", "transform": "none"},
+    "Recall_Mean":      {"minimize": False, "role": "quality", "transform": "none"},
+    "Specificity_Mean": {"minimize": False, "role": "quality", "transform": "none"},
+    "RocAuc_Mean":      {"minimize": False, "role": "quality", "transform": "none"},
+    "LogLoss_Mean":     {"minimize": True,  "role": "quality", "transform": "none"},
+    "Leaves_Mean":      {"minimize": True,  "role": "cost",    "transform": "log1p"},
 }
+
+
+def apply_transforms(df: pd.DataFrame) -> np.ndarray:
+    """Declared per-response transform, then the declared direction."""
+    cols = []
+    for c, spec in RESPONSES.items():
+        v = df[c].to_numpy(dtype=float)
+        if spec["transform"] == "log1p":
+            v = np.log1p(np.clip(v, 0.0, None))
+        elif spec["transform"] != "none":
+            raise ValueError(f"unknown transform {spec['transform']!r} for {c}")
+        cols.append(v * (1.0 if spec["minimize"] else -1.0))
+    return np.column_stack(cols)
 
 
 # --------------------------------------------------------------------------- data
@@ -105,12 +126,39 @@ def cast(row) -> dict:
     return {k: (int(round(float(row[k]))) if k in INTS else float(row[k])) for k in PARAMS}
 
 
-def lhs_points(n: int, seed: int) -> pd.DataFrame:
-    """Held-out compositions: protocol section 7's external set, one design, one seed."""
-    s = qmc.LatinHypercube(d=len(PARAMS), seed=seed).random(n)
+def external_points(n: int, seed: int, kind: str = "spanning") -> pd.DataFrame:
+    """The surrogate gate's external set.
+
+    ``kind="uniform"`` is a plain Latin hypercube over the box. It is the obvious
+    choice and it is the wrong one here: in seven dimensions, uniform sampling puts
+    essentially no mass near the box corners, so every drawn configuration is a decent
+    one and the external set carries 2 to 10 times less response spread than the design
+    it is meant to validate. An R-squared computed against it is dominated by a
+    near-zero denominator and says nothing about the surface.
+
+    ``kind="spanning"`` mixes half a Latin hypercube with half an arcsine-marginal
+    sample, whose Beta(0.5, 0.5) coordinates concentrate near the ends of each range.
+    The result spans the response range the design spans, which is the condition an
+    external set has to meet before R-squared against it means anything.
+    """
     lo = np.array([BOUNDS[p][0] for p in PARAMS])
     hi = np.array([BOUNDS[p][1] for p in PARAMS])
-    return pd.DataFrame(qmc.scale(s, lo, hi), columns=PARAMS)
+    if kind == "uniform":
+        u = qmc.LatinHypercube(d=len(PARAMS), seed=seed).random(n)
+    elif kind == "spanning":
+        n_lhs = n // 2
+        rng = np.random.default_rng(seed)
+        u = np.vstack([
+            qmc.LatinHypercube(d=len(PARAMS), seed=seed).random(n_lhs),
+            rng.beta(0.5, 0.5, size=(n - n_lhs, len(PARAMS))),
+        ])
+    else:
+        raise ValueError(f"unknown external-set kind {kind!r}")
+    return pd.DataFrame(qmc.scale(u, lo, hi), columns=PARAMS)
+
+
+def lhs_points(n: int, seed: int) -> pd.DataFrame:      # retained for the tests
+    return external_points(n, seed, kind="uniform")
 
 
 # ---------------------------------------------------------------- factor stage
@@ -130,31 +178,73 @@ def varimax(L: np.ndarray, tol=1e-7, it=200):
     return L @ R, R
 
 
+class FactorModel:
+    """The protocol section 6.3 factor stage, fitted once and then applied.
+
+    Fitting separately on two sets of runs and comparing the results is meaningless:
+    each fit has its own standardization, its own rotation and its own sign
+    orientation, so the two composites live in different coordinate systems. The
+    method only ever sees the design, so the model is fitted there and *applied* to
+    held-out points, which is also what the surrogate gate requires.
+    """
+
+    def __init__(self, k: int = 3) -> None:
+        self.k = k
+        self.cols = list(RESPONSES)
+
+    def fit(self, df: pd.DataFrame) -> "FactorModel":
+        M = apply_transforms(df)                                 # transform, then canonicalize
+        self.mu_, self.sd_ = M.mean(0), M.std(0, ddof=1)
+        self.sd_ = np.where(self.sd_ == 0, 1.0, self.sd_)
+        Z = (M - self.mu_) / self.sd_
+        pca = PCA(n_components=self.k, random_state=0).fit(Z)
+        self.pca_ = pca
+        lam = pca.explained_variance_
+        loadings = pca.components_.T * np.sqrt(lam)               # scaled, not eigenvectors
+        self.rot_, self.R_ = varimax(loadings)
+        # A principal component's sign is arbitrary, and Varimax does not fix it. Left
+        # alone, the quality composite's sign is arbitrary too, so its correlation with
+        # the cost factor can come out either way: on one dataset a change of transform
+        # flipped the measured objective conflict from -0.66 to +0.69 for this reason
+        # alone. Orient each factor so the response that loads most heavily on it has a
+        # positive loading. Every response is already canonicalized to minimization, so
+        # this makes a larger score mean a worse configuration on every factor.
+        self.flip_ = np.sign(self.rot_[np.argmax(np.abs(self.rot_), axis=0),
+                                       np.arange(self.k)])
+        self.flip_ = np.where(self.flip_ == 0, 1.0, self.flip_)
+        self.rot_ = self.rot_ * self.flip_
+        self.R_ = self.R_ * self.flip_
+        scores = pca.transform(Z) @ self.R_
+        self.score_mu_, self.score_sd_ = scores.mean(0), scores.std(0, ddof=1)
+        self.score_sd_ = np.where(self.score_sd_ == 0, 1.0, self.score_sd_)
+        self.cost_idx_ = int(np.argmax(np.abs(self.rot_[self.cols.index("Leaves_Mean")])))
+        self.q_idx_ = [j for j in range(self.k) if j != self.cost_idx_]
+        share = lam / lam.sum()
+        self.share_ = share
+        self.w_ = share[self.q_idx_] / share[self.q_idx_].sum()   # variance weighting
+        return self
+
+    def transform(self, df: pd.DataFrame) -> dict:
+        M = apply_transforms(df)
+        Z = (M - self.mu_) / self.sd_
+        scores = self.pca_.transform(Z) @ self.R_
+        zs = (scores - self.score_mu_) / self.score_sd_
+        return {"quality": zs[:, self.q_idx_] @ self.w_,
+                "quality_equal": zs[:, self.q_idx_].mean(1),   # pre-registered sensitivity
+                "cost": zs[:, self.cost_idx_]}
+
+    def summary(self) -> dict:
+        return {"loadings": pd.DataFrame(self.rot_, index=self.cols,
+                                         columns=[f"F{j+1}" for j in range(self.k)]),
+                "explained_variance_share": self.share_.tolist(),
+                "cost_factor": self.cost_idx_ + 1,
+                "quality_weights": self.w_.tolist()}
+
+
 def factor_stage(df: pd.DataFrame, k: int = 3) -> dict:
-    """Protocol section 6.3: canonicalize to minimization, PCA, Varimax on SCALED
-    loadings, quality composite weighted by explained-variance share."""
-    cols = list(RESPONSES)
-    M = np.column_stack([df[c].to_numpy() * (1.0 if RESPONSES[c]["minimize"] else -1.0)
-                         for c in cols])
-    Z = (M - M.mean(0)) / np.where(M.std(0, ddof=1) == 0, 1.0, M.std(0, ddof=1))
-    pca = PCA(n_components=k, random_state=0).fit(Z)
-    lam = pca.explained_variance_
-    loadings = pca.components_.T * np.sqrt(lam)          # scaled, not eigenvectors
-    rot, R = varimax(loadings)
-    scores = pca.transform(Z) @ R
-    cost_idx = int(np.argmax(np.abs(rot[cols.index("Leaves_Mean")])))
-    q_idx = [j for j in range(k) if j != cost_idx]
-    share = lam / lam.sum()
-    w = share[q_idx] / share[q_idx].sum()                 # variance weighting
-    zs = (scores - scores.mean(0)) / scores.std(0, ddof=1)
-    return {"quality": zs[:, q_idx] @ w,
-            "quality_equal": zs[:, q_idx].mean(1),        # the pre-registered sensitivity
-            "cost": zs[:, cost_idx],
-            "loadings": pd.DataFrame(rot, index=cols,
-                                     columns=[f"F{j+1}" for j in range(k)]),
-            "explained_variance_share": share.tolist(),
-            "cost_factor": cost_idx + 1,
-            "quality_weights": w.tolist()}
+    """Fit and transform on the same frame. Only for tests and for the design set."""
+    m = FactorModel(k).fit(df)
+    return {**m.transform(df), **m.summary()}
 
 
 # -------------------------------------------------------------------- screening
@@ -193,29 +283,86 @@ def front_curvature(q: np.ndarray, c: np.ndarray) -> float:
     return float(dev.max())
 
 
-def external_r2(fit_df, fit_y, val_df, val_y) -> tuple[float, float]:
-    """Quadratic surface in coded units, fitted on the design, scored on the held-out set."""
+def _code(d: pd.DataFrame) -> np.ndarray:
+    """Coded units, protocol section 7: each factor mapped to [-1, 1] over its box."""
     lo = np.array([BOUNDS[p][0] for p in PARAMS])
     hi = np.array([BOUNDS[p][1] for p in PARAMS])
+    return 2 * (d[PARAMS].to_numpy(dtype=float) - lo) / (hi - lo) - 1
 
-    def code(d):
-        return 2 * (d[PARAMS].to_numpy(dtype=float) - lo) / (hi - lo) - 1
 
-    def basis(Xc):
-        cols = [np.ones(len(Xc))] + [Xc[:, i] for i in range(Xc.shape[1])]
-        cols += [Xc[:, i] ** 2 for i in range(Xc.shape[1])]
-        cols += [Xc[:, i] * Xc[:, j]
-                 for i in range(Xc.shape[1]) for j in range(i + 1, Xc.shape[1])]
-        return np.column_stack(cols)
+def _terms() -> list[tuple[int, ...]]:
+    """Full quadratic basis as index tuples: (), (i,), (i,i), (i,j)."""
+    k = len(PARAMS)
+    out: list[tuple[int, ...]] = [()]
+    out += [(i,) for i in range(k)]
+    out += [(i, i) for i in range(k)]
+    out += [(i, j) for i in range(k) for j in range(i + 1, k)]
+    return out
 
-    A, b = basis(code(fit_df)), np.asarray(fit_y, float)
-    beta, *_ = np.linalg.lstsq(A, b, rcond=None)
-    pred = basis(code(val_df)) @ beta
-    yv = np.asarray(val_y, float)
+
+def _basis(Xc: np.ndarray, terms) -> np.ndarray:
+    cols = []
+    for tm in terms:
+        v = np.ones(len(Xc))
+        for i in tm:
+            v = v * Xc[:, i]
+        cols.append(v)
+    return np.column_stack(cols)
+
+
+def fit_surface_backward(fit_df: pd.DataFrame, y: np.ndarray, alpha: float = 0.05):
+    """Quadratic response surface in coded units, backward elimination, hierarchy kept.
+
+    The protocol inherits the dissertation's surrogate, which is backward-eliminated
+    at alpha = 0.05 with hierarchy enforced, not a full quadratic. The distinction
+    matters for external behaviour: a 36-term quadratic fitted on 88 design points is
+    far more prone to blowing up away from them than the 12-to-18-term model the
+    elimination actually produces.
+    """
+    Xc = _code(fit_df)
+    terms = _terms()
+    y = np.asarray(y, dtype=float)
+    while True:
+        A = _basis(Xc, terms)
+        n, p_ = A.shape
+        if n - p_ <= 1 or len(terms) <= 1:
+            break
+        beta, *_ = np.linalg.lstsq(A, y, rcond=None)
+        resid = y - A @ beta
+        dof = n - p_
+        s2 = float(resid @ resid) / dof
+        XtX_inv = np.linalg.pinv(A.T @ A)
+        se = np.sqrt(np.maximum(np.diag(XtX_inv) * s2, 1e-300))
+        from scipy import stats as _st
+        pvals = 2 * (1 - _st.t.cdf(np.abs(beta) / se, dof))
+        # Hierarchy: a main effect stays while any term containing it stays.
+        protected = {0}
+        for idx, tm in enumerate(terms):
+            if len(tm) == 2:
+                for i in set(tm):
+                    if (i,) in terms:
+                        protected.add(terms.index((i,)))
+        cand = [i for i in range(len(terms)) if i not in protected]
+        if not cand:
+            break
+        worst = max(cand, key=lambda i: pvals[i])
+        if pvals[worst] <= alpha:
+            break
+        terms = [tm for i, tm in enumerate(terms) if i != worst]
+    A = _basis(Xc, terms)
+    beta, *_ = np.linalg.lstsq(A, y, rcond=None)
+    return terms, beta
+
+
+def external_scores(fit_df, fit_y, val_df, val_y, alpha: float = 0.05):
+    """External R-squared and rank correlation of the protocol's surrogate."""
+    terms, beta = fit_surface_backward(fit_df, fit_y, alpha)
+    pred = _basis(_code(val_df), terms) @ beta
+    yv = np.asarray(val_y, dtype=float)
     ss_res = float(((yv - pred) ** 2).sum())
     ss_tot = float(((yv - yv.mean()) ** 2).sum())
     r2 = 1.0 - ss_res / ss_tot if ss_tot else float("nan")
-    return r2, float(spearmanr(pred, yv).statistic)
+    return r2, float(spearmanr(pred, yv).statistic), len(terms)
 
 
 # -------------------------------------------------------------------------- main
@@ -226,12 +373,16 @@ def main() -> int:
                     default=["magic", "spambase", "adult", "bank_marketing"])
     ap.add_argument("--seed", type=int, default=20260913)
     ap.add_argument("--n-valid", type=int, default=100)
+    ap.add_argument("--external-set", choices=["spanning", "uniform"], default="spanning",
+                    help="how the surrogate gate's held-out set is drawn")
+    ap.add_argument("--reuse", action="store_true",
+                    help="recompute the screening from cached evaluations")
     args = ap.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
     design = pd.read_csv(DESIGN, sep=";", decimal=",", encoding="utf-8-sig")
     design.columns = [str(c).strip().strip('"') for c in design.columns]
-    valid = lhs_points(args.n_valid, args.seed)
+    valid = external_points(args.n_valid, args.seed, kind=args.external_set)
 
     report: dict = {"seed": args.seed, "n_design": int(len(design)),
                     "n_valid": args.n_valid, "datasets": {}}
@@ -244,27 +395,40 @@ def main() -> int:
                                           random_state=args.seed)
         kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=args.seed)
 
-        rows = [evaluate(cast(design.iloc[i]), Xtr, ytr, kf, args.seed)
-                for i in range(len(design))]
-        d_df = pd.concat([design[PARAMS].reset_index(drop=True),
-                          pd.DataFrame(rows)], axis=1)
-        v_rows = [evaluate(cast(valid.iloc[i]), Xtr, ytr, kf, args.seed)
-                  for i in range(len(valid))]
-        v_df = pd.concat([valid.reset_index(drop=True), pd.DataFrame(v_rows)], axis=1)
-        elapsed = time.perf_counter() - t0
-        n_eval = len(d_df) + len(v_df)
+        # Both external-set constructions are kept on disk. The comparison between
+        # them is itself a pilot finding, so one must not overwrite the other.
+        d_path = OUT / f"{ds}_design.csv"
+        v_path = OUT / f"{ds}_validation_{args.external_set}.csv"
+        if args.reuse and d_path.exists() and v_path.exists():
+            d_df, v_df = pd.read_csv(d_path), pd.read_csv(v_path)
+            if len(v_df) != args.n_valid:
+                raise SystemExit(f"{ds}: cached validation set has {len(v_df)} rows, "
+                                 f"not {args.n_valid}; rerun without --reuse")
+            elapsed, n_eval = float("nan"), len(d_df) + len(v_df)
+            print(f"{ds:16s} reusing cached evaluations ({n_eval} rows)")
+        else:
+            rows = [evaluate(cast(design.iloc[i]), Xtr, ytr, kf, args.seed)
+                    for i in range(len(design))]
+            d_df = pd.concat([design[PARAMS].reset_index(drop=True),
+                              pd.DataFrame(rows)], axis=1)
+            v_rows = [evaluate(cast(valid.iloc[i]), Xtr, ytr, kf, args.seed)
+                      for i in range(len(valid))]
+            v_df = pd.concat([valid.reset_index(drop=True), pd.DataFrame(v_rows)], axis=1)
+            elapsed = time.perf_counter() - t0
+            n_eval = len(d_df) + len(v_df)
+            d_df.to_csv(d_path, index=False)
+            v_df.to_csv(v_path, index=False)
 
-        d_df.to_csv(OUT / f"{ds}_design.csv", index=False)
-        v_df.to_csv(OUT / f"{ds}_validation.csv", index=False)
-
-        fs = factor_stage(d_df)
-        fs_v = factor_stage(v_df)
-        fs["loadings"].to_csv(OUT / f"{ds}_loadings.csv")
+        model = FactorModel().fit(d_df)          # the method only ever sees the design
+        fs = model.transform(d_df)
+        fs_v = model.transform(v_df)             # applied, not refitted
+        summ = model.summary()
+        summ["loadings"].to_csv(OUT / f"{ds}_loadings.csv")
 
         rho_conf = float(spearmanr(fs["quality"], fs["cost"]).statistic)
         curv = front_curvature(fs["quality"], fs["cost"])
-        r2q, sq = external_r2(d_df, fs["quality"], v_df, fs_v["quality"])
-        r2c, sc = external_r2(d_df, fs["cost"], v_df, fs_v["cost"])
+        r2q, sq, nq = external_scores(d_df, fs["quality"], v_df, fs_v["quality"])
+        r2c, sc, nc = external_scores(d_df, fs["cost"], v_df, fs_v["cost"])
         cost_ratio = float(d_df.Leaves_Mean.max() / max(d_df.Leaves_Mean.min(), 1.0))
         rho_weighting = float(spearmanr(fs["quality"], fs["quality_equal"]).statistic)
 
@@ -279,27 +443,35 @@ def main() -> int:
                 "external_spearman_quality": round(sq, 4),
                 "external_r2_cost": round(r2c, 4),
                 "external_spearman_cost": round(sc, 4),
+                "surface_terms_quality": nq,
+                "surface_terms_cost": nc,
                 "gate_pass_quality": bool(r2q >= 0.5 and sq >= 0.9),
                 "gate_pass_cost": bool(r2c >= 0.5 and sc >= 0.9),
                 "cost_range_ratio": round(cost_ratio, 1),
+                "external_set_kind": args.external_set,
+                "quality_sd_design": round(float(np.std(fs["quality"], ddof=1)), 4),
+                "quality_sd_external": round(float(np.std(fs_v["quality"], ddof=1)), 4),
+                "quality_spread_ratio_design_over_external": round(
+                    float(np.std(fs["quality"], ddof=1) / max(np.std(fs_v["quality"], ddof=1), 1e-12)), 2),
             },
             "factor_stage": {
-                "explained_variance_share": [round(v, 4) for v in fs["explained_variance_share"]],
-                "cost_factor": fs["cost_factor"],
-                "quality_weights_variance": [round(v, 4) for v in fs["quality_weights"]],
+                "explained_variance_share": [round(v, 4) for v in summ["explained_variance_share"]],
+                "cost_factor": summ["cost_factor"],
+                "quality_weights_variance": [round(v, 4) for v in summ["quality_weights"]],
                 "spearman_variance_vs_equal_weighting": round(rho_weighting, 4),
             },
             "cost": {
                 "evaluations": n_eval,
-                "seconds_total": round(elapsed, 1),
-                "seconds_per_evaluation": round(elapsed / n_eval, 3),
+                "seconds_total": None if np.isnan(elapsed) else round(elapsed, 1),
+                "seconds_per_evaluation": None if np.isnan(elapsed) else round(elapsed / n_eval, 3),
             },
         }
-        s = report["datasets"][ds]
-        print(f"{ds:16s} {n_eval} evals in {elapsed/60:5.1f} min "
-              f"({s['cost']['seconds_per_evaluation']:.2f} s/eval) | "
+        timing = ("cached" if np.isnan(elapsed)
+                  else f"{elapsed/60:5.1f} min ({elapsed/n_eval:.2f} s/eval)")
+        print(f"{ds:16s} {n_eval} evals, {timing} | "
               f"conflict {rho_conf:+.3f} curv {curv:.3f} "
-              f"R2q {r2q:+.3f} R2c {r2c:+.3f} costratio {cost_ratio:.0f}")
+              f"R2q {r2q:+.3f} SpRq {sq:+.3f} ({nq} terms) "
+              f"R2c {r2c:+.3f} SpRc {sc:+.3f} ({nc} terms) costratio {cost_ratio:.0f}")
 
     (OUT / "stage_a_report.json").write_text(json.dumps(report, indent=2))
     print(f"\nwrote {OUT/'stage_a_report.json'}")
