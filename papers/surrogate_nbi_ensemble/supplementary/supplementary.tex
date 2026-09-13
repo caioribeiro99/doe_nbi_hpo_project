@@ -1,0 +1,300 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{pdflscape}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\title{\bfseries Supplementary Material\\[0.4em]
+\large When Is Surrogate-Assisted Multiobjective Ensemble Weighting Trustworthy?\\
+A Replicated Study of Mixture Designs, Scheff\'e Surfaces and Normal Boundary Intersection\\
+on the Classifier-Weight Simplex}
+\author{Caio Tertuliano Ribeiro \quad Matheus Costa Pereira \quad Anderson Paulo de Paiva}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent
+Every item here is generated from the frozen study artifacts by
+\texttt{papers/\allowbreak surrogate\_nbi\_ensemble/\allowbreak build\_supplement.py} and
+\texttt{build\_assets.py}, at git tag \texttt{pco213-postwork-r30} (commit \texttt{b3ed050}) for the main study and the
+NSGA-II baseline commits that follow it. No number in this document is computed anywhere other than in the source
+CSVs named in each caption. Long tables are truncated where indicated; the complete table is always the named CSV,
+which is version-controlled.
+
+\tableofcontents
+\newpage
+
+\section{Extended protocol}
+\label{sec:s1}
+
+The design is a fixed 66-run mixture design over the five-component weight simplex: the union of the $\{5,3\}$ and
+$\{5,2\}$ simplex lattices, the overall centroid, the 5 axial points, the 5 quaternary centroids and the 10 midpoints
+between the overall centroid and the ternary centroids. It therefore contains the 5 pure vertices, all 10 binary
+edges, the ternary and quaternary faces, and uniform voting.
+
+External validation uses 100 compositions per replication that are not in the design and never used for fitting:
+60 from $\mathrm{Dirichlet}(\mathbf{1})$ (seed offset $+1000$) and 40 from $\mathrm{Dirichlet}(0.5\cdot\mathbf{1})$
+(offset $+2000$).
+
+Every stochastic component is seeded as $20260904 + r$ for replication $r$, with documented offsets per component
+(design validation $+1000/+2000$; direct AUC search $+3000/+4000$; empirical reference $+5000$ onwards; comparators
+$+12000$; quality scoring $+13000$; NSGA-II $+770000$). The seed map, the configuration history and the resolved
+library versions are in \texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak manifests/\allowbreak benchmark\_manifest.json}; per-dataset
+provenance including source, acquisition command, expected invariants and SHA-256 checksum is in the corresponding
+\texttt{*\_dataset\_manifest.json}.
+
+The statistical analysis plan, fixed before the replicated benchmark and committed to version control, is
+\texttt{STATISTICAL\_ANALYSIS\_R30.md}.
+
+\section{Base models and single-objective references}
+\label{sec:s2}
+\input{tables/s2_model_performance}
+\input{tables/s2_single_objective_refs}
+\input{tables/s2_inference_costs}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth]{fig13_weight_composition.png}
+\caption{Weight composition of the solutions on the empirical reference front, by dataset.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{fig14_neff.png}
+\caption{Effective number of models on the reference front.}
+\end{figure}
+
+\section{Complete Scheff\'e results}
+\label{sec:s3}
+\input{tables/s3_scheffe_orders}
+\input{tables/s3_coefficients}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth]{fig16_surrogate_validation.png}
+\caption{Predicted versus observed response on the 100 unseen compositions, all dataset--response pairs. Extends
+Figure~2 of the main text.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{fig11_coef_stability_roc_auc.png}
+\includegraphics[width=0.49\textwidth]{fig11_coef_stability_log_loss.png}
+\caption{Coefficient stability across the 30 partitions, ROC-AUC (left) and log-loss (right).}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth]{r30_fig05_beta_ij_stability.png}
+\caption{Interaction-coefficient bootstrap intervals across partitions.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{fig10_beta_ij_roc_auc.png}
+\includegraphics[width=0.49\textwidth]{fig15_diversity_vs_beta.png}
+\caption{Left: interaction coefficients for ROC-AUC. Right: interaction magnitude against base-model error
+correlation, which the main text reads as a vertex-quality effect rather than complementarity.}
+\end{figure}
+
+\section{All Pareto indicators}
+\label{sec:s4}
+\input{tables/s4_pareto_indicators}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{fig04_igd_plus.png}
+\includegraphics[width=0.49\textwidth]{fig05_hv_ratio.png}\\
+\includegraphics[width=0.49\textwidth]{fig07_gd.png}
+\includegraphics[width=0.49\textwidth]{fig08_igd.png}
+\caption{Distributions over the 120 replications of IGD$^+$, hypervolume ratio, generational distance and IGD.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{fig06_joint_nd.png}
+\includegraphics[width=0.49\textwidth]{fig09_spacing_cv.png}
+\caption{Joint non-dominated fraction and spacing coefficient of variation.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{fig02_fronts_santander.png}
+\includegraphics[width=0.49\textwidth]{fig02_fronts_bnp.png}\\
+\includegraphics[width=0.49\textwidth]{fig02_fronts_porto.png}
+\includegraphics[width=0.49\textwidth]{fig02_fronts_uci_credit.png}
+\caption{Revalidated fronts against the empirical reference, all four datasets. Extends Figure~3 of the main text.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.8\textwidth]{fig12_active_support.png}
+\caption{Frequency with which each support set appears on the empirical reference front.}
+\end{figure}
+
+\section{Full paired statistics}
+\label{sec:s5}
+\input{tables/s5_paired_effects}
+\input{tables/s5_paired_tests}
+\input{tables/s5_proportions}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{r30_fig01_paired_delta_igd_plus.png}
+\includegraphics[width=0.49\textwidth]{r30_fig02_paired_delta_hv.png}
+\caption{Paired differences on both primary endpoints, all comparisons.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{r30_fig06_win_tie_loss.png}
+\caption{Win/tie/loss heat map over all pairwise set comparisons.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{fig17_nbi_variants_paired.png}
+\caption{Paired comparison of the three NBI variants.}
+\end{figure}
+
+\section{Reliability gate and regime analysis}
+\label{sec:s6}
+\input{tables/s6_gate}
+\input{tables/s6_gate_conditional}
+\input{tables/s6_regimes}
+
+\paragraph{The BNP Paribas collapse, in full.} NBI-A's weighted hypervolume ratio splits into 21 partitions at
+0.891--0.928, two intermediate, and seven collapsing to 0.036--0.120: partitions 7, 9, 18, 20, 23, 26 and 27. The
+seven coincide exactly with the partitions in which the parsimony rule selects the quadratic ROC-AUC order (7 of 7,
+against 0 of 22 linear-selected partitions). Their external $R^2$ is \emph{higher} (median 0.456 against 0.075) and
+they pass the gate more often (3 of 7 against 2 of 23), which is the basis for the main text's statement that the
+gate does not protect against anchor misplacement. NBI-B reaches 0.935--0.996 in all thirty partitions. In six of the
+seven collapses the surrogate anchor carries $k$-nearest neighbours and costs 16--31~ms per 1{,}000 rows, giving
+Spearman $-0.69$ between anchor cost and hypervolume; partition 26 collapses with a cheap anchor, which is why anchor
+cost is described as a marker rather than the mechanism.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{r30_fig04_gate_pass.png}
+\includegraphics[width=0.49\textwidth]{r30_fig09_anchor_costs.png}
+\caption{Gate pass frequencies and the distribution of anchor costs.}
+\end{figure}
+
+\section{NBI solver diagnostics}
+\label{sec:s7}
+\input{tables/s7_nbi_runs}
+
+\paragraph{Success semantics are not on a common scale.} NBI-A and NBI-B optimize smooth polynomials and a subproblem
+counts as successful only when SLSQP certifies optimality. NBI-C optimizes a piecewise-constant ROC-AUC, where such
+certification is generically unattainable, so a subproblem is accepted when its equality residual falls below
+$10^{-3}$, under a reduced budget. The UCI credit gap between NBI-C and NBI-B is substantially a convergence effect
+of NBI-B, which certifies a median 29 of 66 subproblems there; retaining its unconverged iterates preserves the
+direction but reduces the mean gap from $+0.277$ to $+0.108$ hypervolume, and in the three partitions where NBI-B
+converges fully the gap is at most 0.01.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{r30_fig10_nbi_success_ecdf.png}
+\caption{Empirical distribution of subproblem success rates per variant and dataset.}
+\end{figure}
+
+\section{Empirical reference convergence}
+\label{sec:s8}
+\input{tables/s8_reference}
+
+The reference has two layers. The \emph{sampled core} is built from Dirichlet samples, the simplex lattice, all
+vertices and edges, an $\varepsilon$-constraint sweep, the 66 design runs and the single-objective references; it
+contains the search output of none of the five compared methods. The \emph{final augmented reference} is the
+non-dominated union of that core with every candidate set. Because NBI-B and NBI-C contribute 30--40\% of its points,
+and NSGA-II 8--29\%, absolute indicator values computed against the augmented reference are partly self-graded, which
+is why every primary comparison is repeated against the sample core (Section~\ref{sec:s13}).
+
+\section{Cost definition and the accuracy--calibration conflict}
+\label{sec:s9}
+\input{tables/s9_cost_sensitivity}
+\input{tables/s9_conflict}
+
+\paragraph{The BNP Paribas support-cost normalization artifact.} NBI-C's support-cost hypervolume appears bimodal,
+but this is a per-replication normalization effect, not a regime. The cost bound of the normalization box is
+approximately 17~ms per 1{,}000 rows in 13 partitions, where no $k$-nearest-neighbour-bearing point survives on the
+support reference front, and 160--167 in the other 17, a tenfold rescaling of one axis. NBI-C's fronts are the same
+in both groups. Under a common bound the split disappears. The robust statement is qualitative: NBI sets optimized
+under the linear cost omit the cheapest supports that the raw design contains.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\textwidth]{fig03_cost_definitions_santander.png}
+\includegraphics[width=0.49\textwidth]{fig03_cost_definitions_bnp.png}\\
+\includegraphics[width=0.49\textwidth]{fig03_cost_definitions_porto.png}
+\includegraphics[width=0.49\textwidth]{fig03_cost_definitions_uci_credit.png}
+\caption{Weighted versus support cost, all four datasets.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{r30_fig08_cost_definition_ranking.png}
+\caption{Set rankings under the two cost definitions.}
+\end{figure}
+
+\section{Holdout transfer}
+\label{sec:s10}
+\input{tables/s10_holdout}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{r30_fig07_holdout_transfer.png}
+\caption{Holdout minus out-of-fold differences for every knee-selected solution.}
+\end{figure}
+
+\section{From ten to thirty replications}
+\label{sec:s11}
+\input{tables/s11_r10_r30}
+
+Against the twenty new partitions alone, rather than the nested $R = 30$ sample, only 6 of 12 hypervolume and 5 of 12
+IGD$^+$ cells agree with the $R = 10$ estimate, and the Porto Seguro and UCI credit anchor win rates differ between
+batches under an identical protocol (UCI credit Fisher $p = 0.009$). That disagreement is not a defect of either
+batch; it is the magnitude of partition sensitivity the extension was designed to measure.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\textwidth]{r30_fig03_r10_vs_r30_stability.png}
+\caption{$R = 10$ against $R = 30$ across all metric families.}
+\end{figure}
+
+\section{Anchor-injection control}
+\label{sec:s12}
+\input{tables/s12_anchor_injection}
+
+Because a vertex value of $\beta$ returns its anchor directly, NBI-B's returned set contains the three real
+single-objective optima, which are also points of the empirical reference. Part of the NBI-B advantage is therefore
+the injection of those extreme solutions rather than the relocation of the CHIM. Rescoring NBI-A's own candidate set
+augmented with the same three anchors, and changing nothing else, isolates the two. Source:
+\texttt{scripts/\allowbreak pco213\_anchor\_injection\_control.py} and
+\texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak anchor\_injection\_control.csv}.
+
+\section{Evaluation-matched NSGA-II baseline}
+\label{sec:s13}
+\input{tables/s13_nsga2_effects}
+\input{tables/s13_nsga2_levels}
+\input{tables/s13_nsga2_budget}
+
+The pre-specified configuration is \texttt{nsga2\_preregistered\_config.json}, committed before the first run. The
+full verified report, including the ten verification checks, is
+\texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak nsga2/\allowbreak NSGA2\_BASELINE\_REPORT.md}.
+
+\section{Corrections log}
+\label{sec:s14}
+
+Readings that appeared in earlier analyses of this study and did not survive replication or adversarial verification,
+with the evidence that overturned each. They are listed because each is traceable in the repository history and a
+reader should be able to see what changed.
+
+\begin{enumerate}
+\item \textbf{The BNP Paribas support-cost bimodality of NBI-C} was reported at $R = 10$ as a regime. It is a
+per-replication normalization-box artifact (Section~\ref{sec:s9}).
+\item \textbf{A Santander deployment-cost gap between the AUC and log-loss optima} was attributed to the AUC optimum.
+It is an activity-threshold artifact: the derivative-free search leaves a $k$-nearest-neighbour weight just above
+$10^{-3}$ that is AUC-inert, and an AUC-equivalent blend without it costs about $+4$~ms per 1{,}000 rows.
+\item \textbf{The random Dirichlet comparator was described as budget-matched.} It is matched only in the number of
+returned candidates and is degenerate under the weighted cost; it is a floor check.
+\item \textbf{Uniform spacing was treated as an advantage of NBI.} It does not survive revalidation, and the
+NSGA-II arm shows the shortfall is a property of the CHIM construction rather than of the objective geometry.
+\item \textbf{The gate-conditional anchor gain on BNP Paribas} was read as evidence that real anchors add more when
+the surface is reliable. It restates NBI-A's collapse, since three of the five gate-passing partitions are collapse
+partitions.
+\item \textbf{The A-versus-B contrast was described as a clean single-factor experiment.} It is not: replacing the
+anchors also moves the utopia point, rescales both normalization axes, reorients the CHIM and substitutes three
+returned candidates (Section~\ref{sec:s12}).
+\item \textbf{The compute premium was quoted from solver stages only.} Charged standalone, so that each arm carries
+the stages it depends on, the NBI-C premium over NBI-B is 2.3--6.2$\times$, not 3--73$\times$.
+\end{enumerate}
+
+\end{document}

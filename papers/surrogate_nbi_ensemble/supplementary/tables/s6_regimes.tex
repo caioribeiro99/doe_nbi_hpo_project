@@ -1,0 +1,71 @@
+\begin{landscape}
+\begin{center}\captionof{table}{Exploratory regime diagnostics: Sarle's bimodality coefficient and a one- versus two-component Gaussian-mixture BIC difference. No formal multimodality test is claimed. First 50 of 108 rows; the complete table is the source CSV. Showing 10 of 14 columns; the rest are in the source CSV.}\label{tab:s6reg}\end{center}
+\begingroup\tiny\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llllrrrrrr}
+\toprule
+dataset & set & cost & metric & n & mean & median & sd & bimodality coefficient & gmm bic delta \\
+\midrule
+\endfirsthead
+\toprule
+dataset & set & cost & metric & n & mean & median & sd & bimodality coefficient & gmm bic delta \\
+\midrule
+\endhead
+\midrule
+\multicolumn{10}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+santander & nbi\_A & weighted & hv\_ratio & 30 & 0.800400 & 0.788700 & 0.092200 & 0.342700 & -9.597200 \\
+santander & nbi\_A & weighted & igd\_plus & 30 & 0.132100 & 0.136200 & 0.069500 & 0.385900 & -9.161700 \\
+santander & nbi\_A & support & hv\_ratio & 30 & 0.862400 & 0.853100 & 0.029800 & 0.520500 & 2.073900 \\
+santander & nbi\_A & support & igd\_plus & 30 & 0.068300 & 0.067200 & 0.018500 & 0.278000 & -9.079600 \\
+santander & nbi\_A & - & success\_rate & 30 & 0.975300 & 1.000000 & 0.064200 & 0.914800 & 225.906700 \\
+santander & nbi\_A & - & anchor\_auc\_cost & 30 & 45.730400 & 53.680300 & 18.463900 & 0.882900 & 101.826100 \\
+santander & nbi\_A & - & anchor\_ll\_cost & 30 & 26.583000 & 27.473900 & 3.167100 & 0.882400 & 63.674100 \\
+santander & nbi\_B & weighted & hv\_ratio & 30 & 0.979600 & 0.980700 & 0.006600 & 0.489200 & -0.676400 \\
+santander & nbi\_B & weighted & igd\_plus & 30 & 0.012100 & 0.010500 & 0.005800 & 0.547200 & 1.070900 \\
+santander & nbi\_B & support & hv\_ratio & 30 & 0.987800 & 0.986200 & 0.005600 & 0.476800 & 15.233400 \\
+santander & nbi\_B & support & igd\_plus & 30 & 0.008400 & 0.008200 & 0.001700 & 0.238200 & -10.118200 \\
+santander & nbi\_B & - & success\_rate & 30 & 0.949000 & 0.984800 & 0.059700 & 0.571600 & 96.077600 \\
+santander & nbi\_B & - & anchor\_auc\_cost & 30 & 3.737100 & 2.371800 & 3.615300 & 0.709700 & 21.014200 \\
+santander & nbi\_B & - & anchor\_ll\_cost & 30 & 0.876000 & 0.875600 & 0.009600 & 0.392800 & -5.980000 \\
+santander & nbi\_C & weighted & hv\_ratio & 30 & 0.987300 & 0.989000 & 0.007300 & 0.578300 & 3.562000 \\
+santander & nbi\_C & weighted & igd\_plus & 30 & 0.010500 & 0.009500 & 0.006000 & 0.524900 & -0.306700 \\
+santander & nbi\_C & support & hv\_ratio & 30 & 0.993500 & 0.995000 & 0.004600 & 0.693000 & 11.827600 \\
+santander & nbi\_C & support & igd\_plus & 30 & 0.001800 & 0.001500 & 0.001000 & 0.610100 & -10.151100 \\
+santander & nbi\_C & - & success\_rate & 30 & 0.828300 & 0.833300 & 0.017500 & 0.481000 & 12.074200 \\
+santander & nbi\_C & - & anchor\_auc\_cost & 30 & 3.737100 & 2.371800 & 3.615300 & 0.709700 & 21.014200 \\
+santander & nbi\_C & - & anchor\_ll\_cost & 30 & 0.876000 & 0.875600 & 0.009600 & 0.392800 & -5.980000 \\
+santander & nbi\_A & weighted & spearman(hv\_ratio, r2ext\_auc) & 30 & -0.244000 & -- & -- & -- & -- \\
+santander & nbi\_A & weighted & spearman(hv\_ratio, r2ext\_ll) & 30 & -0.049200 & -- & -- & -- & -- \\
+santander & nbi\_A & weighted & spearman(hv\_ratio, spearman\_auc) & 30 & -0.395300 & -- & -- & -- & -- \\
+santander & nbi\_A & weighted & spearman(hv\_ratio, anchor\_auc\_cost\_A) & 30 & -0.094500 & -- & -- & -- & -- \\
+santander & nbi\_A & weighted & spearman(hv\_ratio, anchor\_ll\_cost\_A) & 30 & 0.405100 & -- & -- & -- & -- \\
+santander & nbi\_A & weighted & spearman(hv\_ratio, split\_prevalence) & 30 & -- & -- & -- & -- & -- \\
+bnp & nbi\_A & weighted & hv\_ratio & 30 & 0.694500 & 0.913000 & 0.361900 & 0.840800 & 48.138100 \\
+bnp & nbi\_A & weighted & igd\_plus & 30 & 0.250200 & 0.027100 & 0.376300 & 0.840600 & 50.243500 \\
+bnp & nbi\_A & support & hv\_ratio & 30 & 0.714200 & 0.904300 & 0.359500 & 0.854200 & 53.356800 \\
+bnp & nbi\_A & support & igd\_plus & 30 & 0.266000 & 0.040500 & 0.421600 & 0.846100 & 75.468400 \\
+bnp & nbi\_A & - & success\_rate & 30 & 0.946000 & 1.000000 & 0.156800 & 0.839000 & 45.520000 \\
+bnp & nbi\_A & - & anchor\_auc\_cost & 30 & 7.914400 & 3.479400 & 9.303400 & 0.856600 & 130.868300 \\
+bnp & nbi\_A & - & anchor\_ll\_cost & 30 & 3.466900 & 3.473900 & 0.054700 & 0.385200 & -7.950800 \\
+bnp & nbi\_B & weighted & hv\_ratio & 30 & 0.973800 & 0.971000 & 0.013100 & 0.222900 & 6.452100 \\
+bnp & nbi\_B & weighted & igd\_plus & 30 & 0.011400 & 0.012000 & 0.005100 & 0.225300 & -3.101300 \\
+bnp & nbi\_B & support & hv\_ratio & 30 & 0.865200 & 0.970600 & 0.149400 & 0.713400 & 62.403000 \\
+bnp & nbi\_B & support & igd\_plus & 30 & 0.041300 & 0.018600 & 0.046500 & 0.709100 & 13.960700 \\
+bnp & nbi\_B & - & success\_rate & 30 & 0.995500 & 1.000000 & 0.016000 & 0.862700 & 143.388800 \\
+bnp & nbi\_B & - & anchor\_auc\_cost & 30 & 4.373900 & 4.381200 & 0.070300 & 0.303100 & -2.638400 \\
+bnp & nbi\_B & - & anchor\_ll\_cost & 30 & 3.835300 & 3.826800 & 0.061000 & 0.308400 & -10.092100 \\
+bnp & nbi\_C & weighted & hv\_ratio & 30 & 0.982400 & 0.982900 & 0.003300 & 0.327700 & -9.365600 \\
+bnp & nbi\_C & weighted & igd\_plus & 30 & 0.014200 & 0.013600 & 0.002600 & 0.461700 & -7.783700 \\
+bnp & nbi\_C & support & hv\_ratio & 30 & 0.810500 & 0.968600 & 0.195500 & 0.794200 & 87.136400 \\
+bnp & nbi\_C & support & igd\_plus & 30 & 0.062200 & 0.029800 & 0.089000 & 0.781600 & 34.150700 \\
+bnp & nbi\_C & - & success\_rate & 30 & 0.833800 & 0.833300 & 0.038300 & 0.319500 & -5.490200 \\
+bnp & nbi\_C & - & anchor\_auc\_cost & 30 & 4.373900 & 4.381200 & 0.070300 & 0.303100 & -2.638400 \\
+bnp & nbi\_C & - & anchor\_ll\_cost & 30 & 3.835300 & 3.826800 & 0.061000 & 0.308400 & -10.092100 \\
+bnp & nbi\_A & weighted & spearman(hv\_ratio, r2ext\_auc) & 30 & -0.311200 & -- & -- & -- & -- \\
+bnp & nbi\_A & weighted & spearman(hv\_ratio, r2ext\_ll) & 30 & 0.295200 & -- & -- & -- & -- \\
+\end{longtable}\endgroup
+
+\end{landscape}

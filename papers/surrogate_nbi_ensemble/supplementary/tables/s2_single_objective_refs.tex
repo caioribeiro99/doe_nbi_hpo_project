@@ -1,0 +1,50 @@
+\begin{center}\captionof{table}{Single-objective reference solutions, averaged over 30 partitions. Showing 8 of 24 columns; the rest are in the source CSV.}\label{tab:s2refs}\end{center}
+\begingroup\scriptsize\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llrrrrrr}
+\toprule
+dataset & method & oof roc auc & oof log loss & holdout roc auc & holdout log loss & cost weighted & cost support \\
+\midrule
+\endfirsthead
+\toprule
+dataset & method & oof roc auc & oof log loss & holdout roc auc & holdout log loss & cost weighted & cost support \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+bnp & best\_single & 0.748300 & 0.474000 & 0.753200 & 0.469700 & 3.453500 & 3.453500 \\
+bnp & cheapest\_vertex & 0.734500 & 0.484300 & 0.734700 & 0.484100 & 3.319400 & 3.319400 \\
+bnp & direct\_auc\_search & 0.754700 & 0.469800 & 0.757300 & 0.468300 & 4.373900 & 13.089000 \\
+bnp & scheffe\_optimum\_auc & 0.748800 & 0.474600 & 0.753300 & 0.471100 & 7.899400 & 35.169800 \\
+bnp & scheffe\_optimum\_logloss & 0.746100 & 0.483000 & 0.750700 & 0.479300 & 3.466900 & 4.566400 \\
+bnp & slsqp\_direct\_logloss & 0.753900 & 0.468900 & 0.757000 & 0.466900 & 3.835300 & 16.660500 \\
+bnp & stacking\_lr & 0.754000 & 0.472000 & 0.756300 & 0.470500 & -- & -- \\
+bnp & uniform\_voting & 0.735800 & 0.518800 & 0.737200 & 0.517600 & 33.258700 & 166.293300 \\
+porto & best\_single & 0.625100 & 0.152900 & 0.627200 & 0.152700 & 1.378500 & 1.378500 \\
+porto & cheapest\_vertex & 0.625100 & 0.152900 & 0.627200 & 0.152700 & 1.378500 & 1.378500 \\
+porto & direct\_auc\_search & 0.631100 & 0.152500 & 0.632500 & 0.152400 & 15.782700 & 238.000000 \\
+porto & scheffe\_optimum\_auc & 0.629900 & 0.152500 & 0.631900 & 0.152400 & 2.687100 & 14.178500 \\
+porto & scheffe\_optimum\_logloss & 0.618700 & 0.162200 & 0.620700 & 0.162000 & 4.112300 & 4.771600 \\
+porto & slsqp\_direct\_logloss & 0.631100 & 0.152500 & 0.632500 & 0.152400 & 13.089700 & 238.105800 \\
+porto & stacking\_lr & 0.623900 & 0.153200 & 0.626100 & 0.153100 & -- & -- \\
+porto & uniform\_voting & 0.615100 & 0.196200 & 0.617900 & 0.195700 & 47.895600 & 239.478000 \\
+santander & best\_single & 0.888000 & 0.211000 & 0.880400 & 0.217500 & 0.784200 & 0.784200 \\
+santander & cheapest\_vertex & 0.859400 & 0.232200 & 0.859300 & 0.232200 & 0.720200 & 0.720200 \\
+santander & direct\_auc\_search & 0.892300 & 0.212000 & 0.890000 & 0.213100 & 3.737100 & 185.244400 \\
+santander & scheffe\_optimum\_auc & 0.890200 & 0.215500 & 0.885400 & 0.217500 & 45.755700 & 217.637600 \\
+santander & scheffe\_optimum\_logloss & 0.890100 & 0.211100 & 0.884900 & 0.214100 & 26.578400 & 247.950000 \\
+santander & slsqp\_direct\_logloss & 0.891700 & 0.208800 & 0.888000 & 0.211300 & 0.876000 & 1.859900 \\
+santander & stacking\_lr & 0.886800 & 0.215200 & 0.886300 & 0.216100 & -- & -- \\
+santander & uniform\_voting & 0.889300 & 0.226800 & 0.889200 & 0.226200 & 50.495500 & 252.477300 \\
+uci\_credit & best\_single & 0.782900 & 0.427500 & 0.783200 & 0.427300 & 5.666600 & 5.666600 \\
+uci\_credit & cheapest\_vertex & 0.723800 & 0.465500 & 0.724500 & 0.465200 & 0.515900 & 0.515900 \\
+uci\_credit & direct\_auc\_search & 0.783900 & 0.427300 & 0.784100 & 0.427100 & 6.867300 & 31.498500 \\
+uci\_credit & scheffe\_optimum\_auc & 0.783800 & 0.427300 & 0.784100 & 0.427100 & 7.671500 & 31.124900 \\
+uci\_credit & scheffe\_optimum\_logloss & 0.783100 & 0.427700 & 0.783300 & 0.427500 & 5.825900 & 8.610000 \\
+uci\_credit & slsqp\_direct\_logloss & 0.783600 & 0.426800 & 0.783700 & 0.426700 & 5.982700 & 31.196300 \\
+uci\_credit & stacking\_lr & 0.782600 & 0.428600 & 0.782600 & 0.428600 & -- & -- \\
+uci\_credit & uniform\_voting & 0.767100 & 0.465200 & 0.767800 & 0.465200 & 6.345300 & 31.726300 \\
+\end{longtable}\endgroup

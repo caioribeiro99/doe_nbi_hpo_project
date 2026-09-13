@@ -1,0 +1,111 @@
+\begin{landscape}
+\begin{center}\captionof{table}{Complete $R = 10$ versus $R = 30$ comparison across all sixteen metric families. First 90 of 352 rows; the complete table is the source CSV. Showing 12 of 16 columns; the rest are in the source CSV.}\label{tab:s11}\end{center}
+\begingroup\tiny\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llllllrrrrrr}
+\toprule
+metric & dataset & response & set & cost & term & r10 estimate & r30 estimate & abs change & rel change & r30 ci95 lo & r30 ci95 hi \\
+\midrule
+\endfirsthead
+\toprule
+metric & dataset & response & set & cost & term & r10 estimate & r30 estimate & abs change & rel change & r30 ci95 lo & r30 ci95 hi \\
+\midrule
+\endhead
+\midrule
+\multicolumn{12}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+scheffe\_r2\_external & santander & roc\_auc & -- & -- & -- & -0.275500 & -0.371200 & -0.095700 & -0.347400 & -0.558500 & -0.199000 \\
+reliability\_gate\_pass & santander & roc\_auc & -- & -- & -- & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+scheffe\_r2\_external & santander & log\_loss & -- & -- & -- & 0.973100 & 0.970000 & -0.003100 & -0.003200 & 0.967300 & 0.972500 \\
+reliability\_gate\_pass & santander & log\_loss & -- & -- & -- & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+scheffe\_r2\_external & bnp & roc\_auc & -- & -- & -- & -0.008700 & 0.112500 & 0.121300 & 13.874600 & -0.034500 & 0.244100 \\
+reliability\_gate\_pass & bnp & roc\_auc & -- & -- & -- & 0.200000 & 0.166700 & -0.033300 & -0.166700 & 0.033300 & 0.300000 \\
+scheffe\_r2\_external & bnp & log\_loss & -- & -- & -- & 0.086800 & -0.104200 & -0.191000 & -2.200500 & -0.245900 & 0.041800 \\
+reliability\_gate\_pass & bnp & log\_loss & -- & -- & -- & 0.200000 & 0.100000 & -0.100000 & -0.500000 & 0.000000 & 0.200000 \\
+scheffe\_r2\_external & porto & roc\_auc & -- & -- & -- & 0.519600 & 0.530700 & 0.011000 & 0.021200 & 0.482200 & 0.580500 \\
+reliability\_gate\_pass & porto & roc\_auc & -- & -- & -- & 0.600000 & 0.533300 & -0.066700 & -0.111100 & 0.366700 & 0.700000 \\
+scheffe\_r2\_external & porto & log\_loss & -- & -- & -- & 0.609200 & 0.535700 & -0.073500 & -0.120700 & 0.492200 & 0.579800 \\
+reliability\_gate\_pass & porto & log\_loss & -- & -- & -- & 0.500000 & 0.400000 & -0.100000 & -0.200000 & 0.233300 & 0.566700 \\
+scheffe\_r2\_external & uci\_credit & roc\_auc & -- & -- & -- & 0.992800 & 0.990700 & -0.002000 & -0.002000 & 0.989200 & 0.992100 \\
+reliability\_gate\_pass & uci\_credit & roc\_auc & -- & -- & -- & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+scheffe\_r2\_external & uci\_credit & log\_loss & -- & -- & -- & 0.993800 & 0.991900 & -0.001900 & -0.001900 & 0.990500 & 0.993200 \\
+reliability\_gate\_pass & uci\_credit & log\_loss & -- & -- & -- & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_linear & santander & roc\_auc & -- & -- & gnb & 0.886100 & 0.886300 & 0.000200 & 0.000200 & 0.886100 & 0.886500 \\
+beta\_linear & santander & roc\_auc & -- & -- & knn & 0.757100 & 0.756500 & -0.000600 & -0.000800 & 0.755900 & 0.757200 \\
+beta\_linear & santander & roc\_auc & -- & -- & lr & 0.857800 & 0.858000 & 0.000200 & 0.000200 & 0.857700 & 0.858300 \\
+beta\_linear & santander & roc\_auc & -- & -- & rf & 0.849000 & 0.849300 & 0.000300 & 0.000300 & 0.848900 & 0.849700 \\
+beta\_linear & santander & roc\_auc & -- & -- & xgb & 0.880000 & 0.880300 & 0.000300 & 0.000300 & 0.880000 & 0.880600 \\
+beta\_interaction\_top3 & santander & roc\_auc & -- & -- & gnb*knn & 0.242300 & 0.243200 & 0.000900 & 0.003600 & 0.242300 & 0.244200 \\
+beta\_interaction\_sign\_pos\_freq & santander & roc\_auc & -- & -- & gnb*knn & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & santander & roc\_auc & -- & -- & knn*xgb & 0.231100 & 0.232000 & 0.000900 & 0.003900 & 0.231100 & 0.232900 \\
+beta\_interaction\_sign\_pos\_freq & santander & roc\_auc & -- & -- & knn*xgb & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & santander & roc\_auc & -- & -- & knn*rf & 0.198700 & 0.199300 & 0.000600 & 0.002900 & 0.198500 & 0.200000 \\
+beta\_interaction\_sign\_pos\_freq & santander & roc\_auc & -- & -- & knn*rf & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_linear & santander & log\_loss & -- & -- & gnb & 0.211600 & 0.211400 & -0.000200 & -0.000700 & 0.211300 & 0.211600 \\
+beta\_linear & santander & log\_loss & -- & -- & knn & 0.340200 & 0.340500 & 0.000300 & 0.000900 & 0.340300 & 0.340800 \\
+beta\_linear & santander & log\_loss & -- & -- & lr & 0.232300 & 0.232200 & -0.000100 & -0.000500 & 0.232100 & 0.232400 \\
+beta\_linear & santander & log\_loss & -- & -- & rf & 0.275100 & 0.275000 & -0.000000 & -0.000100 & 0.274900 & 0.275100 \\
+beta\_linear & santander & log\_loss & -- & -- & xgb & 0.220100 & 0.220000 & -0.000100 & -0.000600 & 0.219800 & 0.220200 \\
+beta\_interaction\_top3 & santander & log\_loss & -- & -- & gnb*knn & -0.173500 & -0.174000 & -0.000500 & -0.002900 & -0.174400 & -0.173600 \\
+beta\_interaction\_sign\_pos\_freq & santander & log\_loss & -- & -- & gnb*knn & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_interaction\_top3 & santander & log\_loss & -- & -- & lr*knn & -0.147200 & -0.147600 & -0.000400 & -0.002900 & -0.148000 & -0.147200 \\
+beta\_interaction\_sign\_pos\_freq & santander & log\_loss & -- & -- & lr*knn & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_interaction\_top3 & santander & log\_loss & -- & -- & knn*xgb & -0.136300 & -0.136700 & -0.000500 & -0.003500 & -0.137200 & -0.136300 \\
+beta\_interaction\_sign\_pos\_freq & santander & log\_loss & -- & -- & knn*xgb & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_linear & bnp & roc\_auc & -- & -- & gnb & 0.633900 & 0.637200 & 0.003300 & 0.005200 & 0.634200 & 0.640000 \\
+beta\_linear & bnp & roc\_auc & -- & -- & knn & 0.682300 & 0.682000 & -0.000300 & -0.000400 & 0.681500 & 0.682500 \\
+beta\_linear & bnp & roc\_auc & -- & -- & lr & 0.734100 & 0.734300 & 0.000100 & 0.000200 & 0.734000 & 0.734600 \\
+beta\_linear & bnp & roc\_auc & -- & -- & rf & 0.742900 & 0.743000 & 0.000000 & 0.000000 & 0.742600 & 0.743300 \\
+beta\_linear & bnp & roc\_auc & -- & -- & xgb & 0.746900 & 0.747100 & 0.000300 & 0.000400 & 0.746600 & 0.747700 \\
+beta\_interaction\_top3 & bnp & roc\_auc & -- & -- & gnb*xgb & 0.157200 & 0.147800 & -0.009400 & -0.059900 & 0.139100 & 0.157000 \\
+beta\_interaction\_sign\_pos\_freq & bnp & roc\_auc & -- & -- & gnb*xgb & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & bnp & roc\_auc & -- & -- & gnb*rf & 0.147200 & 0.138600 & -0.008600 & -0.058600 & 0.130400 & 0.147300 \\
+beta\_interaction\_sign\_pos\_freq & bnp & roc\_auc & -- & -- & gnb*rf & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & bnp & roc\_auc & -- & -- & lr*gnb & 0.141300 & 0.132900 & -0.008300 & -0.058900 & 0.124900 & 0.141500 \\
+beta\_interaction\_sign\_pos\_freq & bnp & roc\_auc & -- & -- & lr*gnb & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_linear & bnp & log\_loss & -- & -- & gnb & 3.104300 & 3.035500 & -0.068800 & -0.022200 & 2.978200 & 3.095200 \\
+beta\_linear & bnp & log\_loss & -- & -- & knn & 0.470100 & 0.471300 & 0.001300 & 0.002700 & 0.470300 & 0.472300 \\
+beta\_linear & bnp & log\_loss & -- & -- & lr & 0.441500 & 0.442600 & 0.001100 & 0.002500 & 0.441600 & 0.443500 \\
+beta\_linear & bnp & log\_loss & -- & -- & rf & 0.439900 & 0.441000 & 0.001100 & 0.002500 & 0.440100 & 0.441900 \\
+beta\_linear & bnp & log\_loss & -- & -- & xgb & 0.431100 & 0.432200 & 0.001100 & 0.002600 & 0.431200 & 0.433100 \\
+beta\_interaction\_top3 & bnp & log\_loss & -- & -- & gnb*xgb & -4.023200 & -3.921400 & 0.101800 & 0.025300 & -4.010300 & -3.836000 \\
+beta\_interaction\_sign\_pos\_freq & bnp & log\_loss & -- & -- & gnb*xgb & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_interaction\_top3 & bnp & log\_loss & -- & -- & gnb*rf & -3.992900 & -3.891700 & 0.101200 & 0.025300 & -3.979700 & -3.807200 \\
+beta\_interaction\_sign\_pos\_freq & bnp & log\_loss & -- & -- & gnb*rf & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_interaction\_top3 & bnp & log\_loss & -- & -- & gnb*knn & -3.987000 & -3.888100 & 0.098900 & 0.024800 & -3.974600 & -3.805000 \\
+beta\_interaction\_sign\_pos\_freq & bnp & log\_loss & -- & -- & gnb*knn & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_linear & porto & roc\_auc & -- & -- & gnb & 0.594700 & 0.593900 & -0.000800 & -0.001400 & 0.593100 & 0.594600 \\
+beta\_linear & porto & roc\_auc & -- & -- & knn & 0.568700 & 0.568600 & -0.000100 & -0.000100 & 0.567600 & 0.569700 \\
+beta\_linear & porto & roc\_auc & -- & -- & lr & 0.624700 & 0.625500 & 0.000700 & 0.001200 & 0.624500 & 0.626400 \\
+beta\_linear & porto & roc\_auc & -- & -- & rf & 0.620000 & 0.621300 & 0.001300 & 0.002100 & 0.620300 & 0.622300 \\
+beta\_linear & porto & roc\_auc & -- & -- & xgb & 0.591800 & 0.592800 & 0.001000 & 0.001700 & 0.591600 & 0.594000 \\
+beta\_interaction\_top3 & porto & roc\_auc & -- & -- & gnb*knn & 0.071400 & 0.070700 & -0.000700 & -0.010200 & 0.067800 & 0.073500 \\
+beta\_interaction\_sign\_pos\_freq & porto & roc\_auc & -- & -- & gnb*knn & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & porto & roc\_auc & -- & -- & knn*xgb & 0.067600 & 0.067900 & 0.000300 & 0.004600 & 0.066700 & 0.069100 \\
+beta\_interaction\_sign\_pos\_freq & porto & roc\_auc & -- & -- & knn*xgb & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & porto & roc\_auc & -- & -- & lr*knn & 0.062400 & 0.062800 & 0.000400 & 0.006300 & 0.061900 & 0.063800 \\
+beta\_interaction\_sign\_pos\_freq & porto & roc\_auc & -- & -- & lr*knn & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_linear & porto & log\_loss & -- & -- & gnb & 1.551800 & 1.532100 & -0.019700 & -0.012700 & 1.472100 & 1.590200 \\
+beta\_linear & porto & log\_loss & -- & -- & knn & 0.141500 & 0.141700 & 0.000200 & 0.001600 & 0.140800 & 0.142500 \\
+beta\_linear & porto & log\_loss & -- & -- & lr & 0.134200 & 0.134300 & 0.000200 & 0.001200 & 0.133500 & 0.135100 \\
+beta\_linear & porto & log\_loss & -- & -- & rf & 0.134600 & 0.134700 & 0.000100 & 0.000900 & 0.133800 & 0.135500 \\
+beta\_linear & porto & log\_loss & -- & -- & xgb & 0.139700 & 0.139800 & 0.000100 & 0.001000 & 0.138900 & 0.140600 \\
+beta\_interaction\_top3 & porto & log\_loss & -- & -- & gnb*knn & -1.925600 & -1.901500 & 0.024200 & 0.012600 & -1.981000 & -1.821500 \\
+beta\_interaction\_sign\_pos\_freq & porto & log\_loss & -- & -- & gnb*knn & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_interaction\_top3 & porto & log\_loss & -- & -- & gnb*xgb & -1.917600 & -1.893200 & 0.024400 & 0.012700 & -1.972600 & -1.813200 \\
+beta\_interaction\_sign\_pos\_freq & porto & log\_loss & -- & -- & gnb*xgb & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_interaction\_top3 & porto & log\_loss & -- & -- & gnb*rf & -1.910100 & -1.886300 & 0.023800 & 0.012500 & -1.965100 & -1.807100 \\
+beta\_interaction\_sign\_pos\_freq & porto & log\_loss & -- & -- & gnb*rf & 0.000000 & 0.000000 & 0.000000 & -- & 0.000000 & 0.000000 \\
+beta\_linear & uci\_credit & roc\_auc & -- & -- & gnb & 0.664200 & 0.663300 & -0.001000 & -0.001500 & 0.660800 & 0.665900 \\
+beta\_linear & uci\_credit & roc\_auc & -- & -- & knn & 0.757100 & 0.757500 & 0.000400 & 0.000500 & 0.756700 & 0.758200 \\
+beta\_linear & uci\_credit & roc\_auc & -- & -- & lr & 0.722100 & 0.722400 & 0.000300 & 0.000500 & 0.721800 & 0.723000 \\
+beta\_linear & uci\_credit & roc\_auc & -- & -- & rf & 0.782900 & 0.782800 & -0.000100 & -0.000100 & 0.782200 & 0.783500 \\
+beta\_linear & uci\_credit & roc\_auc & -- & -- & xgb & 0.763300 & 0.763000 & -0.000300 & -0.000400 & 0.762200 & 0.763700 \\
+beta\_interaction\_top3 & uci\_credit & roc\_auc & -- & -- & gnb*xgb & 0.128700 & 0.130100 & 0.001400 & 0.010900 & 0.127200 & 0.132800 \\
+beta\_interaction\_sign\_pos\_freq & uci\_credit & roc\_auc & -- & -- & gnb*xgb & 1.000000 & 1.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+beta\_interaction\_top3 & uci\_credit & roc\_auc & -- & -- & gnb*rf & 0.101400 & 0.102800 & 0.001400 & 0.013800 & 0.100300 & 0.105300 \\
+\end{longtable}\endgroup
+
+\end{landscape}

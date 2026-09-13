@@ -1,0 +1,33 @@
+\begin{landscape}
+\begin{center}\captionof{table}{NBI solver diagnostics per dataset and variant, averaged over 30 partitions. Success semantics differ between arms: A and B are SLSQP-certified, C is equality-feasible under the lenient rule. Showing 9 of 16 columns; the rest are in the source CSV.}\label{tab:s7nbi}\end{center}
+\begingroup\tiny\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llrrrrrrr}
+\toprule
+dataset & variant & n subproblems & n success & n front real weighted & n front real support & total nfev & n real objective evals & seconds \\
+\midrule
+\endfirsthead
+\toprule
+dataset & variant & n subproblems & n success & n front real weighted & n front real support & total nfev & n real objective evals & seconds \\
+\midrule
+\endhead
+\midrule
+\multicolumn{9}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+bnp & A & 66.000000 & 62.433300 & 13.800000 & 19.700000 & 3840.600000 & 0.000000 & 22.209200 \\
+bnp & B & 66.000000 & 65.700000 & 45.933300 & 11.500000 & 2297.500000 & 0.000000 & 34.734400 \\
+bnp & C & 66.000000 & 55.033300 & 33.600000 & 13.333300 & 105597.566700 & 416941.466700 & 1408.892900 \\
+porto & A & 66.000000 & 37.966700 & 12.033300 & 3.733300 & 23230.233300 & 0.000000 & 83.130000 \\
+porto & B & 66.000000 & 66.000000 & 54.966700 & 6.466700 & 4917.700000 & 0.000000 & 54.136100 \\
+porto & C & 66.000000 & 64.533300 & 56.066700 & 12.200000 & 99642.533300 & 416846.400000 & 2502.923300 \\
+santander & A & 66.000000 & 64.366700 & 12.800000 & 8.100000 & 5643.300000 & 0.000000 & 32.332500 \\
+santander & B & 66.000000 & 62.633300 & 18.800000 & 11.133300 & 8003.033300 & 0.000000 & 32.896000 \\
+santander & C & 66.000000 & 54.666700 & 33.366700 & 26.100000 & 101091.533300 & 412035.533300 & 2526.775700 \\
+uci\_credit & A & 66.000000 & 25.766700 & 15.700000 & 8.900000 & 33533.566700 & 0.000000 & 124.579800 \\
+uci\_credit & B & 66.000000 & 31.833300 & 30.533300 & 14.200000 & 28060.400000 & 0.000000 & 99.546500 \\
+uci\_credit & C & 66.000000 & 64.766700 & 62.000000 & 16.933300 & 101876.566700 & 425855.800000 & 306.357400 \\
+\end{longtable}\endgroup
+
+\end{landscape}

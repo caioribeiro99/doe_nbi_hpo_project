@@ -1,0 +1,38 @@
+\begin{center}\captionof{table}{Base-model performance averaged over the 30 outer partitions of each dataset. Showing 7 of 16 columns; the rest are in the source CSV.}\label{tab:s2model}\end{center}
+\begingroup\scriptsize\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llrrrrr}
+\toprule
+dataset & model & oof roc auc & holdout roc auc & oof log loss & oof brier & cost ms per 1k \\
+\midrule
+\endfirsthead
+\toprule
+dataset & model & oof roc auc & holdout roc auc & oof log loss & oof brier & cost ms per 1k \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+bnp & gnb & 0.603400 & 0.606100 & 3.741000 & 0.560200 & 3.696300 \\
+bnp & knn & 0.677700 & 0.679900 & 0.512700 & 0.168900 & 149.632800 \\
+bnp & lr & 0.734500 & 0.734700 & 0.484300 & 0.158500 & 3.319400 \\
+bnp & rf & 0.742500 & 0.744600 & 0.482100 & 0.157300 & 6.191300 \\
+bnp & xgb & 0.748300 & 0.753200 & 0.474000 & 0.154500 & 3.453500 \\
+porto & gnb & 0.588400 & 0.592200 & 1.860500 & 0.320000 & 1.583300 \\
+porto & knn & 0.566800 & 0.563600 & 0.161000 & 0.035200 & 230.531400 \\
+porto & lr & 0.625100 & 0.627200 & 0.152900 & 0.034800 & 1.378500 \\
+porto & rf & 0.620700 & 0.622400 & 0.153200 & 0.034900 & 4.343900 \\
+porto & xgb & 0.591700 & 0.598500 & 0.158800 & 0.035300 & 1.641000 \\
+santander & gnb & 0.888000 & 0.880400 & 0.211000 & 0.060500 & 0.784200 \\
+santander & knn & 0.724700 & 0.727100 & 0.351500 & 0.092200 & 246.090200 \\
+santander & lr & 0.859400 & 0.859300 & 0.232200 & 0.066600 & 0.720200 \\
+santander & rf & 0.845100 & 0.845600 & 0.275200 & 0.079400 & 3.807000 \\
+santander & xgb & 0.881100 & 0.883100 & 0.220100 & 0.063400 & 1.075700 \\
+uci\_credit & gnb & 0.658300 & 0.670900 & 1.160700 & 0.415000 & 0.567000 \\
+uci\_credit & knn & 0.757100 & 0.758400 & 0.445000 & 0.140400 & 24.117800 \\
+uci\_credit & lr & 0.723800 & 0.724500 & 0.465500 & 0.144900 & 0.515900 \\
+uci\_credit & rf & 0.782900 & 0.783200 & 0.427500 & 0.134200 & 5.666600 \\
+uci\_credit & xgb & 0.765100 & 0.766300 & 0.455300 & 0.140400 & 0.858900 \\
+\end{longtable}\endgroup

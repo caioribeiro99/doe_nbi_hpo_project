@@ -1,0 +1,57 @@
+\begin{landscape}
+\begin{center}\captionof{table}{AUC-versus-log-loss conflict in full, including weight-space distances, support Jaccard and both cost differences.}\label{tab:s9conf}\end{center}
+\begingroup\tiny\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llrrrrrrrr}
+\toprule
+dataset & quantity & n & mean & median & sd & ci95 lo & ci95 hi & min & max \\
+\midrule
+\endfirsthead
+\toprule
+dataset & quantity & n & mean & median & sd & ci95 lo & ci95 hi & min & max \\
+\midrule
+\endhead
+\midrule
+\multicolumn{10}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+santander & delta\_auc\_directauc\_minus\_slsqp & 30 & 0.000700 & 0.000700 & 0.000100 & 0.000700 & 0.000700 & 0.000500 & 0.000800 \\
+santander & delta\_logloss\_directauc\_minus\_slsqp & 30 & 0.003200 & 0.003200 & 0.000500 & 0.003000 & 0.003400 & 0.002100 & 0.004600 \\
+santander & holdout\_delta\_auc & 30 & 0.002000 & 0.002000 & 0.000300 & 0.001900 & 0.002100 & 0.001400 & 0.002600 \\
+santander & holdout\_delta\_logloss & 30 & 0.001900 & 0.001900 & 0.000600 & 0.001600 & 0.002100 & 0.000900 & 0.003400 \\
+santander & weight\_l1\_distance & 30 & 0.350400 & 0.349200 & 0.021900 & 0.342800 & 0.358300 & 0.304700 & 0.410800 \\
+santander & support\_jaccard & 30 & 0.504400 & 0.500000 & 0.084800 & 0.475600 & 0.534400 & 0.400000 & 0.666700 \\
+santander & delta\_cost\_weighted & 30 & 2.861100 & 1.495000 & 3.618600 & 1.718100 & 4.252300 & 0.272800 & 15.829100 \\
+santander & delta\_cost\_support & 30 & 183.384600 & 253.958400 & 111.917100 & 142.192700 & 221.033000 & 3.625600 & 257.801800 \\
+santander & ensembling\_gain\_auc\_slsqp\_minus\_best\_single & 30 & 0.003700 & 0.003700 & 0.000200 & 0.003600 & 0.003700 & 0.003100 & 0.004200 \\
+bnp & delta\_auc\_directauc\_minus\_slsqp & 30 & 0.000800 & 0.000800 & 0.000100 & 0.000800 & 0.000800 & 0.000600 & 0.001000 \\
+bnp & delta\_logloss\_directauc\_minus\_slsqp & 30 & 0.000900 & 0.000900 & 0.000100 & 0.000900 & 0.000900 & 0.000800 & 0.001100 \\
+bnp & holdout\_delta\_auc & 30 & 0.000300 & 0.000400 & 0.000400 & 0.000200 & 0.000400 & -0.000400 & 0.001000 \\
+bnp & holdout\_delta\_logloss & 30 & 0.001300 & 0.001400 & 0.000400 & 0.001200 & 0.001400 & 0.000500 & 0.002000 \\
+bnp & weight\_l1\_distance & 30 & 0.376900 & 0.375600 & 0.019000 & 0.370500 & 0.383800 & 0.340900 & 0.437900 \\
+bnp & support\_jaccard & 30 & 0.758300 & 0.750000 & 0.045600 & 0.750000 & 0.775000 & 0.750000 & 1.000000 \\
+bnp & delta\_cost\_weighted & 30 & 0.538600 & 0.532000 & 0.043900 & 0.523800 & 0.554200 & 0.428400 & 0.658600 \\
+bnp & delta\_cost\_support & 30 & -3.571500 & -3.693700 & 0.676100 & -3.706900 & -3.317100 & -3.780300 & 0.000000 \\
+bnp & ensembling\_gain\_auc\_slsqp\_minus\_best\_single & 30 & 0.005600 & 0.005600 & 0.000400 & 0.005500 & 0.005800 & 0.004900 & 0.006400 \\
+porto & delta\_auc\_directauc\_minus\_slsqp & 30 & 0.000100 & 0.000000 & 0.000000 & 0.000000 & 0.000100 & 0.000000 & 0.000200 \\
+porto & delta\_logloss\_directauc\_minus\_slsqp & 30 & 0.000000 & 0.000000 & 0.000000 & 0.000000 & 0.000000 & 0.000000 & 0.000000 \\
+porto & holdout\_delta\_auc & 30 & -0.000100 & -0.000000 & 0.000300 & -0.000200 & 0.000000 & -0.001000 & 0.000400 \\
+porto & holdout\_delta\_logloss & 30 & 0.000000 & 0.000000 & 0.000000 & 0.000000 & 0.000000 & -0.000000 & 0.000100 \\
+porto & weight\_l1\_distance & 30 & 0.058400 & 0.053600 & 0.021800 & 0.050800 & 0.066300 & 0.023200 & 0.107100 \\
+porto & support\_jaccard & 30 & 0.973300 & 1.000000 & 0.069100 & 0.946700 & 0.993300 & 0.800000 & 1.000000 \\
+porto & delta\_cost\_weighted & 30 & 2.692900 & 2.798800 & 2.164800 & 1.925100 & 3.436500 & -2.338100 & 7.188000 \\
+porto & delta\_cost\_support & 30 & -0.105800 & 0.000000 & 0.578200 & -0.317400 & 0.104900 & -1.595500 & 1.579900 \\
+porto & ensembling\_gain\_auc\_slsqp\_minus\_best\_single & 30 & 0.006000 & 0.005700 & 0.001100 & 0.005600 & 0.006300 & 0.003700 & 0.008400 \\
+uci\_credit & delta\_auc\_directauc\_minus\_slsqp & 30 & 0.000300 & 0.000300 & 0.000100 & 0.000300 & 0.000400 & 0.000200 & 0.000600 \\
+uci\_credit & delta\_logloss\_directauc\_minus\_slsqp & 30 & 0.000500 & 0.000500 & 0.000200 & 0.000400 & 0.000600 & 0.000200 & 0.000900 \\
+uci\_credit & holdout\_delta\_auc & 30 & 0.000300 & 0.000500 & 0.000500 & 0.000200 & 0.000500 & -0.000600 & 0.001100 \\
+uci\_credit & holdout\_delta\_logloss & 30 & 0.000400 & 0.000300 & 0.000400 & 0.000200 & 0.000500 & -0.000400 & 0.001500 \\
+uci\_credit & weight\_l1\_distance & 30 & 0.200900 & 0.203900 & 0.043800 & 0.185700 & 0.216200 & 0.097600 & 0.295600 \\
+uci\_credit & support\_jaccard & 30 & 0.866700 & 0.800000 & 0.138500 & 0.816700 & 0.915000 & 0.600000 & 1.000000 \\
+uci\_credit & delta\_cost\_weighted & 30 & 0.884600 & 0.802900 & 0.391200 & 0.752700 & 1.023900 & 0.169200 & 1.742700 \\
+uci\_credit & delta\_cost\_support & 30 & 0.302200 & 0.255700 & 0.393300 & 0.165400 & 0.442500 & -0.565700 & 1.081000 \\
+uci\_credit & ensembling\_gain\_auc\_slsqp\_minus\_best\_single & 30 & 0.000600 & 0.000600 & 0.000300 & 0.000500 & 0.000800 & 0.000200 & 0.001400 \\
+\end{longtable}\endgroup
+
+\end{landscape}

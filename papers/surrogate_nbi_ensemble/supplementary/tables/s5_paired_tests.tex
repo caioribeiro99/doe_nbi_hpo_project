@@ -1,0 +1,85 @@
+\begin{landscape}
+\begin{center}\captionof{table}{Holm-corrected test families, both cost definitions. Showing 11 of 16 columns; the rest are in the source CSV.}\label{tab:s5tests}\end{center}
+\begingroup\tiny\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llllrrrrrrr}
+\toprule
+cost & dataset & comparison & endpoint & mean delta & t nadeau bengio & p nadeau bengio & p nb holm family dataset & p wilcoxon holm & rank biserial & win frac \\
+\midrule
+\endfirsthead
+\toprule
+cost & dataset & comparison & endpoint & mean delta & t nadeau bengio & p nadeau bengio & p nb holm family dataset & p wilcoxon holm & rank biserial & win frac \\
+\midrule
+\endhead
+\midrule
+\multicolumn{11}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+weighted & santander & nbi\_B vs nbi\_A & igd\_plus & 0.120000 & 3.512200 & 0.001500 & 0.007400 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & santander & nbi\_B vs nbi\_A & hv\_ratio & 0.179200 & 3.842600 & 0.000600 & 0.003700 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & santander & nbi\_C vs nbi\_B & igd\_plus & 0.001600 & 2.050700 & 0.049400 & 0.098900 & 0.000000 & 0.840900 & 0.933300 \\
+weighted & santander & nbi\_C vs nbi\_B & hv\_ratio & 0.007700 & 4.046500 & 0.000400 & 0.002500 & 0.000000 & 0.978500 & 0.933300 \\
+weighted & santander & nbi\_C vs ws\_random\_scalarization & igd\_plus & -0.002900 & -0.959700 & 0.345200 & 0.345200 & 0.023400 & -0.471000 & 0.333300 \\
+weighted & santander & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.010600 & 2.451200 & 0.020500 & 0.061500 & 0.000000 & 0.931200 & 0.833300 \\
+weighted & santander & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 0.819600 & 2.647100 & 0.013000 & 0.051900 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & santander & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.709600 & 4.731400 & 0.000100 & 0.000400 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & bnp & nbi\_B vs nbi\_A & igd\_plus & 0.238800 & 1.184300 & 0.245900 & 0.661100 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & bnp & nbi\_B vs nbi\_A & hv\_ratio & 0.279200 & 1.423400 & 0.165300 & 0.661100 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & bnp & nbi\_C vs nbi\_B & igd\_plus & -0.002900 & -1.123000 & 0.270700 & 0.661100 & 0.000300 & -0.741900 & 0.200000 \\
+weighted & bnp & nbi\_C vs nbi\_B & hv\_ratio & 0.008600 & 1.277400 & 0.211600 & 0.661100 & 0.000700 & 0.681700 & 0.800000 \\
+weighted & bnp & nbi\_C vs ws\_random\_scalarization & igd\_plus & 0.397500 & 2.206800 & 0.035400 & 0.177000 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & bnp & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.538900 & 5.266600 & 0.000000 & 0.000100 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & bnp & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 1.513500 & 4.375700 & 0.000100 & 0.000900 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & bnp & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.942800 & 22.052800 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & porto & nbi\_B vs nbi\_A & igd\_plus & 0.038000 & 1.203200 & 0.238600 & 0.785800 & 0.002300 & 0.651600 & 0.766700 \\
+weighted & porto & nbi\_B vs nbi\_A & hv\_ratio & 0.085300 & 1.182400 & 0.246700 & 0.785800 & 0.002300 & 0.655900 & 0.800000 \\
+weighted & porto & nbi\_C vs nbi\_B & igd\_plus & 0.042000 & 1.411600 & 0.168700 & 0.785800 & 0.000000 & 0.896800 & 0.933300 \\
+weighted & porto & nbi\_C vs nbi\_B & hv\_ratio & 0.108300 & 1.452200 & 0.157200 & 0.785800 & 0.000000 & 0.909700 & 0.933300 \\
+weighted & porto & nbi\_C vs ws\_random\_scalarization & igd\_plus & 1.640600 & 0.374000 & 0.711100 & 0.785800 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & porto & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.269800 & 1.972700 & 0.058100 & 0.348800 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & porto & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 1.943100 & 3.198300 & 0.003300 & 0.023300 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & porto & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.930000 & 15.058800 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & uci\_credit & nbi\_B vs nbi\_A & igd\_plus & 0.036200 & 1.634000 & 0.113100 & 0.452300 & 0.000500 & 0.754800 & 0.800000 \\
+weighted & uci\_credit & nbi\_B vs nbi\_A & hv\_ratio & 0.059700 & 1.615500 & 0.117000 & 0.452300 & 0.000500 & 0.746200 & 0.800000 \\
+weighted & uci\_credit & nbi\_C vs nbi\_B & igd\_plus & 0.158200 & 3.404800 & 0.002000 & 0.009800 & 0.000000 & 0.995700 & 0.966700 \\
+weighted & uci\_credit & nbi\_C vs nbi\_B & hv\_ratio & 0.277400 & 3.484100 & 0.001600 & 0.009500 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & uci\_credit & nbi\_C vs ws\_random\_scalarization & igd\_plus & 0.000800 & 0.238900 & 0.812800 & 1.000000 & 1.000000 & 0.122600 & 0.600000 \\
+weighted & uci\_credit & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.001500 & 0.198400 & 0.844100 & 1.000000 & 1.000000 & 0.058100 & 0.533300 \\
+weighted & uci\_credit & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 0.140300 & 6.535400 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+weighted & uci\_credit & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.251900 & 8.166300 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & santander & nbi\_B vs nbi\_A & igd\_plus & 0.059900 & 5.725700 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & santander & nbi\_B vs nbi\_A & hv\_ratio & 0.125500 & 7.298600 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & santander & nbi\_C vs nbi\_B & igd\_plus & 0.006600 & 7.805900 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & santander & nbi\_C vs nbi\_B & hv\_ratio & 0.005700 & 2.144300 & 0.040500 & 0.040500 & 0.000000 & 0.909700 & 0.933300 \\
+support & santander & nbi\_C vs ws\_random\_scalarization & igd\_plus & 0.008700 & 4.375500 & 0.000100 & 0.000400 & 0.000000 & 1.000000 & 1.000000 \\
+support & santander & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.008600 & 3.102300 & 0.004300 & 0.008500 & 0.000000 & 0.982800 & 0.933300 \\
+support & santander & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 0.635700 & 5.197000 & 0.000000 & 0.000100 & 0.000000 & 1.000000 & 1.000000 \\
+support & santander & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.800900 & 6.340200 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & bnp & nbi\_B vs nbi\_A & igd\_plus & 0.224700 & 0.977500 & 0.336400 & 1.000000 & 0.109800 & 0.402200 & 0.633300 \\
+support & bnp & nbi\_B vs nbi\_A & hv\_ratio & 0.151000 & 0.736400 & 0.467400 & 1.000000 & 0.205400 & 0.268800 & 0.666700 \\
+support & bnp & nbi\_C vs nbi\_B & igd\_plus & -0.021000 & -0.836100 & 0.410000 & 1.000000 & 0.018600 & -0.561300 & 0.300000 \\
+support & bnp & nbi\_C vs nbi\_B & hv\_ratio & -0.054700 & -1.081000 & 0.288600 & 1.000000 & 0.001000 & -0.724700 & 0.166700 \\
+support & bnp & nbi\_C vs ws\_random\_scalarization & igd\_plus & 0.360500 & 1.633700 & 0.113100 & 0.565700 & 0.000000 & 0.909700 & 0.933300 \\
+support & bnp & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.320200 & 2.106500 & 0.043900 & 0.307500 & 0.000100 & 0.840900 & 0.766700 \\
+support & bnp & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 4.700800 & 1.767800 & 0.087600 & 0.525700 & 0.000000 & 1.000000 & 1.000000 \\
+support & bnp & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.735900 & 8.561800 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & porto & nbi\_B vs nbi\_A & igd\_plus & 0.080200 & 2.525000 & 0.017300 & 0.103800 & 0.000000 & 0.995700 & 0.966700 \\
+support & porto & nbi\_B vs nbi\_A & hv\_ratio & 0.004000 & 0.035900 & 0.971600 & 1.000000 & 0.855300 & 0.040900 & 0.633300 \\
+support & porto & nbi\_C vs nbi\_B & igd\_plus & 0.012300 & 0.860300 & 0.396700 & 1.000000 & 0.000300 & 0.763400 & 0.866700 \\
+support & porto & nbi\_C vs nbi\_B & hv\_ratio & 0.098400 & 1.073900 & 0.291700 & 1.000000 & 0.000600 & 0.720400 & 0.766700 \\
+support & porto & nbi\_C vs ws\_random\_scalarization & igd\_plus & 1.568000 & 0.382200 & 0.705100 & 1.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & porto & nbi\_C vs ws\_random\_scalarization & hv\_ratio & 0.165600 & 1.075900 & 0.290800 & 1.000000 & 0.000200 & 0.789200 & 0.800000 \\
+support & porto & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 1.359000 & 4.269700 & 0.000200 & 0.001300 & 0.000000 & 1.000000 & 1.000000 \\
+support & porto & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.905000 & 21.029700 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & uci\_credit & nbi\_B vs nbi\_A & igd\_plus & -0.023700 & -0.463500 & 0.646500 & 1.000000 & 0.001600 & -0.638700 & 0.100000 \\
+support & uci\_credit & nbi\_B vs nbi\_A & hv\_ratio & -0.042600 & -0.553800 & 0.584000 & 1.000000 & 0.000300 & -0.759100 & 0.133300 \\
+support & uci\_credit & nbi\_C vs nbi\_B & igd\_plus & 0.030500 & 0.614900 & 0.543400 & 1.000000 & 0.000300 & 0.754800 & 0.866700 \\
+support & uci\_credit & nbi\_C vs nbi\_B & hv\_ratio & 0.071700 & 0.947700 & 0.351100 & 1.000000 & 0.000000 & 0.965600 & 0.900000 \\
+support & uci\_credit & nbi\_C vs ws\_random\_scalarization & igd\_plus & -0.027800 & -3.470200 & 0.001600 & 0.008200 & 0.000000 & -1.000000 & 0.000000 \\
+support & uci\_credit & nbi\_C vs ws\_random\_scalarization & hv\_ratio & -0.038100 & -5.189200 & 0.000000 & 0.000100 & 0.000000 & -1.000000 & 0.000000 \\
+support & uci\_credit & nbi\_C vs random\_dirichlet\_budget & igd\_plus & 0.472000 & 5.498800 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+support & uci\_credit & nbi\_C vs random\_dirichlet\_budget & hv\_ratio & 0.744000 & 6.991600 & 0.000000 & 0.000000 & 0.000000 & 1.000000 & 1.000000 \\
+\end{longtable}\endgroup
+
+\end{landscape}
