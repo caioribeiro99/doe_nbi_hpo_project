@@ -1,0 +1,116 @@
+{
+  "dissertation_tag": "v0.1.0-dissertation",
+  "findings": {
+    "Q1_loadings_are_eigenvectors": {
+      "code": "loadings = pca.components_.T  (src/doe_xgb/factor_analysis.py)",
+      "column_norms_of_reported_loadings": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "eigenvalues": [
+        3.454057,
+        0.870856,
+        0.659646
+      ],
+      "sqrt_eigenvalues": [
+        1.858509,
+        0.933197,
+        0.812186
+      ],
+      "column_norms_of_true_loadings": [
+        1.858509,
+        0.933197,
+        0.812186
+      ],
+      "verdict": "The matrix the code calls 'loadings' has unit-norm columns, so it is the eigenvector matrix. Loadings are the eigenvectors scaled by the square root of the eigenvalues; on this data those scale factors are 1.859, 0.933, 0.812, so the two matrices differ by a factor of up to 2.29 between columns."
+    },
+    "Q2_rotation_differs": {
+      "rotation_matrix_column_angles_deg": [
+        1.187,
+        1.44,
+        0.986
+      ],
+      "frobenius_norm_of_R_difference": 0.036844,
+      "metric_to_factor_assignment_rotating_eigenvectors": {
+        "Accuracy_Mean": 3,
+        "Precision_Mean": 1,
+        "Recall_Mean": 3,
+        "Specificity_Mean": 1,
+        "Time_MeanFold": 2
+      },
+      "metric_to_factor_assignment_rotating_loadings": {
+        "Accuracy_Mean": 3,
+        "Precision_Mean": 1,
+        "Recall_Mean": 3,
+        "Specificity_Mean": 1,
+        "Time_MeanFold": 2
+      },
+      "assignments_agree": true,
+      "verdict": "Varimax maximizes the variance of squared loadings, a criterion that is not invariant to per-column rescaling. Rotating unit-norm eigenvectors therefore gives a different rotation from rotating the loadings, and weights a low-variance component equally with a high-variance one."
+    },
+    "Q3_effective_objective_count": {
+      "factors_extracted": 3,
+      "factor_score_columns": [
+        "FACTOR1_SCORE",
+        "FACTOR2_SCORE",
+        "FACTOR3_SCORE"
+      ],
+      "columns_the_optimizer_consumes": [
+        "Score_Quality",
+        "Score_Cost"
+      ],
+      "effective_q": 2,
+      "mechanism": "combine_quality_factors=True collapses every non-time factor into one Score_Quality, so a three-factor extraction is optimized as a two-objective problem.",
+      "verdict": "3 factors are extracted and 2 objectives are optimized. The reported factor count and the optimized objective count are not the same number."
+    },
+    "Q4_quality_aggregation": {
+      "quality_factor_columns": [
+        "FACTOR1_SCORE",
+        "FACTOR3_SCORE"
+      ],
+      "aggregation": "unweighted mean of z-scored factor scores",
+      "explained_variance_share_per_factor": [
+        0.692951,
+        0.174711,
+        0.132338
+      ],
+      "share_of_the_two_aggregated_factors": [
+        0.692951,
+        0.132338
+      ],
+      "implied_weights_after_zscoring": [
+        0.5,
+        0.5
+      ],
+      "verdict": "Z-scoring each factor score to unit variance before averaging discards the explained-variance ordering that motivated extracting them, so a component carrying a small share of the variance enters the composite with the same weight as one carrying a large share.",
+      "impact": {
+        "variance_weights_that_would_apply": [
+          0.8396,
+          0.1604
+        ],
+        "spearman_equal_vs_variance_weighted": 0.374221,
+        "kendall_tau": 0.358412,
+        "argmax_design_row_equal_weighted": 55,
+        "argmax_design_row_variance_weighted": 2,
+        "argmax_agrees": false,
+        "top10_overlap": 1,
+        "reading": "The two composites disagree substantially: Spearman 0.3742, only 1/10 of the top ten design rows shared, and the best row differs. The quality objective the pipeline optimizes is therefore sensitive to an aggregation choice that is neither stated in the method nor varied in any sensitivity analysis. Whichever weighting is preferred, the result is that 'Score_Quality' is not determined by the factor extraction alone."
+      }
+    },
+    "Q5_fmse_wrapper": {
+      "markers_found_in_frozen_source": {
+        "fmse": false,
+        "target": false,
+        "**2": true,
+        "variance penalty": false,
+        "sigma": true
+      },
+      "verdict": "The frozen factor stage emits sign-oriented factor scores directly. It does not implement the target-seeking quadratic wrapper with a factor-variance penalty that the EAAI 2025 formulation applies to each VRF, so the dissertation's objectives are raw oriented scores, not FMSE objectives."
+    }
+  },
+  "data": {
+    "source": "papers/xgboost_hpo_vrfnbi/audits/provenance/doe_results.csv",
+    "rows": 88
+  }
+}

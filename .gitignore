@@ -90,3 +90,14 @@ data/source/openml_cc18/
 # macOS files
 **/.DS_Store
 
+# Local virtualenvs created outside the .venv/ convention
+.venv-*/
+venv-*/
+
+# Paper 1 lives on paper/surrogate-nbi-ensemble-weighting and is frozen at
+# paper-submission-v2; it is not part of the article track.
+/papers/surrogate_nbi_ensemble/
+
+# Paper 1 raw data and caches: unversioned here as everywhere.
+/data/pco213/
+/reports/pco213_postwork_benchmark/

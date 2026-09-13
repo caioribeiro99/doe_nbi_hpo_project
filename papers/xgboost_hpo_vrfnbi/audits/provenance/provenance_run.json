@@ -1,0 +1,51 @@
+{
+  "purpose": "provenance reproduction of the dissertation DoE + FA + RSM stage",
+  "dissertation_tag": "v0.1.0-dissertation",
+  "dissertation_commit": "67d9fe502ecee6cffa177cf49f7e7f1ce922bb0e",
+  "dataset": {
+    "name": "magic",
+    "rows": 19020,
+    "features": 10,
+    "prevalence": 0.3516298633017876,
+    "raw_sha256": "e9314b7ebd4b4b59a3b3d65f7316663963777b16a46786877651dbbaa640b36a"
+  },
+  "design": {
+    "path": "data/design/hyperparameter_design.csv",
+    "runs": 88,
+    "sha256": "5a9f47e4e6b7c870855f4235aca701b4bb0e90a3a94e1e36c5ff8eba9836a6c5"
+  },
+  "protocol": {
+    "seed": 42,
+    "n_splits": 5,
+    "cv": "StratifiedKFold(shuffle=True)"
+  },
+  "factor_analysis": {
+    "quality_factor": 1,
+    "cost_factor": 2,
+    "n_factors_returned": 3
+  },
+  "rsm": {
+    "Score_Quality": {
+      "r2": 0.8590104024578781,
+      "r2_adj": 0.8247700716262198,
+      "n_terms": 18
+    },
+    "Score_Cost": {
+      "r2": 0.9015418861118258,
+      "r2_adj": 0.8872913696280111,
+      "n_terms": 12
+    }
+  },
+  "timing_seconds": {
+    "doe": 276.1134669780731,
+    "total": 277.0091710090637
+  },
+  "environment": {
+    "python": "3.11.15",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "numpy": "1.26.4",
+    "pandas": "2.3.3",
+    "xgboost": "3.2.0",
+    "scikit_learn": "1.9.1"
+  }
+}

@@ -47,6 +47,13 @@ class NBIConfig:
     quasi_normal: Literal["minus_phi_ones", "gram_schmidt"] = "minus_phi_ones"
     record_trajectory: bool = False
     maxiter: int = 500
+    # Das and Dennis place no sign restriction on t. Restricting it to t >= 0 makes the
+    # subproblem infeasible wherever the Pareto front is non-convex, because a concave
+    # stretch of the front lies on the far side of the CHIM from the utopia point and is
+    # only reachable with t < 0. Since handling non-convex fronts is the reason to prefer
+    # NBI over weighted-sum scalarization in the first place, t is free by default.
+    # Set restrict_t_nonnegative=True only to reproduce the earlier restricted behaviour.
+    restrict_t_nonnegative: bool = False
 
 
 @dataclass(frozen=True)
@@ -242,7 +249,8 @@ def solve_nbi_subproblem(
         x0_x = np.asarray(x0, dtype=float)
     z0 = np.concatenate([x0_x, [0.0]])
 
-    bounds = [(float(lo), float(hi)) for lo, hi in cfg.bounds] + [(0.0, None)]
+    t_lo = 0.0 if cfg.restrict_t_nonnegative else None
+    bounds = [(float(lo), float(hi)) for lo, hi in cfg.bounds] + [(t_lo, None)]
 
     def _F(x: np.ndarray) -> np.ndarray:
         return np.array([float(f(x)) for f in surrogates], dtype=float)

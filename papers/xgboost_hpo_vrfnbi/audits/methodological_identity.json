@@ -1,0 +1,68 @@
+{
+  "dissertation_tag": "v0.1.0-dissertation",
+  "dissertation_commit": "67d9fe502ecee6cffa177cf49f7e7f1ce922bb0e",
+  "solver_functions_in_nbi_module": [
+    "run_nbi_weighted_sum",
+    "nbi_candidates_to_df",
+    "save_nbi_candidates"
+  ],
+  "nbi_structural_elements": {
+    "payoff_matrix": {
+      "patterns": [
+        "\\bphi\\b",
+        "payoff",
+        "F_star",
+        "f_star"
+      ],
+      "found": []
+    },
+    "chim": {
+      "patterns": [
+        "\\bchim\\b",
+        "convex hull of individual minima"
+      ],
+      "found": []
+    },
+    "quasi_normal": {
+      "patterns": [
+        "n_hat",
+        "quasi[_ ]normal",
+        "normal direction"
+      ],
+      "found": []
+    },
+    "anchors": {
+      "patterns": [
+        "\\banchor",
+        "individual minim",
+        "per-objective minimiz"
+      ],
+      "found": []
+    },
+    "max_t_subproblem": {
+      "patterns": [
+        "\\bmax\\s+t\\b",
+        "maximize\\s+t\\b",
+        "\\bt_val\\b",
+        "\\[k\\]\\s*#?\\s*t\\b"
+      ],
+      "found": []
+    }
+  },
+  "nbi_elements_absent": [
+    "payoff_matrix",
+    "chim",
+    "quasi_normal",
+    "anchors",
+    "max_t_subproblem"
+  ],
+  "weighted_sum_objective_found": true,
+  "weighted_sum_objective_source": "return -float(np.dot(betas_arr, norm))",
+  "minmax_normalization_found": true,
+  "reference_box_from_observed_extremes": true,
+  "reference_box_source": {
+    "utopia": "utopia = (float(df[\"Score_Quality\"].max()), float(df[\"Score_Cost\"].max()))",
+    "nadir": "nadir = (float(df[\"Score_Quality\"].min()), float(df[\"Score_Cost\"].min()))"
+  },
+  "verdict": "The frozen solver is normalized weighted-sum scalarization over a weight grid, with a normalization box built from component-wise observed extremes. None of the 5 checked NBI structural elements is present."
+}
