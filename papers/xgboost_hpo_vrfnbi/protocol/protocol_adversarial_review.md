@@ -288,12 +288,28 @@ A5's multi-fidelity comparator are required or optional.
 | E2 | RESOLVED — inherited elements described self-containedly; neither paper cites the other as established |
 | M5, A3, A5, S3, S4, E3, E4, E5 | recorded; A3, S3, S4 and E4 to be closed with numbers from the pilot, E3 and E4 at manuscript time, M5 and A5 as scoping decisions in the manuscript |
 
-**Freeze status: NOT YET.** All eleven MUST FIX items are resolved in design, and each resolution is
-written into the corresponding protocol document. The protocol still cannot freeze, because
-`protocol/EXPERIMENT_PROTOCOL.md` §13 lists six open items (the cost objective, the quality objective
-list, the aggregation weighting, the gate thresholds, the anchor budget, and the NSGA-II population
-and generation counts) that are numbers the pilot has to supply. `xgboost-hpo-protocol-v1` is applied
-when those six are written in.
+**Freeze status: READY.** All eleven MUST FIX items are resolved, and each resolution is written
+into the protocol document it affects.
+
+The seven freeze-blocking numbers are also decided, and decided from evidence that existed before any
+campaign result rather than deferred to the pilot. Deferring them would have been circular: a
+protocol whose parameters come from a pilot run under that protocol is not pre-registered.
+
+| Blocker | Decided as | On what evidence |
+|---|---|---|
+| cost objective | total leaf count, primary; wall-clock time, secondary | eight candidates measured against the 88 measured times of the reproduced MAGIC design |
+| quality objectives | four threshold metrics, plus ROC-AUC and log loss | the dissertation had no ranking or calibration metric |
+| aggregation weighting | explained-variance, with equal weighting as the sensitivity | the audit measured the two ranking the design at Spearman 0.374 |
+| gate thresholds | 100 Latin-hypercube points, R² ≥ 0.5 and Spearman ≥ 0.9 | inherited from Paper 1, and labelled as a transfer rather than a calibration |
+| `B_anchor` | 100 real evaluations per objective | fixed in advance, identical across datasets, so it is a constant and not a knob |
+| NSGA-II population and generations | 34 x 12 at q = 2, matching 408 exactly, plus an unmatched run at ten times | budget arithmetic, with the at-least-ten-generations floor of finding A2 |
+| weighting-disagreement fraction | 0.20 | pre-registered so the reading cannot be chosen after the result |
+
+The pilot's role is therefore **verification and screening**, not parameter selection: it confirms
+the panel, measures per-evaluation cost, supplies the detectable effect size, and checks that every
+NBI subproblem certifies on the real problem.
+
+`xgboost-hpo-protocol-v1` may be applied.
 
 ---
 
