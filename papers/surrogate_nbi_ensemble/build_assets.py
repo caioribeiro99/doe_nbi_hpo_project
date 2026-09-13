@@ -587,7 +587,7 @@ def tab05_compute():
         e = int(np.floor(np.log10(x)))
         return f"${x / 10 ** e:.1f}\\times10^{{{e}}}$"
 
-    rows, oof_s, instr_s, prem_cb, prem_ba = [], [], [], [], []
+    rows, oof_s, instr_s, prem_cb, prem_ba, derived = [], [], [], [], [], []
     for ds in DATASETS:
         s = st[st.dataset == ds].groupby("stage")["seconds"].mean()
         nb = nr[nr.dataset == ds]
@@ -606,6 +606,13 @@ def tab05_compute():
             head = f"\\multirow{{3}}{{*}}{{{DLABEL[ds]}}}" if i == 0 else ""
             rows.append(f"{head} & NBI-{v} & {pre[v][0]} & {pre[v][1]} & {s['nbi_' + v]:.1f} & {tot[v]:.1f} & "
                         f"{tot[v] / tot['A']:.1f}$\\times$ & {fmt_ev(ev[v])} & {succ[v]:.2f} \\\\")
+        for v in ["A", "B", "C"]:
+            derived.append({"dataset": ds, "arm": f"NBI-{v}", "design_fit_s": surr,
+                            "single_obj_refs_s": float(s["refs"]), "nbi_solve_s": float(s["nbi_" + v]),
+                            "standalone_total_s": float(tot[v]), "ratio_vs_A": float(tot[v] / tot["A"]),
+                            "real_evals": float(ev[v]), "success": float(succ[v]),
+                            "oof_s": float(s["oof"]),
+                            "instrumentation_s": float(s["reference"] + s["quality"] + s["comparators"])})
         rows.append(r"\addlinespace")
         oof_s.append(f"{s['oof']:.0f}")
         instr_s.append(f"{s['reference'] + s['quality'] + s['comparators']:.0f}")
@@ -645,6 +652,9 @@ Dataset & Arm & Design\,+\,fit & Single-obj.\ refs & NBI solve & total (s) & vs.
 \end{table*}
 """
     (TAB / "tab05_compute.tex").write_text(tex)
+    # The printed values are means and sums over stage_times.csv, so they do not appear
+    # literally in any source CSV. Dump them so audit_numbers.py can verify them.
+    pd.DataFrame(derived).to_csv(TAB / "tab05_compute.csv", index=False)
     print("wrote tab05")
 
 
@@ -823,7 +833,7 @@ def shorten_tab01():
         ("BNP Paribas Cardif Claims Management (Kaggle, 2016)", "BNP Paribas Cardif Claims (Kaggle 2016)"),
         ("Porto Seguro Safe Driver Prediction (Kaggle, 2017); 200,000-row stratified subsample",
          "Porto Seguro Safe Driver (Kaggle 2017)$^{\\dagger}$"),
-        ("Default of credit card clients (UCI 350; Yeh and Lien, 2009)", "Default of credit card clients (UCI 350)"),
+        ("Default of credit card clients (UCI 350; Yeh and Lien, 2009)", "Default of credit card clients (UCI id 350)"),
         ("all selection is done on 5-fold out-of-fold predictions within the training part.",
          "all selection uses 5-fold out-of-fold predictions within the training part. "
          "$^{\\dagger}$200,000-row stratified subsample of the 595,212 available rows, drawn once with a recorded seed."),

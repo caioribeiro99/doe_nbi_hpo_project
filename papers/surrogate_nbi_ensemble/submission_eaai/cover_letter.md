@@ -61,6 +61,21 @@ response-surface methodology, and in empirical machine-learning evaluation. Give
 predecessor, we ask that reviewers be drawn from outside that collaboration network — in particular that the
 remaining co-authors of that paper and of Rocha et al. (2025, *IEEE Access*) not be invited.
 
+## Files accompanying this submission
+
+| File | Content |
+|---|---|
+| `manuscript.pdf` | Main text, single column, 44 pages including references |
+| `supplementary.pdf` | Supplementary material, 39 pages, Sections S1-S14, 22 tables and 19 figures |
+| `highlights.txt` | Highlights |
+| `author_contributions.md` | CRediT author statement, affiliations, ORCID identifiers and the funding statement |
+| `conflict_of_interest.md` | Declaration of competing interest and disclosure of the related prior work |
+| `self_overlap_assessment.md` | Dimension-by-dimension comparison against the 2025 predecessor |
+| `data_availability.md` | Data availability statement and redistribution limits |
+| `code_availability.md` | Code availability statement |
+| `response_to_pre_submission_review.md` | Record of the pre-submission adversarial review and the changes it produced |
+| `main.tex`, `sections/`, `tables/`, `figures/`, `references.bib`, `supplementary/` | Complete LaTeX sources |
+
 Thank you for your consideration.
 
 Sincerely,

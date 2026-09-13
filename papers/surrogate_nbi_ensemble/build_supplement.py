@@ -41,7 +41,11 @@ def longtab(df, name, caption, label, maxrows=None, round_to=4, cols=None, lands
     size = r"\tiny" if (landscape or len(d.columns) > 9) else r"\scriptsize"
     body = body.replace(r"\begin{longtable}",
                         f"\\begingroup{size}\\setlength{{\\tabcolsep}}{{2.5pt}}\n" + r"\begin{longtable}")
-    body = body.replace(r"\end{longtable}", r"\end{longtable}\endgroup")
+    # longtable steps the table counter on its own, even with no \caption inside it.
+    # The caption here is emitted by \captionof BEFORE the environment, so without this
+    # the numbering advances by two per table (S1, S3, S5, ...).
+    body = body.replace(r"\end{longtable}",
+                        r"\end{longtable}\endgroup\addtocounter{table}{-1}")
     body = body.replace(r"\caption{}", "")
     head = f"\\begin{{center}}\\captionof{{table}}{{{caption}}}\\label{{{label}}}\\end{{center}}\n"
     tex = head + body

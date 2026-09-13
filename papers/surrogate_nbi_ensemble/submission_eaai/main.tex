@@ -20,7 +20,11 @@
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{caption}
+% lightweight ORCID marker: prints the iD next to the author name
+\newcommand{\orcidlink}[1]{\href{https://orcid.org/#1}{\scriptsize\textsuperscript{iD}}}
 
+% absorb the last few points of overfull in justified paragraphs
+\setlength{\emergencystretch}{1.5em}
 \captionsetup{font=small,labelfont=bf}
 \graphicspath{{figures/}}
 \bibliographystyle{plainnat}
@@ -36,12 +40,14 @@
 on the Classifier-Weight Simplex}
 
 \author{%
-Caio Tertuliano Ribeiro\thanks{Corresponding author. \texttt{caio.tertu99@gmail.com}}
-\quad Matheus Costa Pereira \quad Anderson Paulo de Paiva \\[0.4em]
-\small Universidade Federal de Itajub\'a, Itajub\'a, MG, Brazil
-% Affiliation mapping and ORCIDs to be confirmed before submission; see
-% submission_eaai/author_contributions.md. ORCIDs on record from Crossref:
-% M. C. Pereira 0009-0007-2011-9235; A. P. de Paiva 0000-0002-8199-411X.
+Caio Tertuliano Ribeiro\thanks{Corresponding author: \texttt{caio.tertu99@gmail.com}}\orcidlink{0009-0006-7748-1449}$^{a,b}$,\enskip
+Matheus Costa Pereira\orcidlink{0009-0007-2011-9235}$^{b}$,\enskip
+Anderson Paulo de Paiva\orcidlink{0000-0002-8199-411X}$^{b}$ \\[0.5em]
+\small $^{a}$Manufacturing Optimization and Innovation Technology Center (NOMATI), Itajub\'a, MG, Brazil\\
+\small $^{b}$Institute of Industrial Engineering and Management (IEPG), Universidade Federal de Itajub\'a,\\
+\small Av.\ BPS 1303, Itajub\'a, MG, 37500-903, Brazil\\[0.35em]
+\footnotesize ORCID: C.~T.\ Ribeiro 0009-0006-7748-1449;\, M.~C.\ Pereira 0009-0007-2011-9235;\\
+\footnotesize A.~P.\ de Paiva 0000-0002-8199-411X
 }
 
 \date{}
@@ -50,6 +56,7 @@ Caio Tertuliano Ribeiro\thanks{Corresponding author. \texttt{caio.tertu99@gmail.
 \maketitle
 
 \begin{abstract}
+\sloppy
 \input{sections/00_abstract}
 \end{abstract}
 
@@ -69,9 +76,17 @@ inference cost; replicated evaluation.
 \section*{Reproducibility statement}
 \input{sections/09_reproducibility}
 
+\section*{Funding}
+This work was supported by the Funda\c{c}\~ao de Amparo \`a Pesquisa do Estado de Minas Gerais (FAPEMIG) through
+project BPD-01045-22, and by the Coordena\c{c}\~ao de Aperfei\c{c}oamento de Pessoal de N\'ivel Superior (CAPES),
+which supported the master's phase from which this research line originated. The doctoral continuation of the first
+author is supported by the Conselho Nacional de Desenvolvimento Cient\'ifico e Tecnol\'ogico (CNPq).
+A.~P.\ de Paiva acknowledges CNPq research productivity grant 312844/2023-9. The funders had no role in the design of
+the study, in the analysis or interpretation of the data, or in the decision to submit.
+
 \section*{Acknowledgements}
-The computational study was executed on a single workstation; no external compute grant was used.
-% Funding and institutional acknowledgements to be added before submission.
+The authors thank the Universidade Federal de Itajub\'a for institutional support. The computational study was
+executed on a single workstation; no external compute allocation was used.
 
 \bibliography{references}
 

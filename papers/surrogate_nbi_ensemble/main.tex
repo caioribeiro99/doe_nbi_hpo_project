@@ -23,6 +23,8 @@
 % lightweight ORCID marker: prints the iD next to the author name
 \newcommand{\orcidlink}[1]{\href{https://orcid.org/#1}{\scriptsize\textsuperscript{iD}}}
 
+% absorb the last few points of overfull in justified paragraphs
+\setlength{\emergencystretch}{1.5em}
 \captionsetup{font=small,labelfont=bf}
 \graphicspath{{figures/}}
 \bibliographystyle{plainnat}
@@ -38,12 +40,14 @@
 on the Classifier-Weight Simplex}
 
 \author{%
-Caio Tertuliano Ribeiro\thanks{Corresponding author: \texttt{caio.tertu99@gmail.com}}\,\orcidlink{0009-0006-7748-1449}\,$^{a,b}$
-\quad Matheus Costa Pereira\,\orcidlink{0009-0007-2011-9235}\,$^{b}$
-\quad Anderson Paulo de Paiva\,\orcidlink{0000-0002-8199-411X}\,$^{b}$ \\[0.5em]
+Caio Tertuliano Ribeiro\thanks{Corresponding author: \texttt{caio.tertu99@gmail.com}}\orcidlink{0009-0006-7748-1449}$^{a,b}$,\enskip
+Matheus Costa Pereira\orcidlink{0009-0007-2011-9235}$^{b}$,\enskip
+Anderson Paulo de Paiva\orcidlink{0000-0002-8199-411X}$^{b}$ \\[0.5em]
 \small $^{a}$Manufacturing Optimization and Innovation Technology Center (NOMATI), Itajub\'a, MG, Brazil\\
 \small $^{b}$Institute of Industrial Engineering and Management (IEPG), Universidade Federal de Itajub\'a,\\
-\small Av.\ BPS 1303, Itajub\'a, MG, 37500-903, Brazil
+\small Av.\ BPS 1303, Itajub\'a, MG, 37500-903, Brazil\\[0.35em]
+\footnotesize ORCID: C.~T.\ Ribeiro 0009-0006-7748-1449;\, M.~C.\ Pereira 0009-0007-2011-9235;\\
+\footnotesize A.~P.\ de Paiva 0000-0002-8199-411X
 }
 
 \date{}
@@ -52,6 +56,7 @@ Caio Tertuliano Ribeiro\thanks{Corresponding author: \texttt{caio.tertu99@gmail.
 \maketitle
 
 \begin{abstract}
+\sloppy
 \input{sections/00_abstract}
 \end{abstract}
 

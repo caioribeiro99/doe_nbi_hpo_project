@@ -9,10 +9,11 @@ changed.
 \label{sec:protocol:data}
 
 Four public binary tabular classification problems span prevalence, dimensionality and feature type
-(\cref{tab:datasets}): Santander (high-dimensional, anonymized, numeric, 10\% positives); BNP Paribas (numeric plus
-high-cardinality categorical features, 76\% positive); Porto Seguro (strongly imbalanced at 3.6\% positives,
-subsampled to 200{,}000 rows by a single stratified draw with a recorded seed to bound runtime); and UCI credit
-default (small and low-dimensional). For the three Kaggle competition datasets the competition test labels are not
+(\cref{tab:datasets}): Santander \citep{kagglesantander} (high-dimensional, anonymized, numeric, 10\% positives);
+BNP Paribas \citep{kagglebnp} (numeric plus high-cardinality categorical features, 76\% positive); Porto Seguro
+\citep{kaggleporto} (strongly imbalanced at 3.6\% positives, subsampled to 200{,}000 rows by a single stratified
+draw with a recorded seed to bound runtime); and UCI credit default \citep{yeh2009ucidataset} (small and
+low-dimensional). For the three Kaggle competition datasets the competition test labels are not
 public and were never used: all training, weighting, thresholding and model selection use only the published training
 file, from which every performance figure in this paper is derived.
 
@@ -24,7 +25,8 @@ file, from which every performance figure in this paper is derived.
 The ensemble contains $M = 5$ deliberately heterogeneous learners with fixed hyperparameters and no hyperparameter
 search: $\ell_2$-regularized logistic regression; Gaussian naive Bayes; $k$-nearest neighbours with $k = 100$; a
 random forest with 200 trees and a minimum of 20 samples per leaf; and gradient-boosted trees (XGBoost, 400 rounds,
-depth 6, learning rate 0.1, subsample and column subsample 0.8). The zoo spans the accuracy--cost--calibration space
+depth 6, learning rate 0.1, subsample and column subsample 0.8) \citep{chen2016xgboost}. The first four are the
+\texttt{scikit-learn} implementations \citep{pedregosa2011scikit}. The zoo spans the accuracy--cost--calibration space
 rather than forming a competitive stack: it deliberately includes a member strong in ranking but poorly calibrated
 (Gaussian naive Bayes) and one accurate but two orders of magnitude more expensive at inference time ($k$-nearest
 neighbours). Preprocessing --- imputation, standardization and encoding, detailed per model in the supplement --- is
@@ -77,8 +79,9 @@ Paired differences are signed so that $\Delta > 0$ always favours the second-nam
 $\Delta\hv = \hv_{\text{new}} - \hv_{\text{ref}}$ and
 $\Delta\igdp = \igdp_{\text{ref}} - \igdp_{\text{new}}$. For each dataset $\times$ comparison $\times$ endpoint we
 report the mean and median with percentile-bootstrap 95\% intervals (10{,}000 resamples, fixed seed), the quartiles
-and range, the win/tie/loss counts with a tie tolerance of $10^{-4}$, the win fraction with a Wilson 95\% interval,
-and the matched-pairs rank-biserial correlation as a distribution-free effect size.
+and range \citep{efron1993bootstrap}, the win/tie/loss counts with a tie tolerance of $10^{-4}$, the win fraction
+with a Wilson 95\% interval \citep{wilson1927probable}, and the matched-pairs rank-biserial correlation
+\citep{kerby2014simple} as a distribution-free effect size.
 
 An ordinary paired $t$-test on resampled partitions is anticonservative, so the primary test is the Nadeau--Bengio
 corrected resampled $t$-test \citep{nadeau2003inference}: with $J = 30$ paired differences $d_j$,
@@ -95,11 +98,11 @@ training part, whose rows two replications share to the extent computed above. T
 lower bound on the dependence between replications and the corrected test is, if anything, still anticonservative;
 every significance statement below should be read as holding \emph{at} $\rho = 0.25$, with the effect consistency
 that does not depend on $\rho$ reported alongside it. Within each
-dataset the eight primary tests form one family and receive a Holm correction; no correction is applied across
-datasets, because datasets are not pooled. A Wilcoxon signed-rank test is reported alongside as a distribution-free
-check, but it is not corrected for overlap and cannot rescue a non-significant corrected result.
+dataset the eight primary tests form one family and receive a Holm correction \citep{holm1979simple}; no correction
+is applied across datasets, because datasets are not pooled. A Wilcoxon signed-rank test
+\citep{wilcoxon1945individual} is reported alongside as a distribution-free check, but it is not corrected for overlap and cannot rescue a non-significant corrected result.
 
 Where a paired-difference distribution is visibly bimodal or heavy-tailed, the mean-based test is uninformative by
 construction and we say so, reporting the median with its bootstrap interval, the win fraction with its Wilson
 interval and the rank-biserial correlation as the evidence instead. Throughout, effect consistency takes precedence
-over $p$-values. Frequencies over replications are reported with Wilson and Jeffreys 95\% intervals.
+over $p$-values. Frequencies over replications are reported with Wilson and Jeffreys 95\% intervals \citep{brown2001interval}.

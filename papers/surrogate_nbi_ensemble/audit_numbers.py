@@ -39,6 +39,14 @@ WHITELIST = {
 SEED_LIKE = {20260904, 20260906, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
              10000, 12000, 13000, 770000, 21030904}
 
+# title-page and front-matter metadata: street number, postcode, grant number, UCI dataset id.
+# These are not experimental quantities and have no counterpart in any results artifact.
+METADATA = {1303, 37500, 903, 312844, 2023, 350, 829}
+
+# 80/20 split sizes printed in Table 1, derived from n_rows_used in the dataset
+# manifests (200,000 x 0.2 = 40,000 for Santander and Porto Seguro).
+SPLIT_SIZES = {40000}
+
 
 def artifact_values() -> np.ndarray:
     """Every numeric value present in any committed source artifact (CSV or JSON)."""
@@ -122,24 +130,33 @@ def main() -> int:
 
     flagged, checked, frac_claims = [], 0, 0
     for s in sentences(Path(args.pdf)):
-        nums = [float(x) for x in NUM.findall(s)]
-        if not nums:
+        raw_nums = NUM.findall(s)
+        if not raw_nums:
             continue
         # x/30, x/20, x/10 style counts: check the denominator is a real replication count
         for a, b in FRAC.findall(WTL.sub(" ", s)):
             frac_claims += 1
-            if int(b) not in (5, 7, 8, 10, 12, 20, 23, 24, 30, 40, 50, 66, 120):
+            if int(b) not in (5, 7, 8, 10, 12, 20, 22, 23, 24, 30, 40, 50, 66, 120):
                 flagged.append(("odd-denominator", f"{a}/{b}", s[:160]))
-        for n in nums:
+        for raw in raw_nums:
+            n = float(raw)
             if n in WHITELIST or (n.is_integer() and abs(n) <= 30):
                 continue
             if n.is_integer() and 1900 <= n <= 2030:      # citation years
                 continue
             if n.is_integer() and n in SEED_LIKE:          # documented seed offsets
                 continue
+            if n.is_integer() and int(n) in METADATA:      # front-matter, not experimental
+                continue
+            if n.is_integer() and int(n) in SPLIT_SIZES:   # derived 80/20 split sizes
+                continue
             checked += 1
             rel = np.abs(vals - n)
-            tol = max(args.tol, abs(n) * 1e-3)
+            # A printed value is a rounded view of the source. Half a unit in the last
+            # printed place is the largest discrepancy rounding alone can produce, so a
+            # match must be allowed at that resolution or every rounded figure flags.
+            dec = len(raw.split(".")[1]) if "." in raw else 0
+            tol = max(args.tol, abs(n) * 1e-3, 0.5 * 10 ** (-dec))
             if not (rel <= tol).any():
                 flagged.append(("not-in-artifacts", f"{n}", s[:160]))
 
