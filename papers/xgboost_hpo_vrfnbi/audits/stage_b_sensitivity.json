@@ -1,86 +1,118 @@
 {
   "replications": 30,
-  "draws": 150,
+  "draws": 120,
   "method": "half-split resampling of the 166 committed Stage A evaluations per dataset; a conservative proxy for between-replication variability, not a measurement of it",
   "datasets": {
     "magic": {
       "hv_ratio": {
-        "paired_sd_proxy": 0.011848,
-        "minimum_detectable_paired_difference_80pct": 0.006272,
-        "expected_ci95_half_width": 0.004424,
+        "paired_sd_proxy": 0.011236,
+        "minimum_detectable_paired_difference_80pct": 0.005948,
+        "expected_ci95_half_width": 0.004195,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.006611,
-        "mde_corrected_rho_0.25": 0.007242,
-        "mde_corrected_rho_0.5": 0.00887
+        "mde_corrected_rho_0.1": 0.012381,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.019726,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.033115,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       },
       "igd_plus": {
-        "paired_sd_proxy": 0.009583,
-        "minimum_detectable_paired_difference_80pct": 0.005073,
-        "expected_ci95_half_width": 0.003578,
+        "paired_sd_proxy": 0.009233,
+        "minimum_detectable_paired_difference_80pct": 0.004887,
+        "expected_ci95_half_width": 0.003448,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.005347,
-        "mde_corrected_rho_0.25": 0.005858,
-        "mde_corrected_rho_0.5": 0.007174
+        "mde_corrected_rho_0.1": 0.010174,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.01621,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.027212,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       }
     },
     "spambase": {
       "hv_ratio": {
-        "paired_sd_proxy": 0.042293,
-        "minimum_detectable_paired_difference_80pct": 0.022388,
-        "expected_ci95_half_width": 0.015792,
+        "paired_sd_proxy": 0.045536,
+        "minimum_detectable_paired_difference_80pct": 0.024105,
+        "expected_ci95_half_width": 0.017004,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.023599,
-        "mde_corrected_rho_0.25": 0.025851,
-        "mde_corrected_rho_0.5": 0.031661
+        "mde_corrected_rho_0.1": 0.050179,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.079948,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.134212,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       },
       "igd_plus": {
-        "paired_sd_proxy": 0.017189,
-        "minimum_detectable_paired_difference_80pct": 0.009099,
-        "expected_ci95_half_width": 0.006418,
+        "paired_sd_proxy": 0.021997,
+        "minimum_detectable_paired_difference_80pct": 0.011645,
+        "expected_ci95_half_width": 0.008214,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.009591,
-        "mde_corrected_rho_0.25": 0.010507,
-        "mde_corrected_rho_0.5": 0.012868
+        "mde_corrected_rho_0.1": 0.02424,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.038621,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.064834,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       }
     },
     "adult": {
       "hv_ratio": {
-        "paired_sd_proxy": 0.033392,
-        "minimum_detectable_paired_difference_80pct": 0.017676,
-        "expected_ci95_half_width": 0.012469,
+        "paired_sd_proxy": 0.031941,
+        "minimum_detectable_paired_difference_80pct": 0.016908,
+        "expected_ci95_half_width": 0.011927,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.018632,
-        "mde_corrected_rho_0.25": 0.020411,
-        "mde_corrected_rho_0.5": 0.024998
+        "mde_corrected_rho_0.1": 0.035197,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.056078,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.094141,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       },
       "igd_plus": {
-        "paired_sd_proxy": 0.016515,
-        "minimum_detectable_paired_difference_80pct": 0.008742,
-        "expected_ci95_half_width": 0.006167,
+        "paired_sd_proxy": 0.015025,
+        "minimum_detectable_paired_difference_80pct": 0.007954,
+        "expected_ci95_half_width": 0.00561,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.009215,
-        "mde_corrected_rho_0.25": 0.010095,
-        "mde_corrected_rho_0.5": 0.012363
+        "mde_corrected_rho_0.1": 0.016557,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.026379,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.044283,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       }
     },
     "bank_marketing": {
       "hv_ratio": {
-        "paired_sd_proxy": 0.029712,
-        "minimum_detectable_paired_difference_80pct": 0.015728,
-        "expected_ci95_half_width": 0.011095,
+        "paired_sd_proxy": 0.029594,
+        "minimum_detectable_paired_difference_80pct": 0.015666,
+        "expected_ci95_half_width": 0.01105,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.016579,
-        "mde_corrected_rho_0.25": 0.018161,
-        "mde_corrected_rho_0.5": 0.022243
+        "mde_corrected_rho_0.1": 0.032611,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.051957,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.087223,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       },
       "igd_plus": {
-        "paired_sd_proxy": 0.015186,
-        "minimum_detectable_paired_difference_80pct": 0.008039,
-        "expected_ci95_half_width": 0.00567,
+        "paired_sd_proxy": 0.014202,
+        "minimum_detectable_paired_difference_80pct": 0.007518,
+        "expected_ci95_half_width": 0.005303,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.008473,
-        "mde_corrected_rho_0.25": 0.009282,
-        "mde_corrected_rho_0.5": 0.011368
+        "mde_corrected_rho_0.1": 0.015649,
+        "se_inflation_factor_rho_0.1": 2.082,
+        "mde_corrected_rho_0.25": 0.024933,
+        "se_inflation_factor_rho_0.25": 3.317,
+        "mde_corrected_rho_0.5": 0.041857,
+        "se_inflation_factor_rho_0.5": 5.568,
+        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
       }
     }
   },

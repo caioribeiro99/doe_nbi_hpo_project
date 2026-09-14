@@ -81,6 +81,11 @@ def _ensure_frozen_tree(dest: Path | None = None) -> Path:
 # matching it keeps B_candidate_validation equal across arms.
 N_WEIGHTS = 20
 
+# A subproblem counts as certified when the solver succeeded and the equality
+# residual is below this. Declared here rather than inlined so the campaign and the
+# tests cannot drift apart.
+EQUALITY_TOLERANCE = 1e-6
+
 
 # ---------------------------------------------------------------------------
 # Candidate record
@@ -338,7 +343,10 @@ def empirical_reference(x_star: np.ndarray, F_star: np.ndarray,
 def run_ws_s(surrogates: Sequence[SurrogateCallable], cfg: NBIConfig,
              anchors: AnchorSet, realizer: Realizer,
              weights: np.ndarray | None = None,
-             nadir_choice: Literal["pseudo_nadir", "nadir"] = "pseudo_nadir") -> ArmRun:
+             nadir_choice: Literal["pseudo_nadir", "nadir"] = "pseudo_nadir",
+             *, arm: str = "WS-S",
+             reference_override: tuple[np.ndarray, np.ndarray] | None = None,
+             reference_label: str | None = None) -> ArmRun:
     """Weighted sum over the same surrogates, normalized by the payoff matrix.
 
     The geometry control. It differs from NBI-S in one respect only: it minimizes
@@ -350,8 +358,10 @@ def run_ws_s(surrogates: Sequence[SurrogateCallable], cfg: NBIConfig,
     from scipy.optimize import minimize
 
     weights = symmetric_weights() if weights is None else np.asarray(weights, float)
-    utopia = anchors.utopia
-    nadir = getattr(anchors, nadir_choice)
+    if reference_override is not None:
+        utopia, nadir = (np.asarray(v, dtype=float) for v in reference_override)
+    else:
+        utopia, nadir = anchors.utopia, getattr(anchors, nadir_choice)
     span = np.where(np.abs(nadir - utopia) < 1e-12, 1.0, nadir - utopia)
     rng = np.random.default_rng(cfg.seed)
     lo, hi = cfg.bounds[:, 0], cfg.bounds[:, 1]
@@ -364,21 +374,46 @@ def run_ws_s(surrogates: Sequence[SurrogateCallable], cfg: NBIConfig,
             f = np.array([float(s(x)) for s in surrogates])
             return float(np.dot(w, (f - utopia) / span))     # objectives are minimized
 
-        best, best_val = None, np.inf
+        # The same feasibility constraint the NBI path applies, the same acceptance
+        # rule, and the same finiteness guard. Without them WS-S would be solving a
+        # slightly different problem from NBI-S, which is the one thing the geometry
+        # contrast may not permit.
+        constraints = []
+        if cfg.feasibility_constraint is not None:
+            constraints.append({"type": "ineq",
+                                "fun": lambda x, fc=cfg.feasibility_constraint: fc(x)})
+        best, best_val, fallback = None, np.inf, None
         for x0 in starts:
             r = minimize(obj, x0, method="SLSQP", bounds=list(map(tuple, cfg.bounds)),
+                         constraints=constraints,
                          options={"maxiter": cfg.maxiter, "ftol": 1e-9})
-            if r.fun < best_val:
+            if not np.all(np.isfinite(r.x)) or not np.isfinite(r.fun):
+                continue
+            if fallback is None or r.fun < float(fallback.fun):
+                fallback = r
+            if r.success and r.fun < best_val:
                 best, best_val = r, float(r.fun)
-        cands.append(_record("WS-S", w, np.asarray(best.x, float), surrogates, realizer,
+        if best is None:                      # no start converged; keep the best seen
+            best = fallback if fallback is not None else minimize(
+                obj, starts[0], method="SLSQP", bounds=list(map(tuple, cfg.bounds)),
+                options={"maxiter": cfg.maxiter})
+            best_val = float(best.fun)
+        cands.append(_record(arm, w, np.asarray(best.x, float), surrogates, realizer,
                              bool(best.success), str(best.message),
                              extra={"scalarized_value": best_val}))
     from ..reporting import dominated_fraction
     F_real = np.array([c.f_surrogate_realized for c in cands])
-    return ArmRun("WS-S", cands, {
-        "scalarization": "weighted sum of payoff-normalized surrogates",
+    n_unique = len({tuple(np.round(c.x_realized_coded, 9)) for c in cands})
+    return ArmRun(arm, cands, {
+        "scalarization": "weighted sum of normalized surrogates",
+        "reference_construction": reference_label or
+            f"payoff matrix: utopia and {nadir_choice}",
         "dominated_share_of_returned_set": round(float(dominated_fraction(F_real)), 4),
-        "normalization": f"utopia and {nadir_choice} of the payoff matrix",
+        "solver_success_fraction": round(
+            float(np.mean([c.solver_success for c in cands])), 4),
+        "distinct_realized_configurations": n_unique,
+        "duplicate_share_after_realization": round(1.0 - n_unique / max(len(cands), 1), 4),
+        "feasibility_constraint_applied": cfg.feasibility_constraint is not None,
         "utopia": utopia.tolist(), "nadir_used": np.asarray(nadir, float).tolist(),
         "true_nadir": anchors.nadir.tolist(),
         "pseudo_nadir": anchors.pseudo_nadir.tolist(),
@@ -403,8 +438,13 @@ def run_nbi_arm(arm: str, surrogates: Sequence[SurrogateCallable], cfg: NBIConfi
                              r.success, r.message, t=float(r.t),
                              residual=float(r.residual_norm),
                              extra={"optimizer_info": r.optimizer_info}))
-    certified = [c for c in cands
-                 if c.solver_success and (c.equality_residual or 1.0) < 1e-6]
+    # `residual or 1.0` maps a residual of exactly 0.0 to 1.0, so a perfectly
+    # feasible subproblem scored as uncertified. Test the value, not its truthiness.
+    def _certified(c: Candidate) -> bool:
+        r = c.equality_residual
+        return bool(c.solver_success and r is not None and r < EQUALITY_TOLERANCE)
+
+    certified = [c for c in cands if _certified(c)]
     # A subproblem solution is certified FEASIBLE, not Pareto optimal. Weighted-sum
     # minimizers are weakly Pareto optimal by construction; NBI solutions need not be.
     # Reporting the dominated share per arm keeps that asymmetry from being mistaken
@@ -430,6 +470,15 @@ def run_nbi_arm(arm: str, surrogates: Sequence[SurrogateCallable], cfg: NBIConfi
         "quasi_normal": chim.n_hat.tolist(),
         "restrict_t_nonnegative": bool(cfg.restrict_t_nonnegative),
         "certified_fraction": round(len(certified) / max(len(cands), 1), 4),
+        "equality_tolerance": EQUALITY_TOLERANCE,
+        "solver_success_fraction": round(
+            float(np.mean([c.solver_success for c in cands])), 4),
+        "distinct_realized_configurations":
+            len({tuple(np.round(c.x_realized_coded, 9)) for c in cands}),
+        "duplicate_share_after_realization": round(
+            1.0 - len({tuple(np.round(c.x_realized_coded, 9)) for c in cands})
+            / max(len(cands), 1), 4),
+        "feasibility_constraint_applied": cfg.feasibility_constraint is not None,
         "dominated_share_of_returned_set": round(dominated_share, 4),
         "dominated_share_among_certified": (round(dominated_among_certified, 4)
                                             if dominated_among_certified == dominated_among_certified
@@ -443,7 +492,7 @@ def run_nbi_arm(arm: str, surrogates: Sequence[SurrogateCallable], cfg: NBIConfi
     })
 
 
-__all__ = ["ArmRun", "Candidate", "Realizer", "N_WEIGHTS",
+__all__ = ["ArmRun", "Candidate", "Realizer", "N_WEIGHTS", "EQUALITY_TOLERANCE",
            "symmetric_weights", "historical_weights",
            "surrogate_reference", "empirical_reference",
            "run_historical_ws", "run_ws_s", "run_nbi_arm"]

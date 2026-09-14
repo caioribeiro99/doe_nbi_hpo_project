@@ -46,25 +46,39 @@ SECONDS_PER_EVALUATION = 0.1585                      # Stage B calibration, pane
 # --------------------------------------------------------------------- planning
 
 def per_unit_evaluations() -> dict[str, int]:
+    """Every logical evaluation a unit requests, itemized.
+
+    An earlier version understated this by 39%: it counted four arms rather than
+    five (HISTORICAL-WS is run twice, bit-faithfully and under the shared
+    specification), omitted the anchor-injection control, and charged the payoff
+    matrix two extra evaluations that are now reused from the search.
+    """
     b = logical_budget_plan()
     design, ext, cand = b["B_design"], b["B_external_validation"], b["B_candidate_validation"]
     anchor = b["B_anchor_per_objective"] * 2
     comparator = b["comparator_budget"]
-    arms_physical = design + ext + anchor + 4 * cand + 2   # +2 payoff measurements
+    shared = {"design": design, "external_validation_audit": ext,
+              "empirical_anchor_search": anchor}
+    arms = {f"{a}_revalidation": cand for a in
+            ("historical_ws_asrun", "historical_ws", "ws_s", "nbi_s", "nbi_r")}
+    arms["anchor_injection_control"] = 2
     baselines = {"grid": comparator, "random": comparator,
                  "bayes_quality": comparator, "bayes_cost": comparator,
                  "tpe_quality": comparator, "tpe_cost": comparator,
-                 "nsga2": b["nsga2"]["evaluations"]}
-    return {"arms_and_shared": arms_physical,
-            **baselines,
-            "total_logical_upper_bound": arms_physical + sum(baselines.values())}
+                 "nsga2_matched": b["nsga2"]["evaluations"]}
+    out = {**shared, **arms, **baselines}
+    out["total_logical_per_unit"] = sum(out.values())
+    return out
 
 
 def plan() -> dict:
     b = logical_budget_plan()
     per = per_unit_evaluations()
+    from doe_xgb.campaign.runner import (NSGA2_GEN, NSGA2_POP,
+                                          NSGA2_UNMATCHED_MULTIPLIER)
     units = [(d, r) for d in DATASETS for r in range(N_REPLICATIONS)]
-    total = per["total_logical_upper_bound"] * len(units)
+    unmatched = NSGA2_POP * NSGA2_GEN * NSGA2_UNMATCHED_MULTIPLIER * len(DATASETS)
+    total = per["total_logical_per_unit"] * len(units) + unmatched
     return {
         "protocol_tag": PROTOCOL_TAG,
         "source_commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO,
@@ -75,6 +89,8 @@ def plan() -> dict:
         "logical_budget": b,
         "evaluations_per_unit": per,
         "campaign_logical_evaluations": total,
+        "nsga2_unmatched_evaluations": unmatched,
+        "nsga2_unmatched_scope": "one replication per dataset",
         "projected_hours": round(total * SECONDS_PER_EVALUATION / 3600, 2),
         "projected_days": round(total * SECONDS_PER_EVALUATION / 86400, 3),
         "execution_layout": {"process_workers": WORKERS,
@@ -109,7 +125,9 @@ def dry_run() -> int:
           f"population {b['nsga2']['population']} x {b['nsga2']['generations']} generations)")
     print(f"      external validation {b['B_external_validation']} per unit, AUDIT-ONLY, "
           "charged to no comparator\n")
-    print(f"  evaluations per unit  {p['evaluations_per_unit']['total_logical_upper_bound']:,}")
+    print(f"  evaluations per unit  {p['evaluations_per_unit']['total_logical_per_unit']:,}")
+    print(f"  unmatched NSGA-II     {p['nsga2_unmatched_evaluations']:,} "
+          f"({p['nsga2_unmatched_scope']})")
     print(f"  campaign total        {p['campaign_logical_evaluations']:,} logical evaluations")
     print(f"  projected wall clock  {p['projected_hours']:.1f} h "
           f"({p['projected_days']:.2f} days) at {SECONDS_PER_EVALUATION} s/evaluation\n")

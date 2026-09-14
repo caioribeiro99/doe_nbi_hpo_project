@@ -77,7 +77,13 @@ class FrozenFactorModel:
 
     def transform(self, df: pd.DataFrame) -> dict[str, np.ndarray]:
         Z = (apply_transforms(df) - self.mu) / self.sd
-        scores = (Z @ self.components.T) @ self.rotation
+        # Standardize the component scores BEFORE rotating. Rotating raw component
+        # scores, whose variances are the eigenvalues, mixes axes of unequal scale
+        # and produces CORRELATED factors: measured max off-diagonal correlation on
+        # the panel was 0.379 to 0.698. It also means the rotated loadings do not
+        # describe the scores actually used, so the role assignment and the sign
+        # orientation would be read off the wrong matrix.
+        scores = ((Z @ self.components.T) / np.sqrt(self.eigenvalues)) @ self.rotation
         zs = (scores - self.score_mu) / self.score_sd
         q = zs[:, list(self.quality_indices)]
         return {"quality": q @ self.quality_weights,
@@ -96,8 +102,11 @@ class FrozenFactorModel:
                 "standardization_sd": self.sd.tolist(),
                 "pca_components": self.components.tolist(),
                 "eigenvalues": self.eigenvalues.tolist(),
-                "explained_variance_share":
+                "explained_variance_share_unrotated":
                     (self.eigenvalues / self.eigenvalues.sum()).tolist(),
+                "explained_variance_share_rotated":
+                    ((self.rotated_loadings ** 2).sum(axis=0)
+                     / (self.rotated_loadings ** 2).sum()).tolist(),
                 "varimax_rotation": self.rotation.tolist(),
                 "rotated_loadings": self.rotated_loadings.tolist(),
                 "score_standardization_mean": self.score_mu.tolist(),
@@ -134,20 +143,30 @@ def fit_factor_model(design: pd.DataFrame, k: int = N_COMPONENTS) -> FrozenFacto
     rot = rot * flip
     R = R * flip
 
-    scores = (Z @ pca.components_.T) @ R
+    scores = ((Z @ pca.components_.T) / np.sqrt(lam)) @ R
     score_mu = scores.mean(axis=0)
     score_sd = scores.std(axis=0, ddof=1)
     score_sd = np.where(score_sd == 0.0, 1.0, score_sd)
 
-    share = lam / lam.sum()
+    # A component's share of explained variance AFTER an orthogonal rotation is the
+    # sum of its squared rotated loadings, not its unrotated eigenvalue. Varimax
+    # redistributes variance across components, so indexing the unrotated
+    # eigenvalues by the rotated component index pairs two unrelated things: on one
+    # panel dataset that gave 0.872/0.128 where the rotated shares are 0.547/0.453.
+    rotated_ss = (rot ** 2).sum(axis=0)
+    share = rotated_ss / rotated_ss.sum()
     w = np.asarray([share[j] for j in q_idx], dtype=float)
     w = w / w.sum()
 
     # Descriptive diagnostics, reported and never acted on.
     full = PCA(n_components=min(len(names), len(design)), random_state=0).fit(Z)
     lam_full = full.explained_variance_
+    max_off_diagonal_score_correlation = float(
+        np.abs(np.corrcoef(scores, rowvar=False) - np.eye(k)).max()) if k > 1 else 0.0
     diagnostics = {
         "n_components_fixed": int(k),
+        "max_off_diagonal_score_correlation": max_off_diagonal_score_correlation,
+        "rotated_ss_loading_share": (rotated_ss / rotated_ss.sum()).tolist(),
         "kaiser_retained": int((lam_full > 1.0).sum()),
         "eigenvalues_full": lam_full.tolist(),
         "lambda3_over_lambda4": (float(lam_full[2] / lam_full[3])

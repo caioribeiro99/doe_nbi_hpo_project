@@ -40,21 +40,31 @@ def canonical_key(cfg: dict[str, Any]) -> tuple:
 def revalidate(emitted: list[dict], view, objectives_of) -> dict[str, Any]:
     """Realize, deduplicate, evaluate on the real learner, and report the accounting.
 
-    ``emitted`` carries each method's realized configuration. Duplicates are
-    charged to the method once per request by the cache, so deduplication here
-    changes the physical work and not the logical budget.
+    ``emitted`` carries each method's realized configuration. Every element is
+    requested, so every element is charged; the cache serves the repeats, so the
+    physical work is deduplicated and the logical budget is not.
     """
-    seen: dict[tuple, int] = {}
+    # Every emitted candidate is REQUESTED, so every one is charged to the arm. The
+    # cache serves the repeats, so the physical cost is unchanged. Deduplicating
+    # before requesting, as an earlier version did, charged an arm the number of
+    # UNIQUE realized configurations rather than the declared budget -- and the bias
+    # was systematic, because a weighted sum's minimizers cluster at the anchors and
+    # collapse under rounding far more often than NBI's spread subproblem solutions.
+    # The arm whose budget was most understated was the geometry control in the
+    # study's own primary contrast.
+    results: dict[tuple, dict] = {}
     order: list[tuple] = []
     for c in emitted:
         key = canonical_key(c)
-        if key not in seen:
-            seen[key] = len(order)
+        cfg = {p: (int(v) if p in INT_PARAMS else float(v)) for p, v in zip(PARAMS, key)}
+        res = view.evaluate(cfg)                 # charged every time, hit or miss
+        if key not in results:
+            results[key] = res
             order.append(key)
     rows, invalid = [], 0
     for key in order:
         cfg = {p: (int(v) if p in INT_PARAMS else float(v)) for p, v in zip(PARAMS, key)}
-        res = view.evaluate(cfg)
+        res = results[key]
         if not all(np.isfinite(v) for v in res.values() if isinstance(v, (int, float))):
             invalid += 1
             continue

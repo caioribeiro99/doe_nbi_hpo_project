@@ -59,14 +59,58 @@ def test_configurations_that_realize_to_the_same_learner_are_one_configuration()
     assert a == b
 
 
-def test_revalidation_deduplicates_physically_and_reports_the_accounting() -> None:
-    view = _View(_responses)
+def test_every_emitted_candidate_is_charged_while_the_fit_happens_once(tmp_path) -> None:
+    """The budget is what a method requested; the cache decides what is computed.
+
+    Deduplicating before requesting charged an arm the number of UNIQUE realized
+    configurations instead of its declared budget, and the bias was systematic: a
+    weighted sum's minimizers cluster at the anchors and collapse under rounding far
+    more often than NBI's spread subproblem solutions, so the arm most understated
+    was the geometry control in the study's own primary contrast.
+    """
+    from doe_xgb.campaign.evaluation_cache import EvaluationCache
+
+    fits: list[dict] = []
+
+    def compute(cfg):
+        fits.append(cfg)
+        return _responses(cfg)
+
+    cache = EvaluationCache(tmp_path / "e.sqlite", dataset="magic",
+                            split_id="rep_00", seed=1)
+    view = cache.view("ws_s_revalidation", compute)
     emitted = [_cfg(n_estimators=200), _cfg(n_estimators=200), _cfg(n_estimators=400)]
     r = revalidate(emitted, view, _objectives)
+
     assert r["emitted"] == 3
     assert r["unique_realizable"] == 2, "duplicates realize to one learner"
-    assert view.calls == 2, "the duplicate must not be fitted twice"
     assert r["real_valid"] == 2
+    assert len(fits) == 2, "the duplicate must not be fitted twice"
+    assert cache.ledger("ws_s_revalidation").logical == 3, (
+        "every emitted candidate must be charged, or an arm that emits duplicates "
+        "appears to have spent less than its declared budget"
+    )
+    cache.close()
+
+
+def test_twenty_identical_candidates_are_still_charged_twenty(tmp_path) -> None:
+    """The worst case, which is exactly the weighted sum's characteristic behaviour."""
+    from doe_xgb.campaign.evaluation_cache import EvaluationCache
+
+    fits: list[dict] = []
+
+    def compute(cfg):
+        fits.append(cfg)
+        return _responses(cfg)
+
+    cache = EvaluationCache(tmp_path / "e.sqlite", dataset="magic",
+                            split_id="rep_00", seed=1)
+    view = cache.view("arm", compute)
+    r = revalidate([_cfg(n_estimators=200)] * 20, view, _objectives)
+    assert r["emitted"] == 20 and r["unique_realizable"] == 1
+    assert len(fits) == 1
+    assert cache.ledger("arm").logical == 20
+    cache.close()
 
 
 def test_revalidation_drops_non_finite_results_and_counts_them() -> None:

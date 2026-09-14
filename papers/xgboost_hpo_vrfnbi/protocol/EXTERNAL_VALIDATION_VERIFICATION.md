@@ -39,11 +39,25 @@ rank falls to 29. The 14 axial runs restore full rank.
 
 ## Condition 7 in the campaign
 
-The static check covers the screening code. The campaign runner installs a runtime tripwire instead:
-the validation responses are held in an object that raises if read by any stage other than the
-external-diagnostic computation. The stages that must never see them are the response
-standardization, the principal component extraction, the Varimax rotation, the factor orientation,
-the response-surface fit, the backward selection, the anchor construction and every optimizer.
+An earlier version of this document claimed the campaign runner installs a runtime tripwire that
+raises if a validation response is read outside the external diagnostic. **It did not, and the claim
+was removed rather than weakened.** A verification document asserting a control that does not exist
+is worse than one that claims nothing.
+
+What actually holds condition 7 in the campaign, and can be checked:
+
+1. **Structure.** The runner computes the external diagnostic in one stage and never passes the
+   external frame anywhere else. `fit_factor_model` and `fit_surface_backward` are called on
+   `design_df` only, at a single call site each.
+2. **The static call-graph check** above, which reports every fitting call and the frame it received.
+3. **Behavioural tests** in `tests/methodology/test_external_validation_is_external.py`: adding
+   validation rows cannot alter the design-side factor mapping; backward elimination selects the same
+   terms whatever the validation responses are; and the 78-point construction is deterministic and
+   seedless, so it cannot be regenerated in response to a diagnostic.
+
+The stages that must never see a validation response are the response standardization, the principal
+component extraction, the Varimax rotation, the factor orientation, the response-surface fit, the
+backward selection, the anchor construction and every optimizer.
 
 ## Diagnostics retained
 

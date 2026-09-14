@@ -96,15 +96,23 @@ def resolution(sd_paired: float) -> dict:
     t_b = stats.t.ppf(0.80, dof)
     mde = (t_a + t_b) * sd_paired / np.sqrt(R)
     half_width = t_a * sd_paired / np.sqrt(R)
-    # Nadeau and Bengio inflate the variance by (1 + rho/(1-rho)) for overlapping
-    # resamples; reported as a sensitivity, not as the primary test.
     out = {"paired_sd_proxy": round(sd_paired, 6),
            "minimum_detectable_paired_difference_80pct": round(float(mde), 6),
            "expected_ci95_half_width": round(float(half_width), 6),
            "standardized_effect_detectable": round(float((t_a + t_b) / np.sqrt(R)), 4)}
+    # Nadeau and Bengio (2003): for overlapping resamples the variance of the mean
+    # difference is sigma^2 * (1/n + rho/(1-rho)), so the standard error is
+    # sd * sqrt(1/n + rho/(1-rho)) -- NOT sd/sqrt(n) inflated by
+    # sqrt(1 + rho/(1-rho)), which is what an earlier version computed and which
+    # divides the correction term by n. The two differ by a large factor at R = 30.
     for rho in (0.1, 0.25, 0.5):
-        infl = np.sqrt(1.0 + rho / (1.0 - rho))
-        out[f"mde_corrected_rho_{rho}"] = round(float(mde * infl), 6)
+        se_corrected = sd_paired * np.sqrt(1.0 / R + rho / (1.0 - rho))
+        out[f"mde_corrected_rho_{rho}"] = round(float((t_a + t_b) * se_corrected), 6)
+        out[f"se_inflation_factor_rho_{rho}"] = round(
+            float(se_corrected / (sd_paired / np.sqrt(R))), 3)
+    out["correction_note"] = ("Nadeau and Bengio (2003), variance of the mean "
+                              "difference = sigma^2 (1/n + rho/(1-rho)); reported as a "
+                              "sensitivity, never as the primary test")
     return out
 
 

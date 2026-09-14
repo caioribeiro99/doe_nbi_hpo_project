@@ -47,11 +47,25 @@ SEED_BASE = 20260914
 B_ANCHOR_PER_OBJECTIVE = 100      # real evaluations, NBI-R only
 N_CANDIDATES = 20                 # weight-grid cardinality, shared by every arm
 NSGA2_POP, NSGA2_GEN = 32, 12     # frozen, see protocol/NSGA2_DECISION.md
+# The unmatched run defends the matched result against the objection that a
+# 12-generation population is starved. It is a clearly labelled secondary,
+# unmatched-context run, never an efficiency comparison, and it is scoped to ONE
+# replication per dataset because on all thirty it would cost about 180 hours.
+NSGA2_UNMATCHED_MULTIPLIER = 10
+NSGA2_UNMATCHED_REPLICATION = 0
+
+# Two single-objective runs are not a Pareto front. These are reported on their own
+# endpoints only: they never enter the front-indicator table, and they never enter
+# the common augmented reference, where a pure cost-minimizer would pin the cost
+# extreme and move the normalization box every other method is scored against.
+SINGLE_OBJECTIVE = ("bayes_quality", "bayes_cost", "tpe_quality", "tpe_cost")
 
 STAGES = ("split", "design", "factor_model", "surrogates", "external_validation",
-          "historical_ws", "ws_s", "surrogate_anchors", "nbi_s", "empirical_anchors",
-          "nbi_r", "direct_baselines", "candidate_revalidation", "reference_core",
-          "augmented_reference", "holdout_confirmation", "metrics")
+          "historical_ws_asrun", "ws_s", "historical_ws", "surrogate_anchors", "nbi_s",
+          "empirical_anchors", "nbi_r", "direct_baselines", "nsga2_unmatched",
+          "candidate_revalidation",
+          "anchor_injection_control", "reference_core", "augmented_reference",
+          "holdout_confirmation", "metrics")
 
 
 class MethodologicalFailure(RuntimeError):
@@ -220,9 +234,12 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
         cfg = nbi_config(seed)
         rz = realizer()
 
-        if not ck.done("historical_ws"):
-            hist = _run_historical(design_df, Y, fm, surrogates, rz, seed)
-            ck.save("historical_ws", hist)
+        if not ck.done("historical_ws_asrun"):
+            # Exactly as the dissertation ran it: the frozen solver, its own uncoded
+            # surfaces, its own observed-extrema box, its own asymmetric 20-point
+            # grid whose pure-quality vertex is absent.
+            ck.save("historical_ws_asrun",
+                    _run_historical(design_df, Y, fm, surrogates, rz, seed))
 
         if ck.done("surrogate_anchors"):
             pass
@@ -233,6 +250,20 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
 
         if not ck.done("ws_s"):
             ck.save("ws_s", run_ws_s(surrogates, cfg, s_anchors, rz, weights).as_dict())
+        if not ck.done("historical_ws"):
+            # The same weighted sum, the same solver, the same symmetric grid and the
+            # same surrogates as WS-S, differing ONLY in the reference: the
+            # dissertation's component-wise observed extrema of the design rows in
+            # place of the payoff matrix. That is what makes WS-S to HISTORICAL-WS a
+            # single-factor contrast on the normalization. HISTORICAL-WS-asrun is the
+            # bit-faithful reproduction and the two are never mixed in one table.
+            hist_lo = Y.min(axis=0)
+            hist_hi = Y.max(axis=0)
+            ck.save("historical_ws", run_ws_s(
+                surrogates, cfg, s_anchors, rz, weights, arm="HISTORICAL-WS",
+                reference_override=(hist_lo, hist_hi),
+                reference_label=("component-wise observed extrema of the design rows, "
+                                 "as the dissertation normalizes")).as_dict())
         if not ck.done("nbi_s"):
             ck.save("nbi_s", run_nbi_arm("NBI-S", surrogates, cfg, s_anchors, s_chim,
                                          rz, weights).as_dict())
@@ -256,13 +287,17 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
         if not ck.done("direct_baselines"):
             from . import baselines as B
             out = {}
-            specs = [("grid", lambda v: B.coarse_grid(v, budget, seed)),
-                     ("random", lambda v: B.random_search(v, budget, seed)),
-                     ("bayes_quality", lambda v: B.bayesian_optimization(v, budget, seed, to_obj, 0)),
-                     ("bayes_cost", lambda v: B.bayesian_optimization(v, budget, seed, to_obj, 1)),
-                     ("tpe_quality", lambda v: B.tpe(v, budget, seed, to_obj, 0)),
-                     ("tpe_cost", lambda v: B.tpe(v, budget, seed, to_obj, 1)),
-                     ("nsga2", lambda v: B.nsga2(v, NSGA2_POP, NSGA2_GEN, seed, to_obj))]
+            ms = B.method_seed
+            specs = [("grid", lambda v: B.coarse_grid(v, budget, ms(seed, "grid"))),
+                     ("random", lambda v: B.random_search(v, budget, ms(seed, "random"))),
+                     ("bayes_quality", lambda v: B.bayesian_optimization(
+                         v, budget, ms(seed, "bayes_quality"), to_obj, 0)),
+                     ("bayes_cost", lambda v: B.bayesian_optimization(
+                         v, budget, ms(seed, "bayes_cost"), to_obj, 1)),
+                     ("tpe_quality", lambda v: B.tpe(v, budget, ms(seed, "tpe_quality"), to_obj, 0)),
+                     ("tpe_cost", lambda v: B.tpe(v, budget, ms(seed, "tpe_cost"), to_obj, 1)),
+                     ("nsga2", lambda v: B.nsga2(v, NSGA2_POP, NSGA2_GEN,
+                                                 ms(seed, "nsga2"), to_obj))]
             for name, fn in specs:
                 df = fn(cache.view(name, compute))
                 out[name] = {"n_rows": int(len(df)),
@@ -275,18 +310,67 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                                                   "endpoints only and never in the "
                                                   "front-indicator table")})
 
+        # ---- stage: the unmatched NSGA-II run, one replication per dataset ----
+        if rep == NSGA2_UNMATCHED_REPLICATION and not ck.done("nsga2_unmatched"):
+            from . import baselines as B
+            gens = NSGA2_GEN * NSGA2_UNMATCHED_MULTIPLIER
+            df = B.nsga2(cache.view("nsga2_unmatched", compute), NSGA2_POP, gens,
+                         B.method_seed(seed, "nsga2"), to_obj)
+            ck.save("nsga2_unmatched", {
+                "population": NSGA2_POP, "generations": gens,
+                "evaluations": NSGA2_POP * gens,
+                "multiplier_over_matched_budget": NSGA2_UNMATCHED_MULTIPLIER,
+                "n_rows": int(len(df)), "rows": df.to_dict("records"),
+                "note": ("secondary, unmatched-context run on one replication per "
+                         "dataset. It answers whether budget starvation explains the "
+                         "matched result. It is NOT an efficiency comparison, it "
+                         "enters no front-indicator table beside the matched methods, "
+                         "and no claim about any arm is made relative to it.")})
+
         # ---- stage: candidate revalidation on the REAL learner ---------------
         from .scoring import (augmented_reference, indicators, reference_core,
                               revalidate)
         if not ck.done("candidate_revalidation"):
             reval = {}
-            for arm in ("historical_ws", "ws_s", "nbi_s", "nbi_r"):
+            for arm in ("historical_ws_asrun", "historical_ws", "ws_s", "nbi_s", "nbi_r"):
                 emitted = [c["config_realized"] for c in ck.load(arm)["candidates"]]
                 r = revalidate(emitted, cache.view(f"{arm}_revalidation", compute), to_obj)
                 reval[arm] = {k: v for k, v in r.items()
                               if k not in ("rows", "objectives", "nondominated_index")}
                 reval[arm]["rows"] = r["rows"].to_dict("records")
             ck.save("candidate_revalidation", {"arms": reval})
+
+        # ---- stage: the anchor-injection control -----------------------------
+        # method_arms.md makes this mandatory, not optional. A vertex weight returns
+        # its own anchor, so NBI-R's set CONTAINS the empirical anchors and part of
+        # any NBI-S to NBI-R gap is the injection of those extreme points rather
+        # than the relocated geometry. The control rescores NBI-S's own candidate
+        # set augmented with the same anchors, changing nothing else. It costs no
+        # new real evaluations: every point in it has already been measured.
+        if not ck.done("anchor_injection_control"):
+            ea = ck.load("empirical_anchors")
+            rv_s = pd.DataFrame(ck.load("candidate_revalidation")["arms"]["nbi_s"]["rows"])
+            anchor_cfgs = []
+            for xr in np.asarray(ea["x_star"], dtype=float):
+                cfg_nat, _ = rz.realize(xr)
+                anchor_cfgs.append(cfg_nat)
+            anchor_rows = pd.DataFrame(
+                [{**c, **evaluate_config(c)} for c in anchor_cfgs])
+            injected = pd.concat([rv_s, anchor_rows], ignore_index=True)
+            ck.save("anchor_injection_control", {
+                "rows": injected.to_dict("records"),
+                "n_nbi_s_candidates": int(len(rv_s)),
+                "n_anchors_injected": int(len(anchor_rows)),
+                "note": ("NBI-S's revalidated set augmented with the empirical anchors; "
+                         "scored alongside NBI-S and NBI-R so the share of the gap "
+                         "attributable to injected extremes can be separated from the "
+                         "share attributable to the relocated geometry. Uses no new "
+                         "real evaluations beyond the anchors already measured.")})
+
+        # The unmatched NSGA-II run is deliberately absent from both references and
+        # from the matched indicator table: it received ten times the budget, so
+        # admitting it would move the normalization box every matched method is
+        # scored against.
 
         # ---- stage: the two references ---------------------------------------
         if not ck.done("reference_core"):
@@ -306,6 +390,8 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                 per[arm] = to_obj(df) if len(df) else np.zeros((0, 2))
             db = ck.load("direct_baselines")["methods"]
             for name, payload in db.items():
+                if name in SINGLE_OBJECTIVE:
+                    continue                      # never enters the shared reference
                 df = pd.DataFrame(payload["rows"])
                 per[name] = to_obj(df) if len(df) else np.zeros((0, 2))
             aug = augmented_reference(core_front, per)
@@ -319,16 +405,31 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             aug_front = np.asarray(ck.load("augmented_reference")["front"], dtype=float)
             rv = ck.load("candidate_revalidation")["arms"]
             db = ck.load("direct_baselines")["methods"]
-            per_method = {}
-            for name, payload in list(rv.items()) + list(db.items()):
+            per_method, endpoints = {}, {}
+            control = ck.load("anchor_injection_control")
+            scored = list(rv.items()) + list(db.items()) + [
+                ("nbi_s_plus_anchors", {"rows": control["rows"]})]
+            for name, payload in scored:
                 df = pd.DataFrame(payload["rows"])
                 F = to_obj(df) if len(df) else np.zeros((0, 2))
+                if name in SINGLE_OBJECTIVE:
+                    # its own objective only: quality runs on index 0, cost on 1
+                    j = 0 if name.endswith("quality") else 1
+                    endpoints[name] = {"objective_index": j,
+                                       "best_value": (float(F[:, j].min())
+                                                      if len(F) else float("nan")),
+                                       "n_evaluations": int(len(F))}
+                    continue
                 per_method[name] = {
                     "augmented": indicators(F, aug_front),
                     "core": indicators(F, core_front)}
-            ck.save("metrics_by_method", {"methods": per_method,
-                                          "primary_indicator": "hv_ratio",
-                                          "references": ["augmented", "core"]})
+            ck.save("metrics_by_method", {
+                "methods": per_method, "primary_indicator": "hv_ratio",
+                "references": ["augmented", "core"],
+                "single_objective_endpoints": endpoints,
+                "note": ("single-objective runs are reported on their own endpoint only; "
+                         "they are excluded from the front-indicator table and from the "
+                         "augmented reference")})
 
         # ---- stage: holdout confirmation (labels untouched until here) -------
         if not ck.done("holdout_confirmation"):
@@ -368,7 +469,8 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
         cache.close()
 
 
-def _run_historical(design_df, Y, fm, surrogates, rz, seed) -> dict:
+def _run_historical(design_df, Y, fm, surrogates, rz, seed,
+                    *, symmetric_grid: bool) -> dict:
     """HISTORICAL-WS: the dissertation's own normalization and its own grid.
 
     The surfaces are fitted in the historical *uncoded* parameterization and the
@@ -397,7 +499,8 @@ def _run_historical(design_df, Y, fm, surrogates, rz, seed) -> dict:
                             observed_utopia=observed_utopia,
                             observed_nadir=observed_nadir,
                             bounds={p: BOUNDS[p] for p in PARAMS},
-                            realizer=rz, surrogates_coded=surrogates, seed=seed)
+                            realizer=rz, surrogates_coded=surrogates, seed=seed,
+                            symmetric_grid=symmetric_grid)
     out = run.as_dict()
     out["diagnostics"].update({
         "orientation": ("the dissertation maximizes; this campaign's objectives are "
@@ -417,34 +520,37 @@ def _empirical_anchors(cache, compute, fm, cfg, seed) -> tuple[np.ndarray, np.nd
     """
     rng = np.random.default_rng(seed + 77)
     view = cache.view("empirical_anchor_search", compute)
+    rz = Realizer(PARAMS, BOUNDS, list(INT_PARAMS))
     k = len(PARAMS)
     x_star = np.zeros((2, k))
+    F_star = np.zeros((2, 2))
     rows_per_objective = []
     for j in range(2):
-        best_x, best_v, rows = None, np.inf, []
+        best_x, best_f, rows = None, None, []
         for _ in range(B_ANCHOR_PER_OBJECTIVE):
             xc = rng.uniform(-1.0, 1.0, size=k)
-            cfg_nat, xc_real = Realizer(PARAMS, BOUNDS, list(INT_PARAMS)).realize(xc)
+            cfg_nat, xc_real = rz.realize(xc)
             res = view.evaluate(cfg_nat)
             f = fm.objectives(pd.DataFrame([res]))[0]
             rows.append({"config": cfg_nat, "objectives": f.tolist()})
-            if f[j] < best_v:
-                best_v, best_x = float(f[j]), xc_real
+            if best_f is None or f[j] < best_f[j]:
+                best_x, best_f = xc_real, f
         x_star[j] = best_x
+        # The payoff matrix column is the objective vector ALREADY MEASURED at this
+        # anchor. Re-requesting it charged two further evaluations, which took
+        # NBI-R to 202 against a declared 200 and pushed its total past the
+        # comparator budget defined as the maximum over arms.
+        F_star[:, j] = best_f
         rows_per_objective.append(rows)
-    # payoff matrix: every objective measured at every anchor, on the REAL objectives
-    F_star = np.zeros((2, 2))
-    for j in range(2):
-        cfg_nat, _ = Realizer(PARAMS, BOUNDS, list(INT_PARAMS)).realize(x_star[j])
-        res = view.evaluate(cfg_nat)
-        F_star[:, j] = fm.objectives(pd.DataFrame([res]))[0]
     return x_star, F_star, {
         "x_star": x_star.tolist(), "F_star": F_star.tolist(),
         "budget_per_objective": B_ANCHOR_PER_OBJECTIVE,
         "search": "uniform random over the coded box, realized before evaluation",
         "note": ("best found within the declared budget; NOT certified optima and "
                  "never described as such"),
-        "evaluations_by_objective": [len(r) for r in rows_per_objective]}
+        "evaluations_by_objective": [len(r) for r in rows_per_objective],
+        "total_evaluations": sum(len(r) for r in rows_per_objective),
+        "payoff_matrix_reuses_search_measurements": True}
 
 
 # ---------------------------------------------------------------------------

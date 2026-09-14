@@ -74,8 +74,23 @@ eigenvalues:
 This is the matrix that is rotated and the matrix that is reported. Reporting the unscaled
 eigenvector matrix as "loadings" is the defect the PCA/Varimax audit found in the dissertation code.
 
-**4.3 Rotation.** Varimax on `Λ`, giving rotated loadings `Λ_R = Λ · R` and scores `S = Z · V · R`,
-then standardized column-wise to `S_z`.
+**4.3 Rotation.** Varimax on `Λ`, giving rotated loadings `Λ_R = Λ · R`.
+
+The scores are formed from **standardized** component scores, not raw ones:
+
+    S = Z · V · diag(1/√λ) · R,    then standardized column-wise to S_z
+
+The `diag(1/√λ)` is load-bearing and its omission was a real defect in an earlier draft of this
+document and of the code. Raw component scores have variances equal to the eigenvalues, so an
+orthogonal rotation mixes axes of unequal scale and produces **correlated** factors: measured on the
+panel, the maximum off-diagonal correlation of the "orthogonal factors" was 0.379, 0.541, 0.698 and
+0.678. With the standardization it is below 1e-15.
+
+The consequence was not only that the factors were correlated. `Λ_R` is the loading matrix of the
+standardized scores, so without the standardization the role assignment of §4.4 and the sign
+orientation of §4.5 would be read off a matrix that does not describe the scores being oriented. A
+test asserts that each reported loading equals the empirical correlation between its response and
+its factor.
 
 **4.4 Role assignment, deterministic.** The **cost factor** is the component with the largest
 absolute rotated loading on `Leaves_Mean`. This uses an absolute value and is therefore independent
@@ -98,10 +113,23 @@ After orientation, **a larger score is a worse configuration on every factor**.
 
 ## 5. Objective 1 — the quality composite
 
-    f_quality(x) = Σ_{j ∈ Q} w_j · S_z[:, j],      w_j = λ_j / Σ_{i ∈ Q} λ_i
+    f_quality(x) = Σ_{j ∈ Q} w_j · S_z[:, j],      w_j = h_j / Σ_{i ∈ Q} h_i
 
-where `Q` is the two quality factor indices and `λ` their eigenvalues, so the weights are each
-component's **share of explained variance among the quality factors**, summing to one.
+where `Q` is the two quality factor indices and `h_j = Σ_i Λ_R[i, j]²` is the sum of squared
+**rotated** loadings on factor `j`. The weights are each component's share of explained variance
+among the quality factors, summing to one.
+
+**The shares are rotated, not unrotated, and this too was a real defect.** Varimax redistributes
+variance across components, so the unrotated eigenvalue `λ_j` and the rotated component `j` are not
+the same object; indexing one by the other pairs two unrelated quantities. Measured on the panel, the
+unrotated weighting gives 0.706/0.294, 0.837/0.163, 0.872/0.128 and 0.845/0.155 where the rotated
+shares are 0.556/0.444, 0.775/0.225, 0.547/0.453 and 0.587/0.413. On Adult the second factor's weight
+was wrong by a factor of 3.5. §6.3 of the protocol makes variance weighting primary precisely because
+the weighting was measured to move the quality ranking, so a weight that wrong is material by the
+protocol's own standard.
+
+Both shares are persisted per replication, named apart as `explained_variance_share_rotated` and
+`explained_variance_share_unrotated`.
 
 Minimized. The alternative, an unweighted mean of the same z-scored scores, is the dissertation's
 choice and is the sensitivity analysis declared in advance in §11.1. Under this factor stage the two
@@ -124,11 +152,41 @@ is a strong association and is not identity. Enforced by `scripts/check_claim_bl
 The mapping is **fit once on the design side and applied everywhere else**, so that every point a
 replication scores lives in one objective space.
 
-**7.1 Fitted on the design side only**, in this order, from the 88 evaluated design rows:
+**7.0 Scope: one model per replication, from that replication's 88 design rows.** This resolves a
+contradiction between three documents and the code, recorded as amendment 19.
+
+An earlier §7.2 of the protocol required one model per **dataset**, fitted on the Stage A 166-point
+reference set and applied to all 30 replications, on the ground that a per-replication refit means
+the objective is not the same variable in every pair. That requirement is withdrawn, for two reasons
+that outweigh it:
+
+1. **It would route audit-only data into a fitting stage.** The 166-point set is the 88 design rows
+   *plus the 78 external validation runs*, and the external set is declared audit-only in §8 and in
+   `EXTERNAL_VALIDATION_VERIFICATION.md` condition 7. Fitting the objective on it would contradict
+   the study's own leakage rule.
+2. **It would let Stage A define the confirmatory objective.** Stage A is a measurement-validation
+   pilot, one partition per dataset. Using it to define what "quality" means for every confirmatory
+   replication is the strongest available form of a pilot result altering a confirmatory choice,
+   which is the first question the protocol review asks.
+
+The concern that motivated the withdrawn rule is answered rather than dismissed. Both primary
+indicators are **normalized within their own replication** — the hypervolume ratio against that
+replication's reference hypervolume, IGD⁺ against that replication's reference range — so a paired
+difference between two arms is computed inside one objective space and the differences remain
+comparable across replications. And factor stability across replications is not an assumption here;
+it is one of the study's questions. The campaign therefore records, per dataset, the role assignment,
+the sign orientation and the Tucker congruence of each replication's loading matrix against the
+dataset's first replication, and **flags any replication whose role assignment or orientation differs
+from the modal one**. A flip is reported, never silently corrected.
+
+**7.1 Fitted on the design side only**, in this order, from that replication's 88 evaluated design
+rows:
 
     raw responses → transforms (§2.1) → orientation (§2.2) → standardization (§3, μ and σ)
-    → PCA fit (§4.1) → fixed k = 3 → Varimax fit (§4.3, R) → role assignment (§4.4)
-    → sign orientation (§4.5) → factor-score standardization (μ_S, σ_S) → weights (§5)
+    → PCA fit (§4.1) → fixed k = 3 → scaled loadings Λ (§4.2) → Varimax fit (§4.3, R)
+    → standardized component scores S = Z·V·diag(1/√λ)·R → role assignment (§4.4)
+    → sign orientation (§4.5) → factor-score standardization (μ_S, σ_S)
+    → rotated variance-share weights (§5)
 
 The tuple `(μ, σ, V, R, roles, signs, μ_S, σ_S, w)` is then **frozen** and persisted.
 

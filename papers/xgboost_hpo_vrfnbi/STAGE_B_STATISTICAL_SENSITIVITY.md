@@ -38,14 +38,14 @@ Two-sided paired test at α = 0.05 and 80% power, 150 resampling draws per datas
 
 | Dataset | indicator | paired sd (proxy) | minimum detectable difference | expected 95% interval half-width | detectable at ρ = 0.25 |
 |---|---|---:|---:|---:|---:|
-| MAGIC | hypervolume ratio | 0.0118 | **0.0063** | 0.0044 | 0.0072 |
-| MAGIC | IGD⁺ | 0.0096 | 0.0051 | 0.0036 | 0.0059 |
-| Spambase | hypervolume ratio | 0.0423 | **0.0224** | 0.0158 | 0.0259 |
-| Spambase | IGD⁺ | 0.0172 | 0.0091 | 0.0064 | 0.0105 |
-| Adult | hypervolume ratio | 0.0334 | **0.0177** | 0.0125 | 0.0204 |
-| Adult | IGD⁺ | 0.0165 | 0.0087 | 0.0062 | 0.0101 |
-| Bank Marketing | hypervolume ratio | 0.0297 | **0.0157** | 0.0111 | 0.0182 |
-| Bank Marketing | IGD⁺ | 0.0152 | 0.0080 | 0.0057 | 0.0093 |
+| MAGIC | hypervolume ratio | 0.0112 | **0.0059** | 0.0042 | 0.0197 |
+| MAGIC | IGD⁺ | 0.0092 | 0.0049 | 0.0034 | 0.0162 |
+| Spambase | hypervolume ratio | 0.0455 | **0.0241** | 0.0170 | 0.0799 |
+| Spambase | IGD⁺ | 0.0220 | 0.0116 | 0.0082 | 0.0386 |
+| Adult | hypervolume ratio | 0.0319 | **0.0169** | 0.0119 | 0.0561 |
+| Adult | IGD⁺ | 0.0150 | 0.0080 | 0.0056 | 0.0264 |
+| Bank Marketing | hypervolume ratio | 0.0296 | **0.0157** | 0.0111 | 0.0520 |
+| Bank Marketing | IGD⁺ | 0.0142 | 0.0075 | 0.0053 | 0.0249 |
 
 The standardized effect R = 30 detects at 80% power is **0.532 paired standard deviations**, which
 is a medium effect. The design cannot resolve small ones.
@@ -56,9 +56,10 @@ replication count, however suggestive it looks, and will not be reported as one.
 
 ## What this means for the study, stated before any result exists
 
-**The hypervolume-ratio differences the study can resolve are between about 0.6 and 2.2 percentage
-points of the reference hypervolume**, depending on the dataset. MAGIC is the most sensitive by a
-factor of three and Spambase the least.
+**The hypervolume-ratio differences the study can resolve are between about 0.6 and 2.4 percentage
+points of the reference hypervolume** under the uncorrected paired test, depending on the dataset,
+and between **2.0 and 8.0 percentage points** under the corrected test at ρ = 0.25. MAGIC is the most
+sensitive by a factor of four and Spambase the least.
 
 Two consequences follow, and both are written down now rather than after the campaign.
 
@@ -73,14 +74,23 @@ hypervolume ratio, this design will resolve it on MAGIC and may not on Spambase.
 of the design, it was knowable in advance, and it is knowable in advance because this analysis was
 run before the campaign rather than after.
 
-## Treatment of the corrected test
+## Treatment of the corrected test, and a correction to it
 
-The Nadeau and Bengio correction inflates the variance for overlapping resamples. It is reported as
-a **sensitivity, not as the primary test**, for a reason the protocol now states: the correction was
-derived for the generalization error of a learner under repeated resampling, and a Pareto quality
-indicator computed on a returned set is not that quantity. The table gives the detectable effect at
-ρ = 0.25 so the reader can see how much the correction costs — between 14% and 16% coarser
-resolution — without the paper resting on it.
+The final protocol review found that the quantity reported here as the Nadeau and Bengio correction
+**was not theirs**. Their result is that for overlapping resamples the variance of the mean
+difference is `σ²(1/n + ρ/(1−ρ))`, so the standard error is `sd·√(1/n + ρ/(1−ρ))`. The earlier
+version instead inflated `sd/√n` by `√(1 + ρ/(1−ρ))`, which divides the correction term by `n` and
+understates it badly at R = 30.
+
+Corrected, the cost of the correction is much larger than previously reported: the standard error
+inflates by **3.31×** at ρ = 0.25, not 1.15×. The detectable hypervolume-ratio difference under the
+corrected test is therefore **0.020 to 0.080** depending on dataset, not 0.007 to 0.026.
+
+That is a material change and it is reported rather than buried. It is also why the correction is a
+**sensitivity and never the primary test**: it was derived for the generalization error of a learner
+under repeated resampling, and a Pareto quality indicator computed on a returned set is not that
+quantity. Applying it here is a transfer, and at ρ = 0.25 it would leave this design able to resolve
+only fairly large differences.
 
 Primary evidence remains the paired effect distribution: the median with its bootstrap interval, the
 win, tie and loss counts with Wilson intervals, and the matched-pairs rank-biserial correlation.

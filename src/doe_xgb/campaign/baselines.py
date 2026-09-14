@@ -19,6 +19,22 @@ from .design import from_coded, to_coded
 from .evaluator import BOUNDS, INT_PARAMS, PARAMS
 
 
+# Each comparator draws from its own stream. Sharing one seed made the panel
+# substantially one baseline: at a budget of 386 over seven factors the grid is two
+# levels per factor (128 corners) padded with 258 random points, and those padding
+# points were bit-identical to random search's first 258, while the Bayesian and
+# Parzen initial designs were bit-identical to random search's first 77. Pairing
+# across replications is preserved because the offsets are fixed and declared.
+SEED_OFFSET = {"grid": 101, "random": 202, "bayes_quality": 303, "bayes_cost": 404,
+               "tpe_quality": 505, "tpe_cost": 606, "nsga2": 707}
+
+
+def method_seed(base: int, method: str) -> int:
+    if method not in SEED_OFFSET:
+        raise KeyError(f"no declared seed offset for comparator {method!r}")
+    return int(base) + SEED_OFFSET[method]
+
+
 def _realize(xc: np.ndarray) -> dict[str, Any]:
     from .arms import Realizer
     cfg, _ = Realizer(PARAMS, BOUNDS, list(INT_PARAMS)).realize(xc)
@@ -33,7 +49,14 @@ def _collect(view, configs: list[dict]) -> pd.DataFrame:
 
 
 def coarse_grid(view, budget: int, seed: int) -> pd.DataFrame:
-    """A grid with as many levels per factor as the budget allows, then subsampled."""
+    """A grid with as many levels per factor as the budget allows, then padded.
+
+    At a budget of 386 over seven factors this is two levels per factor, so the
+    mesh is 128 corners and 258 of the 386 points are uniform padding. The split is
+    reported rather than hidden: calling a set that is two-thirds random a "coarse
+    grid" without saying so is the kind of thing that costs a paper its comparator
+    section.
+    """
     k = len(PARAMS)
     levels = max(2, int(np.floor(budget ** (1.0 / k))))
     axes = [np.linspace(-1.0, 1.0, levels) for _ in range(k)]
@@ -44,7 +67,11 @@ def coarse_grid(view, budget: int, seed: int) -> pd.DataFrame:
     elif len(mesh) < budget:
         extra = rng.uniform(-1.0, 1.0, size=(budget - len(mesh), k))
         mesh = np.vstack([mesh, extra])
-    return _collect(view, [_realize(x) for x in mesh])
+    out = _collect(view, [_realize(x) for x in mesh])
+    out.attrs["grid_levels_per_factor"] = int(levels)
+    out.attrs["mesh_points"] = int(min(levels ** k, budget))
+    out.attrs["random_padding_points"] = int(max(0, budget - levels ** k))
+    return out
 
 
 def random_search(view, budget: int, seed: int) -> pd.DataFrame:

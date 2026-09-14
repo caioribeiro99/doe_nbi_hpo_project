@@ -160,7 +160,15 @@ subspace is retained there is effectively arbitrary. Eigenvalues and that ratio 
 dataset per replication, and the manuscript states that no standard retention criterion supports
 three components on this panel.
 
-**Why variance weighting is primary.** `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 measured the two
+**Why variance weighting is primary — restated on the right measurement.** An earlier version of this
+paragraph justified the choice with Spearman 0.374. That figure is from the **dissertation's**
+pipeline, measured in `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4. Under this protocol's own factor
+stage the two weightings agree at **0.865 to 0.964** across the panel, so the choice matters far less
+than that number implied. Variance weighting remains primary for the reason that does not depend on
+the magnitude: it is the weighting the extraction itself implies, since a component's share of
+explained variance is the reason it was extracted. The dissertation's equal weighting is the
+sensitivity declared in advance in §11.1. The original audit measurement, for reference:
+`audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 measured the two
 weightings ranking the MAGIC design at Spearman 0.374, sharing 1 of 10 top rows and picking different
 best rows. The choice is therefore not innocuous and cannot be left to a default. Variance weighting
 is chosen because it is the weighting the extraction itself implies: a component's share of explained

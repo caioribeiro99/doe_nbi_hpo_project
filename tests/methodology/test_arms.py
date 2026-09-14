@@ -255,3 +255,53 @@ def test_the_frozen_tree_is_repository_local_not_a_scratch_path() -> None:
     repo = Path(__file__).resolve().parents[2]
     assert repo in src.parents, f"{src} is outside the repository"
     assert "/tmp" not in str(src)
+
+
+def test_a_zero_residual_subproblem_counts_as_certified() -> None:
+    """`residual or 1.0` maps 0.0 to 1.0, so a perfect solve scored as uncertified."""
+    from doe_xgb.campaign.arms import EQUALITY_TOLERANCE
+
+    c = cfg()
+    anchors, chim = surrogate_reference([f1, f2], c)
+    run = run_nbi_arm("NBI-S", [f1, f2], c, anchors, chim, realizer())
+    assert run.diagnostics["equality_tolerance"] == EQUALITY_TOLERANCE
+    exact = [k for k in run.candidates
+             if k.solver_success and k.equality_residual == 0.0]
+    certified_count = round(run.diagnostics["certified_fraction"] * len(run.candidates))
+    counted = sum(1 for k in run.candidates
+                  if k.solver_success and (k.equality_residual or 0.0) < EQUALITY_TOLERANCE)
+    assert certified_count == counted, (
+        f"{len(exact)} subproblems solved to exactly zero residual and the predicate "
+        "must count them"
+    )
+
+
+def test_ws_s_applies_the_same_feasibility_constraint_as_the_nbi_path() -> None:
+    """The geometry contrast may not differ in what region each arm may search."""
+    def on_ball(x):
+        return np.array([0.25 - float(np.dot(x, x))])
+
+    c = NBIConfig(objective_count=2, bounds=np.array([[-1.0, 1.0], [-1.0, 1.0]]),
+                  n_starts=5, seed=3, feasibility_constraint=on_ball)
+    anchors, chim = surrogate_reference([f1, f2], c)
+    ws = run_ws_s([f1, f2], c, anchors, realizer())
+    nbi = run_nbi_arm("NBI-S", [f1, f2], c, anchors, chim, realizer())
+    assert ws.diagnostics["feasibility_constraint_applied"] is True
+    assert nbi.diagnostics["feasibility_constraint_applied"] is True
+    ws_max = max(float(np.dot(k.x_continuous, k.x_continuous)) for k in ws.candidates)
+    assert ws_max <= 0.25 + 1e-4, (
+        f"WS-S left the feasible ball (max squared norm {ws_max:.3f}); it was "
+        "dropping the constraint the NBI path applies"
+    )
+
+
+def test_both_arms_report_solver_success_and_realization_duplication() -> None:
+    """Weighted-sum minimizers cluster; that must be visible, not inferred."""
+    c = cfg()
+    anchors, chim = surrogate_reference([f1, f2], c)
+    for run in (run_ws_s([f1, f2], c, anchors, realizer()),
+                run_nbi_arm("NBI-S", [f1, f2], c, anchors, chim, realizer())):
+        for key in ("solver_success_fraction", "distinct_realized_configurations",
+                    "duplicate_share_after_realization"):
+            assert key in run.diagnostics, f"{run.arm} is missing {key}"
+        assert 0.0 <= run.diagnostics["duplicate_share_after_realization"] <= 1.0
