@@ -10,8 +10,14 @@ Pure-NumPy implementations suitable for any q >= 2:
 - :func:`spacing_entropy`: normalized entropy of nearest-neighbor gaps.
 - :func:`hypervolume`: 2D / 3D exact via inclusion-exclusion; higher q
   uses a Monte-Carlo estimate.
-- :func:`igd`: Inverted Generational Distance against a reference set.
+- :func:`igd`: plain Inverted Generational Distance. Retained for continuity; it
+  is NOT the indicator the protocol names.
+- :func:`igd_plus`: IGD+ (Ishibuchi et al., 2015), weakly Pareto compliant. This
+  is the protocol's indicator.
 - :func:`pareto_front`: extracts the non-dominated subset.
+- :func:`dominance_filter`, :func:`dominated_fraction`: a returned set may contain
+  points dominated by its own members; both the raw and the filtered set are
+  reported, and the dominated share is a per-arm diagnostic.
 """
 
 from __future__ import annotations
@@ -110,6 +116,57 @@ def igd(F: np.ndarray, reference: np.ndarray) -> float:
     return float(np.mean(dists))
 
 
+def igd_plus(F: np.ndarray, reference: np.ndarray) -> float:
+    """Modified inverted generational distance, IGD+ (lower is better).
+
+    Ishibuchi, Masuda, Tanigaki and Nojima (2015). For minimization the distance
+    from a reference point ``z`` to a solution ``a`` counts only the components in
+    which ``a`` is worse:
+
+        d+(z, a) = sqrt( sum_i max(a_i - z_i, 0)^2 )
+
+    IGD+ is the mean over reference points of the minimum of that distance over
+    the approximation set. Unlike plain IGD it is weakly Pareto compliant, which
+    is why the protocol names IGD+ and not IGD.
+
+    ``igd`` above computes plain IGD and is retained only for continuity with
+    earlier reports. It is not the protocol's indicator.
+    """
+    F = np.asarray(F, dtype=float)
+    R = np.asarray(reference, dtype=float)
+    if R.size == 0 or F.size == 0:
+        return float("nan")
+    out = np.empty(len(R), dtype=float)
+    for i, r in enumerate(R):
+        excess = np.maximum(F - r, 0.0)
+        out[i] = float(np.min(np.sqrt(np.sum(excess * excess, axis=1))))
+    return float(np.mean(out))
+
+
+def dominance_filter(F: np.ndarray) -> np.ndarray:
+    """Indices of the rows of ``F`` that are not dominated within ``F`` itself.
+
+    A scalarization can return points that are feasible for its own subproblem
+    and yet dominated inside the set it returns. Weighted-sum minimizers are
+    weakly Pareto optimal by construction; NBI subproblem solutions need not be,
+    and the asymmetry grows with objective count. Reporting a raw set and a
+    filtered set separately keeps that from silently becoming a comparison
+    between methods.
+    """
+    return np.flatnonzero(pareto_front(np.asarray(F, dtype=float)))
+
+
+def dominated_fraction(F: np.ndarray) -> float:
+    """Share of a returned set that its own members dominate.
+
+    A per-arm diagnostic, and itself a result about the scalarization.
+    """
+    F = np.asarray(F, dtype=float)
+    if len(F) == 0:
+        return float("nan")
+    return float(1.0 - pareto_front(F).mean())
+
+
 def hypervolume(F: np.ndarray, reference: np.ndarray) -> float:
     """Hypervolume for q in {2, 3}; Monte-Carlo for higher q."""
     F = np.asarray(F, dtype=float)
@@ -130,7 +187,12 @@ def hypervolume(F: np.ndarray, reference: np.ndarray) -> float:
             hv += (ref[0] - x) * (prev_y - y)
             prev_y = y
         return float(hv)
-    # Monte-Carlo for q >= 3.
+    # Monte-Carlo for q >= 3. Two properties a caller must know: the estimate has a
+    # sampling standard deviation that no number of replications reduces, and the
+    # sampling box depends on the front through ``lo``, so the fixed seed does not
+    # make two fronts' estimates share their error. The campaign runs at q = 2,
+    # where the exact sweep above is used; any q >= 3 use must report the estimator
+    # standard deviation beside the value.
     rng = np.random.default_rng(0)
     n_samples = 20_000
     lo = F.min(axis=0)
@@ -144,6 +206,9 @@ def hypervolume(F: np.ndarray, reference: np.ndarray) -> float:
 
 __all__ = [
     "pareto_front",
+    "igd_plus",
+    "dominance_filter",
+    "dominated_fraction",
     "generalized_distance",
     "shannon_entropy",
     "spread_delta",

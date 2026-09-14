@@ -1,7 +1,7 @@
 {
   "seed": 20260913,
   "n_design": 88,
-  "n_valid": 100,
+  "n_valid": 78,
   "datasets": {
     "magic": {
       "rows": 19020,
@@ -175,5 +175,6 @@
         "evaluations_performed_this_run": 0
       }
     }
-  }
+  },
+  "n_valid_note": "the argparse default of 100 had leaked into this artifact; the realized external set is the 78-run complementary fraction"
 }

@@ -44,7 +44,7 @@ the one the Paper-1 mandate imposed and it carries over: **INHERITED**, **ADAPTE
 |---|---|---|
 | Response-surface fitting | uncoded → coded units | `METHODOLOGY_DECISIONS.md` D6; conditioning |
 | Objective count | three extracted and two optimized, undeclared → one declared specification | `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q3 |
-| Quality aggregation | a default argument → a pre-registered weighting with a sensitivity check | `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 |
+| Quality aggregation | a default argument → a weighting declared in advance with a sensitivity check | `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 |
 | Selection rule | `max(Accuracy_Mean)` → the full front, with the legacy column kept and labelled | `METHODOLOGY_DECISIONS.md` D7 |
 | Cost objective | wall-clock training time → an objective that is reproducible from seeds | `audits/provenance/README.md` |
 | NBI subproblem | `t ≥ 0` → `t` free | `audits/NBI_GEOMETRY_AUDIT.md` |

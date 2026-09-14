@@ -1,5 +1,11 @@
 # Two objectives or three: the scientific question, stated before the compute question
 
+> **OUTCOME: the amendment was REFUSED.** See `Q3_AMENDMENT_REVIEW.md`. The confirmatory campaign
+> runs at two objectives. This document is retained unedited in structure, with its two factual
+> errors corrected in place and marked, because it is the record of what was argued **before** the
+> adversarial review and before the per-objective gate was measured. Every figure below is
+> regenerable by `../scripts/objective_count_evidence.py`.
+
 **Why this document exists.** Protocol v2 runs the campaign at two objectives, and the stated reason
 was cost: 4.6 days serial against 5.8. A serial projection is not a sufficient reason to omit a
 load-bearing objective, and the decision is being taken on a machine whose parallel throughput had
@@ -54,30 +60,52 @@ Three reasons, in descending strength.
 | Bank Marketing | +0.759 |
 
 A negative correlation means the two factors rank configurations in opposing directions. Collapsing
-them into a weighted mean does not summarize a trade-off; it **suppresses** one. On Spambase the
-suppressed axis is precision against specificity, which is the classical threshold trade-off and the
-thing a practitioner deploying a spam filter actually cares about.
+them into a weighted mean does not summarize a trade-off; it **suppresses** one.
 
-**2. The aggregation discards a large amount of Pareto structure.** Non-dominated set sizes on the
-88 design rows, two objectives against three:
+> **CORRECTION.** This paragraph originally continued: "On Spambase the suppressed axis is precision
+> against specificity, which is the classical threshold trade-off." That is **wrong**. On the
+> canonicalized Spambase design, precision and specificity correlate at **+0.863** — they agree. The
+> −0.533 is a property of the rotation, not of those two metrics. The correct statement is that the
+> second factor is dominated by precision and is close to orthogonal to overall quality there
+> (ρ = +0.025 with the mean of the six standardized quality responses); what it measures is not
+> identified by a named metric pair.
 
-| Dataset | two objectives | three objectives | growth |
-|---|---|---|---|
-| MAGIC | 21 | 42 | 2.0× |
-| Spambase | 6 | **65** | **10.8×** |
-| Adult | 6 | 37 | 6.2× |
-| Bank Marketing | 10 | 13 | 1.3× |
+> **REGISTER.** With bootstrap intervals the correlations are MAGIC −0.308 [−0.535, −0.053],
+> Spambase −0.533 [−0.719, −0.303], Adult +0.649 [+0.443, +0.812], Bank Marketing +0.759
+> [+0.586, +0.871]. The defensible claim is that redundancy was **not measured**, not that conflict
+> was established.
 
-On Spambase the two-objective formulation declares 6 of 88 design points non-dominated where the
-three-objective formulation finds 65. Those 59 points are not noise; they are configurations that
-are best-in-class on the suppressed axis.
+**2. The aggregation discards Pareto structure — but the raw growth figure is not the evidence.**
 
-**3. It eliminates the protocol's most awkward free parameter.** The aggregation weighting is the
-subject of `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4, which measured variance weighting and equal
-weighting ranking the design at Spearman 0.374 with different best rows, and of amendment 3, where
-the orientation rule for the aggregated composite had to be corrected after it inverted on three
-datasets. **At three objectives there is no aggregation, so neither problem exists.** The
-pre-registered sensitivity analysis of §11.1 also becomes unnecessary.
+> **CORRECTION.** This section originally reported raw growth factors with no null. Adding *any*
+> third coordinate, including a pure-noise one, weakly enlarges a non-dominated set — roughly 2× at
+> n = 88. The figure is claimable only as an excess over a null. Permuting the third coordinate
+> against the first two, 400 draws:
+
+| Dataset | two objectives | three objectives | raw growth | permutation null mean | p | exceeds null |
+|---|---:|---:|---:|---:|---:|:--:|
+| MAGIC | 21 | 42 | 2.0× | 21.8 | 0.000 | yes |
+| Spambase | 6 | 65 | 10.8× | 16.2 | 0.000 | yes |
+| Adult | 6 | 37 | 6.2× | 18.1 | 0.000 | yes |
+| Bank Marketing | 10 | 13 | 1.3× | **22.7** | **1.000** | **no** |
+
+The null cuts both ways and both readings belong here. On three datasets it **strengthens** the
+case, because the excess on Spambase is 65 against 16, not 65 against 6. On Bank Marketing it
+**reverses** it: the real third objective produces *fewer* non-dominated points than a random axis,
+so on that dataset the evidence runs against the amendment.
+
+**3. It would remove a free parameter — but a much smaller one than stated here originally.**
+
+> **CORRECTION.** This section originally cited Spearman **0.374** for variance-weighted against
+> equal-weighted aggregation. That figure comes from `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 and
+> is a measurement of the **dissertation's** pipeline. Under the protocol's own factor stage the
+> agreement is **0.865 / 0.874 / 0.884 / 0.964** on MAGIC / Spambase / Adult / Bank Marketing. The
+> free parameter is roughly four times less awkward than the argument claimed, and this is the
+> amendment's **weakest** argument once corrected, not its strongest.
+
+What remains true: the orientation rule for the aggregated composite had to be corrected in
+amendment 3 after it inverted on three datasets, and at three objectives there is no aggregation to
+orient. That is a real but modest benefit.
 
 **4. It is where NBI is supposed to earn its keep.** At two objectives the convex hull of individual
 minima is a line segment and the quasi-normal is a single direction. At three it is a simplex, and
@@ -85,6 +113,12 @@ uniform spread over a simplex is the property Das and Dennis advanced NBI to del
 weighted-sum scalarization most visibly lacks. Review finding M5 already said this. Running the
 geometry contrast at the dimensionality where the geometry barely differs is the conservative choice
 for the paper's hypothesis, and a reviewer is entitled to ask why it was made.
+
+**5. A constraint this section originally missed.** `run_historical_ws` reproduces the dissertation by
+calling the frozen `run_nbi_weighted_sum`, whose signature takes **two** models and a two-component
+weight grid, and `method_arms.md` forbids reimplementing it. **HISTORICAL-WS and HISTORICAL-WS-asrun
+cannot exist at three objectives**, so one of the three primary identifying contrasts would
+disappear and the composite with its weighting would survive inside that arm regardless.
 
 ## D. Classification
 
@@ -124,5 +158,23 @@ performance never.
 
 ## F. Outcome
 
-Recorded in `STAGE_B_THROUGHPUT.md` once the measurement exists, together with the branch taken and
-the projection that justified it.
+**Refused.** Stage B measured 0.1585 s per real evaluation, so both objective counts fit far inside
+the ceiling (0.52 and 0.69 days) and **compute was never the binding constraint**. Branch 2 was
+therefore entered and the adversarial review ran, as the rule required.
+
+The review found what this section had not measured: the proposed third objective fails the
+protocol's own surrogate reliability gate on two of four datasets, and the two quality axes exchange
+roles across the panel so that "objective 2" does not name the same quantity on any two datasets.
+Full decision and reasoning in `Q3_AMENDMENT_REVIEW.md`; regenerable evidence in
+`../audits/objective_count_evidence.json`.
+
+A sixth branch is added to §E, retrospectively and explicitly marked as such, because the rule as
+written had no branch for the situation that actually arose:
+
+> **Branch 5 (added after the review).** Load-bearing but **not surrogate-representable**: if the
+> candidate objective fails the §7 reliability gate on any panel dataset, it is not promoted to an
+> optimization target, because the surrogate-driven arms would steer on a coordinate they cannot
+> see. Compute does not enter this branch.
+
+The branch is written down here rather than applied silently, and it is recorded as amendment 14 in
+`../PROTOCOL_AMENDMENTS.md` with the acknowledgement that it postdates the situation it governs.

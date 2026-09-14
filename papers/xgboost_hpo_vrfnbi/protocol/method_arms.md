@@ -96,7 +96,7 @@ Everything except the factor named in the contrast. Specifically:
 | Design | the version-controlled 88-run face-centred central composite design |
 | Evaluation | stratified 5-fold cross-validation, one seed per replication |
 | Objective set | one specification, shared; see below |
-| Objective reduction | one PCA/Varimax stage with a pre-registered aggregation weighting |
+| Objective reduction | one PCA/Varimax stage with an aggregation weighting declared in advance |
 | Surrogate | quadratic response surface, backward elimination at α = 0.05, coded units |
 | Weight grid | the same simplex lattice for every arm, same cardinality |
 | Candidate validation | every returned candidate re-evaluated on the real objectives |
@@ -108,7 +108,7 @@ Two of these are changes from the dissertation, and both are forced by the audit
 - **Coded units**, not uncoded (`docs/METHODOLOGY_DECISIONS.md` D6). Uncoded fitting on factors
   whose ranges span 0.29 to 650 is badly conditioned, and the dissertation's own tables report coded
   coefficients.
-- **A pre-registered aggregation weighting** for the quality composite, with a stated sensitivity
+- **An aggregation weighting declared in advance** for the quality composite, with a stated sensitivity
   check. `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 measured that this choice moves the quality
   ranking at Spearman 0.374 and changes which design row looks best, so leaving it to a default
   argument would put an uncontrolled factor inside every arm.

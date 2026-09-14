@@ -59,27 +59,113 @@ BLACKLIST: list[tuple[int, str, str]] = [
      "only claimable if measured here and found to hold"),
     (10, r"\b(?:no|not any)\s+(?:prior\s+)?work\s+(?:exists|has\s+ever)\b",
      "a bounded search establishes non-location, not absence"),
+    # --- added after the objective-count adversarial review -------------------
+    (11, r"\b(?:three|3)[- ]objectives?\b[^.]{0,90}\b(?:because|so that|in order to)\b"
+         r"[^.]{0,60}\b(?:NBI|normal boundary intersection|simplex|CHIM)\b",
+     "objective count is justified by structure in the data and the decision rule, "
+     "never by the method it favours"),
+    (12, r"\b(?:at|with)\s+(?:three|3)\s+objectives?\b[^.]{0,70}\bNBI\b[^.]{0,50}"
+         r"\b(?:advantage|superior\w*|outperform\w*|wins?|better\s+spread)\b",
+     "the simplex is where an NBI advantage is hypothesised, not where it is established"),
+    (13, r"\bnon-?dominated\b[^.]{0,70}\b(?:grew|grows|growth|increased?|expand\w*)\b"
+         r"[^.]{0,70}\b(?:shows?|demonstrat\w+|prov\w+|confirms?|establish\w+)\b",
+     "adding any coordinate weakly enlarges a non-dominated set; the figure is "
+     "claimable only as an excess over a declared null"),
+    (14, r"\b(?:recover\w*|reveal\w*|uncover\w*|restor\w*)\b[^.]{0,60}"
+         r"\b(?:suppressed|hidden|masked|collapsed)\b[^.]{0,50}"
+         r"\b(?:trade-?off|axis|structure|front)\b",
+     "recovery language asserts as established what only a null-referenced "
+     "comparison supports, and it is false on one panel dataset"),
+    (15, r"\bsurrogate\w*\b[^.]{0,80}"
+         r"\b(?:reliable|adequate|validated|accurate|passes?\s+the\s+gate)\b[^.]{0,60}"
+         r"\b(?:all|every|each|four|both)\s+(?:datasets?|objectives?|factors?)\b",
+     "false at both objective counts: Spambase's quality surface already fails the gate"),
+    (16, r"\b(?:pilot|stage\s*A)\b[^.]{0,70}"
+         r"\b(?:confirms?|confirmed|establish\w+|demonstrat\w+|shows?|proves?)\b[^.]{0,60}"
+         r"\b(?:surrogate|reliab\w+|valid\w+|fidelity)\b",
+     "Stage A is one partition per dataset and is a measurement-validation pilot, "
+     "not confirmatory evidence"),
+    (16, r"\bthe\s+surrogate\s+is\s+reliable\b",
+     "same; the permitted register names the screening, not the surrogate"),
+    (17, r"\b(?:this|the)\s+(?:study|protocol|campaign|experiment|amendment)\s+"
+         r"(?:was|is|were)\s+pre-?registered\b",
+     "only what tag v1 froze before any measurement may be called pre-registered"),
+    (17, r"\bprotocol\s+v(?:2|3)\b[^.]{0,50}\bpre-?registered\b",
+     "v2 and v3 are prospectively specified and pilot-amended, not pre-registered"),
+    (18, r"\b(?:optimiz\w+|minimiz\w+|target\w*)\s+(?:for\s+)?(?:the\s+)?"
+         r"(?:training|computational|wall-?clock)\s+(?:time|cost)\b",
+     "the optimized objective is a deterministic model-complexity proxy, not time"),
+    (18, r"\b(?:our|the|second)\s+(?:cost\s+)?objective\s+(?:is|was)\s+(?:the\s+)?"
+         r"(?:training|computational|wall-?clock)\s+(?:time|cost)\b",
+     "same; measured time is a secondary audit variable"),
+    (19, r"\b(?:the\s+)?(?:third\s+objective|second\s+quality\s+factor|objective\s+2)\b"
+         r"[^.]{0,80}\b(?:across|on\s+all|every\s+dataset|the\s+panel|generally|consistently)\b",
+     "the quality axes exchange roles across the panel, so objective 2 does not name "
+     "the same quantity on any two datasets"),
 ]
 
 
 # A claim stated as something to be tested is not a claim. Reporting a blacklisted
 # phrase that the paper is about to measure, or attribute to someone else, is allowed;
 # asserting it is not. This guard looks at the run-up to the match.
+# A document that states a prohibition has to quote it. Matches whose run-up carries
+# prohibition language are therefore not violations. This is narrow on purpose: it
+# looks only at the immediately preceding text, so an author cannot license a claim
+# by mentioning the word "forbidden" earlier in the paragraph.
+PROHIBITION = re.compile(
+    r"\b(?:must\s+not|may\s+not|never|forbidden|not\s+permitted|prohibit\w*|blacklist\w*|"
+    r"do\s+not\s+(?:write|say|use|claim)|is\s+not:|are\s+not:|incorrect[,:]|wrong[,:]|"
+    r"That\s+(?:this|the)\s+(?:work|study|paper)|forbids?|rules?\s+out)\b", re.I)
+
 HEDGE = re.compile(
     r"\b(?:whether|if|tested|we\s+test|is\s+measured|was\s+measured|not\s+assumed|"
     r"do(?:es)?\s+not\s+claim|claims?\s+no|question\s+(?:of|whether)|ask(?:s|ed)?\s+whether)\b",
     re.I)
 
 
+# Directories whose prose is subject to the claim rules. The workspace documents are
+# included deliberately: a terminology rule that binds only the manuscript is a rule
+# that is broken everywhere it is decided.
+SCAN_SUFFIXES = (".tex", ".md")
+
+# Documents whose job is to STATE the prohibitions necessarily quote them. They are
+# listed here by name rather than detected, so that the exemption is auditable: a
+# reader can see exactly which files are exempt and why, and adding one is a visible
+# edit to this script rather than a phrase an author can drop into any paragraph.
+QUOTING_DOCUMENTS = {
+    "novelty_matrix.md": "contains the claim blacklist itself",
+    "research_lineage.md": "contains the permitted/not-permitted statement pair",
+    "PROTOCOL_AMENDMENTS.md": "quotes the terminology rules it establishes",
+    "protocol/Q3_AMENDMENT_REVIEW.md": "quotes the claims it refuses",
+    "protocol/COST_OBJECTIVE_CLAIM_BOUNDARY.md": "states the cost-terminology rule",
+    "audits/METHODOLOGICAL_IDENTITY_AUDIT.md": "states what may and may not be written",
+    "audits/PCA_VARIMAX_IDENTITY_AUDIT.md": "states what may and may not be written",
+    "README.md": "restates the workspace rules, including the permitted/forbidden pair",
+}
+
+
 def load_text(pdf: Path | None, tex_dir: Path) -> tuple[str, str]:
+    """Prefer the compiled manuscript; otherwise scan the workspace's own prose.
+
+    The earlier version looked only for *.tex, of which there are none until the
+    manuscript exists, so it exited 0 having scanned nothing while
+    COST_OBJECTIVE_CLAIM_BOUNDARY.md advertised it as an active control.
+    """
     if pdf and pdf.exists():
         import pymupdf
         doc = pymupdf.open(pdf)
         return "".join(p.get_text() for p in doc), str(pdf)
-    parts = [p.read_text(errors="replace") for p in sorted(tex_dir.rglob("*.tex"))]
-    if not parts:
+    files = sorted(f for s in SCAN_SUFFIXES for f in tex_dir.rglob(f"*{s}")
+                   if "audits/pilot_stage_a" not in str(f)
+                   and str(f.relative_to(tex_dir)) not in QUOTING_DOCUMENTS)
+    if not files:
         return "", str(tex_dir)
-    return "\n".join(parts), f"{len(parts)} .tex files under {tex_dir}"
+    parts = [f"\n<<<FILE {f.relative_to(tex_dir)}>>>\n" + f.read_text(errors="replace")
+             for f in files]
+    exempt = sum(1 for n in QUOTING_DOCUMENTS if (tex_dir / n).exists())
+    return ("\n".join(parts),
+            f"{len(files)} .tex/.md files under {tex_dir} "
+            f"({exempt} rule-stating documents exempt by name)")
 
 
 def main() -> int:
@@ -100,8 +186,11 @@ def main() -> int:
     for item, pattern, why in BLACKLIST:
         for m in re.finditer(pattern, text, re.I):
             ctx = text[max(0, m.start() - 100):m.end() + 100]
-            if HEDGE.search(text[max(0, m.start() - 60):m.start()]):
+            run_up = text[max(0, m.start() - 60):m.start()]
+            if HEDGE.search(run_up):
                 continue    # the sentence poses the claim as a question, not an assertion
+            if PROHIBITION.search(text[max(0, m.start() - 140):m.start()]):
+                continue    # the sentence forbids the claim rather than making it
             hits.append((item, why, m.group(0), ctx))
 
     print(f"scanned {source}: {len(text.split())} words against "

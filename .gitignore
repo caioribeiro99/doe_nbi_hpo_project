@@ -101,3 +101,4 @@ venv-*/
 # Paper 1 raw data and caches: unversioned here as everywhere.
 /data/pco213/
 /reports/pco213_postwork_benchmark/
+/.frozen/

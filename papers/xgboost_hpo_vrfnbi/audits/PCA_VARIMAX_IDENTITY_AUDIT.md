@@ -138,7 +138,7 @@ Not supported, and must not be written:
 
 1. Every arm in Paper 2 must share **one** objective-reduction stage, specified explicitly, so the
    arms differ only in the optimizer. The aggregation weighting is part of that specification.
-2. The weighting must be a pre-registered, reported choice with a stated sensitivity check, not a
+2. The weighting must be a choice declared in advance and reported with a stated sensitivity check, not a
    default argument.
 3. The loading matrix reported in Paper 2 is the scaled one, and the text says which it is.
 

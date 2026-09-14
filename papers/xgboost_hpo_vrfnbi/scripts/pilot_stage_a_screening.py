@@ -275,7 +275,7 @@ class FactorModel:
         scores = self.pca_.transform(Z) @ self.R_
         zs = (scores - self.score_mu_) / self.score_sd_
         return {"quality": zs[:, self.q_idx_] @ self.w_,
-                "quality_equal": zs[:, self.q_idx_].mean(1),   # pre-registered sensitivity
+                "quality_equal": zs[:, self.q_idx_].mean(1),   # sensitivity declared in advance
                 "cost": zs[:, self.cost_idx_]}
 
     def summary(self) -> dict:
@@ -447,8 +447,11 @@ def main() -> int:
     n_valid = args.n_valid if args.external_set != "complement" else 10**6
     valid = external_points(n_valid, args.seed, kind=args.external_set)
 
+    # record the realized size, not the requested one: the complementary construction
+    # has a fixed size and the argparse default previously leaked into the artifact
     report: dict = {"seed": args.seed, "n_design": int(len(design)),
-                    "n_valid": args.n_valid, "datasets": {}}
+                    "n_valid": int(len(valid)), "external_set_kind": args.external_set,
+                    "datasets": {}}
 
     for ds in args.datasets:
         t0 = time.perf_counter()

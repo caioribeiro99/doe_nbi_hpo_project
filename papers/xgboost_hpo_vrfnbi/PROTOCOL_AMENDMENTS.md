@@ -170,25 +170,128 @@ Two steps, because the first replacement did not work either.
 | **Commit** | `c50c380`, 2026-09-13 13:12:53 −03:00 |
 | **Could it favour an arm?** | No; documentation only. |
 
+## Amendment 11 — Stage B was descoped, and that was not recorded
+
+| | |
+|---|---|
+| **v2 specification** | §12 defines Stage B as "all four arms and all comparators on one partition of one dataset", producing the paired standard deviation of each primary endpoint, the smallest effect the design detects at R = 30, and confirmation that every NBI subproblem certifies on the real problem. |
+| **What actually ran** | a throughput benchmark whose own header says "No arm is run", plus a calibration of the design and external set. Two of the three §12 deliverables do not exist. |
+| **Why it matters** | the R = 30 detectable effect was unmeasured while a protocol amendment was being decided, which inverts the priority the decision rule itself insists on. |
+| **Detected by** | the objective-count adversarial review, not by the author. |
+| **Revised specification** | Stage B is completed before launch: `STAGE_B_STATISTICAL_SENSITIVITY.md` measures the paired endpoint standard deviations and the detectable effect from pre-campaign information only, and the arm-certification check runs on one real partition. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** The descoping is precisely that no arm ran. |
+| **Could it favour an arm?** | **No**, but it could have concealed that the study is underpowered, which is worse than favouring an arm and is why it is recorded rather than quietly completed. |
+
+## Amendment 12 — the objective-count decision rule is not independently dated
+
+| | |
+|---|---|
+| **The claim the amendment rests on** | that `protocol/OBJECTIVE_COUNT_DECISION.md` §A–§E, including the four-day threshold for "comfortably under", was written **before** any throughput number was read. |
+| **The problem** | the decision document and the throughput artifacts landed in the **same commit**, `064832c` (2026-09-14 11:22:31 −03:00), which carries no tag. Nothing a reviewer can check establishes the ordering, and file modification times are trivially writable. The v1-to-v2 lineage was handled correctly; this decision, the one that most needed the discipline, was not. |
+| **Detected by** | the editor role of the adversarial review. |
+| **What is done about it** | the history is **not** rewritten, because rewriting it to look better is the opposite of the remedy. Instead: (a) this entry records the defect in the same ledger that records everything else; (b) the decision was in any case **refused**, so the ordering claim no longer carries a conclusion; (c) from here on, any decision rule that must predate a measurement is committed and **tagged** on its own before the measurement runs. |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | The undated rule could have been written to fit the measurement. It was not, but that is an assertion rather than a check, which is the point of this entry. The refusal makes it moot for this decision and the tagging rule makes it checkable for the next. |
+
+## Amendment 13 — per-objective surrogate gating, and the consequence of failure
+
+| | |
+|---|---|
+| **v2 specification** | §7 gated the surrogate at external R² ≥ 0.5 and Spearman ≥ 0.9, measured for the aggregated quality composite and for cost, and **never said what failing does**. |
+| **Engineering problem** | two things. The gate was never applied to each objective the campaign optimizes; and Spambase's quality composite **already fails today** at Spearman 0.847 while the campaign would have proceeded in silence. |
+| **Evidence** | `audits/objective_count_evidence.json`: 3 of 12 per-objective cells fail. Spambase has no gate-passing quality objective at all — its leading factor scores Spearman 0.861 and its second scores R² 0.080 with rank correlation 0.252 on a five-term surface. |
+| **Revised specification** | §7.1 fixes the consequence of failure before any arm runs: the gate never removes a dataset and never changes an arm; it is a reported per-replication covariate; every primary comparison is additionally reported conditioned on gate status; a dataset failing in the majority of replications is named in the results table and the abstract; and the thresholds never move. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | **No.** The rule is deliberately weak: a gate that changed the experiment would let surrogate quality select the evidence. HISTORICAL-WS is ungated because the historical pipeline has no gate, which is a property of that method and is reported as one. |
+
+## Amendment 14 — one factor model per dataset, applied to every replication
+
+| | |
+|---|---|
+| **v2 specification** | amendment 1 fixed "fitted on the design, applied to held-out points" and said nothing about refitting per replication. |
+| **Engineering problem** | if the model is refit per replication, the objective is not the same variable in every pair, so 30 paired indicator values do not live in one objective space and no normalized indicator is invariant to that. |
+| **Revised specification** | §7.2: one factor model per dataset, fitted on the 166-point reference set already evaluated and committed, applied to every replication; the per-replication refit reported as a sensitivity with Tucker congruence coefficients. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | **No.** Shared stage, identical across arms. |
+
+## Amendment 15 — the objective count, decided and then refused
+
+| | |
+|---|---|
+| **Proposal** | promote the second quality factor from a component of the aggregated composite to a third optimization objective. |
+| **Outcome** | **refused**, after a four-role adversarial review. Full reasoning in `protocol/Q3_AMENDMENT_REVIEW.md`. |
+| **Why** | the proposed objective fails §7's gate on two of four datasets; the two quality axes exchange roles across the panel, so "objective 2" does not name the same quantity on any two datasets; HISTORICAL-WS cannot exist at three objectives; and two of the proposal's own arguments were wrong. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | Refusing it is the choice **less** favourable to this paper's hypothesis, since NBI's advantage over weighted-sum scalarization is expected to grow with objective count. Recorded that way deliberately. |
+
+## Amendment 16 — indicator and diagnostic corrections
+
+| | |
+|---|---|
+| **v2 specification** | §9 names IGD⁺ among the indicators and §10 named no primary indicator. |
+| **Engineering problems** | `reporting.igd` computes plain IGD, not the IGD⁺ the protocol names; nothing filtered dominated points, although a weighted-sum minimizer is weakly Pareto optimal by construction and an NBI subproblem solution need not be; and with five indicators and no primary, the realized comparison family sat between 3 and 15 tests per dataset. |
+| **Revised specification** | `reporting.igd_plus` implements Ishibuchi et al.'s weakly Pareto compliant indicator; `dominance_filter` and `dominated_fraction` added, and every arm now reports the dominated share of its returned set so the asymmetry cannot be mistaken for approximation quality; §10 names the **hypervolume ratio** as the single primary indicator, with the other four secondary and descriptive; per-objective marginal comparisons are forbidden in §14. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | The dominance diagnostic is reported for **every** arm, not only the NBI ones, which is what keeps it neutral. Naming one primary indicator before any result is what keeps the family honest. |
+
+## Amendment 17 — `k = 3` restated as an inherited assumption
+
+| | |
+|---|---|
+| **v2 specification** | "Number of components: fixed at 3, with the Kaiser criterion reported alongside", which reads as though the criterion supports the choice. |
+| **Evidence** | it does not. Kaiser retains **2, 2, 1 and 1** components on MAGIC, Spambase, Adult and Bank Marketing — never three, on any dataset. The third-to-fourth eigenvalue ratio is 2.93, 2.10, 1.34 and 1.06, so on Bank Marketing the retained subspace is effectively arbitrary. |
+| **Revised specification** | §6.3 states that three components is an assumption inherited from the NBI-VRF construction the paper exists to decompose, not a criterion-supported choice, and that no standard retention criterion supports three on this panel. Eigenvalues and the ratio are reported per dataset per replication. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | **No.** Shared stage. |
+
+## Amendment 18 — the claim-blacklist scanner made real
+
+| | |
+|---|---|
+| **The problem** | `COST_OBJECTIVE_CLAIM_BOUNDARY.md` stated the cost-terminology rule was "enforced by `scripts/check_claim_blacklist.py`". It was not. The scanner read only `*.tex` and a compiled PDF, of which there were none, so it exited zero having scanned nothing; its patterns covered none of the four workspace terminology rules; and "pre-registered" appeared 15 times across live documents that `PROTOCOL_AMENDMENTS.md` declares must not use it. |
+| **Revised specification** | the scanner reads `*.md` as well, gains twelve patterns covering the objective-count, surrogate-adequacy, Stage-A register, pre-registration and cost-terminology rules, exempts rule-stating documents **by name in an auditable list** rather than by a detectable phrase, and runs in the test suite on every commit rather than only at build. The "pre-registered" uses were swept: the term is now reserved for what tag v1 froze before any measurement. |
+| **Commit** | this one |
+| **Could it favour an arm?** | **No.** A control that can only refuse text. |
+
 ---
 
 ## Summary of exposure
 
 | Question | Answer |
 |---|---|
-| Amendments made after observing any arm's result | **0 of 10** |
-| Amendments made after observing any Pareto front | **0 of 10** |
-| Amendments made after observing any method comparison | **0 of 10** |
+| Amendments made after observing any arm's result | **0 of 18** |
+| Amendments made after observing any Pareto front | **0 of 18** |
+| Amendments made after observing any method comparison | **0 of 18** |
+| Amendments found by the author | 1–10 |
+| Amendments found by adversarial review rather than by the author | **11–18** |
 | Amendments affecting a stage shared identically by all arms | 1, 2, 3, 8, 9 |
 | Amendments affecting budget symmetrically across arms and comparators | 5, 6 |
 | Amendments affecting only the surrogate gate, which HISTORICAL-WS does not use | 4 |
 | Amendments whose direction is conservative for the paper's own hypothesis | 6 (unmatched NSGA-II scoping), 7 (objective count) |
 
-**The one amendment that deserves a reviewer's attention is 7**, the objective count, because it is
-the only one whose justification was cost rather than correctness and the only one that changes the
-problem's geometry. It is reopened on scientific grounds in
-`protocol/OBJECTIVE_COUNT_DECISION.md` before the campaign runs, and if it is reversed the reversal
-gets its own tag.
+**Amendment 7, the objective count, was the one that deserved attention**, because it was the only
+one justified by cost rather than correctness. It was reopened on scientific grounds, reviewed by
+four adversarial roles, and **refused** (amendment 15). The evidence that refused it —
+`audits/objective_count_evidence.json` — was produced by a script committed alongside it, because
+evidence a reviewer has to re-derive from scratch is not provenance.
+
+**Amendments 11 and 12 are process failures, and they are the author's.** Stage B was descoped
+without being recorded, and the decision rule that had to predate a measurement was committed
+together with it. Neither was found by the author. Both are recorded here in the same form as
+everything else rather than corrected out of sight, because a ledger that only contains the
+amendments its author noticed is not a ledger.
+
+**How "no arm has been executed" can be checked** rather than taken on trust: no
+`experiments/xgboost_hpo_vrfnbi/` directory exists at any commit up to and including this one, no
+`EvaluationCache` database has been written, and `git log --diff-filter=A` shows no arm output
+artifact. The campaign runner publishes its cache accounting at launch, which makes the claim
+positively checkable from then on.
 
 ## What Stage A is, and is not
 

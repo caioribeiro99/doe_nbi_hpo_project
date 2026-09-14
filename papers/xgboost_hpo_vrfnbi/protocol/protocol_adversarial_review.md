@@ -179,7 +179,7 @@ the test as secondary. Written into `protocol/EXPERIMENT_PROTOCOL.md` §10.
 arms admit six pairwise comparisons, and a reader will compute the others. If only three are
 corrected for multiplicity, the rest are uncontrolled comparisons that will be discussed anyway.
 
-**Resolution.** Declare the three identifying contrasts as **primary** and pre-register them as the
+**Resolution.** Declare the three identifying contrasts as **primary** and fix them in advance as the
 family carrying the Holm correction within each dataset. The other three are declared **secondary
 and descriptive** in advance, reported without tests, and never described as significant. Written
 into `protocol/EXPERIMENT_PROTOCOL.md` §10.
@@ -283,7 +283,7 @@ A5's multi-fidelity comparator are required or optional.
 | A2 | RESOLVED — population and generations fixed jointly with at least ten generations, plus an unmatched ten-times run reported separately |
 | A4 | RESOLVED — single-objective Bayesian optimization and Parzen estimator reported on endpoints only, never in the front-indicator table |
 | S1 | RESOLVED — ρ derived from the actual partition scheme; descriptive triple primary if ambiguous |
-| S2 | RESOLVED — three identifying contrasts pre-registered as the primary family; the other three descriptive only |
+| S2 | RESOLVED — three identifying contrasts declared in advance as the primary family; the other three descriptive only |
 | E1 | RESOLVED — outcome-contingent framings written in advance, below |
 | E2 | RESOLVED — inherited elements described self-containedly; neither paper cites the other as established |
 | M5, A3, A5, S3, S4, E3, E4, E5 | recorded; A3, S3, S4 and E4 to be closed with numbers from the pilot, E3 and E4 at manuscript time, M5 and A5 as scoping decisions in the manuscript |
@@ -303,7 +303,7 @@ protocol whose parameters come from a pilot run under that protocol is not pre-r
 | gate thresholds | 100 Latin-hypercube points, R² ≥ 0.5 and Spearman ≥ 0.9 | inherited from Paper 1, and labelled as a transfer rather than a calibration |
 | `B_anchor` | 100 real evaluations per objective | fixed in advance, identical across datasets, so it is a constant and not a knob |
 | NSGA-II population and generations | 34 x 12 at q = 2, matching 408 exactly, plus an unmatched run at ten times | budget arithmetic, with the at-least-ten-generations floor of finding A2 |
-| weighting-disagreement fraction | 0.20 | pre-registered so the reading cannot be chosen after the result |
+| weighting-disagreement fraction | 0.20 | declared in advance so the reading cannot be chosen after the result |
 
 The pilot's role is therefore **verification and screening**, not parameter selection: it confirms
 the panel, measures per-evaluation cost, supplies the detectable effect size, and checks that every

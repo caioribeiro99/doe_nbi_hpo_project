@@ -1,0 +1,334 @@
+{
+  "purpose": "regenerate the objective-count evidence from committed artifacts",
+  "gate": {
+    "external_r2_min": 0.5,
+    "spearman_min": 0.9
+  },
+  "bootstrap_resamples": 2000,
+  "permutations": 400,
+  "datasets": {
+    "magic": {
+      "per_objective_gate": [
+        {
+          "objective": "quality1",
+          "factor_index": 1,
+          "external_r2": 0.8702,
+          "external_spearman": 0.9274,
+          "surface_terms": 19,
+          "gate_pass": true,
+          "explained_variance_share": 0.61,
+          "dominant_response": "RocAuc_Mean",
+          "spearman_with_mean_quality": 0.9442
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 2,
+          "external_r2": 0.8963,
+          "external_spearman": 0.9512,
+          "surface_terms": 16,
+          "gate_pass": true,
+          "explained_variance_share": 0.2537,
+          "dominant_response": "Precision_Mean",
+          "spearman_with_mean_quality": -0.0211
+        },
+        {
+          "objective": "cost",
+          "factor_index": 3,
+          "external_r2": 0.9175,
+          "external_spearman": 0.9403,
+          "surface_terms": 18,
+          "gate_pass": true,
+          "explained_variance_share": 0.1363,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.3071
+        }
+      ],
+      "aggregated_q2_composite_gate": {
+        "external_r2": 0.7753,
+        "external_spearman": 0.9162,
+        "gate_pass": true
+      },
+      "inter_factor_spearman": {
+        "estimate": -0.3078,
+        "ci95_lo": -0.5351,
+        "ci95_hi": -0.0528,
+        "interval_covers_zero": false
+      },
+      "nondominated": {
+        "q2": 21,
+        "q3": 42,
+        "raw_growth_factor": 2.0,
+        "permutation_null_q3": {
+          "observed": 42,
+          "null_mean": 21.8,
+          "null_sd": 3.06,
+          "null_q05": 17.0,
+          "null_q95": 27.0,
+          "p_value_observed_ge_null": 0.0,
+          "exceeds_null": true
+        }
+      },
+      "eigenvalues": [
+        3.9884,
+        1.6586,
+        0.891,
+        0.3043,
+        0.1017,
+        0.056,
+        0.0
+      ],
+      "kaiser_components_retained": 2,
+      "lambda3_over_lambda4": 2.928,
+      "aggregation_weighting_agreement_v2_pipeline": 0.865
+    },
+    "spambase": {
+      "per_objective_gate": [
+        {
+          "objective": "quality1",
+          "factor_index": 1,
+          "external_r2": 0.9689,
+          "external_spearman": 0.8609,
+          "surface_terms": 14,
+          "gate_pass": false,
+          "explained_variance_share": 0.6947,
+          "dominant_response": "Specificity_Mean",
+          "spearman_with_mean_quality": 0.6375
+        },
+        {
+          "objective": "cost",
+          "factor_index": 2,
+          "external_r2": 0.9422,
+          "external_spearman": 0.9652,
+          "surface_terms": 15,
+          "gate_pass": true,
+          "explained_variance_share": 0.1703,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.7956
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 3,
+          "external_r2": 0.0797,
+          "external_spearman": 0.2517,
+          "surface_terms": 5,
+          "gate_pass": false,
+          "explained_variance_share": 0.1349,
+          "dominant_response": "Precision_Mean",
+          "spearman_with_mean_quality": 0.0246
+        }
+      ],
+      "aggregated_q2_composite_gate": {
+        "external_r2": 0.9534,
+        "external_spearman": 0.8468,
+        "gate_pass": false
+      },
+      "inter_factor_spearman": {
+        "estimate": -0.5331,
+        "ci95_lo": -0.7193,
+        "ci95_hi": -0.3035,
+        "interval_covers_zero": false
+      },
+      "nondominated": {
+        "q2": 6,
+        "q3": 65,
+        "raw_growth_factor": 10.83,
+        "permutation_null_q3": {
+          "observed": 65,
+          "null_mean": 16.23,
+          "null_sd": 3.8,
+          "null_q05": 10.0,
+          "null_q95": 22.049999999999955,
+          "p_value_observed_ge_null": 0.0,
+          "exceeds_null": true
+        }
+      },
+      "eigenvalues": [
+        4.4551,
+        1.0923,
+        0.8653,
+        0.4123,
+        0.1483,
+        0.0267,
+        0.0
+      ],
+      "kaiser_components_retained": 2,
+      "lambda3_over_lambda4": 2.099,
+      "aggregation_weighting_agreement_v2_pipeline": 0.8738
+    },
+    "adult": {
+      "per_objective_gate": [
+        {
+          "objective": "quality1",
+          "factor_index": 1,
+          "external_r2": 0.9049,
+          "external_spearman": 0.9121,
+          "surface_terms": 8,
+          "gate_pass": true,
+          "explained_variance_share": 0.7548,
+          "dominant_response": "Specificity_Mean",
+          "spearman_with_mean_quality": 0.6141
+        },
+        {
+          "objective": "cost",
+          "factor_index": 2,
+          "external_r2": 0.9345,
+          "external_spearman": 0.955,
+          "surface_terms": 17,
+          "gate_pass": true,
+          "explained_variance_share": 0.1344,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.5324
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 3,
+          "external_r2": 0.8408,
+          "external_spearman": 0.9097,
+          "surface_terms": 13,
+          "gate_pass": true,
+          "explained_variance_share": 0.1108,
+          "dominant_response": "LogLoss_Mean",
+          "spearman_with_mean_quality": 0.9933
+        }
+      ],
+      "aggregated_q2_composite_gate": {
+        "external_r2": 0.9109,
+        "external_spearman": 0.9245,
+        "gate_pass": true
+      },
+      "inter_factor_spearman": {
+        "estimate": 0.6494,
+        "ci95_lo": 0.4427,
+        "ci95_hi": 0.8122,
+        "interval_covers_zero": false
+      },
+      "nondominated": {
+        "q2": 6,
+        "q3": 37,
+        "raw_growth_factor": 6.17,
+        "permutation_null_q3": {
+          "observed": 37,
+          "null_mean": 18.15,
+          "null_sd": 4.68,
+          "null_q05": 11.0,
+          "null_q95": 26.0,
+          "p_value_observed_ge_null": 0.0,
+          "exceeds_null": true
+        }
+      },
+      "eigenvalues": [
+        4.7751,
+        0.8505,
+        0.7007,
+        0.5216,
+        0.109,
+        0.0431,
+        0.0
+      ],
+      "kaiser_components_retained": 1,
+      "lambda3_over_lambda4": 1.343,
+      "aggregation_weighting_agreement_v2_pipeline": 0.8839
+    },
+    "bank_marketing": {
+      "per_objective_gate": [
+        {
+          "objective": "quality1",
+          "factor_index": 1,
+          "external_r2": 0.9209,
+          "external_spearman": 0.9292,
+          "surface_terms": 9,
+          "gate_pass": true,
+          "explained_variance_share": 0.7594,
+          "dominant_response": "Specificity_Mean",
+          "spearman_with_mean_quality": 0.7795
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 2,
+          "external_r2": 0.7195,
+          "external_spearman": 0.8743,
+          "surface_terms": 12,
+          "gate_pass": false,
+          "explained_variance_share": 0.1389,
+          "dominant_response": "LogLoss_Mean",
+          "spearman_with_mean_quality": 0.991
+        },
+        {
+          "objective": "cost",
+          "factor_index": 3,
+          "external_r2": 0.9423,
+          "external_spearman": 0.9578,
+          "surface_terms": 17,
+          "gate_pass": true,
+          "explained_variance_share": 0.1017,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.5865
+        }
+      ],
+      "aggregated_q2_composite_gate": {
+        "external_r2": 0.9168,
+        "external_spearman": 0.9146,
+        "gate_pass": true
+      },
+      "inter_factor_spearman": {
+        "estimate": 0.7591,
+        "ci95_lo": 0.5856,
+        "ci95_hi": 0.8713,
+        "interval_covers_zero": false
+      },
+      "nondominated": {
+        "q2": 10,
+        "q3": 13,
+        "raw_growth_factor": 1.3,
+        "permutation_null_q3": {
+          "observed": 13,
+          "null_mean": 22.68,
+          "null_sd": 3.54,
+          "null_q05": 17.0,
+          "null_q95": 29.0,
+          "p_value_observed_ge_null": 1.0,
+          "exceeds_null": false
+        }
+      },
+      "eigenvalues": [
+        4.6637,
+        0.8529,
+        0.6246,
+        0.5884,
+        0.2205,
+        0.0498,
+        0.0
+      ],
+      "kaiser_components_retained": 1,
+      "lambda3_over_lambda4": 1.062,
+      "aggregation_weighting_agreement_v2_pipeline": 0.9642
+    }
+  },
+  "summary": {
+    "per_objective_gate_cells": 12,
+    "per_objective_gate_failures": 3,
+    "datasets_where_the_second_quality_factor_fails_the_gate": [
+      "spambase",
+      "bank_marketing"
+    ],
+    "datasets_where_any_quality_objective_fails_the_gate": [
+      "spambase",
+      "bank_marketing"
+    ],
+    "datasets_where_q3_nondominated_count_exceeds_its_null": [
+      "magic",
+      "spambase",
+      "adult"
+    ],
+    "kaiser_retained_per_dataset": {
+      "magic": 2,
+      "spambase": 2,
+      "adult": 1,
+      "bank_marketing": 1
+    },
+    "aggregation_weighting_agreement_range": [
+      0.865,
+      0.9642
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "replications": 30,
+  "draws": 150,
+  "method": "half-split resampling of the 166 committed Stage A evaluations per dataset; a conservative proxy for between-replication variability, not a measurement of it",
+  "datasets": {
+    "magic": {
+      "hv_ratio": {
+        "paired_sd_proxy": 0.011848,
+        "minimum_detectable_paired_difference_80pct": 0.006272,
+        "expected_ci95_half_width": 0.004424,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.006611,
+        "mde_corrected_rho_0.25": 0.007242,
+        "mde_corrected_rho_0.5": 0.00887
+      },
+      "igd_plus": {
+        "paired_sd_proxy": 0.009583,
+        "minimum_detectable_paired_difference_80pct": 0.005073,
+        "expected_ci95_half_width": 0.003578,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.005347,
+        "mde_corrected_rho_0.25": 0.005858,
+        "mde_corrected_rho_0.5": 0.007174
+      }
+    },
+    "spambase": {
+      "hv_ratio": {
+        "paired_sd_proxy": 0.042293,
+        "minimum_detectable_paired_difference_80pct": 0.022388,
+        "expected_ci95_half_width": 0.015792,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.023599,
+        "mde_corrected_rho_0.25": 0.025851,
+        "mde_corrected_rho_0.5": 0.031661
+      },
+      "igd_plus": {
+        "paired_sd_proxy": 0.017189,
+        "minimum_detectable_paired_difference_80pct": 0.009099,
+        "expected_ci95_half_width": 0.006418,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.009591,
+        "mde_corrected_rho_0.25": 0.010507,
+        "mde_corrected_rho_0.5": 0.012868
+      }
+    },
+    "adult": {
+      "hv_ratio": {
+        "paired_sd_proxy": 0.033392,
+        "minimum_detectable_paired_difference_80pct": 0.017676,
+        "expected_ci95_half_width": 0.012469,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.018632,
+        "mde_corrected_rho_0.25": 0.020411,
+        "mde_corrected_rho_0.5": 0.024998
+      },
+      "igd_plus": {
+        "paired_sd_proxy": 0.016515,
+        "minimum_detectable_paired_difference_80pct": 0.008742,
+        "expected_ci95_half_width": 0.006167,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.009215,
+        "mde_corrected_rho_0.25": 0.010095,
+        "mde_corrected_rho_0.5": 0.012363
+      }
+    },
+    "bank_marketing": {
+      "hv_ratio": {
+        "paired_sd_proxy": 0.029712,
+        "minimum_detectable_paired_difference_80pct": 0.015728,
+        "expected_ci95_half_width": 0.011095,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.016579,
+        "mde_corrected_rho_0.25": 0.018161,
+        "mde_corrected_rho_0.5": 0.022243
+      },
+      "igd_plus": {
+        "paired_sd_proxy": 0.015186,
+        "minimum_detectable_paired_difference_80pct": 0.008039,
+        "expected_ci95_half_width": 0.00567,
+        "standardized_effect_detectable": 0.5294,
+        "mde_corrected_rho_0.1": 0.008473,
+        "mde_corrected_rho_0.25": 0.009282,
+        "mde_corrected_rho_0.5": 0.011368
+      }
+    }
+  },
+  "win_fraction": {
+    "replications": 30,
+    "minimum_wins_for_wilson_interval_above_half": 21,
+    "as_fraction": 0.7,
+    "note": "the smallest number of wins out of 30 whose Wilson 95% interval excludes 0.5; below this the win fraction is not evidence of a direction"
+  }
+}

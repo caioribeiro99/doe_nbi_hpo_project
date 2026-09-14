@@ -85,7 +85,7 @@ This is the most interesting of the audit findings because it is not about a bug
 modelling choice inside an established method that nobody reports and nobody varies, and it moves
 the objective the whole pipeline optimizes.
 
-**Strengthening it is cheap and should be pre-registered:** run the sensitivity across the whole
+**Strengthening it is cheap and should be declared in advance:** run the sensitivity across the whole
 panel and all 30 replications rather than on one design, and report how often the two weightings
 disagree about the returned front, not only about the design ranking. That converts an anecdote into
 a result. It is in `protocol/EXPERIMENT_PROTOCOL.md` as a planned secondary analysis.

@@ -189,3 +189,32 @@ def test_coincident_anchors_are_reported_not_repaired() -> None:
     assert run.diagnostics["anchors_coincide"] is True
     assert run.diagnostics["payoff_rank"] < 2
     assert run.diagnostics["payoff_condition_number"] is None
+
+
+def test_every_arm_reports_the_dominated_share_of_its_returned_set() -> None:
+    """Certification is feasibility, not Pareto optimality, and the arms differ.
+
+    Weighted-sum minimizers are weakly Pareto optimal by construction; NBI
+    subproblem solutions need not be. If only one arm reported this, the asymmetry
+    would look like a difference in approximation quality.
+    """
+    c = cfg()
+    anchors, chim = surrogate_reference([f1, f2], c)
+    ws = run_ws_s([f1, f2], c, anchors, realizer())
+    nbi = run_nbi_arm("NBI-S", [f1, f2], c, anchors, chim, realizer())
+    for run in (ws, nbi):
+        assert "dominated_share_of_returned_set" in run.diagnostics, run.arm
+        share = run.diagnostics["dominated_share_of_returned_set"]
+        assert 0.0 <= share <= 1.0
+    assert "dominated_share_among_certified" in nbi.diagnostics
+
+
+def test_igd_plus_is_weakly_pareto_compliant_and_igd_is_not_the_protocol_indicator() -> None:
+    from doe_xgb.reporting import igd_plus
+
+    R = np.array([[0.0, 1.0], [0.5, 0.5], [1.0, 0.0]])
+    A = np.array([[0.1, 1.0], [0.6, 0.6], [1.0, 0.1]])
+    B = A + 0.2                                   # every point dominated by A's
+    assert igd_plus(A, R) < igd_plus(B, R)
+    # a set containing the reference scores zero
+    assert igd_plus(R, R) == pytest.approx(0.0, abs=1e-12)

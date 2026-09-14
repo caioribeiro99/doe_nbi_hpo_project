@@ -114,7 +114,7 @@ Reproduce the table with `python scripts/cost_objective_selection.py`, which wri
 the dissertation, with its measured run-to-run variation stated. It is never a primary endpoint.
 
 The relationship between the two, Spearman 0.86 on the MAGIC design, is reported. The two are
-related, not interchangeable, and §11.4 pre-registers reporting whether they disagree about the
+related, not interchangeable, and §11.4 declares in advance that it will report whether they disagree about the
 winning arm.
 
 ### 6.2 The quality objectives — DECIDED
@@ -146,10 +146,19 @@ the design rows.
 | Extraction | principal components of the correlation matrix of the seven standardized responses |
 | Reported loadings | eigenvectors scaled by the square root of their eigenvalues, and the text says so |
 | Rotation | Varimax, applied to the **scaled loadings**, not to the eigenvectors |
-| Number of components | fixed at 3, with the Kaiser criterion reported alongside |
+| Number of components | fixed at 3; see the note below, because no retention criterion supports it |
 | Sign orientation | declared per objective, not inferred |
 | Quality aggregation | **weighted by each component's share of explained variance** |
 | Pre-registered sensitivity | the unweighted mean of z-scored scores, that is the dissertation's own choice |
+
+**On k = 3, stated plainly.** Three components is an assumption **inherited from the NBI-VRF
+construction this paper exists to decompose**, not a criterion-supported choice. Measured on the
+panel, the Kaiser criterion retains **2, 2, 1 and 1** components on MAGIC, Spambase, Adult and Bank
+Marketing - never three, on any dataset. The ratio of the third to the fourth eigenvalue is 2.93,
+2.10, 1.34 and 1.06, so on Bank Marketing the third and fourth components differ by 6% and which
+subspace is retained there is effectively arbitrary. Eigenvalues and that ratio are reported per
+dataset per replication, and the manuscript states that no standard retention criterion supports
+three components on this panel.
 
 **Why variance weighting is primary.** `audits/PCA_VARIMAX_IDENTITY_AUDIT.md` Q4 measured the two
 weightings ranking the MAGIC design at Spearman 0.374, sharing 1 of 10 top rows and picking different
@@ -157,7 +166,7 @@ best rows. The choice is therefore not innocuous and cannot be left to a default
 is chosen because it is the weighting the extraction itself implies: a component's share of explained
 variance is the reason it was extracted, and discarding that share by z-scoring to unit variance
 throws away the only ordering the method provides. The dissertation's equal weighting becomes the
-pre-registered sensitivity analysis of §11.1, which is the honest way to carry a predecessor's choice
+sensitivity analysis declared in advance in §11.1, which is the honest way to carry a predecessor's choice
 forward without either adopting it silently or discarding it silently.
 
 ## 7. Surrogate and its gate
@@ -189,6 +198,43 @@ check rather than a discriminator. Retuning after seeing campaign results is for
 `protocol/budget_accounting.md` charges this as `B_surrogate_validation = 78` per replication for
 every arm that uses a surrogate.
 
+### 7.1 What happens when the gate fails - DECIDED, and it had been missing
+
+Section 7 declared a pass/fail gate and never said what failing does. That hole is not hypothetical:
+**Spambase's quality composite already fails today**, at Spearman 0.847, and Stage A recorded
+`gate_pass_quality: false` for it while the campaign would have proceeded in silence.
+
+The rule, fixed before any arm runs:
+
+1. **The gate never removes a dataset and never changes an arm.** Every dataset in the panel runs
+   every arm at every replication, whatever the gate says. Dropping gate-failing datasets would make
+   the panel a function of surrogate quality and would delete precisely the cases Paper 1 showed to
+   be informative.
+2. **The gate is a reported per-replication, per-response covariate.** Its pass rate is a result, not
+   a filter. Every primary comparison is additionally reported **conditioned on** gate status, as
+   Paper 1 did, so a reader can see whether a contrast behaves differently where the surrogate is
+   unreliable.
+3. **A dataset whose gate fails in the majority of replications for a primary response is named** in
+   the results table and in the abstract. It is not quietly averaged into a panel summary.
+4. **The thresholds are never moved**, in either direction, after any campaign result is seen.
+
+The consequence is deliberately weak. A gate that changed the experiment would let surrogate quality
+select the evidence; a gate that annotates it cannot.
+
+### 7.2 One factor model per dataset, applied - DECIDED, and it had been missing
+
+Amendment 1 fixed that the factor model is fitted on the design and applied to held-out points. It
+did not say whether the model is **refit per replication**. It matters: if it is, the objective is
+not the same variable in every pair, so 30 paired indicator values do not live in one objective
+space, and no normalized indicator is invariant to that.
+
+**Decision.** One factor model per dataset, fitted on a declared reference set - the Stage A 88
+design rows plus their 78-point complement, 166 points, already evaluated and committed - and
+**applied** to every replication. The per-replication refit is reported as a sensitivity, with Tucker
+congruence coefficients between the reference model and each replication's own model.
+
+This removes a confound that exists at two objectives and is merely smaller there.
+
 ## 8. Budget
 
 The ledger of `protocol/budget_accounting.md`: `B_design`, `B_surrogate_validation`, `B_anchor`,
@@ -208,8 +254,10 @@ reported and charged to no arm.
 
 `B_anchor` is **100 real evaluations per objective**, spent by NBI-R's direct search for each
 objective's real optimum. The figure is fixed in advance and is identical across datasets and
-objectives, so it is a constant of the design and not a tuning knob. At q = 3 it becomes 300 and
-NBI-R's total 508.
+objectives, so it is a constant of the design and not a tuning knob. (An earlier draft said the
+q = 3 total would be 508; that was computed from the superseded validation count of 100, and under
+the 78-point external set it would be 486. The campaign runs at q = 2, so neither figure is used.
+See `Q3_AMENDMENT_REVIEW.md`.)
 
 HISTORICAL-WS is charged no surrogate validation because the dissertation pipeline has no gate; that
 is a property of the historical method, not a concession to it, and the manuscript says so.
@@ -281,13 +329,21 @@ partition scheme used, stated explicitly, and every significance statement is re
 scheme makes the proportion ambiguous, the descriptive triple (median with its bootstrap interval,
 win fraction with its Wilson interval, rank-biserial correlation) is primary and the test secondary.
 
+**One primary indicator (resolution of review finding MF17).** Section 9 lists five indicators and
+originally designated none primary, so the realized comparison family sat somewhere between 3 and 15
+tests per dataset. **The primary indicator is the hypervolume ratio**, computed against the reference
+convention of section 9. The family is three contrasts times one indicator, Holm-corrected within
+each dataset. IGD+, generational distance, Schott spacing and the joint non-dominated fraction are
+**secondary and descriptive**, reported with intervals and no tests. Per-objective marginal
+comparisons are forbidden; see section 14.
+
 **Multiplicity across the four arms (resolution of review finding S2).** Four arms admit six pairwise
 comparisons. The three identifying contrasts of `protocol/method_arms.md` --- HISTORICAL-WS to WS-S,
-WS-S to NBI-S, NBI-S to NBI-R --- are pre-registered as the **primary family** and carry the Holm
+WS-S to NBI-S, NBI-S to NBI-R --- are declared in advance as the **primary family** and carry the Holm
 correction within each dataset. The remaining three pairwise comparisons are declared **secondary and
 descriptive in advance**, reported without tests, and are never described as significant.
 
-## 11. Planned secondary analyses, pre-registered
+## 11. Planned secondary analyses, declared in advance
 
 1. **Aggregation sensitivity across the panel.** Repeat the Q4 comparison on every dataset and every
    replication, and report how often the two weightings disagree about the **returned front**, not
@@ -391,6 +447,13 @@ established.
   compiled manuscript rather than by a checklist (review finding E4).
 - WS-S's second reference end is the pseudo-nadir; every objective is canonicalized to minimization;
   the shared weight grid is symmetric. See `protocol/method_arms.md`.
+- The campaign runs at **two** objectives. The three-objective amendment was reviewed and refused;
+  see `protocol/Q3_AMENDMENT_REVIEW.md`. It is not reopened on the strength of any campaign result.
+- **Per-objective marginal comparisons are forbidden.** They are uncontrolled multiplicity, and above
+  two objectives they are also ill-defined, because the quality axes are not the same construct
+  across datasets.
+- The surrogate gate annotates the analysis and never filters it (7.1). One factor model per dataset,
+  applied to every replication (7.2).
 - The three identifying contrasts are the primary family; the other three pairwise comparisons are
   descriptive only.
 - The outcome-contingent framings in `protocol/protocol_adversarial_review.md` were written before

@@ -43,6 +43,27 @@ from ..nbi_core import (AnchorSet, CHIM, NBIConfig, build_chim, compute_anchors,
 
 SurrogateCallable = Callable[[np.ndarray], float]
 
+DISSERTATION_TAG = "v0.1.0-dissertation"
+
+
+def _ensure_frozen_tree(dest: Path | None = None) -> Path:
+    """Extract the dissertation source at its tag, under the repository, and return it.
+
+    HISTORICAL-WS reproduces the dissertation by calling its code. Defaulting that
+    code's location to a path under /tmp made the one arm that must be bit-faithful
+    depend on whatever happened to be in a scratch directory.
+    """
+    import subprocess
+    repo = Path(__file__).resolve().parents[3]
+    dest = dest or (repo / ".frozen" / DISSERTATION_TAG)
+    src = dest / "src"
+    if not (src / "doe_xgb" / "nbi.py").exists():
+        dest.mkdir(parents=True, exist_ok=True)
+        tar = subprocess.run(["git", "archive", DISSERTATION_TAG, "src/doe_xgb"],
+                             cwd=repo, capture_output=True, check=True)
+        subprocess.run(["tar", "-x", "-C", str(dest)], input=tar.stdout, check=True)
+    return src
+
 # Weight-grid cardinality, shared by every arm. The historical grid has 20 points;
 # matching it keeps B_candidate_validation equal across arms.
 N_WEIGHTS = 20
@@ -203,7 +224,7 @@ def historical_weights(step: float = 0.05) -> np.ndarray:
 def run_historical_ws(model_quality, model_cost, *, observed_utopia, observed_nadir,
                       bounds: dict[str, tuple[float, float]], realizer: Realizer,
                       surrogates_coded: Sequence[SurrogateCallable],
-                      frozen_src: str | Path = "/tmp/diss_frozen_arms/src",
+                      frozen_src: str | Path | None = None,
                       seed: int = 42, n_starts: int = 10) -> ArmRun:
     """Reproduce the dissertation optimizer by calling the frozen code itself.
 
@@ -216,9 +237,17 @@ def run_historical_ws(model_quality, model_cost, *, observed_utopia, observed_na
     component-wise observed extrema of the design rows, as ``scripts/run_nbi.py``
     built it.
     """
-    src = str(frozen_src)
-    if src not in sys.path:
-        sys.path.insert(0, src)
+    # The one arm whose job is bit-faithful reproduction must not depend on an
+    # ephemeral path. Extract the tag into the repository's own scratch area if it is
+    # not already there, and verify the module really came from the frozen tree.
+    src = Path(frozen_src) if frozen_src is not None else _ensure_frozen_tree()
+    if str(src) not in sys.path:
+        sys.path.insert(0, str(src))
+    import doe_xgb.nbi as _frozen_nbi
+    if str(src) not in str(_frozen_nbi.__file__):
+        raise RuntimeError(
+            f"doe_xgb.nbi resolved to {_frozen_nbi.__file__}, not the frozen tree at {src}. "
+            "HISTORICAL-WS must call the dissertation code, not the article-track rewrite.")
     from doe_xgb.nbi import run_nbi_weighted_sum          # frozen
     from doe_xgb.config import PARAM_NAMES as FROZEN_PARAMS   # frozen
 
@@ -235,8 +264,11 @@ def run_historical_ws(model_quality, model_cost, *, observed_utopia, observed_na
                              realizer, c.success, c.message,
                              extra={"historical_predicted": list(map(float, c.predicted)),
                                     "historical_score": float(c.score)}))
+    from ..reporting import dominated_fraction
     grid = historical_weights()
+    F_real = np.array([c.f_surrogate_realized for c in cands])
     return ArmRun("HISTORICAL-WS", cands, {
+        "dominated_share_of_returned_set": round(float(dominated_fraction(F_real)), 4),
         "source": "frozen v0.1.0-dissertation run_nbi_weighted_sum, called unmodified",
         "normalization": "component-wise observed extrema of the design rows",
         "observed_utopia": list(map(float, observed_utopia)),
@@ -325,8 +357,11 @@ def run_ws_s(surrogates: Sequence[SurrogateCallable], cfg: NBIConfig,
         cands.append(_record("WS-S", w, np.asarray(best.x, float), surrogates, realizer,
                              bool(best.success), str(best.message),
                              extra={"scalarized_value": best_val}))
+    from ..reporting import dominated_fraction
+    F_real = np.array([c.f_surrogate_realized for c in cands])
     return ArmRun("WS-S", cands, {
         "scalarization": "weighted sum of payoff-normalized surrogates",
+        "dominated_share_of_returned_set": round(float(dominated_fraction(F_real)), 4),
         "normalization": f"utopia and {nadir_choice} of the payoff matrix",
         "utopia": utopia.tolist(), "nadir_used": np.asarray(nadir, float).tolist(),
         "true_nadir": anchors.nadir.tolist(),
@@ -354,6 +389,16 @@ def run_nbi_arm(arm: str, surrogates: Sequence[SurrogateCallable], cfg: NBIConfi
                              extra={"optimizer_info": r.optimizer_info}))
     certified = [c for c in cands
                  if c.solver_success and (c.equality_residual or 1.0) < 1e-6]
+    # A subproblem solution is certified FEASIBLE, not Pareto optimal. Weighted-sum
+    # minimizers are weakly Pareto optimal by construction; NBI solutions need not be.
+    # Reporting the dominated share per arm keeps that asymmetry from being mistaken
+    # for a difference in approximation quality.
+    from ..reporting import dominated_fraction
+    F_real = np.array([c.f_surrogate_realized for c in cands])
+    dominated_share = float(dominated_fraction(F_real))
+    dominated_among_certified = (
+        float(dominated_fraction(np.array([c.f_surrogate_realized for c in certified])))
+        if certified else float("nan"))
     Phi = chim.Phi
     return ArmRun(arm, cands, {
         "scalarization": "canonical NBI: max t subject to F(x) = utopia + Phi beta + t n_hat",
@@ -369,6 +414,10 @@ def run_nbi_arm(arm: str, surrogates: Sequence[SurrogateCallable], cfg: NBIConfi
         "quasi_normal": chim.n_hat.tolist(),
         "restrict_t_nonnegative": bool(cfg.restrict_t_nonnegative),
         "certified_fraction": round(len(certified) / max(len(cands), 1), 4),
+        "dominated_share_of_returned_set": round(dominated_share, 4),
+        "dominated_share_among_certified": (round(dominated_among_certified, 4)
+                                            if dominated_among_certified == dominated_among_certified
+                                            else None),
         "t_range": [float(min(c.t for c in cands)), float(max(c.t for c in cands))],
         "max_equality_residual": float(max(c.equality_residual for c in cands)),
         "max_realization_displacement": float(max(c.realization_displacement
