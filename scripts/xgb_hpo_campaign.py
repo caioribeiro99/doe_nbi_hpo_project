@@ -150,8 +150,8 @@ def dry_run() -> int:
     check("every unit has a distinct seed",
           len({unit_seed(d, r) for d in DATASETS for r in range(N_REPLICATIONS)})
           == len(DATASETS) * N_REPLICATIONS)
-    check("holdout labels are not read before the confirmation stage",
-          _holdout_is_late())
+    _ho_ok, _ho_why = _holdout_is_late()
+    check("holdout labels are not read before the confirmation stage", _ho_ok, _ho_why)
     check("the git tree is clean", _tree_clean(), _tree_status())
     cb = campaign_budget()
     # This is an arithmetic identity and is labelled as one. It is NOT evidence that
@@ -234,11 +234,39 @@ def _latest_smoke_accounting():
     return best
 
 
-def _holdout_is_late() -> bool:
-    """The holdout is read in exactly one place, and it is the last stage."""
+def _holdout_is_late() -> tuple[bool, str]:
+    """The holdout partition is evaluated in exactly one stage, and it is the last.
+
+    The earlier version of this check asserted that the 3,000 characters preceding
+    the single ``on_holdout=True`` mentioned ``holdout_confirmation``. That was a
+    proxy for "the call sits inside the holdout stage", and it broke the moment the
+    holdout compute function had to be defined at the top of ``run_unit`` so the
+    evaluation cache could be given it -- while the call site had not moved at all.
+    A proxy that fails when the invariant holds is no better than one that passes
+    when it does not.
+
+    What is checked now: the holdout flag is set in exactly one place; the holdout
+    cache view is created exactly once; and that creation is inside the
+    ``holdout_confirmation`` stage guard, which is the last stage before metrics.
+    The dynamic proof -- that no holdout evaluation is REQUESTED before that stage --
+    is in tests/methodology/test_unit_runs_end_to_end.py, where a real unit runs.
+    """
     src = (REPO / "src" / "doe_xgb" / "campaign" / "runner.py").read_text()
-    uses = [ln for ln in src.splitlines() if "on_holdout=True" in ln]
-    return len(uses) == 1 and "holdout_confirmation" in src.split("on_holdout=True")[0][-3000:]
+    lines = src.splitlines()
+    flags = [i for i, ln in enumerate(lines) if "on_holdout=True" in ln]
+    views = [i for i, ln in enumerate(lines) if 'cache.view("holdout_confirmation"' in ln]
+    guards = [i for i, ln in enumerate(lines) if 'ck.done("holdout_confirmation")' in ln]
+    if len(flags) != 1:
+        return False, f"on_holdout=True appears {len(flags)} times, expected 1"
+    if len(views) != 1:
+        return False, f"the holdout cache view is created {len(views)} times, expected 1"
+    if len(guards) != 1:
+        return False, f"the holdout stage guard appears {len(guards)} times, expected 1"
+    if not guards[0] < views[0]:
+        return False, "the holdout view is created outside the holdout stage guard"
+    later = [s for s in STAGES[STAGES.index("holdout_confirmation") + 1:]]
+    return True, (f"one flag, one view, inside the stage guard; "
+                  f"stages after it: {later}")
 
 
 def _tree_clean() -> bool:

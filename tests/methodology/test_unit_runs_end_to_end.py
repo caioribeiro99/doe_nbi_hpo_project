@@ -258,3 +258,51 @@ def test_resuming_a_completed_unit_changes_nothing(unit):
     assert calls["n"] == 0, f"a completed unit re-evaluated {calls['n']} configurations"
     assert set(again["stages_complete"]) == set(R.STAGES)
     assert set(before["stages_complete"]) == set(R.STAGES)
+
+
+# ---------------------------------------------------------------------------
+# the holdout is read last -- proved dynamically, not by reading the source
+# ---------------------------------------------------------------------------
+
+def test_no_holdout_evaluation_happens_before_the_holdout_stage(unit):
+    """The holdout partition must be untouched until the confirmation stage.
+
+    The dry run checks this statically. A static check on this property is a proxy
+    -- the previous one asserted that the text near the call mentioned the stage
+    name, and it broke when the compute function moved while the call site did not.
+    This is the dynamic version: every holdout evaluation is keyed under
+    fold_id="holdout", and the request log records the order, so the ordering can be
+    read off the database the unit actually produced.
+    """
+    import sqlite3
+    db = sqlite3.connect(str(unit["dir"] / "evaluations.sqlite"))
+    rows = db.execute(
+        "SELECT r.id, r.method, r.stage, e.fold_id FROM requests r "
+        "LEFT JOIN evaluations e ON e.key = r.key ORDER BY r.id").fetchall()
+    db.close()
+
+    holdout_ids = [i for i, _m, _s, fold in rows if fold == "holdout"]
+    assert holdout_ids, "no holdout evaluation was recorded at all"
+
+    first_holdout = min(holdout_ids)
+    before = {(m, s) for i, m, s, _f in rows if i < first_holdout}
+    assert all(s != "holdout_audit" for _m, s in before)
+    # every holdout request belongs to the holdout stage and to nothing else
+    for i, m, s, fold in rows:
+        if fold == "holdout":
+            assert s == "holdout_audit" and m == "holdout_confirmation", (
+                f"a holdout evaluation was charged to {m}/{s}")
+
+
+def test_the_holdout_measurement_is_keyed_apart_from_the_internal_one(unit):
+    """The same configuration measured two ways must not collide in the cache."""
+    import sqlite3
+    db = sqlite3.connect(str(unit["dir"] / "evaluations.sqlite"))
+    folds = {f for (f,) in db.execute("SELECT DISTINCT fold_id FROM evaluations")}
+    dupes = db.execute(
+        "SELECT config, COUNT(DISTINCT fold_id) c FROM evaluations "
+        "GROUP BY config HAVING c > 1").fetchall()
+    db.close()
+    assert "holdout" in folds and "all" in folds
+    assert dupes, ("no configuration was measured both internally and on the "
+                   "holdout, so this test cannot show they are keyed apart")

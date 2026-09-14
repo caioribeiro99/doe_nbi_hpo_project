@@ -102,3 +102,4 @@ venv-*/
 /data/pco213/
 /reports/pco213_postwork_benchmark/
 /.frozen/
+uv.lock
