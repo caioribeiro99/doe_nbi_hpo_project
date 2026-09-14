@@ -1,0 +1,64 @@
+{
+  "design_runs": 88,
+  "external_runs": 78,
+  "check_1_no external run appears in the fitting design": {
+    "pass": true,
+    "shared_runs": 0
+  },
+  "check_2_fitting and validation fractions have opposite defining relation": {
+    "pass": true,
+    "design_sign_product": [
+      1.0
+    ],
+    "external_sign_product": [
+      -1.0
+    ]
+  },
+  "check_3_complementary fraction has the same factorial resolution": {
+    "pass": true,
+    "design_resolution": 7,
+    "external_resolution": 7
+  },
+  "integer_rounding_displacement": {
+    "max_depth": 0.5,
+    "n_estimators": 0.5
+  },
+  "check_4_every configuration is feasible under the declared bounds and types": {
+    "pass": true,
+    "violations": "none",
+    "integer_rounding_displacement": {
+      "max_depth": 0.5,
+      "n_estimators": 0.5
+    }
+  },
+  "check_5_axial runs are distinct from both factorial fractions and from the design's own axial runs": {
+    "pass": true,
+    "axial_runs": 14,
+    "overlap_with_corners": 0,
+    "overlap_with_design_axial": 0,
+    "axial_radius": 0.5
+  },
+  "check_6_external set can identify the terms of the fitted response surface": {
+    "pass": true,
+    "terms": 36,
+    "rank_with_axial": 36,
+    "rank_corners_only": 29,
+    "note": "corners alone cannot identify the quadratic terms, which is why the axial runs are part of the specification"
+  },
+  "check_7_no validation response can reach any fitting stage": {
+    "pass": true,
+    "fitting_calls_on_design": [
+      "FactorModel(k) at line 291",
+      "fit(Z) at line 230",
+      "fit(d_df) at line 490",
+      "fit(df) at line 291",
+      "fit_surface_backward(alpha) at line 420",
+      "fit_surface_backward(fit_df) at line 420",
+      "fit_surface_backward(fit_y) at line 420",
+      "varimax(loadings) at line 234"
+    ],
+    "fitting_calls_on_validation": [],
+    "leak_free": true
+  },
+  "all_pass": true
+}

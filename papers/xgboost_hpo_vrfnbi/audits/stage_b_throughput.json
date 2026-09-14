@@ -1,0 +1,491 @@
+{
+  "machine": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "physical_cores": 14,
+    "ram_gb": 36.0
+  },
+  "dataset": "magic",
+  "seed": 20260914,
+  "configurations": [
+    {
+      "label": "centre",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "cheap corner",
+      "subsample": 0.05,
+      "colsample_bytree": 0.05,
+      "colsample_bylevel": 0.05,
+      "learning_rate": 0.01,
+      "max_depth": 3,
+      "gamma": 5.0,
+      "n_estimators": 50
+    },
+    {
+      "label": "expensive corner",
+      "subsample": 1.0,
+      "colsample_bytree": 1.0,
+      "colsample_bylevel": 1.0,
+      "learning_rate": 0.3,
+      "max_depth": 18,
+      "gamma": 0.05,
+      "n_estimators": 700
+    },
+    {
+      "label": "design corner #0",
+      "subsample": 0.05,
+      "colsample_bytree": 0.05,
+      "colsample_bylevel": 0.05,
+      "learning_rate": 0.01,
+      "max_depth": 3,
+      "gamma": 0.05,
+      "n_estimators": 700
+    },
+    {
+      "label": "design corner #12",
+      "subsample": 0.05,
+      "colsample_bytree": 0.05,
+      "colsample_bylevel": 1.0,
+      "learning_rate": 0.3,
+      "max_depth": 3,
+      "gamma": 0.05,
+      "n_estimators": 700
+    },
+    {
+      "label": "design corner #25",
+      "subsample": 1.0,
+      "colsample_bytree": 0.05,
+      "colsample_bylevel": 0.05,
+      "learning_rate": 0.3,
+      "max_depth": 18,
+      "gamma": 0.05,
+      "n_estimators": 50
+    },
+    {
+      "label": "design corner #37",
+      "subsample": 1.0,
+      "colsample_bytree": 0.05,
+      "colsample_bylevel": 1.0,
+      "learning_rate": 0.01,
+      "max_depth": 3,
+      "gamma": 5.0,
+      "n_estimators": 50
+    },
+    {
+      "label": "design corner #50",
+      "subsample": 0.05,
+      "colsample_bytree": 1.0,
+      "colsample_bylevel": 0.05,
+      "learning_rate": 0.01,
+      "max_depth": 18,
+      "gamma": 5.0,
+      "n_estimators": 50
+    },
+    {
+      "label": "design corner #62",
+      "subsample": 0.05,
+      "colsample_bytree": 1.0,
+      "colsample_bylevel": 1.0,
+      "learning_rate": 0.3,
+      "max_depth": 18,
+      "gamma": 5.0,
+      "n_estimators": 50
+    },
+    {
+      "label": "axial subsample -1",
+      "subsample": 0.05,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "axial subsample +1",
+      "subsample": 1.0,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "axial colsample_bylevel -1",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.05,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "axial colsample_bylevel +1",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 1.0,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "axial max_depth -1",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 3,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "axial max_depth +1",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 18,
+      "gamma": 2.525,
+      "n_estimators": 375
+    },
+    {
+      "label": "axial n_estimators -1",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 50
+    },
+    {
+      "label": "axial n_estimators +1",
+      "subsample": 0.525,
+      "colsample_bytree": 0.525,
+      "colsample_bylevel": 0.525,
+      "learning_rate": 0.155,
+      "max_depth": 10,
+      "gamma": 2.525,
+      "n_estimators": 700
+    }
+  ],
+  "layouts": [
+    {
+      "workers": 1,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 34.71,
+      "evals_per_second": 1.9593,
+      "seconds_per_evaluation": 0.51,
+      "system": {
+        "cpu_mean_pct": 9.3,
+        "cpu_max_pct": 10.9,
+        "peak_rss_gb": 1.0,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 4.9,
+        "samples": 68
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 1,
+      "threads": 2,
+      "evaluations": 68,
+      "wall_seconds": 34.19,
+      "evals_per_second": 1.9887,
+      "seconds_per_evaluation": 0.503,
+      "system": {
+        "cpu_mean_pct": 10.0,
+        "cpu_max_pct": 16.3,
+        "peak_rss_gb": 1.01,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 3.6,
+        "samples": 67
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 1,
+      "threads": 4,
+      "evaluations": 68,
+      "wall_seconds": 34.22,
+      "evals_per_second": 1.987,
+      "seconds_per_evaluation": 0.503,
+      "system": {
+        "cpu_mean_pct": 10.9,
+        "cpu_max_pct": 31.6,
+        "peak_rss_gb": 0.52,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 3.4,
+        "samples": 67
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 2,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 18.39,
+      "evals_per_second": 3.6986,
+      "seconds_per_evaluation": 0.27,
+      "system": {
+        "cpu_mean_pct": 16.4,
+        "cpu_max_pct": 24.4,
+        "peak_rss_gb": 1.61,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 2.8,
+        "samples": 36
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 2,
+      "threads": 2,
+      "evaluations": 68,
+      "wall_seconds": 23.96,
+      "evals_per_second": 2.8386,
+      "seconds_per_evaluation": 0.352,
+      "system": {
+        "cpu_mean_pct": 22.6,
+        "cpu_max_pct": 29.9,
+        "peak_rss_gb": 1.58,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 3.3,
+        "samples": 47
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 2,
+      "threads": 4,
+      "evaluations": 68,
+      "wall_seconds": 31.47,
+      "evals_per_second": 2.1609,
+      "seconds_per_evaluation": 0.463,
+      "system": {
+        "cpu_mean_pct": 29.5,
+        "cpu_max_pct": 33.3,
+        "peak_rss_gb": 1.4,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 4.6,
+        "samples": 61
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 4,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 10.02,
+      "evals_per_second": 6.7847,
+      "seconds_per_evaluation": 0.147,
+      "system": {
+        "cpu_mean_pct": 28.7,
+        "cpu_max_pct": 31.4,
+        "peak_rss_gb": 2.03,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 4.7,
+        "samples": 20
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 4,
+      "threads": 2,
+      "evaluations": 68,
+      "wall_seconds": 17.01,
+      "evals_per_second": 3.9978,
+      "seconds_per_evaluation": 0.25,
+      "system": {
+        "cpu_mean_pct": 39.8,
+        "cpu_max_pct": 45.1,
+        "peak_rss_gb": 2.03,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 5.0,
+        "samples": 33
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 6,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 7.16,
+      "evals_per_second": 9.4932,
+      "seconds_per_evaluation": 0.105,
+      "system": {
+        "cpu_mean_pct": 41.5,
+        "cpu_max_pct": 45.7,
+        "peak_rss_gb": 2.46,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 4.9,
+        "samples": 14
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 6,
+      "threads": 2,
+      "evaluations": 68,
+      "wall_seconds": 14.31,
+      "evals_per_second": 4.7534,
+      "seconds_per_evaluation": 0.21,
+      "system": {
+        "cpu_mean_pct": 59.5,
+        "cpu_max_pct": 68.6,
+        "peak_rss_gb": 2.4,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 5.8,
+        "samples": 28
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 8,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 5.83,
+      "evals_per_second": 11.6559,
+      "seconds_per_evaluation": 0.086,
+      "system": {
+        "cpu_mean_pct": 59.6,
+        "cpu_max_pct": 82.1,
+        "peak_rss_gb": 2.83,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 6.1,
+        "samples": 12
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 10,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 5.58,
+      "evals_per_second": 12.1957,
+      "seconds_per_evaluation": 0.082,
+      "system": {
+        "cpu_mean_pct": 79.0,
+        "cpu_max_pct": 98.9,
+        "peak_rss_gb": 3.29,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 6.8,
+        "samples": 11
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 12,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 5.29,
+      "evals_per_second": 12.8651,
+      "seconds_per_evaluation": 0.078,
+      "system": {
+        "cpu_mean_pct": 73.9,
+        "cpu_max_pct": 96.0,
+        "peak_rss_gb": 3.69,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 7.4,
+        "samples": 11
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    },
+    {
+      "workers": 14,
+      "threads": 1,
+      "evaluations": 68,
+      "wall_seconds": 4.99,
+      "evals_per_second": 13.615,
+      "seconds_per_evaluation": 0.073,
+      "system": {
+        "cpu_mean_pct": 80.3,
+        "cpu_max_pct": 100.0,
+        "peak_rss_gb": 4.13,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 7.0,
+        "samples": 10
+      },
+      "fingerprint": "3fc2870df94924eb",
+      "deterministic_vs_first_layout": true
+    }
+  ],
+  "skipped_oversubscribed": [
+    "4x4",
+    "6x4",
+    "8x2",
+    "8x4",
+    "10x2",
+    "10x4",
+    "12x2",
+    "12x4",
+    "14x2",
+    "14x4"
+  ],
+  "best_throughput": {
+    "workers": 14,
+    "threads": 1,
+    "evals_per_second": 13.615
+  },
+  "within_5pct_band": [
+    "14x1"
+  ],
+  "chosen_layout": {
+    "workers": 14,
+    "threads": 1,
+    "evals_per_second": 13.615,
+    "rule": "highest throughput, then simplest layout within 5%"
+  },
+  "sustained": {
+    "minutes": 3.5,
+    "segments": [
+      {
+        "segment": 0,
+        "evals_per_second": 19.2563
+      },
+      {
+        "segment": 1,
+        "evals_per_second": 19.866
+      },
+      {
+        "segment": 2,
+        "evals_per_second": 19.8418
+      },
+      {
+        "segment": 3,
+        "evals_per_second": 19.9373
+      }
+    ],
+    "degradation_pct": -3.5,
+    "system": {
+      "cpu_mean_pct": 92.0,
+      "cpu_max_pct": 100.0,
+      "peak_rss_gb": 14.36,
+      "swap_used_delta_mb": 0.0,
+      "load1_max": 18.0,
+      "samples": 396
+    }
+  }
+}

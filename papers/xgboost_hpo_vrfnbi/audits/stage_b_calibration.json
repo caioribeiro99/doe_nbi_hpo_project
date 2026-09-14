@@ -1,0 +1,105 @@
+{
+  "layout": {
+    "workers": 14,
+    "threads": 1
+  },
+  "workload": {
+    "design_runs": 88,
+    "external_runs": 78,
+    "total": 166
+  },
+  "datasets": {
+    "magic": {
+      "evaluations": 166,
+      "wall_seconds": 24.8,
+      "seconds_per_evaluation": 0.1497,
+      "evaluations_per_second": 6.681,
+      "system": {
+        "cpu_mean_pct": 53.2,
+        "cpu_max_pct": 100.0,
+        "peak_rss_gb": 5.8,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 8.6,
+        "samples": 48
+      }
+    },
+    "spambase": {
+      "evaluations": 166,
+      "wall_seconds": 11.7,
+      "seconds_per_evaluation": 0.0702,
+      "evaluations_per_second": 14.248,
+      "system": {
+        "cpu_mean_pct": 65.2,
+        "cpu_max_pct": 100.0,
+        "peak_rss_gb": 5.01,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 8.8,
+        "samples": 23
+      }
+    },
+    "adult": {
+      "evaluations": 166,
+      "wall_seconds": 41.5,
+      "seconds_per_evaluation": 0.2503,
+      "evaluations_per_second": 3.996,
+      "system": {
+        "cpu_mean_pct": 94.0,
+        "cpu_max_pct": 100.0,
+        "peak_rss_gb": 4.55,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 12.1,
+        "samples": 79
+      }
+    },
+    "bank_marketing": {
+      "evaluations": 166,
+      "wall_seconds": 27.2,
+      "seconds_per_evaluation": 0.1636,
+      "evaluations_per_second": 6.113,
+      "system": {
+        "cpu_mean_pct": 94.1,
+        "cpu_max_pct": 100.0,
+        "peak_rss_gb": 4.11,
+        "swap_used_delta_mb": 0.0,
+        "load1_max": 13.0,
+        "samples": 52
+      }
+    }
+  },
+  "mean_seconds_per_evaluation": 0.1585,
+  "panel_mean_evaluations_per_second": 6.311,
+  "projection": {
+    "q2": {
+      "B_total_solution": {
+        "HISTORICAL-WS": 108,
+        "WS-S": 186,
+        "NBI-S": 186,
+        "NBI-R": 386
+      },
+      "comparator_budget": 386,
+      "evaluations_per_replication_per_dataset": 2376,
+      "campaign_evaluations": 285120,
+      "campaign_hours": 12.55,
+      "campaign_days": 0.523,
+      "unmatched_nsga2_evaluations": 15440,
+      "unmatched_nsga2_hours": 0.68,
+      "total_days_including_unmatched": 0.551
+    },
+    "q3": {
+      "B_total_solution": {
+        "HISTORICAL-WS": 108,
+        "WS-S": 186,
+        "NBI-S": 186,
+        "NBI-R": 486
+      },
+      "comparator_budget": 486,
+      "evaluations_per_replication_per_dataset": 2976,
+      "campaign_evaluations": 357120,
+      "campaign_hours": 15.72,
+      "campaign_days": 0.655,
+      "unmatched_nsga2_evaluations": 19440,
+      "unmatched_nsga2_hours": 0.86,
+      "total_days_including_unmatched": 0.691
+    }
+  }
+}

@@ -1,0 +1,159 @@
+"""The cache must save wall clock without distorting the scientific budget.
+
+Two properties matter and both are easy to break:
+
+* every request a method makes is charged to that method, whether or not the
+  physical fit was already done, so caching cannot make one optimizer look
+  cheaper than another;
+* a method can reach only the evaluations it requested itself, so nothing leaks
+  into a Bayesian surrogate, a Parzen history, an evolutionary population, an
+  anchor search or a weighted-sum search.
+"""
+from __future__ import annotations
+
+import pytest
+
+from doe_xgb.campaign.evaluation_cache import (EvaluationCache, canonical_config,
+                                               evaluation_key)
+
+
+@pytest.fixture()
+def cache(tmp_path):
+    c = EvaluationCache(tmp_path / "evals.sqlite", dataset="magic",
+                        split_id="rep_00", seed=42)
+    yield c
+    c.close()
+
+
+def _counter():
+    """A compute function that records how many real fits it performed."""
+    calls: list[dict] = []
+
+    def compute(cfg):
+        calls.append(cfg)
+        return {"leaves": 100.0 + len(calls), "time": 0.5, "acc": 0.9}
+
+    return compute, calls
+
+
+CFG_A = {"max_depth": 6, "n_estimators": 200, "learning_rate": 0.1}
+CFG_B = {"max_depth": 9, "n_estimators": 400, "learning_rate": 0.05}
+
+
+# --------------------------------------------------------------- normalization
+
+def test_canonical_config_rounds_integers_and_stabilizes_floats() -> None:
+    a = canonical_config({"max_depth": 5.5, "n_estimators": 137.4, "gamma": 0.1})
+    b = canonical_config({"n_estimators": 137, "gamma": 0.1 + 1e-15, "max_depth": 6})
+    assert a == b, "configurations that name the same learner must share a key"
+
+
+def test_key_changes_with_every_pinned_component() -> None:
+    base = dict(dataset="magic", split_id="rep_00", fold_id="all",
+                config=CFG_A, seed=42)
+    k = evaluation_key(**base)
+    for field, value in [("dataset", "adult"), ("split_id", "rep_01"),
+                         ("fold_id", "fold_2"), ("seed", 43)]:
+        assert evaluation_key(**{**base, field: value}) != k, f"{field} not in the key"
+    assert evaluation_key(**base, protocol_version="other") != k
+    assert evaluation_key(**{**base, "config": CFG_B}) != k
+
+
+# ------------------------------------------------------------------ accounting
+
+def test_a_cache_hit_is_still_charged_to_the_requesting_method(cache) -> None:
+    compute, calls = _counter()
+    ws = cache.view("WS-S", compute)
+    nbi = cache.view("NBI-S", compute)
+
+    ws.evaluate(CFG_A)
+    nbi.evaluate(CFG_A)          # same configuration, already computed
+
+    assert len(calls) == 1, "the physical fit should have happened once"
+    assert cache.ledger("WS-S").logical == 1
+    assert cache.ledger("NBI-S").logical == 1, (
+        "the second method was served from cache but must still be charged; "
+        "otherwise caching makes it look cheaper than it is"
+    )
+    acc = cache.accounting()
+    assert acc["logical_evaluations_total"] == 2
+    assert acc["unique_physical_fits"] == 1
+    assert acc["cache_hit_rate"] == pytest.approx(0.5)
+
+
+def test_repeated_requests_by_one_method_are_charged_each_time(cache) -> None:
+    compute, calls = _counter()
+    v = cache.view("NBI-R", compute)
+    for _ in range(3):
+        v.evaluate(CFG_A)
+    assert len(calls) == 1
+    led = cache.ledger("NBI-R")
+    assert led.logical == 3, "a method's own repetition is its own cost"
+    assert led.unique_logical == 1
+
+
+def test_physical_fits_count_distinct_evaluations_only(cache) -> None:
+    compute, calls = _counter()
+    a, b = cache.view("A", compute), cache.view("B", compute)
+    a.evaluate(CFG_A); a.evaluate(CFG_B); b.evaluate(CFG_A); b.evaluate(CFG_B)
+    assert cache.physical_fits() == 2
+    assert len(calls) == 2
+    assert cache.accounting()["logical_evaluations_total"] == 4
+
+
+# -------------------------------------------------------------------- isolation
+
+def test_a_method_sees_only_its_own_history(cache) -> None:
+    compute, _ = _counter()
+    a, b = cache.view("BO", compute), cache.view("TPE", compute)
+    a.evaluate(CFG_A)
+    b.evaluate(CFG_B)
+    assert [h["config"] for h in a.history()] == [canonical_config(CFG_A)]
+    assert [h["config"] for h in b.history()] == [canonical_config(CFG_B)]
+
+
+def test_a_method_view_exposes_no_route_to_other_methods(cache) -> None:
+    """An optimizer given this object must not be able to enumerate the table."""
+    compute, _ = _counter()
+    v = cache.view("NSGA-II", compute)
+    public = {n for n in dir(v) if not n.startswith("_")}
+    assert public == {"evaluate", "history", "logical_evaluations", "method"}, public
+    with pytest.raises(AttributeError):
+        v.cache                       # no handle on the shared store
+    with pytest.raises(AttributeError):
+        v.anything_else = 1           # __slots__, so no smuggling state through it
+
+
+def test_cache_hit_returns_the_same_result_not_a_recomputation(cache) -> None:
+    compute, calls = _counter()
+    a, b = cache.view("A", compute), cache.view("B", compute)
+    first = a.evaluate(CFG_A)
+    second = b.evaluate(CFG_A)
+    assert first == second
+    assert len(calls) == 1
+
+
+# ----------------------------------------------------------------- persistence
+
+def test_the_cache_survives_a_restart(tmp_path) -> None:
+    compute, calls = _counter()
+    c1 = EvaluationCache(tmp_path / "e.sqlite", dataset="magic", split_id="rep_00", seed=1)
+    c1.view("A", compute).evaluate(CFG_A)
+    c1.close()
+
+    c2 = EvaluationCache(tmp_path / "e.sqlite", dataset="magic", split_id="rep_00", seed=1)
+    r = c2.view("B", compute).evaluate(CFG_A)
+    assert len(calls) == 1, "a resumed replication must not recompute a completed fit"
+    assert r["leaves"] == 101.0
+    assert c2.ledger("B").logical == 1, "and the resumed method is still charged"
+    c2.close()
+
+
+def test_a_different_replication_does_not_reuse_another_replications_fits(tmp_path) -> None:
+    compute, calls = _counter()
+    for rep in ("rep_00", "rep_01"):
+        c = EvaluationCache(tmp_path / f"{rep}.sqlite", dataset="magic",
+                            split_id=rep, seed=1)
+        c.view("A", compute).evaluate(CFG_A)
+        c.close()
+    assert len(calls) == 2, "replications have different splits, so different evaluations"
