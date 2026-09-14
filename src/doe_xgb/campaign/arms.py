@@ -46,22 +46,35 @@ SurrogateCallable = Callable[[np.ndarray], float]
 DISSERTATION_TAG = "v0.1.0-dissertation"
 
 
+FROZEN_PACKAGE = "doe_xgb_frozen"
+
+
 def _ensure_frozen_tree(dest: Path | None = None) -> Path:
     """Extract the dissertation source at its tag, under the repository, and return it.
 
-    HISTORICAL-WS reproduces the dissertation by calling its code. Defaulting that
-    code's location to a path under /tmp made the one arm that must be bit-faithful
-    depend on whatever happened to be in a scratch directory.
+    The tree is extracted under a **different top-level package name**,
+    ``doe_xgb_frozen``. The article track has already imported ``doe_xgb``, so
+    putting the frozen tree on ``sys.path`` would not change what
+    ``doe_xgb.nbi`` resolves to: the historical arm would silently call the
+    rewrite it exists to be compared against. Renaming the package makes the two
+    importable side by side, and the relative imports inside the frozen modules
+    keep working because they do not name their own package.
     """
+    import shutil
     import subprocess
     repo = Path(__file__).resolve().parents[3]
     dest = dest or (repo / ".frozen" / DISSERTATION_TAG)
     src = dest / "src"
-    if not (src / "doe_xgb" / "nbi.py").exists():
+    target = src / FROZEN_PACKAGE
+    if not (target / "nbi.py").exists():
         dest.mkdir(parents=True, exist_ok=True)
         tar = subprocess.run(["git", "archive", DISSERTATION_TAG, "src/doe_xgb"],
                              cwd=repo, capture_output=True, check=True)
         subprocess.run(["tar", "-x", "-C", str(dest)], input=tar.stdout, check=True)
+        extracted = src / "doe_xgb"
+        if target.exists():
+            shutil.rmtree(target)
+        extracted.rename(target)
     return src
 
 # Weight-grid cardinality, shared by every arm. The historical grid has 20 points;
@@ -243,13 +256,16 @@ def run_historical_ws(model_quality, model_cost, *, observed_utopia, observed_na
     src = Path(frozen_src) if frozen_src is not None else _ensure_frozen_tree()
     if str(src) not in sys.path:
         sys.path.insert(0, str(src))
-    import doe_xgb.nbi as _frozen_nbi
+    import importlib
+    _frozen_nbi = importlib.import_module(f"{FROZEN_PACKAGE}.nbi")
+    _frozen_cfg = importlib.import_module(f"{FROZEN_PACKAGE}.config")
     if str(src) not in str(_frozen_nbi.__file__):
         raise RuntimeError(
-            f"doe_xgb.nbi resolved to {_frozen_nbi.__file__}, not the frozen tree at {src}. "
-            "HISTORICAL-WS must call the dissertation code, not the article-track rewrite.")
-    from doe_xgb.nbi import run_nbi_weighted_sum          # frozen
-    from doe_xgb.config import PARAM_NAMES as FROZEN_PARAMS   # frozen
+            f"{FROZEN_PACKAGE}.nbi resolved to {_frozen_nbi.__file__}, not the frozen tree "
+            f"at {src}. HISTORICAL-WS must call the dissertation code, not the "
+            "article-track rewrite.")
+    run_nbi_weighted_sum = _frozen_nbi.run_nbi_weighted_sum      # frozen
+    FROZEN_PARAMS = _frozen_cfg.PARAM_NAMES                      # frozen
 
     raw = run_nbi_weighted_sum(
         model_quality, model_cost, bounds=bounds,

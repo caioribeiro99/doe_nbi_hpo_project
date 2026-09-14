@@ -198,7 +198,7 @@ check rather than a discriminator. Retuning after seeing campaign results is for
 `protocol/budget_accounting.md` charges this as `B_surrogate_validation = 78` per replication for
 every arm that uses a surrogate.
 
-### 7.1 What happens when the gate fails - DECIDED, and it had been missing
+### 7.1 The gate is DIAGNOSTIC, NOT ADAPTIVE - DECIDED, and it had been missing
 
 Section 7 declared a pass/fail gate and never said what failing does. That hole is not hypothetical:
 **Spambase's quality composite already fails today**, at Spearman 0.847, and Stage A recorded
@@ -220,6 +220,39 @@ The rule, fixed before any arm runs:
 
 The consequence is deliberately weak. A gate that changed the experiment would let surrogate quality
 select the evidence; a gate that annotates it cannot.
+
+**Exhaustively, a gate failure does NOT:**
+
+| It does not | Why |
+|---|---|
+| remove the dataset | the panel would become a function of surrogate quality |
+| remove the replication | same, at finer grain, and it would bias the paired sample |
+| suppress WS-S, NBI-S or NBI-R | what those arms do on an unreliable surface is a research question |
+| cause a different surrogate to be fitted | the surrogate family is frozen |
+| change the polynomial order after the frozen selection rule | order is chosen by backward elimination on the design, full stop |
+| trigger extra design points | the design is the version-controlled 88-run central composite |
+| change the anchors | anchor provenance is the factor NBI-R varies, not a repair mechanism |
+| select another optimizer | the arm set is frozen |
+
+**All four arms run at every replication of every dataset, whatever the gate says.** This is required
+rather than merely permitted, because one of the study's questions is precisely what happens to
+surrogate-assisted Pareto construction when the externally validated surrogate is unreliable. An
+adaptive gate would delete the answer.
+
+The primary analysis includes **all valid replications**. Stratification by gate status is a
+**secondary** analysis. The gate is never a post-hoc exclusion criterion.
+
+### 7.1.1 Two failures that must not be conflated
+
+| | **Surrogate gate failure** | **Mathematical or software failure** |
+|---|---|---|
+| What happened | the surface is estimable and fitted, but externally unreliable | the surface cannot be estimated, or produces non-finite values, or no valid candidate can be produced under the frozen failure policy |
+| Examples | external R² 0.080, Spearman 0.252; backward elimination leaving five terms | singular design matrix, non-finite response, a payoff matrix of deficient rank, an optimizer returning NaN |
+| What the runner does | **runs the arm and retains the result** | records a methodological failure for that replication, preserves every artifact, and excludes it from the paired sample with the exclusion counted and reported |
+| What it is in the paper | a covariate and a finding | a reported failure count |
+
+The first is data. The second is an absence of data. Reporting them together would let an
+uninformative surface look like a broken one, or worse, the reverse.
 
 ### 7.2 One factor model per dataset, applied - DECIDED, and it had been missing
 

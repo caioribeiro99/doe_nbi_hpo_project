@@ -218,3 +218,40 @@ def test_igd_plus_is_weakly_pareto_compliant_and_igd_is_not_the_protocol_indicat
     assert igd_plus(A, R) < igd_plus(B, R)
     # a set containing the reference scores zero
     assert igd_plus(R, R) == pytest.approx(0.0, abs=1e-12)
+
+
+def test_historical_arm_loads_the_frozen_tree_not_the_article_rewrite() -> None:
+    """The one arm whose job is bit-faithful reproduction must call the tag's code.
+
+    The article track imports `doe_xgb`, so putting the frozen tree on sys.path
+    cannot change what `doe_xgb.nbi` resolves to. The frozen tree is therefore
+    extracted under its own package name and both are importable side by side.
+    """
+    import importlib
+    import sys
+
+    from doe_xgb.campaign.arms import FROZEN_PACKAGE, _ensure_frozen_tree
+
+    src = _ensure_frozen_tree()
+    if str(src) not in sys.path:
+        sys.path.insert(0, str(src))
+    frozen = importlib.import_module(f"{FROZEN_PACKAGE}.nbi")
+    assert str(src) in str(frozen.__file__)
+    assert hasattr(frozen, "run_nbi_weighted_sum")
+    # the weighted-sum solver is the only optimizer the dissertation shipped
+    assert not hasattr(frozen, "run_nbi")
+    # and the article-track NBI is a different module, still importable
+    import doe_xgb.nbi_core as article
+    assert "nbi_core" in article.__file__
+    assert hasattr(article, "solve_nbi_subproblem")
+
+
+def test_the_frozen_tree_is_repository_local_not_a_scratch_path() -> None:
+    from pathlib import Path
+
+    from doe_xgb.campaign.arms import _ensure_frozen_tree
+
+    src = _ensure_frozen_tree()
+    repo = Path(__file__).resolve().parents[2]
+    assert repo in src.parents, f"{src} is outside the repository"
+    assert "/tmp" not in str(src)
