@@ -79,7 +79,8 @@ BLACKLIST: list[tuple[int, str, str]] = [
     (15, r"\bsurrogate\w*\b[^.]{0,80}"
          r"\b(?:reliable|adequate|validated|accurate|passes?\s+the\s+gate)\b[^.]{0,60}"
          r"\b(?:all|every|each|four|both)\s+(?:datasets?|objectives?|factors?)\b",
-     "false at both objective counts: Spambase's quality surface already fails the gate"),
+     "false at both objective counts: on the corrected model the reliability criterion "
+     "is unmet by the composite quality surrogate on three of the four screening datasets"),
     (16, r"\b(?:pilot|stage\s*A)\b[^.]{0,70}"
          r"\b(?:confirms?|confirmed|establish\w+|demonstrat\w+|shows?|proves?)\b[^.]{0,60}"
          r"\b(?:surrogate|reliab\w+|valid\w+|fidelity)\b",
@@ -102,6 +103,26 @@ BLACKLIST: list[tuple[int, str, str]] = [
          r"[^.]{0,80}\b(?:across|on\s+all|every\s+dataset|the\s+panel|generally|consistently)\b",
      "the quality axes exchange roles across the panel, so objective 2 does not name "
      "the same quantity on any two datasets"),
+    # --- added before the v3 freeze, to hold the pilot/confirmatory boundary ---
+    # The screening finding that the reliability criterion is unmet on three of four
+    # datasets is PRE-CONFIRMATORY. It comes from one pilot design realization at
+    # R = 1. Written bare it reads as a study conclusion about this study's
+    # surrogate, which no measurement yet supports: the confirmatory campaign
+    # recomputes the gate 30 times per dataset. The permitted register names the
+    # screening and the criterion, and these patterns pass when it is used.
+    (20, r"\b(?:the\s+)?surrogate\w*\b[^.]{0,60}\b(?:fails?|failed|failing|is\s+unreliable|"
+         r"breaks?\s+down)\b[^.]{0,60}\b(?:three|3)\s+of\s+(?:the\s+)?(?:four|4)\b",
+     "pre-confirmatory screening evidence stated as a study conclusion; write "
+     "\"in the corrected pre-campaign screening, the frozen reliability criterion was "
+     "not met by the composite-quality surrogate on three of four datasets\""),
+    (20, r"\b(?:three|3)\s+of\s+(?:the\s+)?(?:four|4)\s+datasets?\b[^.]{0,50}"
+         r"\b(?:the\s+)?surrogate\w*\b[^.]{0,40}\b(?:fails?|failed|unreliable)\b",
+     "same claim in the reverse word order"),
+    (20, r"\b(?:we\s+(?:find|found|show|showed|conclude)|this\s+(?:study|paper|campaign)\s+"
+         r"(?:finds?|shows?|demonstrates?))\b[^.]{0,70}\bgate\b[^.]{0,50}"
+         r"\b(?:fails?|failed|not\s+met)\b",
+     "a gate outcome becomes a finding of this study only after the confirmatory "
+     "campaign; before it, gate outcomes are screening evidence"),
 ]
 
 

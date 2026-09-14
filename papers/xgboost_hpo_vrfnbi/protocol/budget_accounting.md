@@ -30,13 +30,21 @@ run. Paper 1's Table 5 is the model for how this is presented.
 
 ## Per-arm composition
 
-| Arm | `B_design` | `B_surrogate_validation` | `B_anchor` | `B_candidate_validation` |
-|---|---|---|---|---|
-| HISTORICAL-WS | yes | no (the dissertation has no gate) | no | yes |
-| WS-S | yes | yes | no | yes |
-| NBI-S | yes | yes | no | yes |
-| NBI-R | yes | yes | **yes** | yes |
-| Comparators | no | no | no | `B_direct_search` only |
+| Arm | `B_design` | `B_surrogate_validation` | `B_anchor` | `B_candidate_validation` | `B_total_solution` |
+|---|---|---|---|---|---|
+| HISTORICAL-WS-asrun | yes | no (the dissertation has no gate) | no | yes | 108 |
+| HISTORICAL-WS | yes | yes | no | yes | 186 |
+| WS-S | yes | yes | no | yes | 186 |
+| NBI-S | yes | yes | no | yes | 186 |
+| NBI-R | yes | yes | **yes** | yes | **386** |
+| Comparators | no | no | no | `B_direct_search` only | 386 |
+
+**The two historical entities are separate rows and cost different amounts.**
+`HISTORICAL-WS-asrun` is the bit-faithful reproduction: it fits the dissertation's own uncoded
+surfaces, has no gate, and therefore never pays `B_surrogate_validation`. `HISTORICAL-WS` is the
+shared-specification arm that isolates the normalization; it uses WS-S's own gated surrogates and
+pays exactly what WS-S pays. An earlier version of this table carried a single ambiguous
+`HISTORICAL-WS` row at 108 and omitted the other arm entirely.
 
 The asymmetry to state plainly: **NBI-R is the only arm that buys anchors with real evaluations, and
 it is not free.** Whatever NBI-R gains, the honest comparison is against a comparator given the same
@@ -52,7 +60,7 @@ From the frozen code and the reproduction in `audits/provenance/`:
 | `B_candidate_validation` | 20 | 20 weight pairs at step 0.05, one candidate each |
 | `B_surrogate_validation` | 0 | no external validation exists in the frozen pipeline |
 | `B_anchor` | 0 | the observed-extremes box costs nothing beyond the design |
-| `B_total_solution`, HISTORICAL-WS | **108** | 88 + 20 |
+| `B_total_solution`, HISTORICAL-WS-asrun | **108** | 88 + 20 |
 | comparator budget as the dissertation set it | 108 each | `benchmark_budget = len(doe_df) + len(cand_params)` in `scripts/run_replica.py` |
 
 The dissertation's fairness rule is therefore already evaluation-matched, and correctly so. Paper 2
@@ -63,11 +71,39 @@ keeps the rule and extends it to the terms the dissertation had no need for.
 | Term | Value | Source |
 |---|---|---|
 | `B_surrogate_validation` | **78** | the design's complementary half fraction (64 corners) plus 14 axial runs at half the axial distance |
-| `B_total_solution` | 108 / 186 / 186 / 386 for HISTORICAL-WS / WS-S / NBI-S / NBI-R at q = 2 | the ledger above |
+| `B_total_solution` | 108 / 186 / 186 / 186 / 386 for HISTORICAL-WS-asrun / HISTORICAL-WS / WS-S / NBI-S / NBI-R at q = 2 | the ledger above |
 | comparator budget | 386 | the most expensive arm |
-| seconds per real evaluation, 8 threads | 1.02 to 1.69, mean 1.40 | measured on all four panel datasets |
-| campaign total at q = 2 | 285,120 evaluations, 111 hours, 4.6 days serial | 2,376 per replication per dataset x 30 x 4 |
-| campaign total at q = 3 | 357,120 evaluations, 5.8 days serial | over the ceiling; the campaign runs at q = 2 |
+
+### Campaign total, superseding the Stage A projection
+
+The figures below are the authoritative ones and are derived by
+`doe_xgb.campaign.runner.campaign_budget()` from the runner's own method-stage registry, so the
+campaign cannot execute a budget other than the one published here. They **supersede** the Stage A
+projection of 2,376 logical evaluations per unit, 285,120 for the campaign, at 1.40 s per evaluation
+on 8 threads. That projection predated the anchor-injection control, the as-run historical arm, the
+unmatched NSGA-II run and the Stage B throughput recalibration, and it is retained in this sentence
+rather than deleted so the change is visible.
+
+| Term | Value | Source |
+|---|---|---|
+| logical evaluations per unit | **3,173** | `method_stage_ledger()`, reconciled with zero remainder |
+| of which audit-only | 83 | 78 external validation + 5 holdout confirmation |
+| of which solution-producing | 3,090 | |
+| confirmatory units | 120 | 4 datasets x R = 30 |
+| unmatched NSGA-II, outside the unit | 15,360 | 32 x 12 x 10 x 4, one replication per dataset |
+| **campaign total at q = 2** | **396,120** | 3,173 x 120 + 15,360 |
+| of which audit-only | 9,960 | 83 x 120 |
+| of which solution-producing | 386,160 | 3,090 x 120 + 15,360 |
+| seconds per real evaluation | 0.1585 | Stage B calibration, panel mean, at the chosen 14 x 1 layout |
+| projected wall clock | 17.4 hours, 0.73 days | 396,120 x 0.1585 s |
+
+**Two audit-only stages, both declared.** The 78-point external validation set and the 5 holdout
+confirmations per unit are measured, reported, and steer nothing: a gate failure and a holdout result
+both change zero execution decisions. Being audit-only is a reason to declare a real evaluation
+separately, never a reason to leave it out of the total. An earlier version of this table omitted the
+holdout line entirely and the code performed those 600 campaign evaluations outside every ledger,
+alongside 240 more in the anchor-injection control that bypassed the cache; both now go through the
+evaluation cache and are charged.
 
 The original ledger assumed 100 validation evaluations, copied from Paper 1. Stage A found that a
 random held-out set cannot validate a surface fitted to a factorial design, and replaced it with the

@@ -37,7 +37,9 @@ from .design import (external_scores, external_validation_set, from_coded, gate_
                      load_design, make_surrogate, fit_surface_backward, to_coded)
 from .evaluation_cache import EvaluationCache
 from .evaluator import BOUNDS, INT_PARAMS, PARAMS, RESPONSES, evaluate_config, init_worker
-from .factor_model import fit_factor_model, raw_conflict
+from .factor_model import (composite_alignment, fit_factor_model,
+                           load_reference_factor_model, raw_conflict,
+                           tucker_congruence)
 from .seeding import candidate_hash, derive_seed, seed_key
 
 PROTOCOL_TAG = "xgboost-hpo-protocol-v3"
@@ -61,6 +63,12 @@ NSGA2_UNMATCHED_REPLICATION = 0
 # extreme and move the normalization box every other method is scored against.
 SINGLE_OBJECTIVE = ("bayes_quality", "bayes_cost", "tpe_quality", "tpe_cost")
 
+# Every comparator the direct-baselines stage produces, by exact identifier. The
+# augmented-reference and metrics stages iterate this namespace and score whatever
+# they find in it, so it must contain methods and nothing else.
+SCORED_BASELINES = ("grid", "random", "bayes_quality", "bayes_cost",
+                    "tpe_quality", "tpe_cost", "nsga2")
+
 STAGES = ("split", "design", "factor_model", "surrogates", "external_validation",
           "historical_ws_asrun", "ws_s", "historical_ws", "surrogate_anchors", "nbi_s",
           "empirical_anchors", "nbi_r", "direct_baselines", "nsga2_unmatched",
@@ -71,6 +79,31 @@ STAGES = ("split", "design", "factor_model", "surrogates", "external_validation"
 
 class MethodologicalFailure(RuntimeError):
     """A frozen assumption did not hold. The unit is recorded and excluded, not repaired."""
+
+
+def _baseline_methods(payload: dict) -> dict:
+    """The comparators in a ``direct_baselines`` checkpoint, namespace validated.
+
+    The seed ledger was once written into this namespace alongside the methods.
+    Both the augmented-reference and the metrics stage iterate it and score every
+    entry, so a metadata key carrying a ``rows`` field would have been scored into
+    the shared reference without any error. It crashed instead, on a missing key,
+    which was luck rather than a safeguard. This is the safeguard.
+    """
+    methods = payload["methods"]
+    unknown = set(methods) - set(SCORED_BASELINES)
+    if unknown:
+        raise MethodologicalFailure(
+            f"the direct-baselines methods namespace carries non-method entries "
+            f"{sorted(unknown)}. Everything in it is iterated as a scored method by "
+            f"the augmented-reference and metrics stages, so anything stored here "
+            f"enters the shared reference and the indicator table.")
+    missing = set(SCORED_BASELINES) - set(methods)
+    if missing:
+        raise MethodologicalFailure(
+            f"direct baselines did not produce {sorted(missing)}; the comparator "
+            f"set is incomplete and the reference would be built from a subset.")
+    return methods
 
 
 # ---------------------------------------------------------------------------
@@ -172,6 +205,12 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
     def compute(cfg: dict) -> dict:
         return evaluate_config(cfg)
 
+    def _compute_holdout(cfg: dict) -> dict:
+        # A different measurement of the same configuration: the held-out partition
+        # rather than the inner resampling. It is keyed under fold_id="holdout" so it
+        # can never be served from, or serve, an internal evaluation of that config.
+        return evaluate_config(cfg, on_holdout=True)
+
     t0 = time.time()
     try:
         # ---- stage: design (shared, charged to every arm in the ledger) -------
@@ -183,22 +222,81 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             ck.save("design", {"rows": design_df.to_dict("records"),
                                "n": len(design_df)})
 
-        # ---- stage: factor model (DESIGN SIDE ONLY) --------------------------
-        fm = fit_factor_model(design_df)
+        # ---- stage: factor model (APPLIED, never fitted here) ----------------
+        # EXPERIMENT_PROTOCOL.md 7.2: ONE factor model per dataset, fitted on the
+        # 166-point Stage A reference set and APPLIED to every replication. This
+        # stage previously called fit_factor_model(design_df), refitting on each
+        # replication's own design evaluations -- which is precisely the confound
+        # 7.2 exists to remove: with a per-replication fit the objective is not the
+        # same variable in every pair, so the 30 paired indicator values do not live
+        # in one objective space and no normalized indicator is invariant to that.
+        fm = load_reference_factor_model(dataset)
         if not ck.done("factor_model"):
-            conflict_latent = float(pd.Series(fm.transform(design_df)["quality"]).corr(
-                pd.Series(fm.transform(design_df)["cost"]), method="spearman"))
+            t_d = fm.transform(design_df)
+            conflict_latent = float(pd.Series(t_d["quality"]).corr(
+                pd.Series(t_d["cost"]), method="spearman"))
             conflict_raw = raw_conflict(design_df)
-            if np.sign(conflict_latent) != np.sign(conflict_raw):
-                raise MethodologicalFailure(
-                    f"{dataset} rep {rep}: latent objective conflict {conflict_latent:+.3f} "
-                    f"disagrees in sign with the raw-response conflict {conflict_raw:+.3f}. "
-                    "The quality composite is inverted relative to the metrics it is built "
-                    "from. Factors are NOT re-oriented after the fact; the unit is recorded "
-                    "as a methodological failure.")
+            alignment = composite_alignment(fm, design_df)
+
+            # HARD invariant: the composite must point the same way as the badness
+            # it aggregates. A negative alignment would mean the study is optimizing
+            # toward worse models.
+            #
+            # The model is frozen per dataset, so the ORIENTATION this guards is a
+            # property of the committed artifact and is verified once, before the
+            # campaign, by the dry run and by the test suite. Here the same
+            # quantity is recomputed against this replication's own design
+            # measurements and REPORTED. It is deliberately not fatal at this point:
+            # the frozen composite's alignment on the spambase reference set is only
+            # +0.249, so a per-replication sign test on resampled data would abort
+            # units at a rate driven by sampling noise and would do so non-randomly
+            # with respect to the factor structure -- which would make the panel a
+            # function of that noise.
+            if alignment <= 0.0:
+                ck.save("factor_alignment_warning", {
+                    "dataset": dataset, "replication": rep, "alignment": alignment,
+                    "note": ("the frozen composite's alignment measured NEGATIVE on "
+                             "this replication's design sample. The frozen model is "
+                             "unchanged and the unit continues; this is reported as "
+                             "a covariate, exactly as the surrogate gate is.")})
+
+            # The per-replication refit, reported as the sensitivity 7.2 requires:
+            # Tucker congruence between the frozen reference loadings and the model
+            # this replication would have produced had it fitted its own.
+            refit = fit_factor_model(design_df)
+            phi = tucker_congruence(fm.rotated_loadings, refit.rotated_loadings)
+
             ck.save("factor_model", {**fm.as_dict(),
+                                     "source": "frozen reference model, APPLIED",
+                                     "protocol_clause": "EXPERIMENT_PROTOCOL.md 7.2",
+                                     "fitted_at_campaign_time": False,
                                      "objective_conflict_latent": conflict_latent,
-                                     "objective_conflict_raw_responses": conflict_raw})
+                                     "objective_conflict_raw_responses": conflict_raw,
+                                     "composite_alignment_with_raw_quality": alignment,
+                                     "per_replication_refit_sensitivity": {
+                                         "tucker_congruence": phi.tolist(),
+                                         "min_abs_congruence": float(np.abs(phi).min()),
+                                         "quality_weights_refit":
+                                             refit.quality_weights.tolist(),
+                                         "cost_index_refit": int(refit.cost_index),
+                                         "cost_index_agrees":
+                                             bool(refit.cost_index == fm.cost_index),
+                                         "note": ("reported only; the refit is NEVER "
+                                                  "applied. Conventional reading: "
+                                                  "|phi| >= 0.95 equivalence, 0.85 to "
+                                                  "0.95 fair similarity")},
+                                     "conflict_divergence_note":
+                                         ("the latent conflict is a Spearman between "
+                                          "two axes that are Pearson-orthogonal BY "
+                                          "CONSTRUCTION -- the quality composite is a "
+                                          "weighted sum of rotated factors and the "
+                                          "cost factor is another, so their linear "
+                                          "correlation is ~1e-16 on every dataset. "
+                                          "What it measures is rank-nonlinearity "
+                                          "residual, and its sign is not stable. The "
+                                          "conflict between the RAW responses is the "
+                                          "meaningful quantity and is reported "
+                                          "alongside it.")})
 
         Y = fm.objectives(design_df)                   # (88, 2), both minimized
 
@@ -312,7 +410,12 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                     "seed_key": seed_key(dataset, rep, name),
                     "candidate_hash": candidate_hash(
                         df[list(PARAMS)].to_dict("records")) if len(df) else None}
-            out["_seed_ledger"] = seed_ledger
+            # The seed ledger is metadata and is stored at the TOP level only. It
+            # was also being written into `out`, the methods namespace, where the
+            # augmented-reference and metrics stages iterate every entry as a
+            # scored method. It crashed there on a missing "rows" key -- loudly,
+            # which was luck: a metadata entry that happened to carry "rows" would
+            # have been scored into the shared reference in silence.
             ck.save("direct_baselines", {"budget": budget, "methods": out,
                                          "seed_ledger": seed_ledger,
                                          "single_objective_methods":
@@ -366,8 +469,17 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             for xr in np.asarray(ea["x_star"], dtype=float):
                 cfg_nat, _ = rz.realize(xr)
                 anchor_cfgs.append(cfg_nat)
+            # Through the cache, not around it. Calling evaluate_config directly
+            # performed two REAL evaluations per unit that no ledger recorded and
+            # no budget table showed -- 240 across the campaign -- while the note
+            # below claimed the control costs no new evaluations. Routed through
+            # the view, the two anchors are charged as the budget registry declares
+            # and served from cache, because the anchor search already measured
+            # these exact configurations.
+            aic_view = cache.view("anchor_injection_control", compute,
+                                  stage="candidate_validation")
             anchor_rows = pd.DataFrame(
-                [{**c, **evaluate_config(c)} for c in anchor_cfgs])
+                [{**c, **aic_view.evaluate(c)} for c in anchor_cfgs])
             injected = pd.concat([rv_s, anchor_rows], ignore_index=True)
             ck.save("anchor_injection_control", {
                 "rows": injected.to_dict("records"),
@@ -376,8 +488,14 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                 "note": ("NBI-S's revalidated set augmented with the empirical anchors; "
                          "scored alongside NBI-S and NBI-R so the share of the gap "
                          "attributable to injected extremes can be separated from the "
-                         "share attributable to the relocated geometry. Uses no new "
-                         "real evaluations beyond the anchors already measured.")})
+                         "share attributable to the relocated geometry."),
+                "logical_charged": int(aic_view.logical_evaluations),
+                "accounting_note": ("charged through the evaluation cache as "
+                                    "candidate_validation; the anchor search already "
+                                    "measured these exact configurations, so they are "
+                                    "served from cache and cost no new physical fit. "
+                                    "The per-method ledger in `accounting` is the "
+                                    "authority on both figures.")})
 
         # The unmatched NSGA-II run is deliberately absent from both references and
         # from the matched indicator table: it received ten times the budget, so
@@ -386,12 +504,34 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
 
         # ---- stage: the two references ---------------------------------------
         if not ck.done("reference_core"):
+            # Method-independent real evaluations ONLY: the 88 design rows and the
+            # 200 anchor-search rows. Nothing any compared method returned enters
+            # this set, which is what makes it a reference a method cannot grade
+            # itself against.
+            #
+            # The empirical anchors were previously loaded into an unused variable
+            # while a variable NAMED anchor_rows held design rows, so the primary
+            # indicator's reference was built from 88 points instead of 288 -- and
+            # the 200 omitted ones are the best points direct search found on the
+            # REAL objectives, which is precisely the part of the front that
+            # matters.
+            design_rows = pd.DataFrame(ck.load("design")["rows"])
             ea = ck.load("empirical_anchors")
-            anchor_rows = pd.DataFrame(
-                [r for r in ck.load("design")["rows"]])       # design is method-independent
-            core = reference_core([anchor_rows], to_obj)
-            ck.save("reference_core", {k: v for k, v in core.items() if k != "front"}
-                    | {"front": core["front"].tolist()})
+            anchor_rows = pd.DataFrame(ea.get("rows", []))
+            if len(anchor_rows) != ea["total_evaluations"]:
+                raise MethodologicalFailure(
+                    f"{dataset} rep {rep}: the anchor search measured "
+                    f"{ea['total_evaluations']} points but persisted "
+                    f"{len(anchor_rows)}. The core reference would be built from a "
+                    f"subset of the method-independent evaluations.")
+            core = reference_core([design_rows, anchor_rows], to_obj)
+            ck.save("reference_core",
+                    {k: v for k, v in core.items() if k != "front"}
+                    | {"front": core["front"].tolist(),
+                       "n_design_rows": int(len(design_rows)),
+                       "n_anchor_rows": int(len(anchor_rows)),
+                       "composition": "88 design rows + the anchor search's own "
+                                      "measurements; method-independent by construction"})
 
         if not ck.done("augmented_reference"):
             core_front = np.asarray(ck.load("reference_core")["front"], dtype=float)
@@ -400,7 +540,7 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             for arm, payload in rv.items():
                 df = pd.DataFrame(payload["rows"])
                 per[arm] = to_obj(df) if len(df) else np.zeros((0, 2))
-            db = ck.load("direct_baselines")["methods"]
+            db = _baseline_methods(ck.load("direct_baselines"))
             for name, payload in db.items():
                 if name in SINGLE_OBJECTIVE:
                     continue                      # never enters the shared reference
@@ -416,7 +556,7 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             core_front = np.asarray(ck.load("reference_core")["front"], dtype=float)
             aug_front = np.asarray(ck.load("augmented_reference")["front"], dtype=float)
             rv = ck.load("candidate_revalidation")["arms"]
-            db = ck.load("direct_baselines")["methods"]
+            db = _baseline_methods(ck.load("direct_baselines"))
             per_method, endpoints = {}, {}
             control = ck.load("anchor_injection_control")
             scored = list(rv.items()) + list(db.items()) + [
@@ -445,6 +585,14 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
 
         # ---- stage: holdout confirmation (labels untouched until here) -------
         if not ck.done("holdout_confirmation"):
+            # The holdout measurement is a REAL learner evaluation on a partition no
+            # earlier stage has touched. It was called directly, so five real
+            # evaluations per unit -- 600 across the campaign -- were performed
+            # outside every ledger and appeared in no budget table. It is audit-only,
+            # exactly like the 78-point external set: it confirms and it steers
+            # nothing. Audit-only is a reason to DECLARE it, not a reason to omit it.
+            ho_view = cache.view("holdout_confirmation", _compute_holdout,
+                                 stage="holdout_audit")
             rv = ck.load("candidate_revalidation")["arms"]
             ho = {}
             for arm, payload in rv.items():
@@ -459,7 +607,7 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                            for p in PARAMS}
                 ho[arm] = {"selected_config": cfg_sel,
                            "internal": {k: float(sel[k]) for k in RESPONSES},
-                           "holdout": evaluate_config(cfg_sel, on_holdout=True)}
+                           "holdout": ho_view.evaluate(cfg_sel, fold_id="holdout")}
             ck.save("holdout_confirmation", {
                 "selection_rule": "distance to the utopia of the arm's own revalidated set",
                 "arms": ho,
@@ -470,7 +618,11 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
         result = {"dataset": dataset, "replication": rep, "seed": seed,
                   "wall_seconds": round(time.time() - t0, 1),
                   "accounting": cache.accounting(),
-                  "stages_complete": [s for s in STAGES if ck.done(s)]}
+                  # "metrics" is this checkpoint itself and is complete by the time
+                  # anyone reads it, so it is listed rather than omitted. Computing
+                  # the list before the save made every unit report 19 of 20 stages.
+                  "stages_complete": [s for s in STAGES
+                                      if s == "metrics" or ck.done(s)]}
         ck.save("metrics", result)
         return result
     except MethodologicalFailure as exc:
@@ -481,9 +633,8 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
         cache.close()
 
 
-def _run_historical(design_df, Y, fm, surrogates, rz, seed,
-                    *, symmetric_grid: bool) -> dict:
-    """HISTORICAL-WS: the dissertation's own normalization and its own grid.
+def _run_historical(design_df, Y, fm, surrogates, rz, seed) -> dict:
+    """HISTORICAL-WS-asrun: the dissertation's own normalization and its own grid.
 
     The surfaces are fitted in the historical *uncoded* parameterization and the
     normalization box is the component-wise observed extrema of the design rows,
@@ -511,8 +662,7 @@ def _run_historical(design_df, Y, fm, surrogates, rz, seed,
                             observed_utopia=observed_utopia,
                             observed_nadir=observed_nadir,
                             bounds={p: BOUNDS[p] for p in PARAMS},
-                            realizer=rz, surrogates_coded=surrogates, seed=seed,
-                            symmetric_grid=symmetric_grid)
+                            realizer=rz, surrogates_coded=surrogates, seed=seed)
     out = run.as_dict()
     out["diagnostics"].update({
         "orientation": ("the dissertation maximizes; this campaign's objectives are "
@@ -544,7 +694,10 @@ def _empirical_anchors(cache, compute, fm, cfg, seed) -> tuple[np.ndarray, np.nd
             cfg_nat, xc_real = rz.realize(xc)
             res = view.evaluate(cfg_nat)
             f = fm.objectives(pd.DataFrame([res]))[0]
-            rows.append({"config": cfg_nat, "objectives": f.tolist()})
+            # The full measured row, in the same shape as a design row, because the
+            # core reference is built from it. Storing only the config and the
+            # objective vector made these 200 real evaluations unusable downstream.
+            rows.append({**cfg_nat, **res, "run": f"anchor_obj{j}"})
             if best_f is None or f[j] < best_f[j]:
                 best_x, best_f = xc_real, f
         x_star[j] = best_x
@@ -562,7 +715,11 @@ def _empirical_anchors(cache, compute, fm, cfg, seed) -> tuple[np.ndarray, np.nd
                  "never described as such"),
         "evaluations_by_objective": [len(r) for r in rows_per_objective],
         "total_evaluations": sum(len(r) for r in rows_per_objective),
-        "payoff_matrix_reuses_search_measurements": True}
+        "payoff_matrix_reuses_search_measurements": True,
+        # Method-independent real measurements. reference_core is documented as
+        # "the design AND the anchor search"; without these rows persisted it was
+        # built from the design alone.
+        "rows": [r for rows in rows_per_objective for r in rows]}
 
 
 # ---------------------------------------------------------------------------
@@ -594,6 +751,12 @@ def method_stage_ledger(q: int = 2) -> dict[str, dict[str, int]]:
     for arm in ("historical_ws_asrun", "historical_ws", "ws_s", "nbi_s", "nbi_r"):
         table[f"{arm}_revalidation"] = {"candidate_validation": cand}
     table["anchor_injection_control"] = {"candidate_validation": 2}
+    # Audit-only, and therefore DECLARED rather than omitted. One holdout
+    # measurement per revalidated arm, on a partition no earlier stage touches.
+    # These were previously performed by a direct call outside the cache, so 5 real
+    # evaluations per unit -- 600 across the campaign -- were charged to no method
+    # and appeared in no budget table.
+    table["holdout_confirmation"] = {"holdout_audit": 5}
     for m in ("grid", "random", "bayes_quality", "bayes_cost",
               "tpe_quality", "tpe_cost"):
         table[m] = {"direct_search": comparator}
@@ -609,14 +772,78 @@ def unit_budget(q: int = 2) -> dict:
         for s, n in stages.items():
             by_stage[s] = by_stage.get(s, 0) + n
     total = sum(by_stage.values())
-    audit_only = by_stage.get("external_audit", 0)
+    # Audit-only stages: they are measured and reported, and they steer nothing.
+    # A gate failure and a holdout result both change zero execution decisions.
+    audit_only = by_stage.get("external_audit", 0) + by_stage.get("holdout_audit", 0)
     solution = total - audit_only
-    reconciles = total == sum(n for st in table.values() for n in st.values())
     return {"method_stage_table": table, "by_stage": by_stage,
             "solution_producing_logical": solution,
             "audit_only_logical": audit_only,
-            "total_logical": total,
-            "reconciles": reconciles}
+            "total_logical": total}
+
+
+def reconcile_unit_accounting(accounting: dict, q: int = 2,
+                              replication: int | None = None) -> dict:
+    """Compare what a unit ACTUALLY charged against what the registry declares.
+
+    ``unit_budget`` previously returned a ``reconciles`` flag computed as
+    ``sum(by_stage.values()) == sum(table values)``, where ``by_stage`` had itself
+    been built by summing that same table. It was ``X == X``: it could not fail, and
+    the dry run published it as a pre-launch proof. It would have reported a clean
+    reconciliation while the runner charged a different budget entirely -- which it
+    did, by 840 evaluations across the campaign, performed outside every ledger.
+
+    This is the check that can fail. It takes the cache's own per-method-per-stage
+    ledger from a completed unit and compares it entry by entry with the registry.
+    """
+    declared: dict[tuple[str, str], int] = {}
+    for method, stages in method_stage_ledger(q).items():
+        for stage, n in stages.items():
+            declared[(method, stage)] = n
+
+    # The unmatched NSGA-II run is scoped to ONE replication per dataset, so it is
+    # budgeted campaign-wide rather than per unit. A unit that ran it charges it and
+    # must have it declared; a unit that did not must not. Passing replication=None
+    # accepts either, which is only appropriate when the caller does not know which
+    # unit produced the ledger.
+    unmatched = NSGA2_POP * NSGA2_GEN * NSGA2_UNMATCHED_MULTIPLIER
+    unmatched_key = ("nsga2_unmatched", "unmatched_context")
+    charged_unmatched = any(
+        led["method"] == unmatched_key[0]
+        for led in accounting.get("per_method", []))
+    if replication is None:
+        if charged_unmatched:
+            declared[unmatched_key] = unmatched
+    elif replication == NSGA2_UNMATCHED_REPLICATION:
+        declared[unmatched_key] = unmatched
+
+    charged: dict[tuple[str, str], int] = {}
+    for led in accounting.get("per_method", []):
+        for stage, st in (led.get("by_stage") or {}).items():
+            charged[(led["method"], stage)] = st.get("logical", 0)
+
+    mismatches, undeclared, unspent = [], [], []
+    for key, n in sorted(declared.items()):
+        got = charged.get(key)
+        if got is None:
+            unspent.append({"method": key[0], "stage": key[1], "declared": n})
+        elif got != n:
+            mismatches.append({"method": key[0], "stage": key[1],
+                               "declared": n, "charged": got})
+    for key, n in sorted(charged.items()):
+        if key not in declared:
+            undeclared.append({"method": key[0], "stage": key[1], "charged": n})
+
+    total_declared = sum(declared.values())
+    total_charged = sum(charged.values())
+    return {"reconciles": not (mismatches or undeclared or unspent)
+                          and total_declared == total_charged,
+            "total_declared": total_declared,
+            "total_charged": total_charged,
+            "difference": total_charged - total_declared,
+            "mismatched_stages": mismatches,
+            "charged_but_never_declared": undeclared,
+            "declared_but_never_charged": unspent}
 
 
 def campaign_budget(q: int = 2) -> dict:
@@ -633,13 +860,24 @@ def campaign_budget(q: int = 2) -> dict:
                 unit["solution_producing_logical"] * n_units + unmatched,
             "campaign_audit_only_logical": unit["audit_only_logical"] * n_units,
             "campaign_total_logical": total,
-            "reconciles": unit["reconciles"] and total == parts}
+            # An arithmetic identity, labelled as one. Whether the campaign SPENDS
+            # this budget is answered by reconcile_unit_accounting against a
+            # completed unit's ledger, not here.
+            "arithmetic_consistent": total == parts}
 
 
 def logical_budget_plan(q: int = 2) -> dict:
     design_n, ext_n = 88, 78
+    # Standalone cost per executed arm, by exact identifier. The two historical
+    # entities cost different amounts and must appear as different rows: the as-run
+    # reproduction fits the dissertation's uncoded surfaces and has no gate, so it
+    # never pays external validation, while the shared-specification arm uses WS-S's
+    # own gated surrogates and pays exactly what WS-S pays. An earlier version of
+    # this table carried one ambiguous "HISTORICAL-WS" row at 108 and omitted the
+    # other arm entirely.
     arms = {
-        "HISTORICAL-WS": design_n + N_CANDIDATES,
+        "HISTORICAL-WS-asrun": design_n + N_CANDIDATES,
+        "HISTORICAL-WS": design_n + ext_n + N_CANDIDATES,
         "WS-S": design_n + ext_n + N_CANDIDATES,
         "NBI-S": design_n + ext_n + N_CANDIDATES,
         "NBI-R": design_n + ext_n + B_ANCHOR_PER_OBJECTIVE * q + N_CANDIDATES,
@@ -661,5 +899,6 @@ def logical_budget_plan(q: int = 2) -> dict:
 
 
 __all__ = ["run_unit", "logical_budget_plan", "method_stage_ledger",
+           "reconcile_unit_accounting", "SCORED_BASELINES",
            "unit_budget", "campaign_budget", "unit_seed", "STAGES", "DATASETS",
            "N_REPLICATIONS", "PROTOCOL_TAG", "MethodologicalFailure", "Checkpoint"]

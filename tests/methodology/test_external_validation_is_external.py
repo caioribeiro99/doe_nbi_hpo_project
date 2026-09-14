@@ -66,23 +66,64 @@ def test_backward_elimination_selects_terms_from_the_design_alone(ds: str) -> No
     R-squared would be measuring a surface the external data helped choose.
     """
     d, v = _frames(ds)
-    fm = pilot.FactorModel().fit(d)
+    # The campaign's own factor model, not the superseded pilot one.
+    from doe_xgb.campaign.factor_model import load_reference_factor_model
+    fm = load_reference_factor_model(ds)
     y_design = fm.transform(d)["quality"]
 
     terms_a, beta_a = pilot.fit_surface_backward(d, y_design)
-    # Perturbing the validation responses beyond recognition must change nothing.
+
+    # Perturb the validation responses beyond recognition and refit. An earlier
+    # version of this test built v2 and then never passed it, so the second call
+    # was byte-identical to the first and `terms_a == terms_b` was trivially true:
+    # the proof of non-leakage proved nothing. v2 is now actually used.
     v2 = v.copy()
     for c in pilot.RESPONSES:
         v2[c] = v2[c] * 3.0 + 7.0
+    y_v2 = fm.transform(v2)["quality"]
+
     terms_b, beta_b = pilot.fit_surface_backward(d, y_design)
     assert terms_a == terms_b
     np.testing.assert_allclose(beta_a, beta_b, atol=1e-12)
 
-    # and the scoring call must not feed validation responses back into the fit
+    # Scoring against wildly perturbed validation responses must not move the fit:
+    # same term count, same coefficients. Only the SCORE may change.
     r2_a, rho_a, n_a = pilot.external_scores(d, y_design, v, fm.transform(v)["quality"])
-    r2_b, rho_b, n_b = pilot.external_scores(d, y_design, v, fm.transform(v)["quality"])
-    assert (n_a, n_b) == (len(terms_a), len(terms_a))
-    assert r2_a == r2_b and rho_a == rho_b
+    r2_b, rho_b, n_b = pilot.external_scores(d, y_design, v2, y_v2)
+    assert n_a == n_b == len(terms_a), (
+        "the surface fitted against perturbed validation responses has a different "
+        "term count, so model-order selection saw the external set")
+    terms_c, beta_c = pilot.fit_surface_backward(d, y_design)
+    assert terms_c == terms_a
+    np.testing.assert_allclose(beta_c, beta_a, atol=1e-12)
+
+
+@pytest.mark.parametrize("ds", DATASETS)
+def test_the_leakage_check_can_fail(ds: str) -> None:
+    """The paired half: feeding validation rows INTO the fit must move the terms.
+
+    Without this, the test above could pass because the perturbation is inert
+    rather than because the external set is excluded.
+    """
+    import pandas as pd
+
+    d, v = _frames(ds)
+    from doe_xgb.campaign.factor_model import load_reference_factor_model
+    fm = load_reference_factor_model(ds)
+
+    terms_design, _ = pilot.fit_surface_backward(d, fm.transform(d)["quality"])
+
+    v2 = v.copy()
+    for c in pilot.RESPONSES:
+        v2[c] = v2[c] * 3.0 + 7.0
+    contaminated = pd.concat([d, v2], ignore_index=True)
+    terms_leaked, _ = pilot.fit_surface_backward(
+        contaminated, fm.transform(contaminated)["quality"])
+
+    assert terms_leaked != terms_design, (
+        f"{ds}: fitting on design+perturbed-validation selected the SAME terms as "
+        f"design alone, so this test cannot detect leakage and the companion test "
+        f"proves nothing")
 
 
 def test_the_external_set_is_the_frozen_78_point_construction() -> None:

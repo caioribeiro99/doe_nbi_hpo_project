@@ -201,17 +201,36 @@ The thresholds are still Paper 1's, and adopting them remains a transfer rather 
 **The threshold is not moved**, and retuning after seeing campaign results is forbidden.
 
 What the gate does on this panel changed substantially once the factor-model defect was corrected,
-and the corrected figure is the one that stands. Measured pre-campaign with the corrected model, the
-**two-objective quality composite fails on three of four datasets** - MAGIC at Spearman 0.832, Adult
-at 0.893, Bank Marketing at 0.857 - and passes only on Spambase. The cost objective passes everywhere.
+and the corrected figure is the one that stands.
+
+**The following is pre-confirmatory screening evidence, not a study result.** It was measured on the
+single pilot design realization used for measurement validation, at R = 1, before any arm ran. The
+confirmatory campaign recomputes the gate per replication, 30 times per dataset, and only those
+figures may be reported as findings. This must not be written as "the surrogate fails on three of
+four datasets", nor as any equivalent headline conclusion about this study's surrogate.
+
+In the corrected pre-campaign screening, the frozen reliability criterion was not met by the
+composite-quality surrogate on three of four datasets:
+
+| dataset | composite quality R² | composite quality ρ | criterion met | cost R² | cost ρ | criterion met |
+|---|---:|---:|:--:|---:|---:|:--:|
+| MAGIC | 0.691 | 0.832 | no | 0.900 | 0.941 | yes |
+| Spambase | 0.924 | 0.919 | **yes** | 0.899 | 0.945 | yes |
+| Adult | 0.908 | 0.893 | no | 0.917 | 0.901 | yes |
+| Bank Marketing | 0.870 | 0.857 | no | 0.937 | 0.950 | yes |
+
+Every failure is on the rank criterion, ρ ≥ 0.9, and by at most 0.068; the variance criterion
+R² ≥ 0.5 is met in all eight cells. The cost objective meets both criteria everywhere. Source:
+`audits/objective_count_revalidation.json`.
 
 An earlier draft of this section, computed from the defective construction, said the gate passes 7 of
 8 cells and is therefore "a check rather than a discriminator". **That reading is withdrawn.** On the
-corrected model the gate fires on most of the panel, which makes what happens to surrogate-assisted
-Pareto construction under an unreliable surface a live question on this study's own data rather than
-a hypothetical. Section 7.1 already fixes the consequence: all four arms run regardless, the gate
-annotates and never filters, and every primary comparison is additionally reported conditioned on
-gate status.
+corrected model the criterion is not met across much of the screening panel, which makes what happens
+to surrogate-assisted Pareto construction under an unreliable surface a live question on this study's
+own data rather than a hypothetical. Section 7.1 already fixes the consequence: all four arms run
+regardless, the gate annotates and never filters, and every primary comparison is additionally
+reported conditioned on gate status. Whether the criterion is met in the confirmatory campaign, and
+on which datasets, is an open question at freeze time.
 
 `protocol/budget_accounting.md` charges this as `B_surrogate_validation = 78` per replication for
 every arm that uses a surrogate.
@@ -219,8 +238,11 @@ every arm that uses a surrogate.
 ### 7.1 The gate is DIAGNOSTIC, NOT ADAPTIVE - DECIDED, and it had been missing
 
 Section 7 declared a pass/fail gate and never said what failing does. That hole is not hypothetical:
-**Spambase's quality composite already fails today**, at Spearman 0.847, and Stage A recorded
-`gate_pass_quality: false` for it while the campaign would have proceeded in silence.
+in the corrected pre-campaign screening the composite-quality criterion is unmet on three of the four
+candidate datasets, and Stage A recorded `gate_pass_quality: false` while the campaign would have
+proceeded in silence. (An earlier draft named Spambase as the failing example, at Spearman 0.847,
+from the defective factor construction. On the corrected model Spambase is the one dataset that meets
+the criterion, at 0.919. The example was wrong; the hole it illustrated was real.)
 
 The rule, fixed before any arm runs:
 

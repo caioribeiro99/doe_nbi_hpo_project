@@ -46,6 +46,33 @@ def derive_seed(dataset: str, replication: int, method: str,
     return int.from_bytes(digest, "big")
 
 
+# numpy's SeedSequence accepts arbitrarily wide entropy, but several third-party
+# seed APIs do not: scikit-learn validates ``random_state`` against
+# ``[0, 2**32 - 1]`` and rejects anything wider. A 64-bit derived seed handed
+# straight to ``GaussianProcessRegressor`` therefore raises
+# ``InvalidParameterError`` -- which is how this was found, in the pre-freeze smoke,
+# at the Bayesian comparator.
+UINT32 = 2 ** 32
+
+
+def as_uint32(seed: int) -> int:
+    """Narrow a derived seed for a library whose seed API is 32-bit.
+
+    The low 32 bits of a BLAKE2b digest are uniformly distributed and independent
+    across keys, so narrowing preserves the property that actually matters here:
+    two different ``(dataset, replication, method, stage)`` tuples get unrelated
+    streams. It does not preserve full entropy, and it is therefore used ONLY where
+    a library refuses a wider value -- never for numpy generators, which take the
+    full 64 bits.
+
+    Narrowing is a many-to-one map, so distinctness is not guaranteed by
+    construction the way it is at 64 bits. It is asserted instead, over the
+    campaign's entire set of streams, by
+    ``tests/methodology/test_seed_derivation.py``.
+    """
+    return int(seed) % UINT32
+
+
 def generator(dataset: str, replication: int, method: str,
               stage: str = "main") -> np.random.Generator:
     """A fresh generator for one (dataset, replication, method, stage)."""
@@ -71,4 +98,5 @@ def candidate_hash(configs) -> str:
     return h.hexdigest()
 
 
-__all__ = ["SEED_NAMESPACE", "seed_key", "derive_seed", "generator", "candidate_hash"]
+__all__ = ["SEED_NAMESPACE", "UINT32", "seed_key", "derive_seed", "as_uint32",
+           "generator", "candidate_hash"]

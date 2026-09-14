@@ -1,0 +1,196 @@
+{
+  "cost_factor_index": 1,
+  "dataset": "bank_marketing",
+  "diagnostics_on_reference_set": {
+    "composite_alignment_with_raw_quality": 0.9056104961051559,
+    "max_abs_offdiagonal_factor_correlation": 3.7142006642005225e-16,
+    "objective_conflict_latent_pearson": 1.512430466753366e-17,
+    "objective_conflict_latent_spearman": 0.0013749888478957948,
+    "objective_conflict_raw_responses": -0.4311021194305364
+  },
+  "dominant_response_per_factor": [
+    "Specificity_Mean",
+    "Leaves_Mean",
+    "LogLoss_Mean"
+  ],
+  "eigenvalues": [
+    4.674879635607281,
+    0.8213135025384419,
+    0.6471429889496252
+  ],
+  "eigenvalues_full": [
+    4.674879635607281,
+    0.8213135025384419,
+    0.6471429889496252,
+    0.5939576361518969,
+    0.2128042553795533,
+    0.0499019810059501,
+    3.672514618802121e-10
+  ],
+  "explained_variance_share_rotated": [
+    0.427644016311627,
+    0.23338315167381715,
+    0.33897283201455575
+  ],
+  "explained_variance_share_unrotated": [
+    0.7609675816025432,
+    0.13369177358146117,
+    0.10534064481599562
+  ],
+  "fitted_on": "the reference set above, once; APPLIED to every replication",
+  "kaiser_retained": 1,
+  "lambda3_over_lambda4": 1.0895440172169566,
+  "max_off_diagonal_score_correlation": 3.6603716690671837e-16,
+  "n_components_fixed": 3,
+  "no_arm_result_in_input": true,
+  "note": "k is a fixed protocol-level latent representation inherited from the NBI-VRF construction, not a per-dataset criterion-selected dimensionality; the Kaiser count is descriptive only",
+  "pca_components": [
+    [
+      0.44178069908994727,
+      0.32284915507530176,
+      0.43725014820405733,
+      -0.3936967471506759,
+      0.38221863788555444,
+      0.34817378066487836,
+      -0.29512259735185237
+    ],
+    [
+      0.21568018241698927,
+      0.2658529469457243,
+      -0.08229920351112657,
+      0.2949903982451625,
+      -0.08439531074681872,
+      0.5771908192916466,
+      0.6698805604037401
+    ],
+    [
+      -0.09908597597046699,
+      -0.1977255927610895,
+      -0.3453707805635058,
+      0.49567204716197033,
+      0.49312572981946023,
+      0.39712793864620105,
+      -0.4303849670528885
+    ]
+  ],
+  "protocol_clause": "EXPERIMENT_PROTOCOL.md 7.2",
+  "quality_factor_indices": [
+    0,
+    2
+  ],
+  "quality_weights": [
+    0.5578327912376791,
+    0.44216720876232085
+  ],
+  "reference_set": {
+    "description": "the Stage A design rows plus their complementary half fraction, already evaluated and committed",
+    "files": [
+      "bank_marketing_design.csv",
+      "bank_marketing_validation_complement.csv"
+    ],
+    "n_complement": 78,
+    "n_design": 88,
+    "n_total": 166
+  },
+  "response_names": [
+    "Accuracy_Mean",
+    "Precision_Mean",
+    "Recall_Mean",
+    "Specificity_Mean",
+    "RocAuc_Mean",
+    "LogLoss_Mean",
+    "Leaves_Mean"
+  ],
+  "rotated_loadings": [
+    [
+      0.6944093288256481,
+      -0.2148663483445412,
+      0.6546638432255454
+    ],
+    [
+      0.562583085126397,
+      -0.030009716760858906,
+      0.5032084149599447
+    ],
+    [
+      0.8672838471719545,
+      -0.28696833457140325,
+      0.37683164148059356
+    ],
+    [
+      -0.9153284240430737,
+      0.3138730707816736,
+      -0.13681268840521196
+    ],
+    [
+      0.3141801951607221,
+      -0.6265211673807134,
+      0.5957665938205022
+    ],
+    [
+      0.22392414646349865,
+      -0.1293562126529001,
+      0.9356914149329496
+    ],
+    [
+      -0.29932971366997485,
+      0.8924987864672718,
+      -0.09718298454036466
+    ]
+  ],
+  "rotated_ss_loading_share": [
+    0.4276440163116271,
+    0.23338315167381718,
+    0.33897283201455575
+  ],
+  "score_standardization_mean": [
+    -9.926463934630466e-15,
+    2.9802131311624684e-15,
+    2.7013197569042212e-14
+  ],
+  "score_standardization_sd": [
+    0.9999999999999998,
+    0.9999999999999996,
+    0.9999999999999998
+  ],
+  "sign_flips_applied": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "standardization_mean": [
+    -0.8923796045189375,
+    -0.5439503781122099,
+    -0.3250120179858708,
+    -0.9745951392362213,
+    -0.9077246625449258,
+    0.2589524454381092,
+    6.976141706351511
+  ],
+  "standardization_sd": [
+    0.01262644315682505,
+    0.2731403139273879,
+    0.2222970160594802,
+    0.019555534262104782,
+    0.04494388502109738,
+    0.07555898876960188,
+    1.5228788167563074
+  ],
+  "varimax_rotation": [
+    [
+      0.7004042435593645,
+      -0.41697592312146736,
+      0.5792797037192268
+    ],
+    [
+      -0.15430247033140812,
+      0.7039520529972728,
+      0.6932836755113665
+    ],
+    [
+      -0.6968677372741974,
+      -0.5749631176153172,
+      0.4287105901752546
+    ]
+  ]
+}

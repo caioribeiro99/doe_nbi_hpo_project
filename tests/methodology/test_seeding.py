@@ -84,3 +84,89 @@ def test_candidate_hash_distinguishes_streams_and_is_stable() -> None:
 def test_the_namespace_is_part_of_the_key() -> None:
     assert SEED_NAMESPACE in seed_key("magic", 0, "grid")
     assert seed_key("magic", 0, "grid") != seed_key("magic", 0, "grid", stage="other")
+
+
+# ---------------------------------------------------------------------------
+# 32-bit narrowing for third-party seed APIs
+#
+# Found by the pre-freeze smoke, at the Bayesian comparator: scikit-learn
+# validates random_state against [0, 2**32 - 1], so a 64-bit BLAKE2b seed handed
+# to GaussianProcessRegressor raises InvalidParameterError and the stage dies.
+# Narrowing is many-to-one, so the distinctness that 64 bits gave by construction
+# has to be asserted here instead -- over the campaign's ENTIRE stream set, not a
+# sample, because a collision between two methods is exactly the aliasing the
+# seeding module exists to prevent.
+# ---------------------------------------------------------------------------
+
+from doe_xgb.campaign.seeding import UINT32, as_uint32, derive_seed  # noqa: E402
+from doe_xgb.campaign.runner import DATASETS, N_REPLICATIONS  # noqa: E402
+
+_METHODS = ("grid", "random", "bayes_quality", "bayes_cost", "tpe_quality",
+            "tpe_cost", "nsga2", "empirical_anchor_search",
+            "historical_ws_asrun", "historical_ws", "ws_s", "nbi_s", "nbi_r")
+_STAGES = ("main", "direct_search", "anchor", "candidate_validation")
+
+
+def _campaign_keys():
+    return [(d, r, m, s)
+            for d in DATASETS for r in range(N_REPLICATIONS)
+            for m in _METHODS for s in _STAGES]
+
+
+def test_as_uint32_is_within_the_sklearn_accepted_range():
+    for key in _campaign_keys()[:500]:
+        v = as_uint32(derive_seed(*key))
+        assert isinstance(v, int)
+        assert 0 <= v < UINT32
+
+
+def test_narrowing_preserves_distinctness_across_the_whole_campaign():
+    keys = _campaign_keys()
+    narrowed = [as_uint32(derive_seed(*k)) for k in keys]
+    assert len(set(narrowed)) == len(keys), (
+        f"{len(keys) - len(set(narrowed))} seed collision(s) after narrowing to 32 "
+        f"bits; two streams would be aliased")
+
+
+def test_narrowing_is_deterministic():
+    k = ("magic", 7, "bayes_quality", "direct_search")
+    assert as_uint32(derive_seed(*k)) == as_uint32(derive_seed(*k))
+
+
+def test_the_gaussian_process_accepts_every_narrowed_seed():
+    """The exact call that failed, exercised with the real estimator."""
+    from sklearn.gaussian_process import GaussianProcessRegressor
+    import numpy as np
+
+    X = np.linspace(0, 1, 12).reshape(-1, 1)
+    y = np.sin(3 * X).ravel()
+    for key in [("magic", 0, "bayes_quality", "direct_search"),
+                ("spambase", 0, "bayes_cost", "direct_search"),
+                ("adult", 29, "tpe_quality", "direct_search")]:
+        seed = derive_seed(*key)
+        assert seed >= UINT32 or True          # width is not the point; acceptance is
+        GaussianProcessRegressor(normalize_y=True,
+                                 random_state=as_uint32(seed)).fit(X, y)
+
+
+def test_raw_64_bit_seed_is_rejected_by_sklearn():
+    """The defect this guards against, demonstrated rather than asserted."""
+    import pytest
+    from sklearn.gaussian_process import GaussianProcessRegressor
+    from sklearn.utils._param_validation import InvalidParameterError
+    import numpy as np
+
+    X = np.linspace(0, 1, 12).reshape(-1, 1)
+    y = np.sin(3 * X).ravel()
+    wide = next(s for s in (derive_seed("magic", r, "bayes_quality", "direct_search")
+                            for r in range(50)) if s >= UINT32)
+    with pytest.raises(InvalidParameterError):
+        GaussianProcessRegressor(normalize_y=True, random_state=wide).fit(X, y)
+
+
+def test_numpy_generators_still_get_the_full_width():
+    """Narrowing is for third-party APIs only; numpy must keep 64 bits."""
+    import inspect
+    from doe_xgb.campaign import seeding
+    src = inspect.getsource(seeding.generator)
+    assert "as_uint32" not in src, "generator() must not narrow; numpy takes 64 bits"

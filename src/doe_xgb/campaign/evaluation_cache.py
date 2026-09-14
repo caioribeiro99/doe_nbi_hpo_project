@@ -136,15 +136,34 @@ class EvaluationCache:
         # The logical ledger is the scientific budget, so it must survive a resumed
         # run. Holding it only in memory meant a unit resumed from checkpoints
         # reported zero logical evaluations beside thousands of physical fits.
+        # ``attempt`` is what makes the logical ledger resume-invariant. Stage
+        # completion is checkpointed at stage granularity, so a unit interrupted
+        # MID-stage re-enters that stage and re-requests everything it had already
+        # requested. Replaying an append-only log then counts the partial first
+        # attempt and the complete second one, and the logical ledger -- the
+        # scientific budget, and the only figure entering a fairness comparison --
+        # silently inflates. Measured before this change: a mid-stage kill took grid
+        # from 386 to 772 while the physical fit count stayed correct, so the
+        # corruption is invisible in the cache statistics and is asymmetric across
+        # the comparison, since it lands only on whichever method was interrupted.
+        #
+        # Rows are kept, not deleted, so a superseded attempt remains auditable.
+        # Only the latest attempt per (method, stage) is counted.
         self._db.execute(
             "CREATE TABLE IF NOT EXISTS requests ("
             "  id INTEGER PRIMARY KEY AUTOINCREMENT, method TEXT NOT NULL,"
             "  stage TEXT NOT NULL DEFAULT 'unspecified', key TEXT NOT NULL,"
             "  served_from_cache INTEGER NOT NULL, computed INTEGER NOT NULL,"
-            "  config TEXT)")
+            "  config TEXT, attempt INTEGER NOT NULL DEFAULT 1)")
+        cols = {r[1] for r in self._db.execute("PRAGMA table_info(requests)")}
+        if "attempt" not in cols:                     # a database written before this
+            self._db.execute("ALTER TABLE requests ADD COLUMN "
+                             "attempt INTEGER NOT NULL DEFAULT 1")
         self._db.execute("CREATE INDEX IF NOT EXISTS requests_method "
-                         "ON requests(method, stage)")
+                         "ON requests(method, stage, attempt)")
         self._db.commit()
+        self._attempt: dict[tuple[str, str], int] = {}
+        self._opened: set[tuple[str, str]] = set()
         self._load_ledgers()
 
     def _load_ledgers(self) -> None:
@@ -153,9 +172,19 @@ class EvaluationCache:
         A resumed unit must reconstruct both accountings exactly; holding them in
         memory lost the scientific budget on every resume.
         """
+        # The latest attempt per (method, stage) is the one that counts. Earlier
+        # attempts are the record of an interrupted run and are deliberately
+        # retained in the table, but counting them would double-charge the budget.
+        for method, stage, attempt in self._db.execute(
+                "SELECT method, stage, MAX(attempt) FROM requests "
+                "GROUP BY method, stage").fetchall():
+            self._attempt[(method, stage)] = int(attempt)
         rows = self._db.execute(
-            "SELECT method, stage, key, served_from_cache, computed FROM requests "
-            "ORDER BY id").fetchall()
+            "SELECT r.method, r.stage, r.key, r.served_from_cache, r.computed "
+            "FROM requests r JOIN (SELECT method, stage, MAX(attempt) AS a "
+            "                      FROM requests GROUP BY method, stage) m "
+            "  ON r.method = m.method AND r.stage = m.stage AND r.attempt = m.a "
+            "ORDER BY r.id").fetchall()
         for method, stage, key, served, computed in rows:
             led = self._ledgers.setdefault(method, MethodLedger(method))
             led.logical += 1
@@ -223,8 +252,9 @@ class EvaluationCache:
                 st["served_from_cache"] += 1
                 self._db.execute(
                     "INSERT INTO requests (method, stage, key, served_from_cache, "
-                    "computed, config) VALUES (?,?,?,1,0,?)",
-                    (method, stage, key, json.dumps(cfg, sort_keys=True)))
+                    "computed, config, attempt) VALUES (?,?,?,1,0,?,?)",
+                    (method, stage, key, json.dumps(cfg, sort_keys=True),
+                     self._attempt.get((method, stage), 1)))
                 self._db.commit()
                 return json.loads(row[0])
         # computed outside the lock: a fit takes seconds and must not block others
@@ -237,8 +267,9 @@ class EvaluationCache:
                  json.dumps(result), method))
             self._db.execute(
                 "INSERT INTO requests (method, stage, key, served_from_cache, "
-                "computed, config) VALUES (?,?,?,0,1,?)",
-                (method, stage, key, json.dumps(cfg, sort_keys=True)))
+                "computed, config, attempt) VALUES (?,?,?,0,1,?,?)",
+                (method, stage, key, json.dumps(cfg, sort_keys=True),
+                 self._attempt.get((method, stage), 1)))
             self._db.commit()
             led = self.ledger(method)
             led.computed += 1
@@ -253,7 +284,56 @@ class EvaluationCache:
 
         The returned object is the only thing an optimizer is given.
         """
+        self._begin_stage(method, stage)
         return MethodView(self, method, compute, stage)
+
+    def _begin_stage(self, method: str, stage: str) -> None:
+        """Open a fresh attempt for one (method, stage), discarding the last one.
+
+        Opened on the FIRST view of a (method, stage) in THIS process, and only
+        then. That is precisely the resume boundary: the runner enters a stage only
+        when its checkpoint says the stage is incomplete, so the first view of a
+        pair in a new process means "this stage is being run again from the start",
+        and whatever a killed earlier process charged for it is superseded rather
+        than added to. Later views of the same pair within one process are ordinary
+        continued work -- several methods share a stage, and a caller may reasonably
+        take more than one view -- so they accumulate.
+
+        The in-memory ledger is rewound by the superseded attempt's own counts, so a
+        resumed process and an uninterrupted one report identical budgets.
+        """
+        with self._lock:
+            key = (method, stage)
+            if key in self._opened:
+                return                          # already running in this process
+            self._opened.add(key)
+            prev = self._attempt.get(key, 0)
+            if prev:
+                row = self._db.execute(
+                    "SELECT COUNT(*), COALESCE(SUM(served_from_cache),0), "
+                    "       COALESCE(SUM(computed),0) FROM requests "
+                    "WHERE method = ? AND stage = ? AND attempt = ?",
+                    (method, stage, prev)).fetchone()
+                n, served, computed = int(row[0]), int(row[1]), int(row[2])
+                if n:
+                    led = self._ledgers.setdefault(method, MethodLedger(method))
+                    led.logical -= n
+                    led.served_from_cache -= served
+                    led.computed -= computed
+                    st = led.by_stage.get(stage)
+                    if st is not None:
+                        st["logical"] -= n
+                        st["served_from_cache"] -= served
+                        st["computed"] -= computed
+                        if st["logical"] <= 0:
+                            led.by_stage.pop(stage, None)
+                    keys = [k for (k,) in self._db.execute(
+                        "SELECT key FROM requests WHERE method = ? AND stage = ? "
+                        "AND attempt = ? ORDER BY id", (method, stage, prev))]
+                    for k in keys:
+                        if k in led.keys:
+                            led.keys.remove(k)
+            self._attempt[key] = prev + 1
 
     def close(self) -> None:
         self._db.close()

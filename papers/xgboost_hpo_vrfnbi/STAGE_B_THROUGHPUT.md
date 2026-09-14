@@ -107,10 +107,10 @@ It is the right one here because the campaign runs all four datasets in fixed pr
 |---|---:|---:|
 | `B_total_solution`: HISTORICAL-WS / WS-S / NBI-S / NBI-R | 108 / 186 / 186 / 386 | same |
 | comparator budget | 386 | same |
-| evaluations per replication per dataset | **3,168** | 2,376 |
+| evaluations per replication per dataset | **3,173** | 2,376 |
 | campaign evaluations (R = 30, 4 datasets) | **380,160** | 285,120 |
 | unmatched NSGA-II, one replication per dataset | **15,360** | not counted |
-| **campaign total** | **395,520** | 285,120 |
+| **campaign total** | **396,120** | 285,120 |
 | **projected wall clock** | **17.4 h, 0.73 days** | 12.6 h, 0.52 days |
 
 The correction does **not** disturb the objective-count decision. That was refused on scientific

@@ -190,15 +190,131 @@ def test_the_logical_ledger_survives_a_resume(tmp_path) -> None:
     assert len(calls) == 2
 
 
-def test_a_resumed_cache_still_charges_new_requests(tmp_path) -> None:
+def test_re_entering_a_stage_replaces_its_charge_rather_than_adding_to_it(tmp_path) -> None:
+    """Re-entry means the stage is being run again from the start.
+
+    This test previously asserted the opposite -- that a resumed cache ADDS to the
+    previous count -- which is exactly the double-charge. Stage completion is
+    checkpointed at stage granularity, so the runner re-enters a stage only when it
+    did not finish; everything the killed attempt charged is superseded, not
+    accumulated. A stage that DID complete is never re-entered, and
+    ``test_the_logical_ledger_survives_a_resume`` covers that case: there the
+    resumed process opens no view and the original count stands.
+    """
     compute, _ = _counter()
     path = tmp_path / "e.sqlite"
     c1 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
-    c1.view("A", compute).evaluate(CFG_A)
+    c1.view("A", compute, stage="direct_search").evaluate(CFG_A)
     c1.close()
+
     c2 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
-    c2.view("A", compute).evaluate(CFG_A)             # same method, cached
-    assert c2.ledger("A").logical == 2, "the reloaded ledger must keep counting"
+    c2.view("A", compute, stage="direct_search").evaluate(CFG_A)
+    assert c2.ledger("A").logical == 1, "a re-entered stage must not double-charge"
+    c2.close()
+
+    # The superseded attempt is retained for audit, not deleted.
+    import sqlite3
+    db = sqlite3.connect(str(path))
+    assert db.execute("SELECT COUNT(*) FROM requests").fetchone()[0] == 2
+    assert {a for (a,) in db.execute("SELECT DISTINCT attempt FROM requests")} == {1, 2}
+    db.close()
+
+
+def test_a_resumed_process_still_charges_work_it_has_not_done_before(tmp_path) -> None:
+    """Rewinding a re-entered stage must not suppress genuinely new requests."""
+    compute, _ = _counter()
+    path = tmp_path / "e.sqlite"
+    c1 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c1.view("A", compute, stage="direct_search").evaluate(CFG_A)
+    c1.close()
+
+    c2 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    v = c2.view("A", compute, stage="direct_search")
+    v.evaluate(CFG_A)
+    v.evaluate(CFG_B)                                   # new work in the new attempt
+    assert c2.ledger("A").logical == 2
+    c2.close()
+
+
+def test_a_resumed_unit_reports_the_same_budget_as_an_uninterrupted_one(tmp_path) -> None:
+    """The invariant that actually matters, stated directly.
+
+    The logical ledger is the scientific budget and the only figure entering a
+    fairness comparison. Before the attempt column, killing a process part-way
+    through one stage and resuming took that stage's charge from 386 to 772 while
+    the physical fit count stayed correct -- so the corruption was invisible in the
+    cache statistics, and it was asymmetric across the comparison because it landed
+    only on whichever method happened to be interrupted.
+    """
+    compute, _ = _counter()
+    configs = [{**CFG_A, "n_estimators": 50 + 10 * i} for i in range(12)]
+
+    # (a) uninterrupted
+    a_path = tmp_path / "uninterrupted.sqlite"
+    ca = EvaluationCache(a_path, dataset="magic", split_id="rep_00", seed=1)
+    va = ca.view("grid", compute, stage="direct_search")
+    for cfg in configs:
+        va.evaluate(cfg)
+    uninterrupted = ca.accounting()
+    ca.close()
+
+    # (b) killed after 5 of 12, then resumed and re-run from the start
+    b_path = tmp_path / "interrupted.sqlite"
+    cb = EvaluationCache(b_path, dataset="magic", split_id="rep_00", seed=1)
+    vb = cb.view("grid", compute, stage="direct_search")
+    for cfg in configs[:5]:
+        vb.evaluate(cfg)
+    cb.close()                                           # the kill
+
+    cb2 = EvaluationCache(b_path, dataset="magic", split_id="rep_00", seed=1)
+    vb2 = cb2.view("grid", compute, stage="direct_search")
+    for cfg in configs:                                  # the stage re-runs entire
+        vb2.evaluate(cfg)
+    resumed = cb2.accounting()
+    cb2.close()
+
+    assert resumed["logical_evaluations_total"] == uninterrupted["logical_evaluations_total"] == 12
+    assert resumed["by_stage"]["direct_search"]["logical"] == 12
+    per_r = {m["method"]: m for m in resumed["per_method"]}
+    per_u = {m["method"]: m for m in uninterrupted["per_method"]}
+    assert per_r["grid"]["logical_evaluations"] == per_u["grid"]["logical_evaluations"] == 12
+    assert per_r["grid"]["unique_logical_evaluations"] == 12
+
+
+def test_two_interruptions_still_charge_once(tmp_path) -> None:
+    compute, _ = _counter()
+    path = tmp_path / "e.sqlite"
+    configs = [{**CFG_A, "n_estimators": 50 + 10 * i} for i in range(6)]
+    for stop in (2, 4):
+        c = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+        v = c.view("random", compute, stage="direct_search")
+        for cfg in configs[:stop]:
+            v.evaluate(cfg)
+        c.close()
+    c = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    v = c.view("random", compute, stage="direct_search")
+    for cfg in configs:
+        v.evaluate(cfg)
+    assert c.ledger("random").logical == 6
+    c.close()
+
+
+def test_an_interruption_does_not_disturb_another_methods_ledger(tmp_path) -> None:
+    """Re-entering one stage must rewind that stage only."""
+    compute, _ = _counter()
+    path = tmp_path / "e.sqlite"
+    c1 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c1.view("grid", compute, stage="direct_search").evaluate(CFG_A)
+    c1.view("nbi_s_revalidation", compute, stage="candidate_validation").evaluate(CFG_B)
+    c1.close()
+
+    c2 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c2.view("grid", compute, stage="direct_search").evaluate(CFG_A)   # re-entered
+    acc = c2.accounting()
+    per = {m["method"]: m for m in acc["per_method"]}
+    assert per["grid"]["logical_evaluations"] == 1
+    assert per["nbi_s_revalidation"]["logical_evaluations"] == 1, \
+        "an untouched method's ledger was disturbed by another stage's re-entry"
     c2.close()
 
 

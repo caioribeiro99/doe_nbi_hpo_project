@@ -17,6 +17,7 @@ import pandas as pd
 
 from .design import from_coded, to_coded
 from .evaluator import BOUNDS, INT_PARAMS, PARAMS
+from .seeding import as_uint32
 
 
 # Seeds are derived per (dataset, replication, method, stage) in
@@ -97,7 +98,7 @@ def _scalar_bo(view, budget: int, seed: int, objective_index: int,
         if kind == "bayes":
             gp = GaussianProcessRegressor(
                 kernel=ConstantKernel(1.0) * Matern(nu=2.5) + WhiteKernel(1e-6),
-                normalize_y=True, random_state=seed).fit(X, y)
+                normalize_y=True, random_state=as_uint32(seed)).fit(X, y)
             cand = rng.uniform(-1.0, 1.0, size=(512, k))
             mu, sd = gp.predict(cand, return_std=True)
             best = y.min()

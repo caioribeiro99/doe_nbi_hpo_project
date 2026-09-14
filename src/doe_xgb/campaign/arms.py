@@ -235,7 +235,7 @@ def historical_weights(step: float = 0.05) -> np.ndarray:
 
 
 # ---------------------------------------------------------------------------
-# Arm 1 -- HISTORICAL-WS
+# Arm 1 -- HISTORICAL-WS-asrun
 # ---------------------------------------------------------------------------
 
 
@@ -267,7 +267,7 @@ def run_historical_ws(model_quality, model_cost, *, observed_utopia, observed_na
     if str(src) not in str(_frozen_nbi.__file__):
         raise RuntimeError(
             f"{FROZEN_PACKAGE}.nbi resolved to {_frozen_nbi.__file__}, not the frozen tree "
-            f"at {src}. HISTORICAL-WS must call the dissertation code, not the "
+            f"at {src}. HISTORICAL-WS-asrun must call the dissertation code, not the "
             "article-track rewrite.")
     run_nbi_weighted_sum = _frozen_nbi.run_nbi_weighted_sum      # frozen
     FROZEN_PARAMS = _frozen_cfg.PARAM_NAMES                      # frozen
@@ -281,14 +281,14 @@ def run_historical_ws(model_quality, model_cost, *, observed_utopia, observed_na
     for c in raw:
         x_nat = np.array([float(c.params[p]) for p in FROZEN_PARAMS], dtype=float)
         x_coded = realizer.to_coded(x_nat)
-        cands.append(_record("HISTORICAL-WS", c.betas, x_coded, surrogates_coded,
+        cands.append(_record("HISTORICAL-WS-asrun", c.betas, x_coded, surrogates_coded,
                              realizer, c.success, c.message,
                              extra={"historical_predicted": list(map(float, c.predicted)),
                                     "historical_score": float(c.score)}))
     from ..reporting import dominated_fraction
     grid = historical_weights()
     F_real = np.array([c.f_surrogate_realized for c in cands])
-    return ArmRun("HISTORICAL-WS", cands, {
+    return ArmRun("HISTORICAL-WS-asrun", cands, {
         "dominated_share_of_returned_set": round(float(dominated_fraction(F_real)), 4),
         "source": "frozen v0.1.0-dissertation run_nbi_weighted_sum, called unmodified",
         "normalization": "component-wise observed extrema of the design rows",

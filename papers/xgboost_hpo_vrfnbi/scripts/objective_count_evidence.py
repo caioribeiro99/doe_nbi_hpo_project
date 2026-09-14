@@ -1,5 +1,16 @@
 #!/usr/bin/env python
-"""Regenerate every number in the objective-count decision, from committed artifacts.
+"""
+SUPERSEDED by objective_count_revalidation.py.
+
+This script computes the objective-count evidence with pilot_stage_a_screening.py's
+FactorModel, which carries both withdrawn factor-algebra defects. Its output,
+audits/objective_count_evidence.json, is retained as the record of what the
+three-objective decision was originally made on; audits/objective_count_revalidation.json
+is the evidence that stands, recomputed on doe_xgb.campaign.factor_model. Amendment 15's
+refusal was re-derived there and survived (Outcome A).
+
+Do not cite this script's output as current evidence.
+Regenerate every number in the objective-count decision, from committed artifacts.
 
 The adversarial review of the two-to-three objective amendment found that none of
 the eight figures carrying the proposal could be reproduced by any committed

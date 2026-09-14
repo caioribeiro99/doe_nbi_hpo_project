@@ -1,0 +1,196 @@
+{
+  "cost_factor_index": 1,
+  "dataset": "spambase",
+  "diagnostics_on_reference_set": {
+    "composite_alignment_with_raw_quality": 0.2493387423509284,
+    "max_abs_offdiagonal_factor_correlation": 3.7007434154171886e-16,
+    "objective_conflict_latent_pearson": -3.394261769787695e-16,
+    "objective_conflict_latent_spearman": 0.31006161241904845,
+    "objective_conflict_raw_responses": -0.500235179586126
+  },
+  "dominant_response_per_factor": [
+    "Specificity_Mean",
+    "Leaves_Mean",
+    "Precision_Mean"
+  ],
+  "eigenvalues": [
+    4.446206981250497,
+    1.1061127805341968,
+    0.8855393590894506
+  ],
+  "eigenvalues_full": [
+    4.446206981250497,
+    1.1061127805341968,
+    0.8855393590894506,
+    0.3892602785047928,
+    0.14688900918033757,
+    0.025991591440725985,
+    0.0
+  ],
+  "explained_variance_share_rotated": [
+    0.5666387719220639,
+    0.2713264321447055,
+    0.1620347959332306
+  ],
+  "explained_variance_share_unrotated": [
+    0.690634401556582,
+    0.1718137597866551,
+    0.13755183865676304
+  ],
+  "fitted_on": "the reference set above, once; APPLIED to every replication",
+  "kaiser_retained": 2,
+  "lambda3_over_lambda4": 2.274928647975438,
+  "max_off_diagonal_score_correlation": 3.821858654467208e-16,
+  "n_components_fixed": 3,
+  "no_arm_result_in_input": true,
+  "note": "k is a fixed protocol-level latent representation inherited from the NBI-VRF construction, not a per-dataset criterion-selected dimensionality; the Kaiser count is descriptive only",
+  "pca_components": [
+    [
+      0.46038792992760996,
+      0.12073472545502725,
+      0.46057106636603506,
+      -0.35502788623539056,
+      0.39801479731871237,
+      0.45633679124773574,
+      -0.2619857380412497
+    ],
+    [
+      -0.07236790275577255,
+      0.5930805876716588,
+      -0.11212665212877033,
+      0.4875353249814653,
+      0.2140879522605921,
+      -0.11032620913505005,
+      -0.5785755786672456
+    ],
+    [
+      0.07847003807023696,
+      0.7822661766876926,
+      0.09675857889932506,
+      -0.25890684336816017,
+      -0.32900617980122115,
+      -0.044562932788319264,
+      0.44190065000642853
+    ]
+  ],
+  "protocol_clause": "EXPERIMENT_PROTOCOL.md 7.2",
+  "quality_factor_indices": [
+    0,
+    2
+  ],
+  "quality_weights": [
+    0.7776304739443922,
+    0.22236952605560778
+  ],
+  "reference_set": {
+    "description": "the Stage A design rows plus their complementary half fraction, already evaluated and committed",
+    "files": [
+      "spambase_design.csv",
+      "spambase_validation_complement.csv"
+    ],
+    "n_complement": 78,
+    "n_design": 88,
+    "n_total": 166
+  },
+  "response_names": [
+    "Accuracy_Mean",
+    "Precision_Mean",
+    "Recall_Mean",
+    "Specificity_Mean",
+    "RocAuc_Mean",
+    "LogLoss_Mean",
+    "Leaves_Mean"
+  ],
+  "rotated_loadings": [
+    [
+      0.8963208929120082,
+      -0.3568909309197896,
+      0.15128848677679016
+    ],
+    [
+      0.08342251079071768,
+      -0.08217195638077375,
+      0.9909927932536735
+    ],
+    [
+      0.9186516144820234,
+      -0.31951549152480996,
+      0.13907176414353414
+    ],
+    [
+      -0.9299815109619831,
+      -0.13246970087001386,
+      0.016741935950940357
+    ],
+    [
+      0.5735443869200725,
+      -0.722205664952713,
+      0.0191731563047901
+    ],
+    [
+      0.8846793362872404,
+      -0.3964661106695895,
+      0.03566201299258412
+    ],
+    [
+      -0.13112221909142377,
+      0.9023487178228824,
+      -0.13016001417888828
+    ]
+  ],
+  "rotated_ss_loading_share": [
+    0.5666387719220639,
+    0.2713264321447054,
+    0.16203479593323059
+  ],
+  "score_standardization_mean": [
+    4.04629475842301e-17,
+    -2.7835832701746396e-15,
+    -6.541861680878392e-15
+  ],
+  "score_standardization_sd": [
+    0.9999999999999999,
+    0.9999999999999994,
+    0.9999999999999997
+  ],
+  "sign_flips_applied": [
+    1.0,
+    -1.0,
+    1.0
+  ],
+  "standardization_mean": [
+    -0.8949433603981137,
+    -0.9347539274889751,
+    -0.7811923556294144,
+    -0.9689070182073586,
+    -0.9728894098118158,
+    0.2670377512294127,
+    6.701355508720788
+  ],
+  "standardization_sd": [
+    0.09532231690925473,
+    0.10942491379012029,
+    0.26028942535040617,
+    0.015574952740461674,
+    0.013624336130888159,
+    0.1547970252114109,
+    1.258804107434565
+  ],
+  "varimax_rotation": [
+    [
+      0.8737272950045852,
+      -0.4643508078573638,
+      0.14484108949529248
+    ],
+    [
+      -0.44759392562693584,
+      -0.6509500006941069,
+      0.6131262303459297
+    ],
+    [
+      0.1904213530721769,
+      0.6005351145757882,
+      0.7765933842466115
+    ]
+  ]
+}

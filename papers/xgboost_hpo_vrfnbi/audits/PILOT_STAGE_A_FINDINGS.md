@@ -207,9 +207,27 @@ All four measurements, taken with the corrected machinery:
 | Adult | −0.562 | 0.288 | 0.911 | 0.925 | 0.935 | 0.955 | 3,402 | 1.57 |
 | Bank Marketing | −0.688 | 0.144 | 0.917 | 0.915 | 0.942 | 0.958 | 4,273 | 1.31 |
 
-**All four datasets pass all four criteria.** Objectives conflict everywhere, every front has
-curvature, every surface is useful without being perfect, and the cost objective ranges over two to
-three orders of magnitude. The panel stands as proposed; no replacement is needed.
+**This verdict was computed on the superseded factor algebra and CRITERION 1 DOES NOT SURVIVE
+CORRECTION.** The row of latent conflict values above — −0.284, −0.428, −0.562, −0.688 — came from
+the factor construction the protocol has since withdrawn. Recomputed on the corrected model
+(`audits/reference_factor_models/`), the same quantity is **−0.201, +0.310, +0.103 and +0.001**: on
+no dataset is it "clearly negative", which is what criterion 1 requires.
+
+The reason is structural and is recorded in amendment 19. The quality composite is a weighted sum of
+rotated quality factors and the cost objective is another factor of the same orthogonal basis, so
+`Pearson(quality, cost)` is **zero by construction** — measured between 1e−17 and 5e−16 on all four
+166-point reference sets. Criterion 1 asks whether two variables that are linearly uncorrelated by
+construction are "clearly negatively" associated; its Spearman is rank-nonlinearity residual and has
+no stable sign. **The instrument is broken, not the panel.**
+
+The conflict between the **raw responses** and the leaf-count cost — which is what "these objectives
+trade off" means physically — is clearly negative on every dataset: **−0.223, −0.500, −0.440,
+−0.431**. Criteria 2, 3 and 4 are unaffected by the factor correction and are unchanged.
+
+**What follows from this is NOT decided here.** Restating a frozen screening criterion after seeing
+the numbers it produces is exactly the move the pilot/confirmatory boundary exists to prevent, and it
+is not the author's to make silently. It is recorded as an open item in `PROTOCOL_AMENDMENTS.md` and
+the protocol is not frozen until it is resolved.
 
 **One observation to carry into the manuscript, against interest.** The gate as specified — external
 R² ≥ 0.5 and Spearman ≥ 0.9 — now passes 7 of the 8 dataset-by-response cells, failing only

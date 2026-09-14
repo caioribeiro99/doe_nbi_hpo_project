@@ -49,10 +49,15 @@ R = 30
 PROTOCOL_TEST_TRAIN_RATIO = 0.20 / 0.80
 TEST_TRAIN_RATIOS = (0.1111, PROTOCOL_TEST_TRAIN_RATIO, 0.4286)   # 90/10, 80/20, 70/30
 
-_spec = importlib.util.spec_from_file_location("pilot", HERE / "pilot_stage_a_screening.py")
-pilot = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(pilot)
-
+# The objective definition MUST be the campaign's own. This script previously
+# loaded pilot_stage_a_screening.py and called its FactorModel, which still carries
+# both superseded factor-algebra defects: it rotates raw component scores
+# (line 264, pca.transform(Z) @ R_) instead of standardized ones, and it weights
+# the quality axes by UNROTATED eigenvalue shares indexed by rotated component
+# (line 267). Only the Nadeau-Bengio arithmetic downstream had been corrected; its
+# input had not, so the study's frozen statement of what R = 30 can resolve was
+# computed on the algebra the protocol had already withdrawn.
+from doe_xgb.campaign.factor_model import load_reference_factor_model  # noqa: E402
 from doe_xgb.reporting import hypervolume, igd_plus, pareto_front   # noqa: E402
 
 
@@ -75,7 +80,10 @@ def paired_spread(ds: str, draws: int, rng) -> dict:
     d = pd.read_csv(PILOT / f"{ds}_design.csv")
     v = pd.read_csv(PILOT / f"{ds}_validation_complement.csv")
     both = pd.concat([d, v], ignore_index=True)
-    fm = pilot.FactorModel().fit(d)          # fitted on the design, as the protocol requires
+    # The frozen per-dataset model the campaign APPLIES (EXPERIMENT_PROTOCOL.md 7.2),
+    # so the spread measured here is the spread of the indicator the campaign will
+    # actually compute, not of one a refit would have produced.
+    fm = load_reference_factor_model(ds)
     fs = fm.transform(both)
     F = np.column_stack([fs["quality"], fs["cost"]])
     lo, hi = F.min(axis=0), F.max(axis=0)

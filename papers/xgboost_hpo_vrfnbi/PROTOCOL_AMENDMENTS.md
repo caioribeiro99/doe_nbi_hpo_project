@@ -259,17 +259,187 @@ Two steps, because the first replacement did not work either.
 | **Commit** | this one |
 | **Could it favour an arm?** | **No.** A control that can only refuse text. |
 
+## Amendment 19 — the methodological guard tested the wrong invariant
+
+**Recorded with the fact that made it necessary: the campaign would not run.** That is the
+circumstance in which a protocol change most needs scrutiny, so it is stated first.
+
+| | |
+|---|---|
+| **v2 specification** | the runner raises a methodological failure when the latent objective conflict, Spearman between the quality composite and the cost factor, disagrees in sign with the same quantity computed from an equally weighted mean of the six canonicalized quality responses. The stated purpose was to catch a composite "inverted relative to the metrics it is built from". |
+| **What happened** | on the first smoke unit run against the **corrected** factor model, the guard fired on Spambase: latent +0.355 against raw −0.472. Investigated across the panel, it fires on **two of four** datasets (Spambase and Adult), which would record half the panel as methodological failures and exclude it. |
+| **Diagnosis, CORRECTED** | the guard was a proxy for inversion and the proxy is wrong. Measured directly, the composite is **not inverted anywhere**: its Spearman with the badness it aggregates is +0.929, +0.243, +0.835 and +0.896. **The mechanism behind the divergence is structural, not a property of any one response.** The quality composite is a weighted sum of rotated quality factors and the cost objective is another factor from the same orthogonal basis, so `Pearson(quality, cost)` is **zero by construction**: measured −3.3e−16, +3.9e−16, +7.6e−17, +3.1e−16 on the four design sets and −8.8e−17 to +4.9e−16 on the four 166-point reference sets. A Spearman between two variables with zero linear correlation is rank-nonlinearity residual, and its **sign is not stable**. Comparing that sign against the sign of a genuine −0.22 to −0.50 raw-response conflict was never an invariant; it was close to a coin flip. |
+| **A diagnosis that was recorded here and is now withdrawn** | this row previously attributed the divergence to specificity trading off against the other quality responses at a fixed decision threshold. **That is false and was falsified by direct test.** Rebuilding the equally weighted raw reference with `Specificity_Mean` removed does not reconcile the sign on Spambase (latent +0.323 against raw-without-specificity −0.601) or on Adult (+0.103 against −0.284), and on Adult it is marginally *worse* than with specificity included (−0.398). No single-response exclusion reconciles either dataset. The false mechanism was found by the V10 independent review, not by the author, and is left visible here rather than quietly overwritten. `tests/methodology/test_frozen_reference_factor_model.py::test_specificity_removal_does_not_explain_the_divergence` keeps the falsification executable. |
+| **Revised specification** | the guard is split. **Hard, still a methodological failure:** the composite's Spearman with the badness it aggregates must be positive. A negative value means the study would be optimizing toward worse models and no result from that unit is usable. **Reported, never fatal:** the conflict-sign comparison against the equally weighted reference, persisted per replication with its own note. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** The smoke unit failed at stage 3 of 20, before any arm ran. |
+| **Could it favour an arm?** | **No.** The guard is a shared stage that either stops a unit or does not; it cannot alter what any arm computes. It is applied identically to every unit of every dataset. |
+| **Why this is not weakening the protocol to make the campaign run** | the replacement invariant is **strictly the one the original guard's own error message names**, and it is testable in a way the proxy was not. The proxy could not distinguish an inverted composite from a correctly oriented one that weights a trade-off differently, and it classified the second as the first. Both quantities are now persisted, so a reader can see the divergence the proxy was reacting to. |
+| **What must appear in the manuscript** | **not** the withdrawn specificity story. The correct and more uncomfortable statement is that the two frozen objectives are **linearly uncorrelated on the design side by construction**, because Varimax rotation of an orthogonal basis leaves the quality composite orthogonal to the cost factor. Every "latent objective conflict" this study can measure between them is therefore a rank-nonlinearity artifact with no stable sign, and the conflict that is real — between the raw responses and the leaf-count cost — is the one to report. This bears directly on what a measured trade-off between these two objectives means, and it must be stated plainly rather than presented as a property of one response. |
+| **Consequence still open at freeze time** | `protocol/dataset_selection.md` screening criterion 1 requires the Spearman between the quality composite and the cost objective to be "clearly negative", and under the corrected algebra it is −0.201, +0.323, +0.103 and −0.025. That criterion is measuring the quantity shown above to be structurally near zero, so it is not a criterion the corrected model can satisfy. **This is not resolved in this amendment**, because resolving it changes a frozen screening rule. See the open item recorded after the engineering-defect section. |
+
+---
+
+## OPEN ITEM — blocks the v3 freeze, and is not decided here
+
+**Screening criterion 1 cannot be satisfied under the corrected factor algebra, and deciding what to
+do about that changes a frozen screening rule.**
+
+`protocol/dataset_selection.md` requires, for a dataset to stay in the panel:
+
+> Spearman between the quality composite and the cost objective — **clearly negative**; a value near
+> zero means no conflict.
+
+| dataset | Stage A value (superseded algebra) | corrected latent ρ | corrected latent *Pearson* | raw-response ρ |
+|---|---:|---:|---:|---:|
+| MAGIC | −0.284 | −0.201 | +8.8e−17 | **−0.223** |
+| Spambase | −0.428 | **+0.310** | −3.4e−16 | **−0.500** |
+| Adult | −0.562 | **+0.103** | +4.9e−16 | **−0.440** |
+| Bank Marketing | −0.688 | **+0.001** | +1.5e−17 | **−0.431** |
+
+**Why this is not a panel problem.** The quality composite is a weighted sum of rotated quality
+factors and the cost objective is another factor of the same orthogonal basis, so their linear
+correlation is **zero by construction**, everywhere, for any dataset. Criterion 1 therefore asks
+whether two variables that are uncorrelated by construction are clearly negatively associated. Its
+Spearman is rank-nonlinearity residual with no stable sign. Under the corrected algebra the criterion
+is **unsatisfiable in principle**, not failed in fact — it would reject every dataset that could ever
+be proposed, including datasets whose objectives obviously trade off.
+
+The trade-off these datasets actually have is intact and is clearly negative on all four: the raw
+quality responses against the leaf-count cost, −0.223 to −0.500.
+
+**Why it is recorded rather than fixed.** Restating a screening criterion *after* seeing the numbers
+it produces is the exact move the pilot/confirmatory boundary exists to prevent, and the fact that
+the obvious restatement leaves the panel unchanged makes it more dangerous to do quietly, not less:
+an author who rewrites a rejection rule and finds nothing rejected has no evidence that the rule was
+ever binding. The direction of any change would also be self-serving — it keeps the panel the study
+already has.
+
+So it is stated, with its numbers, and left for an explicit decision. **`xgboost-hpo-protocol-v3` is
+not frozen while this is open.**
+
+The options, without a recommendation attached to any of them:
+
+1. **Restate criterion 1 on the raw responses**, where "these objectives conflict" is measurable and
+   is satisfied by all four datasets. The panel is unchanged, which is precisely why adopting it
+   requires the reasoning to be recorded before the numbers are cited, not after.
+2. **Retire criterion 1**, on the ground that the corrected construction makes it vacuous, and rely
+   on criteria 2, 3 and 4 — which are unaffected and which all four datasets meet. The panel is
+   again unchanged, and the study then has one fewer screening rule than it published.
+3. **Keep it as written.** No dataset qualifies and the panel is empty. Not viable, and listed only
+   so that "the criterion as frozen" is on the record as having been considered.
+
+Whichever is chosen becomes a numbered amendment recording that no arm had been executed when it was
+made, which remains true: this is written before the confirmatory campaign has run.
+
+---
+
+## Engineering defects caught by the pre-freeze smoke — *not* protocol amendments
+
+The pre-freeze engineering smoke ran one full unit end to end on `spambase`. It exposed four defects
+in the **code**, none of which changes the protocol. They are recorded here because this ledger
+says it records every change, and they are kept out of the numbered amendments because the amendment
+count means "the pilot changed the protocol" and must not be diluted by ordinary bugs.
+
+The distinction is load-bearing, so it is stated precisely: **an amendment changes what the campaign
+is specified to do; these two changed only whether the code did what the specification already
+said.** Neither altered a threshold, a budget, an arm definition, a decision rule or a reported
+quantity.
+
+### E1 — a stage could not be called at all
+
+`_run_historical` acquired a keyword-only `symmetric_grid` parameter and forwarded it to
+`run_historical_ws`, which never accepted it, while the runner's own call site never supplied it.
+Three mutually inconsistent signatures. The campaign stopped with a `TypeError` at stage six of
+twenty, after the split, design, factor model, surrogates and external validation had all executed —
+in the confirmatory campaign, hours of compute per unit before the traceback.
+
+The parameter was vestigial: the symmetric-grid path is the shared-specification `HISTORICAL-WS` arm,
+which runs through `run_ws_s`, and the frozen solver's grid is fixed by its own `beta_step=0.05` and
+is not a knob that can be turned from outside without modifying the frozen code — which would defeat
+the arm. The parameter was removed rather than threaded through.
+
+**Why 253 tests did not catch it:** nothing bound the runner's call sites to their callees'
+signatures. `tests/methodology/test_call_signatures.py` now walks the AST of every campaign module
+and binds each intra-package call against `inspect.signature`, checking arity and keyword names only.
+Reintroducing the defect makes it fail, naming `runner.py:263`.
+
+### E2 — two distinct entities shared one identifier
+
+`run_historical_ws` labelled its output `HISTORICAL-WS`, and so did the shared-specification arm. The
+runner kept them apart by checkpoint stage key, so nothing failed and both ran correctly, but every
+candidate record in both carried the same `arm` field.
+
+These are exactly the two entities of which `protocol/EXPERIMENT_PROTOCOL.md` says "the two are never
+mixed in one table". With one identifier between them, mixing them was undetectable rather than
+forbidden: any downstream aggregation grouping by `arm` — per-arm indicator tables, provenance
+exports, the method registry — would have merged the bit-faithful reproduction with the normalization
+control and produced a single row where the protocol requires two.
+
+**This was a code-conformance defect, not a protocol change.** `protocol/EXPERIMENT_PROTOCOL.md` and
+`protocol/OBJECTIVE_COUNT_DECISION.md` had named the as-run arm `HISTORICAL-WS-asrun` all along. The
+code was out of conformance with the frozen protocol documents, and was corrected to match them;
+the documents were not changed to match the code. `tests/methodology/test_arm_identifiers.py` now
+holds the registry and fails if `arms.py` stamps an unregistered identifier onto a result.
+
+### E3 — a derived seed too wide for the library that received it
+
+`derive_seed` returns a 64-bit BLAKE2b value, which is correct for
+`numpy.random.SeedSequence`. scikit-learn validates `random_state` against `[0, 2**32 - 1]` and
+raises `InvalidParameterError` for anything wider, so the Bayesian comparator died at stage thirteen
+of twenty — after the design, the external audit, all five arms, the empirical anchor search and two
+comparators had spent their real evaluations.
+
+`seeding.as_uint32` now narrows a seed where, and only where, a third-party API requires it; numpy
+generators keep the full width, which a test asserts by inspecting `generator`'s source. Narrowing is
+many-to-one, so the distinctness that 64 bits gave by construction is asserted instead over the
+campaign's entire set of 3,840 streams.
+
+### E4 — metadata stored in a namespace that is iterated as methods
+
+The direct-baselines stage wrote its seed ledger into the `methods` dictionary as well as at the
+checkpoint's top level. The augmented-reference and metrics stages iterate that dictionary and score
+every entry in it, so the run died at stage eighteen on `KeyError: 'rows'`.
+
+**The crash was luck, and it is not the reason this is recorded.** Had the stray entry carried a
+`rows` key, it would have been converted to objective values and folded into the **augmented
+reference** — the set against which every arm's IGD⁺ and hypervolume are measured — with no error at
+all. The reference would have been contaminated by metadata, every indicator in the paper computed
+against the contaminated set, and nothing would have looked wrong at any point.
+
+The duplicate write was removed, and both read sites now go through `_baseline_methods`, which fails
+loudly if the namespace holds anything that is not a registered comparator, or if any registered
+comparator is missing. The guard was verified against the actual polluted artifact the smoke left on
+disk, not only against a synthetic one.
+
+---
+
+All four defects were found before any confirmatory arm executed, and all four were found by running
+the pipeline rather than by reading it. Three of them killed a stage between six and eighteen of
+twenty, which in the confirmatory campaign is hours of real evaluations per unit before the
+traceback, times 120 units.
+
+**The common property is that none was visible to a unit test**, because each lived in the seam
+between a component and its caller, or between a component and a third-party library. Four new test
+files close the class rather than the four instances: `test_call_signatures.py` binds every
+intra-package call against its callee's signature; `test_arm_identifiers.py` holds the registry of
+executed entities and fails on an unregistered label; `test_baselines_execute.py` runs every
+comparator against a stub view with real derived seeds, in about a second and with no data;
+`test_baseline_namespace.py` and `test_checkpoint_resume.py` pin the namespace and resume invariants.
+Each was confirmed to fail when its defect is reintroduced.
+
 ---
 
 ## Summary of exposure
 
 | Question | Answer |
 |---|---|
-| Amendments made after observing any arm's result | **0 of 18** |
-| Amendments made after observing any Pareto front | **0 of 18** |
-| Amendments made after observing any method comparison | **0 of 18** |
+| Amendments made after observing any arm's result | **0 of 19** |
+| Amendments made after observing any Pareto front | **0 of 19** |
+| Amendments made after observing any method comparison | **0 of 19** |
 | Amendments found by the author | 1–10 |
 | Amendments found by adversarial review rather than by the author | **11–18** |
+| Amendments forced by an engineering smoke run before any arm executed | **19** |
 | Amendments affecting a stage shared identically by all arms | 1, 2, 3, 8, 9 |
 | Amendments affecting budget symmetrically across arms and comparators | 5, 6 |
 | Amendments affecting only the surrogate gate, which HISTORICAL-WS does not use | 4 |

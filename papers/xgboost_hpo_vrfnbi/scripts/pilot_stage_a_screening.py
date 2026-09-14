@@ -208,6 +208,23 @@ def varimax(L: np.ndarray, tol=1e-7, it=200):
     return L @ R, R
 
 
+# ---------------------------------------------------------------------------
+# SUPERSEDED. This class carries BOTH factor-algebra defects the protocol has
+# since withdrawn, and it is retained ONLY so Stage A's committed output remains
+# reproducible from the code that produced it.
+#
+#   * it rotates RAW component scores, whose variances are the eigenvalues,
+#     instead of standardized ones, which yields correlated "orthogonal" factors
+#     (measured 0.379 to 0.698) and loadings that do not describe the scores in use;
+#   * it weights the quality axes by UNROTATED eigenvalue shares indexed by
+#     ROTATED component, which on Adult gave 0.872/0.128 where the rotated shares
+#     are 0.547/0.453.
+#
+# The corrected implementation is doe_xgb.campaign.factor_model. Nothing that
+# produces current evidence may use this class; the design-geometry helpers in this
+# module (PARAMS, BOUNDS, INTS, external_points) are unaffected and are still used.
+# tests/methodology/test_no_superseded_factor_algebra.py enforces this.
+# ---------------------------------------------------------------------------
 class FactorModel:
     """The protocol section 6.3 factor stage, fitted once and then applied.
 

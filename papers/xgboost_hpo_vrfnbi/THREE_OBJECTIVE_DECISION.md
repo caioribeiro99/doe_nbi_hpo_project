@@ -92,7 +92,7 @@ against 5.8, with a 5-day ceiling. Stage B retired that premise entirely.
 
 | | two objectives | three objectives |
 |---|---:|---:|
-| campaign evaluations, corrected accounting | 395,520 | ~484,000 |
+| campaign evaluations, corrected accounting | 396,120 | ~484,000 |
 | projected wall clock at the measured 0.1585 s per evaluation | **0.73 days** | **~0.89 days** |
 
 *(The figures first published here, 285,120 and 0.52 days, understated the campaign by 39%: they

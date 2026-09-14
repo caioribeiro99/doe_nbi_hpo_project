@@ -34,18 +34,18 @@ this establishes what to expect.
 
 ## What R = 30 resolves
 
-Two-sided paired test at α = 0.05 and 80% power, 150 resampling draws per dataset:
+Two-sided paired test at α = 0.05 and 80% power, 200 resampling draws per dataset:
 
-| Dataset | indicator | paired sd (proxy) | minimum detectable difference | expected 95% interval half-width | detectable at ρ = 0.25 |
+| Dataset | indicator | paired sd (proxy) | minimum detectable difference | expected 95% interval half-width | detectable at n_test/n_train = 0.25 (80/20) |
 |---|---|---:|---:|---:|---:|
-| MAGIC | hypervolume ratio | 0.0112 | **0.0059** | 0.0042 | 0.0197 |
-| MAGIC | IGD⁺ | 0.0092 | 0.0049 | 0.0034 | 0.0162 |
-| Spambase | hypervolume ratio | 0.0455 | **0.0241** | 0.0170 | 0.0799 |
-| Spambase | IGD⁺ | 0.0220 | 0.0116 | 0.0082 | 0.0386 |
-| Adult | hypervolume ratio | 0.0319 | **0.0169** | 0.0119 | 0.0561 |
-| Adult | IGD⁺ | 0.0150 | 0.0080 | 0.0056 | 0.0264 |
-| Bank Marketing | hypervolume ratio | 0.0296 | **0.0157** | 0.0111 | 0.0520 |
-| Bank Marketing | IGD⁺ | 0.0142 | 0.0075 | 0.0053 | 0.0249 |
+| MAGIC | hypervolume ratio | 0.0150 | **0.0079** | 0.0056 | 0.0231 |
+| MAGIC | IGD⁺ | 0.0098 | 0.0052 | 0.0037 | 0.0152 |
+| Spambase | hypervolume ratio | 0.0522 | **0.0276** | 0.0195 | 0.0805 |
+| Spambase | IGD⁺ | 0.0379 | 0.0201 | 0.0141 | 0.0585 |
+| Adult | hypervolume ratio | 0.0277 | **0.0147** | 0.0103 | 0.0428 |
+| Adult | IGD⁺ | 0.0184 | 0.0097 | 0.0069 | 0.0283 |
+| Bank Marketing | hypervolume ratio | 0.0417 | **0.0221** | 0.0156 | 0.0644 |
+| Bank Marketing | IGD⁺ | 0.0196 | 0.0104 | 0.0073 | 0.0302 |
 
 The standardized effect R = 30 detects at 80% power is **0.532 paired standard deviations**, which
 is a medium effect. The design cannot resolve small ones.
@@ -83,7 +83,7 @@ version instead inflated `sd/√n` by `√(1 + ρ/(1−ρ))`, which divides the 
 understates it badly at R = 30.
 
 Corrected, the cost of the correction is much larger than previously reported: the standard error
-inflates by **3.31×** at ρ = 0.25, not 1.15×. The detectable hypervolume-ratio difference under the
+inflates by **sqrt(8.5) = 2.9155×** at n_test/n_train = 0.25, not 1.15×. An earlier version of this sentence said 3.31× “at ρ = 0.25”, which is the equicorrelation variant and corresponds to a 75/25 split, not this protocol's 80/20. The detectable hypervolume-ratio difference under the
 corrected test is therefore **0.020 to 0.080** depending on dataset, not 0.007 to 0.026.
 
 That is a material change and it is reported rather than buried. It is also why the correction is a

@@ -19,6 +19,7 @@ import argparse
 import json
 import multiprocessing as mp
 import os
+import pathlib
 import platform
 import subprocess
 import sys
@@ -36,7 +37,7 @@ from doe_xgb.campaign.design import (external_validation_set, load_design)  # no
 from doe_xgb.campaign.runner import (DATASETS, N_REPLICATIONS, PROTOCOL_TAG,  # noqa: E402
                                      STAGES, Checkpoint, campaign_budget,
                                      logical_budget_plan, method_stage_ledger,
-                                     run_unit, unit_seed)
+                                     reconcile_unit_accounting, run_unit, unit_seed)
 
 CONFIRMATORY_ROOT = REPO / "experiments" / "xgboost_hpo_vrfnbi_confirmatory"
 PILOT_ROOTS = [REPO / "papers" / "xgboost_hpo_vrfnbi" / "audits" / "pilot_stage_a"]
@@ -80,7 +81,7 @@ def plan() -> dict:
         "campaign_solution_producing_logical": cb["campaign_solution_producing_logical"],
         "campaign_audit_only_logical": cb["campaign_audit_only_logical"],
         "budget_by_stage_per_unit": cb["by_stage"],
-        "budget_reconciles": cb["reconciles"],
+        "budget_arithmetic_consistent": cb["arithmetic_consistent"],
         "nsga2_unmatched_evaluations": unmatched,
         "nsga2_unmatched_scope": cb["unmatched_nsga2_scope"],
         "projected_hours": round(total * SECONDS_PER_EVALUATION / 3600, 2),
@@ -153,14 +154,40 @@ def dry_run() -> int:
           _holdout_is_late())
     check("the git tree is clean", _tree_clean(), _tree_status())
     cb = campaign_budget()
-    check("the budget reconciles against the method-stage table", cb["reconciles"],
+    # This is an arithmetic identity and is labelled as one. It is NOT evidence that
+    # the campaign spends the budget it publishes: the previous "the budget
+    # reconciles" proof compared a sum of the method-stage table against a sum of
+    # the same table, so it could not fail, and it reported a clean reconciliation
+    # while the runner charged 840 evaluations per campaign outside every ledger.
+    check("the published total is the sum of its published parts (arithmetic only)",
+          cb["arithmetic_consistent"],
           f"{cb['campaign_total_logical']:,} = "
           f"{cb['campaign_solution_producing_logical']:,} solution-producing + "
           f"{cb['campaign_audit_only_logical']:,} audit-only")
-    check("every stage in the ledger is a runner stage or a shared stage",
+    # The check that CAN fail: what a real unit charged, against what is declared.
+    # It needs a completed unit, so the dry run reports whether one is available
+    # rather than silently skipping.
+    check("every stage in the ledger is a declared stage",
           set(cb["by_stage"]) <= {"design", "external_audit", "anchor",
-                                  "candidate_validation", "direct_search"},
+                                  "candidate_validation", "direct_search",
+                                  "holdout_audit"},
           str(sorted(cb["by_stage"])))
+    smoke = _latest_smoke_accounting()
+    if smoke is None:
+        check("a completed unit's ledger reconciles against the registry", False,
+              "no completed unit available; run an engineering smoke first. "
+              "The arithmetic identity above is NOT a substitute.")
+    else:
+        rec = reconcile_unit_accounting(smoke["accounting"])
+        check("a completed unit's ledger reconciles against the registry",
+              rec["reconciles"],
+              f"{smoke['label']}: charged {rec['total_charged']:,} against "
+              f"{rec['total_declared']:,} declared"
+              + (f"; mismatched {rec['mismatched_stages']}" if rec["mismatched_stages"] else "")
+              + (f"; undeclared {rec['charged_but_never_declared']}"
+                 if rec["charged_but_never_declared"] else "")
+              + (f"; never charged {rec['declared_but_never_charged']}"
+                 if rec["declared_but_never_charged"] else ""))
 
     CONFIRMATORY_ROOT.mkdir(parents=True, exist_ok=True)
     (CONFIRMATORY_ROOT / "campaign_plan.json").write_text(json.dumps(p, indent=2))
@@ -174,6 +201,37 @@ def _disjoint() -> bool:
     d, e = load_design(), external_validation_set()
     return not ({tuple(r) for r in np.round(to_coded(e), 6)}
                 & {tuple(r) for r in np.round(to_coded(d), 6)})
+
+
+# Engineering smoke roots, searched newest first. These live OUTSIDE the
+# confirmatory root by construction: a smoke unit is not campaign data, and the
+# dry run reads only its accounting ledger, never any arm's outcome.
+SMOKE_ROOTS = [pathlib.Path("/tmp/smoke_v3"),
+               REPO / "experiments" / "_xgb_hpo_v3_smoke"]
+
+
+def _latest_smoke_accounting():
+    """The most recent completed smoke unit's accounting, or None.
+
+    Reads ONLY the accounting block of the metrics checkpoint. No arm outcome is
+    opened, so running this proof cannot breach confirmatory blindness.
+    """
+    best = None
+    for root in SMOKE_ROOTS:
+        if not root.exists():
+            continue
+        for metrics in root.glob("*/rep_*/metrics.json"):
+            try:
+                payload = json.loads(metrics.read_text())
+            except Exception:
+                continue
+            if not payload.get("_complete") or "accounting" not in payload:
+                continue
+            stamp = payload.get("_written_at", 0)
+            if best is None or stamp > best["stamp"]:
+                best = {"stamp": stamp, "accounting": payload["accounting"],
+                        "label": f"{metrics.parent.parent.name}/{metrics.parent.name}"}
+    return best
 
 
 def _holdout_is_late() -> bool:

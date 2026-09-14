@@ -14,6 +14,9 @@ objective is not the same variable across the points a replication compares.
 """
 from __future__ import annotations
 
+import json
+import pathlib
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -117,6 +120,95 @@ class FrozenFactorModel:
                 **self.diagnostics}
 
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "FrozenFactorModel":
+        """Rebuild a model persisted by :meth:`as_dict`.
+
+        Protocol EXPERIMENT_PROTOCOL.md 7.2 freezes ONE factor model per dataset,
+        fitted on the 166-point Stage A reference set and APPLIED to every
+        replication. Refitting per replication makes the objective a different
+        variable in each pair, so 30 paired indicator values would not live in one
+        objective space and no normalized indicator is invariant to that. The model
+        is therefore built once, committed as an artifact, and read back here.
+        """
+        known = {"response_names", "standardization_mean", "standardization_sd",
+                 "pca_components", "eigenvalues", "varimax_rotation",
+                 "rotated_loadings", "score_standardization_mean",
+                 "score_standardization_sd", "cost_factor_index",
+                 "quality_factor_indices", "quality_weights",
+                 "explained_variance_share_unrotated",
+                 "explained_variance_share_rotated"}
+        return cls(
+            mu=np.asarray(d["standardization_mean"], dtype=float),
+            sd=np.asarray(d["standardization_sd"], dtype=float),
+            components=np.asarray(d["pca_components"], dtype=float),
+            eigenvalues=np.asarray(d["eigenvalues"], dtype=float),
+            rotation=np.asarray(d["varimax_rotation"], dtype=float),
+            rotated_loadings=np.asarray(d["rotated_loadings"], dtype=float),
+            score_mu=np.asarray(d["score_standardization_mean"], dtype=float),
+            score_sd=np.asarray(d["score_standardization_sd"], dtype=float),
+            cost_index=int(d["cost_factor_index"]),
+            quality_indices=tuple(int(i) for i in d["quality_factor_indices"]),
+            quality_weights=np.asarray(d["quality_weights"], dtype=float),
+            response_names=tuple(d["response_names"]),
+            diagnostics={k: v for k, v in d.items()
+                         if k not in known and not k.startswith("_")})
+
+
+# The committed per-dataset reference models. EXPERIMENT_PROTOCOL.md 7.2 freezes
+# one model per dataset, fitted on the 166-point Stage A reference set and APPLIED
+# to every replication; papers/.../scripts/build_reference_factor_models.py is what
+# produces these files, and the test suite rebuilds and compares them.
+REFERENCE_MODEL_DIR = (pathlib.Path(__file__).resolve().parents[3]
+                       / "papers" / "xgboost_hpo_vrfnbi" / "audits"
+                       / "reference_factor_models")
+
+
+def load_reference_factor_model(dataset: str) -> "FrozenFactorModel":
+    """The frozen factor model for one dataset. Never fitted at campaign time.
+
+    Refitting per replication makes the objective a different variable in every
+    pair, so the 30 paired indicator values would not live in one objective space.
+    The runner had been doing exactly that. This loads the committed artifact
+    instead, so every replication of a dataset measures the same two objectives.
+    """
+    path = REFERENCE_MODEL_DIR / f"{dataset}.json"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"no frozen reference factor model for {dataset!r} at {path}. "
+            f"Run papers/xgboost_hpo_vrfnbi/scripts/build_reference_factor_models.py. "
+            f"The campaign must not fall back to a per-replication fit: that is the "
+            f"confound EXPERIMENT_PROTOCOL.md 7.2 exists to remove.")
+    return FrozenFactorModel.from_dict(json.loads(path.read_text()))
+
+
+def tucker_congruence(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Per-factor Tucker congruence between two loading matrices.
+
+    phi_j = <a_j, b_j> / sqrt(<a_j,a_j><b_j,b_j>), computed after matching each
+    column of ``b`` to the column of ``a`` it best corresponds to and resolving the
+    sign, because Varimax fixes neither factor order nor orientation. Conventional
+    reading: |phi| >= 0.95 is equivalence, 0.85 to 0.95 fair similarity.
+
+    EXPERIMENT_PROTOCOL.md 7.2 requires this as the reported sensitivity of the
+    per-replication refit against the frozen reference model.
+    """
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    k = a.shape[1]
+    na = np.linalg.norm(a, axis=0)
+    nb = np.linalg.norm(b, axis=0)
+    # cross-congruence of every pair, sign removed for matching only
+    C = (a.T @ b) / np.outer(np.where(na == 0, 1, na), np.where(nb == 0, 1, nb))
+    used, out = set(), np.zeros(k)
+    for j in range(k):
+        order = np.argsort(-np.abs(C[j]))
+        pick = next((i for i in order if i not in used), int(order[0]))
+        used.add(pick)
+        out[j] = C[j, pick]
+    return out
+
+
 def fit_factor_model(design: pd.DataFrame, k: int = N_COMPONENTS) -> FrozenFactorModel:
     """Fit on the design side. Never call this on anything else."""
     names = tuple(RESPONSES)
@@ -185,6 +277,38 @@ def fit_factor_model(design: pd.DataFrame, k: int = N_COMPONENTS) -> FrozenFacto
         response_names=names, diagnostics=diagnostics)
 
 
+def composite_alignment(model: "FrozenFactorModel", df: pd.DataFrame) -> float:
+    """Spearman between the quality composite and the badness it aggregates.
+
+    This is the inversion test. The composite is a weighted mean of rotated latent
+    axes, and it must point the same way as the responses it is built from; a
+    negative value means the study would be optimizing toward worse models.
+
+    It deliberately does NOT test that the composite relates to COST the same way
+    the raw responses do, which is what the guard it replaced tested. That
+    comparison cannot be an invariant here, for a structural reason: the composite
+    is a weighted sum of rotated quality factors and the cost objective is another
+    factor from the same orthogonal basis, so their Pearson correlation is zero by
+    construction -- measured between 1e-17 and 5e-16 on every design set and every
+    166-point reference set in the panel. A Spearman between two linearly
+    uncorrelated variables is rank-nonlinearity residual and its sign is not stable,
+    so comparing that sign against the sign of a genuine raw-response conflict was
+    close to a coin flip.
+
+    An earlier version of this docstring attributed the divergence to specificity
+    trading off at a fixed threshold. That was wrong: removing Specificity_Mean from
+    the raw reference does not reconcile the sign on Spambase or Adult, and on Adult
+    it is slightly worse. See PROTOCOL_AMENDMENTS.md amendment 19.
+    """
+    from scipy.stats import spearmanr
+    M = apply_transforms(df)
+    names = list(RESPONSES)
+    q = [i for i, c in enumerate(names) if RESPONSES[c]["role"] == "quality"]
+    ref = np.column_stack([(M[:, i] - M[:, i].mean()) / M[:, i].std(ddof=1)
+                           for i in q]).mean(axis=1)
+    return float(spearmanr(model.transform(df)["quality"], ref).statistic)
+
+
 def raw_conflict(df: pd.DataFrame) -> float:
     """Objective conflict measured without the factor stage, as an independent check."""
     from scipy.stats import spearmanr
@@ -196,4 +320,5 @@ def raw_conflict(df: pd.DataFrame) -> float:
 
 
 __all__ = ["FrozenFactorModel", "fit_factor_model", "apply_transforms", "varimax",
-           "raw_conflict", "N_COMPONENTS"]
+           "raw_conflict", "composite_alignment", "tucker_congruence",
+           "load_reference_factor_model", "REFERENCE_MODEL_DIR", "N_COMPONENTS"]
