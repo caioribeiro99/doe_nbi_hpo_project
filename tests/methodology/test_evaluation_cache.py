@@ -117,7 +117,8 @@ def test_a_method_view_exposes_no_route_to_other_methods(cache) -> None:
     compute, _ = _counter()
     v = cache.view("NSGA-II", compute)
     public = {n for n in dir(v) if not n.startswith("_")}
-    assert public == {"evaluate", "history", "logical_evaluations", "method"}, public
+    assert public == {"evaluate", "history", "logical_evaluations", "method",
+                      "stage"}, public
     with pytest.raises(AttributeError):
         v.cache                       # no handle on the shared store
     with pytest.raises(AttributeError):
@@ -199,3 +200,55 @@ def test_a_resumed_cache_still_charges_new_requests(tmp_path) -> None:
     c2.view("A", compute).evaluate(CFG_A)             # same method, cached
     assert c2.ledger("A").logical == 2, "the reloaded ledger must keep counting"
     c2.close()
+
+
+def test_the_ledger_is_reported_per_method_and_per_stage(tmp_path) -> None:
+    """The budget table must break down by stage, not only by method."""
+    compute, _ = _counter()
+    cache = EvaluationCache(tmp_path / "e.sqlite", dataset="magic",
+                            split_id="rep_00", seed=1)
+    cache.view("NBI-R", compute, stage="anchor").evaluate(CFG_A)
+    cache.view("NBI-R", compute, stage="anchor").evaluate(CFG_B)
+    cache.view("NBI-R", compute, stage="candidate_validation").evaluate(CFG_A)
+    acc = cache.accounting()
+    per = {m["method"]: m for m in acc["per_method"]}["NBI-R"]
+    assert per["logical_evaluations"] == 3
+    assert per["by_stage"]["anchor"]["logical"] == 2
+    assert per["by_stage"]["candidate_validation"]["logical"] == 1
+    assert acc["by_stage"]["anchor"]["logical"] == 2
+    cache.close()
+
+
+def test_the_stage_ledger_survives_a_resume(tmp_path) -> None:
+    compute, _ = _counter()
+    path = tmp_path / "e.sqlite"
+    c1 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c1.view("WS-S", compute, stage="candidate_validation").evaluate(CFG_A)
+    c1.view("WS-S", compute, stage="candidate_validation").evaluate(CFG_B)
+    before = c1.accounting()
+    c1.close()
+    c2 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    assert c2.accounting()["by_stage"] == before["by_stage"]
+    c2.close()
+
+
+def test_twenty_collapsing_candidates_cost_twenty_logical_and_one_physical(tmp_path) -> None:
+    """The exact case the review named: no method gains budget from rounding collapse."""
+    calls: list[dict] = []
+
+    def compute(cfg):
+        calls.append(cfg)
+        return {"leaves": 1.0}
+
+    cache = EvaluationCache(tmp_path / "e.sqlite", dataset="magic",
+                            split_id="rep_00", seed=1)
+    for method in ("HISTORICAL-WS", "WS-S", "NBI-S", "NBI-R"):
+        v = cache.view(method, compute, stage="candidate_validation")
+        for _ in range(20):
+            v.evaluate(CFG_A)                # twenty continuous solutions, one learner
+        led = cache.ledger(method)
+        assert led.by_stage["candidate_validation"]["logical"] == 20, method
+    assert len(calls) == 1, "one physical fit for all eighty requests"
+    assert cache.physical_fits() == 1
+    assert cache.accounting()["logical_evaluations_total"] == 80
+    cache.close()

@@ -198,10 +198,20 @@ same surfaces score R² of 0.775 to 0.953 against the complementary fraction and
 against random sets. See `audits/PILOT_STAGE_A_FINDINGS.md` Finding 4.
 
 The thresholds are still Paper 1's, and adopting them remains a transfer rather than a calibration.
-Measured pre-campaign they now pass 7 of 8 dataset-by-response cells, failing only Spambase's quality
-surface at Spearman 0.847. **The threshold is not moved.** The honest reading, which goes in the
-manuscript, is that on this problem the surrogate is adequate nearly everywhere and the gate is a
-check rather than a discriminator. Retuning after seeing campaign results is forbidden.
+**The threshold is not moved**, and retuning after seeing campaign results is forbidden.
+
+What the gate does on this panel changed substantially once the factor-model defect was corrected,
+and the corrected figure is the one that stands. Measured pre-campaign with the corrected model, the
+**two-objective quality composite fails on three of four datasets** - MAGIC at Spearman 0.832, Adult
+at 0.893, Bank Marketing at 0.857 - and passes only on Spambase. The cost objective passes everywhere.
+
+An earlier draft of this section, computed from the defective construction, said the gate passes 7 of
+8 cells and is therefore "a check rather than a discriminator". **That reading is withdrawn.** On the
+corrected model the gate fires on most of the panel, which makes what happens to surrogate-assisted
+Pareto construction under an unreliable surface a live question on this study's own data rather than
+a hypothetical. Section 7.1 already fixes the consequence: all four arms run regardless, the gate
+annotates and never filters, and every primary comparison is additionally reported conditioned on
+gate status.
 
 `protocol/budget_accounting.md` charges this as `B_surrogate_validation = 78` per replication for
 every arm that uses a surrogate.

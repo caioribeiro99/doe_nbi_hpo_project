@@ -9,26 +9,26 @@
         "minimum_detectable_paired_difference_80pct": 0.005948,
         "expected_ci95_half_width": 0.004195,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.012381,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.019726,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.033115,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.012381,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.01734,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.022141,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       },
       "igd_plus": {
         "paired_sd_proxy": 0.009233,
         "minimum_detectable_paired_difference_80pct": 0.004887,
         "expected_ci95_half_width": 0.003448,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.010174,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.01621,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.027212,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.010174,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.014249,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.018194,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       }
     },
     "spambase": {
@@ -37,26 +37,26 @@
         "minimum_detectable_paired_difference_80pct": 0.024105,
         "expected_ci95_half_width": 0.017004,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.050179,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.079948,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.134212,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.050177,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.070278,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.089734,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       },
       "igd_plus": {
         "paired_sd_proxy": 0.021997,
         "minimum_detectable_paired_difference_80pct": 0.011645,
         "expected_ci95_half_width": 0.008214,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.02424,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.038621,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.064834,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.024239,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.033949,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.043349,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       }
     },
     "adult": {
@@ -65,26 +65,26 @@
         "minimum_detectable_paired_difference_80pct": 0.016908,
         "expected_ci95_half_width": 0.011927,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.035197,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.056078,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.094141,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.035196,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.049296,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.062943,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       },
       "igd_plus": {
         "paired_sd_proxy": 0.015025,
         "minimum_detectable_paired_difference_80pct": 0.007954,
         "expected_ci95_half_width": 0.00561,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.016557,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.026379,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.044283,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.016556,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.023188,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.029608,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       }
     },
     "bank_marketing": {
@@ -93,26 +93,26 @@
         "minimum_detectable_paired_difference_80pct": 0.015666,
         "expected_ci95_half_width": 0.01105,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.032611,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.051957,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.087223,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.03261,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.045673,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.058318,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       },
       "igd_plus": {
         "paired_sd_proxy": 0.014202,
         "minimum_detectable_paired_difference_80pct": 0.007518,
         "expected_ci95_half_width": 0.005303,
         "standardized_effect_detectable": 0.5294,
-        "mde_corrected_rho_0.1": 0.015649,
-        "se_inflation_factor_rho_0.1": 2.082,
-        "mde_corrected_rho_0.25": 0.024933,
-        "se_inflation_factor_rho_0.25": 3.317,
-        "mde_corrected_rho_0.5": 0.041857,
-        "se_inflation_factor_rho_0.5": 5.568,
-        "correction_note": "Nadeau and Bengio (2003), variance of the mean difference = sigma^2 (1/n + rho/(1-rho)); reported as a sensitivity, never as the primary test"
+        "mde_corrected_test_train_0.1111": 0.015649,
+        "se_inflation_test_train_0.1111": 2.0816,
+        "mde_corrected_test_train_0.25": 0.021918,
+        "se_inflation_test_train_0.25": 2.9155,
+        "mde_corrected_test_train_0.4286": 0.027986,
+        "se_inflation_test_train_0.4286": 3.7226,
+        "correction_note": "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported as a sensitivity, never as the primary test."
       }
     }
   },

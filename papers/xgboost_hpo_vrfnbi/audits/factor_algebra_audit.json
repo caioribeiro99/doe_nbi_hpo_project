@@ -1,0 +1,318 @@
+{
+  "tolerance": 1e-08,
+  "datasets": {
+    "magic": {
+      "checks": {
+        "1_unrotated_score_covariance_is_diagonal": {
+          "max_off_diagonal": 4.900294729380001e-16,
+          "pass": true
+        },
+        "2_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 2.220446049250313e-16,
+          "pass": true
+        },
+        "3_rotated_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 1.1102230246251565e-15,
+          "pass": true
+        },
+        "4_rotated_loadings_describe_the_applied_scores": {
+          "max_abs_deviation": 8.881784197001252e-16,
+          "pass": true
+        },
+        "5_truncated_reconstruction_matches_retained_pca": {
+          "max_abs_deviation": 9.325873406851315e-15,
+          "pass": true
+        },
+        "6_sign_flips_change_orientation_only": {
+          "covariance_change": 0.0,
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "7_role_permutation_preserves_the_subspace": {
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "8_weights_are_normalized_rotated_ss_loadings": {
+          "max_abs_deviation": 5.551115123125783e-17,
+          "pass": true
+        }
+      },
+      "max_off_diagonal_factor_correlation": 3.4710420999774996e-16
+    },
+    "spambase": {
+      "checks": {
+        "1_unrotated_score_covariance_is_diagonal": {
+          "max_off_diagonal": 3.777310520563751e-16,
+          "pass": true
+        },
+        "2_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 7.771561172376096e-16,
+          "pass": true
+        },
+        "3_rotated_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 1.3322676295501878e-15,
+          "pass": true
+        },
+        "4_rotated_loadings_describe_the_applied_scores": {
+          "max_abs_deviation": 1.7763568394002505e-15,
+          "pass": true
+        },
+        "5_truncated_reconstruction_matches_retained_pca": {
+          "max_abs_deviation": 1.3988810110276972e-14,
+          "pass": true
+        },
+        "6_sign_flips_change_orientation_only": {
+          "covariance_change": 0.0,
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "7_role_permutation_preserves_the_subspace": {
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "8_weights_are_normalized_rotated_ss_loadings": {
+          "max_abs_deviation": 2.7755575615628914e-17,
+          "pass": true
+        }
+      },
+      "max_off_diagonal_factor_correlation": 6.299239546328662e-16
+    },
+    "adult": {
+      "checks": {
+        "1_unrotated_score_covariance_is_diagonal": {
+          "max_off_diagonal": 4.517459203647188e-16,
+          "pass": true
+        },
+        "2_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 1.6653345369377348e-15,
+          "pass": true
+        },
+        "3_rotated_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 1.4432899320127035e-15,
+          "pass": true
+        },
+        "4_rotated_loadings_describe_the_applied_scores": {
+          "max_abs_deviation": 9.992007221626409e-16,
+          "pass": true
+        },
+        "5_truncated_reconstruction_matches_retained_pca": {
+          "max_abs_deviation": 1.1546319456101628e-14,
+          "pass": true
+        },
+        "6_sign_flips_change_orientation_only": {
+          "covariance_change": 7.554621041127502e-16,
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "7_role_permutation_preserves_the_subspace": {
+          "reconstruction_change": 8.881784197001252e-16,
+          "pass": true
+        },
+        "8_weights_are_normalized_rotated_ss_loadings": {
+          "max_abs_deviation": 1.1102230246251565e-16,
+          "pass": true
+        }
+      },
+      "max_off_diagonal_factor_correlation": 3.879399994092501e-16
+    },
+    "bank_marketing": {
+      "checks": {
+        "1_unrotated_score_covariance_is_diagonal": {
+          "max_off_diagonal": 1.9907447338106256e-16,
+          "pass": true
+        },
+        "2_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 1.5543122344752192e-15,
+          "pass": true
+        },
+        "3_rotated_standardized_scores_covariance_is_identity": {
+          "max_abs_deviation": 1.5543122344752192e-15,
+          "pass": true
+        },
+        "4_rotated_loadings_describe_the_applied_scores": {
+          "max_abs_deviation": 1.1102230246251565e-15,
+          "pass": true
+        },
+        "5_truncated_reconstruction_matches_retained_pca": {
+          "max_abs_deviation": 1.7319479184152442e-14,
+          "pass": true
+        },
+        "6_sign_flips_change_orientation_only": {
+          "covariance_change": 9.034918407294377e-16,
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "7_role_permutation_preserves_the_subspace": {
+          "reconstruction_change": 0.0,
+          "pass": true
+        },
+        "8_weights_are_normalized_rotated_ss_loadings": {
+          "max_abs_deviation": 1.1102230246251565e-16,
+          "pass": true
+        }
+      },
+      "max_off_diagonal_factor_correlation": 7.962978935242497e-16
+    }
+  },
+  "audit_table": [
+    {
+      "dataset": "magic",
+      "component": 0,
+      "eigenvalue": 3.98839,
+      "unrotated_loading_ss": 3.98839,
+      "rotated_loading_ss": 3.028759,
+      "normalized_rotated_share": 0.463255,
+      "assigned_role": "quality1",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "RocAuc_Mean"
+    },
+    {
+      "dataset": "magic",
+      "component": 1,
+      "eigenvalue": 1.658604,
+      "unrotated_loading_ss": 1.658604,
+      "rotated_loading_ss": 2.422686,
+      "normalized_rotated_share": 0.370555,
+      "assigned_role": "quality2",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Precision_Mean"
+    },
+    {
+      "dataset": "magic",
+      "component": 2,
+      "eigenvalue": 0.890998,
+      "unrotated_loading_ss": 0.890998,
+      "rotated_loading_ss": 1.086548,
+      "normalized_rotated_share": 0.16619,
+      "assigned_role": "cost",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Leaves_Mean"
+    },
+    {
+      "dataset": "spambase",
+      "component": 0,
+      "eigenvalue": 4.455133,
+      "unrotated_loading_ss": 4.455133,
+      "rotated_loading_ss": 3.644743,
+      "normalized_rotated_share": 0.568368,
+      "assigned_role": "quality1",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Specificity_Mean"
+    },
+    {
+      "dataset": "spambase",
+      "component": 1,
+      "eigenvalue": 1.092254,
+      "unrotated_loading_ss": 1.092254,
+      "rotated_loading_ss": 1.709101,
+      "normalized_rotated_share": 0.26652,
+      "assigned_role": "cost",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Leaves_Mean"
+    },
+    {
+      "dataset": "spambase",
+      "component": 2,
+      "eigenvalue": 0.865265,
+      "unrotated_loading_ss": 0.865265,
+      "rotated_loading_ss": 1.058808,
+      "normalized_rotated_share": 0.165112,
+      "assigned_role": "quality2",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Precision_Mean"
+    },
+    {
+      "dataset": "adult",
+      "component": 0,
+      "eigenvalue": 4.775117,
+      "unrotated_loading_ss": 4.775117,
+      "rotated_loading_ss": 2.771618,
+      "normalized_rotated_share": 0.438107,
+      "assigned_role": "quality1",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Specificity_Mean"
+    },
+    {
+      "dataset": "adult",
+      "component": 1,
+      "eigenvalue": 0.850525,
+      "unrotated_loading_ss": 0.850525,
+      "rotated_loading_ss": 1.259649,
+      "normalized_rotated_share": 0.199112,
+      "assigned_role": "cost",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Leaves_Mean"
+    },
+    {
+      "dataset": "adult",
+      "component": 2,
+      "eigenvalue": 0.700703,
+      "unrotated_loading_ss": 0.700703,
+      "rotated_loading_ss": 2.295078,
+      "normalized_rotated_share": 0.362781,
+      "assigned_role": "quality2",
+      "sign": -1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "LogLoss_Mean"
+    },
+    {
+      "dataset": "bank_marketing",
+      "component": 0,
+      "eigenvalue": 4.663655,
+      "unrotated_loading_ss": 4.663655,
+      "rotated_loading_ss": 2.750838,
+      "normalized_rotated_share": 0.447929,
+      "assigned_role": "quality1",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Specificity_Mean"
+    },
+    {
+      "dataset": "bank_marketing",
+      "component": 1,
+      "eigenvalue": 0.852942,
+      "unrotated_loading_ss": 0.852942,
+      "rotated_loading_ss": 1.93145,
+      "normalized_rotated_share": 0.314505,
+      "assigned_role": "quality2",
+      "sign": 1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "LogLoss_Mean"
+    },
+    {
+      "dataset": "bank_marketing",
+      "component": 2,
+      "eigenvalue": 0.624644,
+      "unrotated_loading_ss": 0.624644,
+      "rotated_loading_ss": 1.458953,
+      "normalized_rotated_share": 0.237566,
+      "assigned_role": "cost",
+      "sign": -1.0,
+      "factor_variance": 1.0,
+      "max_off_diagonal_factor_correlation": 0.0,
+      "dominant_response": "Leaves_Mean"
+    }
+  ],
+  "all_pass": true,
+  "failures": [],
+  "terminology": "The factors are standardized to unit variance, so their variances carry no information and the aggregation weights are NOT factor variances. They are normalized rotated sums of squared loadings."
+}

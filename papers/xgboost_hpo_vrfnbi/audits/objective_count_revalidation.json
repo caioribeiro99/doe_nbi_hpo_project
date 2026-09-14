@@ -1,0 +1,315 @@
+{
+  "purpose": "objective-count evidence recomputed with the corrected factor model",
+  "datasets": {
+    "magic": {
+      "per_objective": [
+        {
+          "objective": "quality1",
+          "factor_index": 0,
+          "external_r2": 0.8123,
+          "external_rmse": 0.4474,
+          "external_spearman": 0.9155,
+          "surface_terms": 17,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.4633,
+          "unrotated_eigenvalue_share": 0.61,
+          "dominant_response": "RocAuc_Mean",
+          "spearman_with_mean_quality": 0.9547,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 1,
+          "external_r2": 0.8262,
+          "external_rmse": 0.4506,
+          "external_spearman": 0.9315,
+          "surface_terms": 10,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.3706,
+          "unrotated_eigenvalue_share": 0.2537,
+          "dominant_response": "Precision_Mean",
+          "spearman_with_mean_quality": 0.0795,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "cost",
+          "factor_index": 2,
+          "external_r2": 0.8997,
+          "external_rmse": 0.3272,
+          "external_spearman": 0.9411,
+          "surface_terms": 16,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.1662,
+          "unrotated_eigenvalue_share": 0.1363,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.1931,
+          "sign_applied": 1.0
+        }
+      ],
+      "aggregated_q2_composite": {
+        "external_r2": 0.6913,
+        "external_spearman": 0.8324,
+        "gate_pass": false
+      },
+      "quality_weights": [
+        0.5556,
+        0.4444
+      ],
+      "max_off_diagonal_factor_correlation": 3.4710420999774996e-16,
+      "inter_quality_factor_spearman": {
+        "estimate": -0.1354,
+        "ci95_lo": -0.3763,
+        "ci95_hi": 0.1229
+      },
+      "nondominated": {
+        "q2": 7,
+        "q3": 22,
+        "permutation_null_q3": {
+          "observed": 22,
+          "null_mean": 13.99,
+          "p_value": 0.035,
+          "exceeds_null": true
+        }
+      },
+      "kaiser_retained": 2
+    },
+    "spambase": {
+      "per_objective": [
+        {
+          "objective": "quality1",
+          "factor_index": 0,
+          "external_r2": 0.9597,
+          "external_rmse": 0.2068,
+          "external_spearman": 0.9386,
+          "surface_terms": 15,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.5684,
+          "unrotated_eigenvalue_share": 0.6947,
+          "dominant_response": "Specificity_Mean",
+          "spearman_with_mean_quality": 0.2402,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "cost",
+          "factor_index": 1,
+          "external_r2": 0.8987,
+          "external_rmse": 0.3293,
+          "external_spearman": 0.9449,
+          "surface_terms": 11,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.2665,
+          "unrotated_eigenvalue_share": 0.1703,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.6763,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 2,
+          "external_r2": -0.0025,
+          "external_rmse": 1.0134,
+          "external_spearman": NaN,
+          "surface_terms": 1,
+          "gate_pass": false,
+          "rotated_ss_loading_share": 0.1651,
+          "unrotated_eigenvalue_share": 0.1349,
+          "dominant_response": "Precision_Mean",
+          "spearman_with_mean_quality": -0.1751,
+          "sign_applied": 1.0
+        }
+      ],
+      "aggregated_q2_composite": {
+        "external_r2": 0.9242,
+        "external_spearman": 0.9192,
+        "gate_pass": true
+      },
+      "quality_weights": [
+        0.7749,
+        0.2251
+      ],
+      "max_off_diagonal_factor_correlation": 6.299239546328662e-16,
+      "inter_quality_factor_spearman": {
+        "estimate": -0.6737,
+        "ci95_lo": -0.8272,
+        "ci95_hi": -0.4676
+      },
+      "nondominated": {
+        "q2": 2,
+        "q3": 14,
+        "permutation_null_q3": {
+          "observed": 14,
+          "null_mean": 7.56,
+          "p_value": 0.0325,
+          "exceeds_null": true
+        }
+      },
+      "kaiser_retained": 2
+    },
+    "adult": {
+      "per_objective": [
+        {
+          "objective": "quality1",
+          "factor_index": 0,
+          "external_r2": 0.8793,
+          "external_rmse": 0.3485,
+          "external_spearman": 0.8859,
+          "surface_terms": 10,
+          "gate_pass": false,
+          "rotated_ss_loading_share": 0.4381,
+          "unrotated_eigenvalue_share": 0.7548,
+          "dominant_response": "Specificity_Mean",
+          "spearman_with_mean_quality": 0.3639,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "cost",
+          "factor_index": 1,
+          "external_r2": 0.9168,
+          "external_rmse": 0.2855,
+          "external_spearman": 0.9012,
+          "surface_terms": 14,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.1991,
+          "unrotated_eigenvalue_share": 0.1344,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.2745,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 2,
+          "external_r2": 0.7156,
+          "external_rmse": 0.4192,
+          "external_spearman": 0.8209,
+          "surface_terms": 14,
+          "gate_pass": false,
+          "rotated_ss_loading_share": 0.3628,
+          "unrotated_eigenvalue_share": 0.1108,
+          "dominant_response": "LogLoss_Mean",
+          "spearman_with_mean_quality": 0.955,
+          "sign_applied": -1.0
+        }
+      ],
+      "aggregated_q2_composite": {
+        "external_r2": 0.9078,
+        "external_spearman": 0.8928,
+        "gate_pass": false
+      },
+      "quality_weights": [
+        0.547,
+        0.453
+      ],
+      "max_off_diagonal_factor_correlation": 3.879399994092501e-16,
+      "inter_quality_factor_spearman": {
+        "estimate": 0.3073,
+        "ci95_lo": 0.0728,
+        "ci95_hi": 0.521
+      },
+      "nondominated": {
+        "q2": 6,
+        "q3": 19,
+        "permutation_null_q3": {
+          "observed": 19,
+          "null_mean": 11.74,
+          "p_value": 0.01,
+          "exceeds_null": true
+        }
+      },
+      "kaiser_retained": 1
+    },
+    "bank_marketing": {
+      "per_objective": [
+        {
+          "objective": "quality1",
+          "factor_index": 0,
+          "external_r2": 0.9023,
+          "external_rmse": 0.3205,
+          "external_spearman": 0.9068,
+          "surface_terms": 13,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.4479,
+          "unrotated_eigenvalue_share": 0.7594,
+          "dominant_response": "Specificity_Mean",
+          "spearman_with_mean_quality": 0.6364,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "quality2",
+          "factor_index": 1,
+          "external_r2": 0.589,
+          "external_rmse": 0.5979,
+          "external_spearman": 0.7217,
+          "surface_terms": 14,
+          "gate_pass": false,
+          "rotated_ss_loading_share": 0.3145,
+          "unrotated_eigenvalue_share": 0.1389,
+          "dominant_response": "LogLoss_Mean",
+          "spearman_with_mean_quality": 0.8589,
+          "sign_applied": 1.0
+        },
+        {
+          "objective": "cost",
+          "factor_index": 2,
+          "external_r2": 0.9366,
+          "external_rmse": 0.2548,
+          "external_spearman": 0.9503,
+          "surface_terms": 20,
+          "gate_pass": true,
+          "rotated_ss_loading_share": 0.2376,
+          "unrotated_eigenvalue_share": 0.1017,
+          "dominant_response": "Leaves_Mean",
+          "spearman_with_mean_quality": -0.2662,
+          "sign_applied": -1.0
+        }
+      ],
+      "aggregated_q2_composite": {
+        "external_r2": 0.87,
+        "external_spearman": 0.8566,
+        "gate_pass": false
+      },
+      "quality_weights": [
+        0.5875,
+        0.4125
+      ],
+      "max_off_diagonal_factor_correlation": 7.962978935242497e-16,
+      "inter_quality_factor_spearman": {
+        "estimate": 0.3631,
+        "ci95_lo": 0.1392,
+        "ci95_hi": 0.557
+      },
+      "nondominated": {
+        "q2": 6,
+        "q3": 11,
+        "permutation_null_q3": {
+          "observed": 11,
+          "null_mean": 12.79,
+          "p_value": 0.7075,
+          "exceeds_null": false
+        }
+      },
+      "kaiser_retained": 1
+    }
+  },
+  "decision_inputs": {
+    "datasets_where_the_second_quality_factor_fails_the_gate": [
+      "spambase",
+      "adult",
+      "bank_marketing"
+    ],
+    "per_objective_gate_failures": 4,
+    "overall_quality_carrier_by_dataset": {
+      "magic": "quality1",
+      "spambase": "quality1",
+      "adult": "quality2",
+      "bank_marketing": "quality2"
+    },
+    "semantic_identity_stable_across_panel": false,
+    "datasets_where_q3_exceeds_its_permutation_null": [
+      "magic",
+      "spambase",
+      "adult"
+    ]
+  },
+  "outcome": "A. TWO-OBJECTIVE DECISION REVALIDATED",
+  "reasoning": "The rule refuses promotion when the candidate objective fails the frozen surrogate gate on any panel dataset, or when what the second quality axis measures is not the same construct across datasets. Either alone is disqualifying, because three of the four arms optimize the surrogate and the study's synthesis is across datasets."
+}

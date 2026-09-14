@@ -34,7 +34,8 @@ import pandas as pd                                   # noqa: E402
 
 from doe_xgb.campaign.design import (external_validation_set, load_design)  # noqa: E402
 from doe_xgb.campaign.runner import (DATASETS, N_REPLICATIONS, PROTOCOL_TAG,  # noqa: E402
-                                     STAGES, Checkpoint, logical_budget_plan,
+                                     STAGES, Checkpoint, campaign_budget,
+                                     logical_budget_plan, method_stage_ledger,
                                      run_unit, unit_seed)
 
 CONFIRMATORY_ROOT = REPO / "experiments" / "xgboost_hpo_vrfnbi_confirmatory"
@@ -46,27 +47,15 @@ SECONDS_PER_EVALUATION = 0.1585                      # Stage B calibration, pane
 # --------------------------------------------------------------------- planning
 
 def per_unit_evaluations() -> dict[str, int]:
-    """Every logical evaluation a unit requests, itemized.
+    """Every logical evaluation a unit requests, from the runner's own registry.
 
-    An earlier version understated this by 39%: it counted four arms rather than
-    five (HISTORICAL-WS is run twice, bit-faithfully and under the shared
-    specification), omitted the anchor-injection control, and charged the payoff
-    matrix two extra evaluations that are now reused from the search.
+    Derived rather than restated: the planner, the dry run and the campaign
+    manifest all read `campaign_budget`, so no figure here can drift from what the
+    runner actually does. An earlier hand-maintained version understated the
+    campaign by 39%.
     """
-    b = logical_budget_plan()
-    design, ext, cand = b["B_design"], b["B_external_validation"], b["B_candidate_validation"]
-    anchor = b["B_anchor_per_objective"] * 2
-    comparator = b["comparator_budget"]
-    shared = {"design": design, "external_validation_audit": ext,
-              "empirical_anchor_search": anchor}
-    arms = {f"{a}_revalidation": cand for a in
-            ("historical_ws_asrun", "historical_ws", "ws_s", "nbi_s", "nbi_r")}
-    arms["anchor_injection_control"] = 2
-    baselines = {"grid": comparator, "random": comparator,
-                 "bayes_quality": comparator, "bayes_cost": comparator,
-                 "tpe_quality": comparator, "tpe_cost": comparator,
-                 "nsga2_matched": b["nsga2"]["evaluations"]}
-    out = {**shared, **arms, **baselines}
+    table = method_stage_ledger()
+    out = {m: sum(st.values()) for m, st in table.items()}
     out["total_logical_per_unit"] = sum(out.values())
     return out
 
@@ -74,11 +63,10 @@ def per_unit_evaluations() -> dict[str, int]:
 def plan() -> dict:
     b = logical_budget_plan()
     per = per_unit_evaluations()
-    from doe_xgb.campaign.runner import (NSGA2_GEN, NSGA2_POP,
-                                          NSGA2_UNMATCHED_MULTIPLIER)
+    cb = campaign_budget()
     units = [(d, r) for d in DATASETS for r in range(N_REPLICATIONS)]
-    unmatched = NSGA2_POP * NSGA2_GEN * NSGA2_UNMATCHED_MULTIPLIER * len(DATASETS)
-    total = per["total_logical_per_unit"] * len(units) + unmatched
+    unmatched = cb["unmatched_nsga2_logical"]
+    total = cb["campaign_total_logical"]
     return {
         "protocol_tag": PROTOCOL_TAG,
         "source_commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO,
@@ -89,8 +77,12 @@ def plan() -> dict:
         "logical_budget": b,
         "evaluations_per_unit": per,
         "campaign_logical_evaluations": total,
+        "campaign_solution_producing_logical": cb["campaign_solution_producing_logical"],
+        "campaign_audit_only_logical": cb["campaign_audit_only_logical"],
+        "budget_by_stage_per_unit": cb["by_stage"],
+        "budget_reconciles": cb["reconciles"],
         "nsga2_unmatched_evaluations": unmatched,
-        "nsga2_unmatched_scope": "one replication per dataset",
+        "nsga2_unmatched_scope": cb["unmatched_nsga2_scope"],
         "projected_hours": round(total * SECONDS_PER_EVALUATION / 3600, 2),
         "projected_days": round(total * SECONDS_PER_EVALUATION / 86400, 3),
         "execution_layout": {"process_workers": WORKERS,
@@ -160,6 +152,15 @@ def dry_run() -> int:
     check("holdout labels are not read before the confirmation stage",
           _holdout_is_late())
     check("the git tree is clean", _tree_clean(), _tree_status())
+    cb = campaign_budget()
+    check("the budget reconciles against the method-stage table", cb["reconciles"],
+          f"{cb['campaign_total_logical']:,} = "
+          f"{cb['campaign_solution_producing_logical']:,} solution-producing + "
+          f"{cb['campaign_audit_only_logical']:,} audit-only")
+    check("every stage in the ledger is a runner stage or a shared stage",
+          set(cb["by_stage"]) <= {"design", "external_audit", "anchor",
+                                  "candidate_validation", "direct_search"},
+          str(sorted(cb["by_stage"])))
 
     CONFIRMATORY_ROOT.mkdir(parents=True, exist_ok=True)
     (CONFIRMATORY_ROOT / "campaign_plan.json").write_text(json.dumps(p, indent=2))

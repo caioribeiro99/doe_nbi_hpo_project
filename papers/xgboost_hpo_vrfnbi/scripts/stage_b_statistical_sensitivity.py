@@ -44,6 +44,10 @@ PILOT = REPO / "papers" / "xgboost_hpo_vrfnbi" / "audits" / "pilot_stage_a"
 OUT = REPO / "papers" / "xgboost_hpo_vrfnbi"
 DATASETS = ["magic", "spambase", "adult", "bank_marketing"]
 R = 30
+# The protocol's outer split is 80/20, so the Nadeau and Bengio correction term
+# n_test/n_train is 0.25. The others bracket it as a sensitivity.
+PROTOCOL_TEST_TRAIN_RATIO = 0.20 / 0.80
+TEST_TRAIN_RATIOS = (0.1111, PROTOCOL_TEST_TRAIN_RATIO, 0.4286)   # 90/10, 80/20, 70/30
 
 _spec = importlib.util.spec_from_file_location("pilot", HERE / "pilot_stage_a_screening.py")
 pilot = importlib.util.module_from_spec(_spec)
@@ -100,19 +104,28 @@ def resolution(sd_paired: float) -> dict:
            "minimum_detectable_paired_difference_80pct": round(float(mde), 6),
            "expected_ci95_half_width": round(float(half_width), 6),
            "standardized_effect_detectable": round(float((t_a + t_b) / np.sqrt(R)), 4)}
-    # Nadeau and Bengio (2003): for overlapping resamples the variance of the mean
-    # difference is sigma^2 * (1/n + rho/(1-rho)), so the standard error is
-    # sd * sqrt(1/n + rho/(1-rho)) -- NOT sd/sqrt(n) inflated by
-    # sqrt(1 + rho/(1-rho)), which is what an earlier version computed and which
-    # divides the correction term by n. The two differ by a large factor at R = 30.
-    for rho in (0.1, 0.25, 0.5):
-        se_corrected = sd_paired * np.sqrt(1.0 / R + rho / (1.0 - rho))
-        out[f"mde_corrected_rho_{rho}"] = round(float((t_a + t_b) * se_corrected), 6)
-        out[f"se_inflation_factor_rho_{rho}"] = round(
-            float(se_corrected / (sd_paired / np.sqrt(R))), 3)
-    out["correction_note"] = ("Nadeau and Bengio (2003), variance of the mean "
-                              "difference = sigma^2 (1/n + rho/(1-rho)); reported as a "
-                              "sensitivity, never as the primary test")
+    # Nadeau and Bengio (2003), corrected resampled t-test. For R repeated random
+    # splits the variance of the mean difference is
+    #
+    #     SE_corr^2 = (1/R + n_test/n_train) * s^2
+    #
+    # The second term is the ratio of the held-out to the fitted set SIZES. It is
+    # NOT a free equicorrelation parameter, and the two coincide only when
+    # rho = n_test/(n_test + n_train): for an 80/20 split rho = 0.20 and
+    # rho/(1-rho) = 0.25 = n_test/n_train. An earlier version of this script passed
+    # rho = 0.25, which silently assumed a 75/25 split and inflated the standard
+    # error by 3.317 where the protocol's 80/20 split gives sqrt(8.5) = 2.9155.
+    for ratio in TEST_TRAIN_RATIOS:
+        se_corrected = sd_paired * np.sqrt(1.0 / R + ratio)
+        out[f"mde_corrected_test_train_{ratio}"] = round(
+            float((t_a + t_b) * se_corrected), 6)
+        out[f"se_inflation_test_train_{ratio}"] = round(
+            float(se_corrected / (sd_paired / np.sqrt(R))), 4)
+    out["correction_note"] = (
+        "Nadeau and Bengio (2003): SE_corr^2 = (1/R + n_test/n_train) * s^2. The "
+        "protocol's outer split is 80/20, so n_test/n_train = 0.25 and the standard "
+        "error inflates by sqrt((1/30 + 0.25)/(1/30)) = sqrt(8.5) = 2.9155. Reported "
+        "as a sensitivity, never as the primary test.")
     return out
 
 
@@ -130,7 +143,7 @@ def main() -> int:
               "datasets": {}}
     print(f"What R = {R} resolves, from pre-campaign information only\n")
     print(f"{'dataset':16s}{'indicator':>10}{'paired sd':>11}{'min detectable':>15}"
-          f"{'CI95 half-width':>17}{'x sd at rho=0.25':>18}")
+          f"{'CI95 half-width':>17}{'corrected, 80/20':>18}")
     for ds in DATASETS:
         sds = paired_spread(ds, args.draws, rng)
         report["datasets"][ds] = {}
@@ -140,7 +153,7 @@ def main() -> int:
             print(f"{ds:16s}{k:>10}{sd:11.4f}"
                   f"{res['minimum_detectable_paired_difference_80pct']:15.4f}"
                   f"{res['expected_ci95_half_width']:17.4f}"
-                  f"{res['mde_corrected_rho_0.25']:18.4f}")
+                  f"{res[f'mde_corrected_test_train_{PROTOCOL_TEST_TRAIN_RATIO}']:18.4f}")
 
     # Win-fraction resolution is analytic and needs no simulation.
     from statsmodels.stats.proportion import proportion_confint

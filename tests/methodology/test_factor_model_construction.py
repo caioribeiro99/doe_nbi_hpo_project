@@ -121,3 +121,77 @@ def test_both_variance_shares_are_reported_and_named_apart() -> None:
     assert "explained_variance_share_rotated" in d
     assert "explained_variance_share_unrotated" in d
     assert abs(sum(d["explained_variance_share_rotated"]) - 1.0) < 1e-9
+
+
+# --------------------------------------------------------------------------
+# V1 algebraic invariants, asserted rather than inspected
+# --------------------------------------------------------------------------
+
+
+def _pieces(df: pd.DataFrame):
+    from sklearn.decomposition import PCA
+
+    fm = fit_factor_model(df)
+    M = apply_transforms(df)
+    Z = (M - fm.mu) / fm.sd
+    k = fm.rotated_loadings.shape[1]
+    pca = PCA(n_components=k, random_state=0).fit(Z)
+    raw = Z @ pca.components_.T
+    std = raw / np.sqrt(fm.eigenvalues)
+    rot = std @ fm.rotation
+    return fm, Z, pca, raw, std, rot, k
+
+
+@pytest.mark.parametrize("seed", range(3))
+def test_unrotated_score_covariance_is_diagonal(seed: int) -> None:
+    _, _, _, raw, _, _, _ = _pieces(_frame(seed=seed))
+    C = np.cov(raw, rowvar=False)
+    assert np.abs(C - np.diag(np.diag(C))).max() < 1e-8
+
+
+@pytest.mark.parametrize("seed", range(3))
+def test_standardized_and_rotated_scores_have_identity_covariance(seed: int) -> None:
+    _, _, _, _, std, rot, k = _pieces(_frame(seed=seed))
+    for name, S in (("standardized", std), ("rotated", rot)):
+        C = np.cov(S, rowvar=False)
+        assert np.abs(C - np.eye(k)).max() < 1e-8, f"{name} scores are not white"
+
+
+@pytest.mark.parametrize("seed", range(3))
+def test_reconstruction_from_scores_and_loadings_matches_retained_pca(seed: int) -> None:
+    """The rotation is orthogonal, so it must preserve the represented subspace."""
+    fm, _, pca, raw, _, _, _ = _pieces(_frame(seed=seed))
+    applied = fm.transform(_frame(seed=seed))["factor_scores"]
+    np.testing.assert_allclose(applied @ fm.rotated_loadings.T,
+                               raw @ pca.components_, atol=1e-8)
+
+
+@pytest.mark.parametrize("seed", range(3))
+def test_sign_flips_change_orientation_only(seed: int) -> None:
+    fm, _, _, raw, _, _, _ = _pieces(_frame(seed=seed))
+    applied = fm.transform(_frame(seed=seed))["factor_scores"]
+    flip = np.asarray(fm.diagnostics["sign_flips_applied"], dtype=float)
+    unflipped = applied * flip
+    np.testing.assert_allclose(np.cov(unflipped, rowvar=False),
+                               np.cov(applied, rowvar=False), atol=1e-10)
+    np.testing.assert_allclose(unflipped @ (fm.rotated_loadings * flip).T,
+                               applied @ fm.rotated_loadings.T, atol=1e-10)
+
+
+@pytest.mark.parametrize("seed", range(3))
+def test_role_permutation_preserves_the_subspace(seed: int) -> None:
+    fm = fit_factor_model(_frame(seed=seed))
+    applied = fm.transform(_frame(seed=seed))["factor_scores"]
+    perm = np.argsort(-(fm.rotated_loadings ** 2).sum(axis=0))
+    np.testing.assert_allclose(applied[:, perm] @ fm.rotated_loadings[:, perm].T,
+                               applied @ fm.rotated_loadings.T, atol=1e-10)
+
+
+def test_the_factors_are_unit_variance_so_the_weights_are_not_variances() -> None:
+    """Terminology: the weights are normalized rotated sums of squared loadings."""
+    fm = fit_factor_model(_frame(seed=9))
+    S = fm.transform(_frame(seed=9))["factor_scores"]
+    np.testing.assert_allclose(S.var(axis=0, ddof=1), np.ones(S.shape[1]), atol=1e-8)
+    # unit variances carry no information, so they cannot be the weights
+    assert not np.allclose(fm.quality_weights,
+                           np.ones(len(fm.quality_weights)) / len(fm.quality_weights))

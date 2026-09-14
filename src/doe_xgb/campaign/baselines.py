@@ -19,20 +19,14 @@ from .design import from_coded, to_coded
 from .evaluator import BOUNDS, INT_PARAMS, PARAMS
 
 
-# Each comparator draws from its own stream. Sharing one seed made the panel
-# substantially one baseline: at a budget of 386 over seven factors the grid is two
-# levels per factor (128 corners) padded with 258 random points, and those padding
-# points were bit-identical to random search's first 258, while the Bayesian and
-# Parzen initial designs were bit-identical to random search's first 77. Pairing
-# across replications is preserved because the offsets are fixed and declared.
-SEED_OFFSET = {"grid": 101, "random": 202, "bayes_quality": 303, "bayes_cost": 404,
-               "tpe_quality": 505, "tpe_cost": 606, "nsga2": 707}
-
-
-def method_seed(base: int, method: str) -> int:
-    if method not in SEED_OFFSET:
-        raise KeyError(f"no declared seed offset for comparator {method!r}")
-    return int(base) + SEED_OFFSET[method]
+# Seeds are derived per (dataset, replication, method, stage) in
+# doe_xgb.campaign.seeding. An additive offset on a shared base was the first fix
+# and is not enough: it keeps every method on one generator family, and a reader
+# cannot check independence from it. The derivation is a keyed hash, and each
+# method's candidate stream is digested into the seed ledger so independence is a
+# reported fact rather than a claim.
+METHODS = ("grid", "random", "bayes_quality", "bayes_cost",
+           "tpe_quality", "tpe_cost", "nsga2", "nsga2_unmatched")
 
 
 def _realize(xc: np.ndarray) -> dict[str, Any]:

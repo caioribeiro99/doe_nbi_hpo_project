@@ -92,9 +92,12 @@ against 5.8, with a 5-day ceiling. Stage B retired that premise entirely.
 
 | | two objectives | three objectives |
 |---|---:|---:|
-| campaign evaluations | 285,120 | 357,120 |
-| projected wall clock at the measured 0.1585 s per evaluation | **0.52 days** | **0.66 days** |
-| including the unmatched NSGA-II run | 0.55 days | 0.69 days |
+| campaign evaluations, corrected accounting | 395,520 | ~484,000 |
+| projected wall clock at the measured 0.1585 s per evaluation | **0.73 days** | **~0.89 days** |
+
+*(The figures first published here, 285,120 and 0.52 days, understated the campaign by 39%: they
+counted four arms where five run and omitted the anchor-injection control. See
+`STAGE_B_THROUGHPUT.md`.)*
 
 Against a ceiling of 5 days and a threshold for "comfortably under" fixed at 4 days **before any
 throughput number was read**, both fit with an order of magnitude to spare. Had the decision been
@@ -146,10 +149,11 @@ is therefore **precisely the structure no surrogate-driven arm could reach**.
 
 ## 5. Semantic identity across datasets
 
-From §2.3: on MAGIC and Spambase the **leading** axis is overall quality and the second is close to
-orthogonal to it (ρ = −0.021 and +0.025). On Adult and Bank Marketing the **second** axis is overall
-quality (ρ = +0.993 and +0.991) and the leading axis is a specificity contrast. Dominant loadings:
-precision, precision, log loss, log loss.
+From §2.3, corrected model: on MAGIC and Spambase the **leading** axis carries overall quality
+(ρ = +0.955 and +0.240 against the mean of the six quality responses, with the second axis at +0.080
+and −0.175). On Adult and Bank Marketing the **second** axis carries it (ρ = +0.955 and +0.859) and
+the leading axis is a specificity contrast. Dominant loadings: precision, precision, log loss, log
+loss.
 
 "Objective 2" does not name the same quantity on any two datasets. A three-objective panel result
 would compare a precision axis on MAGIC against a log-loss axis on Adult and call the comparison a

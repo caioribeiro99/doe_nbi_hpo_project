@@ -90,3 +90,90 @@ def test_dominance_filter_agrees_with_pymoo_nondominated_sorting() -> None:
         mine = set(dominance_filter(F).tolist())
         theirs = set(NonDominatedSorting().do(F, only_non_dominated_front=True).tolist())
         assert mine == theirs
+
+
+# --------------------------------------------------------------------------
+# V9 oracle suite, re-run after every change to the indicator path
+# --------------------------------------------------------------------------
+
+
+def _rand_front(rng, n, q):
+    return rng.random((n, q))
+
+
+@pytest.mark.parametrize("seed", range(6))
+def test_every_indicator_is_permutation_invariant(seed: int) -> None:
+    """Reordering rows must not change any reported quantity."""
+    from doe_xgb.campaign.scoring import indicators
+
+    rng = np.random.default_rng(seed)
+    F, R = _rand_front(rng, 18, 2), _rand_front(rng, 25, 2)
+    a = indicators(F, R)
+    perm = rng.permutation(len(F))
+    b = indicators(F[perm], R[rng.permutation(len(R))])
+    for k in a:
+        if isinstance(a[k], float) and np.isnan(a[k]):
+            assert np.isnan(b[k])
+        else:
+            assert a[k] == pytest.approx(b[k], rel=1e-9, abs=1e-12), k
+
+
+@pytest.mark.parametrize("seed", range(4))
+def test_duplicated_points_do_not_change_the_front_or_hypervolume(seed: int) -> None:
+    from doe_xgb.campaign.scoring import indicators
+
+    rng = np.random.default_rng(100 + seed)
+    F, R = _rand_front(rng, 12, 2), _rand_front(rng, 20, 2)
+    a = indicators(F, R)
+    b = indicators(np.vstack([F, F[:5]]), R)
+    assert a["hv_ratio"] == pytest.approx(b["hv_ratio"], rel=1e-9)
+    assert a["igd_plus"] == pytest.approx(b["igd_plus"], rel=1e-9)
+
+
+@pytest.mark.parametrize("seed", range(4))
+def test_adding_dominated_points_does_not_change_hypervolume_or_igd_plus(seed: int) -> None:
+    """Contamination must be filtered out, since the indicators score the front."""
+    from doe_xgb.campaign.scoring import indicators
+
+    rng = np.random.default_rng(200 + seed)
+    F, R = _rand_front(rng, 12, 2), _rand_front(rng, 20, 2)
+    dominated = F.max(axis=0) + rng.random((6, 2)) * 0.1 + 0.05
+    a, b = indicators(F, R), indicators(np.vstack([F, dominated]), R)
+    assert a["hv_ratio"] == pytest.approx(b["hv_ratio"], rel=1e-9)
+    assert a["igd_plus"] == pytest.approx(b["igd_plus"], rel=1e-9)
+
+
+def test_generational_distance_is_zero_for_a_subset_of_the_reference() -> None:
+    from doe_xgb.campaign.scoring import indicators
+
+    R = np.array([[0.0, 1.0], [0.3, 0.6], [0.6, 0.3], [1.0, 0.0]])
+    out = indicators(R[[1, 2]], R)
+    assert out["gd"] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_the_joint_fraction_counts_the_methods_surviving_points() -> None:
+    from doe_xgb.campaign.scoring import indicators
+
+    R = np.array([[0.0, 1.0], [0.5, 0.5], [1.0, 0.0]])
+    on_front = np.array([[0.2, 0.7]])
+    dominated = np.array([[0.9, 0.9]])
+    assert indicators(on_front, np.vstack([R, on_front]))["joint_nondominated_fraction"] \
+        == pytest.approx(1.0)
+    assert indicators(dominated, R)["joint_nondominated_fraction"] == pytest.approx(0.0)
+
+
+def test_hypervolume_ratio_is_one_when_the_set_is_the_reference() -> None:
+    from doe_xgb.campaign.scoring import indicators
+
+    R = np.array([[0.0, 1.0], [0.4, 0.5], [1.0, 0.0]])
+    assert indicators(R, R)["hv_ratio"] == pytest.approx(1.0, rel=1e-9)
+    assert indicators(R, R)["igd_plus"] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_indicators_consume_the_dominance_filtered_set() -> None:
+    """The protocol says the front; the code must not score the raw set."""
+    from doe_xgb.campaign.scoring import indicators
+
+    R = np.array([[0.0, 1.0], [0.5, 0.5], [1.0, 0.0]])
+    F = np.array([[0.2, 0.7], [0.8, 0.95]])       # the second is dominated by the first
+    assert indicators(F, R)["n_front"] == 1
