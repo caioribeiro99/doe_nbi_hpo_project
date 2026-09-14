@@ -419,6 +419,15 @@ the pipeline rather than by reading it. Three of them killed a stage between six
 twenty, which in the confirmatory campaign is hours of real evaluations per unit before the
 traceback, times 120 units.
 
+**The pipeline now completes.** After the fixes, one full unit ran end to end on `spambase` with
+the real learner: 20 of 20 stages, 1,139 seconds, no methodological failure, no non-finite value in
+any artifact, all five arms recorded under distinct identifiers, the core reference built from 288
+method-independent points, and the logical ledger reconciling exactly — 7,013 charged against 7,013
+declared, with the physical row count equal to the number of distinct requested keys, so nothing was
+evaluated outside the ledger. The per-replication refit's Tucker congruence against the frozen
+reference model was 0.999, 0.997 and 0.971, all at the conventional equivalence threshold. Only
+execution and accounting were inspected; no arm's performance was looked at.
+
 **The common property is that none was visible to a unit test**, because each lived in the seam
 between a component and its caller, or between a component and a third-party library. Four new test
 files close the class rather than the four instances: `test_call_signatures.py` binds every
