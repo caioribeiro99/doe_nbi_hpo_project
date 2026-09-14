@@ -157,3 +157,45 @@ def test_a_different_replication_does_not_reuse_another_replications_fits(tmp_pa
         c.view("A", compute).evaluate(CFG_A)
         c.close()
     assert len(calls) == 2, "replications have different splits, so different evaluations"
+
+
+def test_the_logical_ledger_survives_a_resume(tmp_path) -> None:
+    """The scientific budget must not be lost when a unit resumes from checkpoints.
+
+    Held only in memory, a resumed unit reported zero logical evaluations beside
+    thousands of physical fits, which is exactly backwards: the logical figure is
+    the one that enters a fairness comparison.
+    """
+    compute, calls = _counter()
+    path = tmp_path / "e.sqlite"
+
+    c1 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c1.view("NBI-S", compute).evaluate(CFG_A)
+    c1.view("NBI-S", compute).evaluate(CFG_B)
+    c1.view("WS-S", compute).evaluate(CFG_A)          # a hit, still charged
+    before = c1.accounting()
+    c1.close()
+
+    c2 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    after = c2.accounting()
+    c2.close()
+
+    assert after["logical_evaluations_total"] == before["logical_evaluations_total"] == 3
+    assert after["unique_physical_fits"] == before["unique_physical_fits"] == 2
+    per = {m["method"]: m for m in after["per_method"]}
+    assert per["NBI-S"]["logical_evaluations"] == 2
+    assert per["WS-S"]["logical_evaluations"] == 1
+    assert per["WS-S"]["served_from_cache"] == 1
+    assert len(calls) == 2
+
+
+def test_a_resumed_cache_still_charges_new_requests(tmp_path) -> None:
+    compute, _ = _counter()
+    path = tmp_path / "e.sqlite"
+    c1 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c1.view("A", compute).evaluate(CFG_A)
+    c1.close()
+    c2 = EvaluationCache(path, dataset="magic", split_id="rep_00", seed=1)
+    c2.view("A", compute).evaluate(CFG_A)             # same method, cached
+    assert c2.ledger("A").logical == 2, "the reloaded ledger must keep counting"
+    c2.close()

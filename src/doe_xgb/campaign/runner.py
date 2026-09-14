@@ -339,9 +339,9 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                 if not len(df):
                     continue
                 F = to_obj(df)
-                sel = df.iloc[int(np.argmin(np.linalg.norm(
-                    (F - F.min(axis=0)) / np.where(F.ptp(axis=0) == 0, 1, F.ptp(axis=0)),
-                    axis=1)))]
+                span = np.ptp(F, axis=0)          # numpy 2 removed ndarray.ptp
+                norm = (F - F.min(axis=0)) / np.where(span == 0, 1.0, span)
+                sel = df.iloc[int(np.argmin(np.linalg.norm(norm, axis=1)))]
                 cfg_sel = {p: (int(sel[p]) if p in INT_PARAMS else float(sel[p]))
                            for p in PARAMS}
                 ho[arm] = {"selected_config": cfg_sel,

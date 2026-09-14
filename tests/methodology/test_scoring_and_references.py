@@ -157,3 +157,23 @@ def test_a_surrogate_returns_a_python_float_not_a_length_one_array() -> None:
     v = f(np.zeros(7))
     assert isinstance(v, float) and not isinstance(v, np.ndarray)
     assert float(v) == v
+
+
+def test_no_campaign_module_calls_the_removed_ndarray_ptp() -> None:
+    """numpy 2 removed ndarray.ptp; np.ptp(array, axis=) is the replacement.
+
+    It bit twice, in two different files, because it only fires on the code path
+    that runs it. A grep is cheaper than a third occurrence.
+    """
+    import re
+    from pathlib import Path
+
+    repo = Path(__file__).resolve().parents[2]
+    offenders = []
+    for d in (repo / "src" / "doe_xgb", repo / "scripts",
+              repo / "papers" / "xgboost_hpo_vrfnbi" / "scripts"):
+        for f in d.rglob("*.py"):
+            for i, line in enumerate(f.read_text().splitlines(), 1):
+                if re.search(r"(?<!np)\.ptp\s*\(", line):
+                    offenders.append(f"{f.relative_to(repo)}:{i}")
+    assert not offenders, f"ndarray.ptp used at {offenders}; use np.ptp(x, axis=...)"

@@ -131,7 +131,30 @@ class EvaluationCache:
             "  key TEXT PRIMARY KEY, dataset TEXT, split_id TEXT, fold_id TEXT,"
             "  config TEXT, seed INTEGER, protocol_version TEXT,"
             "  result TEXT, first_requested_by TEXT)")
+        # The logical ledger is the scientific budget, so it must survive a resumed
+        # run. Holding it only in memory meant a unit resumed from checkpoints
+        # reported zero logical evaluations beside thousands of physical fits.
+        self._db.execute(
+            "CREATE TABLE IF NOT EXISTS requests ("
+            "  id INTEGER PRIMARY KEY AUTOINCREMENT, method TEXT NOT NULL,"
+            "  key TEXT NOT NULL, served_from_cache INTEGER NOT NULL,"
+            "  computed INTEGER NOT NULL)")
+        self._db.execute("CREATE INDEX IF NOT EXISTS requests_method "
+                         "ON requests(method)")
         self._db.commit()
+        self._load_ledgers()
+
+    def _load_ledgers(self) -> None:
+        """Rebuild the per-method ledgers from the persisted request log."""
+        rows = self._db.execute(
+            "SELECT method, key, served_from_cache, computed FROM requests "
+            "ORDER BY id").fetchall()
+        for method, key, served, computed in rows:
+            led = self._ledgers.setdefault(method, MethodLedger(method))
+            led.logical += 1
+            led.keys.append(key)
+            led.served_from_cache += int(served)
+            led.computed += int(computed)
 
     # ------------------------------------------------------------------ queries
 
@@ -175,6 +198,10 @@ class EvaluationCache:
                 "SELECT result FROM evaluations WHERE key = ?", (key,)).fetchone()
             if row is not None:
                 led.served_from_cache += 1
+                self._db.execute(
+                    "INSERT INTO requests (method, key, served_from_cache, computed) "
+                    "VALUES (?,?,1,0)", (method, key))
+                self._db.commit()
                 return json.loads(row[0])
         # computed outside the lock: a fit takes seconds and must not block others
         result = compute(dict(cfg))
@@ -184,6 +211,9 @@ class EvaluationCache:
                 (key, self.dataset, self.split_id, fold_id,
                  json.dumps(cfg, sort_keys=True), self.seed, self.protocol_version,
                  json.dumps(result), method))
+            self._db.execute(
+                "INSERT INTO requests (method, key, served_from_cache, computed) "
+                "VALUES (?,?,0,1)", (method, key))
             self._db.commit()
             self.ledger(method).computed += 1
         return result
