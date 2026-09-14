@@ -139,9 +139,17 @@ def surface_predict(terms, beta: np.ndarray, C: np.ndarray) -> np.ndarray:
 
 
 def make_surrogate(terms, beta: np.ndarray):
-    """A callable on a single coded point, as the arms expect."""
+    """A callable on a single coded point, as the arms expect.
+
+    Returns a genuine Python float. ``surface_basis`` always produces a 2-D design
+    matrix, so the product is a length-1 array; numpy 2 refuses to coerce that to a
+    scalar, and every arm calls this through ``float(...)``.
+    """
+    beta = np.asarray(beta, dtype=float)
+
     def f(x: np.ndarray) -> float:
-        return float(surface_basis(np.atleast_2d(np.asarray(x, dtype=float)), terms) @ beta)
+        A = surface_basis(np.atleast_2d(np.asarray(x, dtype=float)), terms)
+        return float((A @ beta)[0])
     return f
 
 
@@ -165,6 +173,76 @@ def external_scores(design: pd.DataFrame, y_design: np.ndarray,
                 float(np.std(y_design, ddof=1) / max(np.std(yv, ddof=1), 1e-12))}
 
 
+def fit_surface_backward_uncoded(design: pd.DataFrame, y: np.ndarray,
+                                 alpha: float = 0.05):
+    """The dissertation's own fit: full quadratic in NATURAL units, not coded.
+
+    ``docs/METHODOLOGY_DECISIONS.md`` D6 records that the dissertation's tables
+    report coded coefficients while its code fits uncoded. HISTORICAL-WS reproduces
+    the code, so it fits uncoded and its coefficients are evaluated at natural
+    values by the frozen solver. The article-track arms fit coded, which is the
+    amendment D6 records; the difference is a property of the historical method and
+    is not repaired.
+
+    Returns ``(term_names, coefficients)`` in the frozen solver's own term grammar:
+    ``Intercept``, ``name``, ``name^2``, ``name*other``.
+    """
+    from scipy import stats
+    X = design[PARAMS].to_numpy(dtype=float)
+    k = len(PARAMS)
+    idx = [()] + [(i,) for i in range(k)] + [(i, i) for i in range(k)]
+    idx += [(i, j) for i in range(k) for j in range(i + 1, k)]
+    y = np.asarray(y, dtype=float)
+
+    def basis(terms):
+        cols = []
+        for tm in terms:
+            v = np.ones(len(X))
+            for i in tm:
+                v = v * X[:, i]
+            cols.append(v)
+        return np.column_stack(cols)
+
+    terms = list(idx)
+    while True:
+        A = basis(terms)
+        n, p = A.shape
+        if n - p <= 1 or len(terms) <= 1:
+            break
+        beta, *_ = np.linalg.lstsq(A, y, rcond=None)
+        resid = y - A @ beta
+        dof = n - p
+        s2 = float(resid @ resid) / dof
+        se = np.sqrt(np.maximum(np.diag(np.linalg.pinv(A.T @ A)) * s2, 1e-300))
+        pvals = 2 * (1 - stats.t.cdf(np.abs(beta) / se, dof))
+        protected = {0}
+        for i_, tm in enumerate(terms):
+            if len(tm) == 2:
+                for v in set(tm):
+                    if (v,) in terms:
+                        protected.add(terms.index((v,)))
+        cand = [i for i in range(len(terms)) if i not in protected]
+        if not cand:
+            break
+        worst = max(cand, key=lambda i: pvals[i])
+        if pvals[worst] <= alpha:
+            break
+        terms = [tm for i, tm in enumerate(terms) if i != worst]
+    beta, *_ = np.linalg.lstsq(basis(terms), y, rcond=None)
+
+    names = []
+    for tm in terms:
+        if not tm:
+            names.append("Intercept")
+        elif len(tm) == 1:
+            names.append(PARAMS[tm[0]])
+        elif tm[0] == tm[1]:
+            names.append(f"{PARAMS[tm[0]]}^2")
+        else:
+            names.append(f"{PARAMS[tm[0]]}*{PARAMS[tm[1]]}")
+    return names, [float(b) for b in beta]
+
+
 GATE_R2, GATE_SPEARMAN = 0.5, 0.9
 
 
@@ -174,6 +252,6 @@ def gate_pass(scores: dict) -> bool:
                 and scores["external_spearman"] >= GATE_SPEARMAN)
 
 
-__all__ = ["load_design", "external_validation_set", "to_coded", "from_coded",
+__all__ = ["fit_surface_backward_uncoded", "load_design", "external_validation_set", "to_coded", "from_coded",
            "surface_terms", "surface_basis", "fit_surface_backward", "surface_predict",
            "make_surrogate", "external_scores", "gate_pass", "GATE_R2", "GATE_SPEARMAN"]

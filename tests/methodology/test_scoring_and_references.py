@@ -143,3 +143,17 @@ def test_hypervolume_reference_point_is_fixed_before_any_front_is_seen() -> None
 def test_indicators_return_nan_rather_than_a_number_on_an_empty_set() -> None:
     out = indicators(np.zeros((0, 2)), np.array([[0.0, 1.0]]))
     assert all(np.isnan(v) for k, v in out.items() if k != "n_front")
+
+
+def test_a_surrogate_returns_a_python_float_not_a_length_one_array() -> None:
+    """Every arm calls the surrogate through float(); numpy 2 refuses size-1 arrays."""
+    import numpy as np
+
+    from doe_xgb.campaign.design import make_surrogate, surface_terms
+
+    terms = surface_terms()
+    beta = np.arange(len(terms), dtype=float)
+    f = make_surrogate(terms, beta)
+    v = f(np.zeros(7))
+    assert isinstance(v, float) and not isinstance(v, np.ndarray)
+    assert float(v) == v

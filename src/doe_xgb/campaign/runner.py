@@ -375,32 +375,38 @@ def _run_historical(design_df, Y, fm, surrogates, rz, seed) -> dict:
     normalization box is the component-wise observed extrema of the design rows,
     as scripts/run_nbi.py built it. Neither is repaired.
     """
-    import statsmodels.api as sm      # noqa: F401  (kept for parity of the fit path)
-    from .design import fit_surface_backward as _fit
-    # the historical box: component-wise observed extrema, both objectives minimized
-    observed_utopia = tuple(float(Y[:, j].min()) for j in range(2))
-    observed_nadir = tuple(float(Y[:, j].max()) for j in range(2))
-    terms_beta = [_fit(design_df, Y[:, j]) for j in range(2)]
-    models = []
-    for terms, beta in terms_beta:
-        names, coefs = [], []
-        for tm, b in zip(terms, beta):
-            if not tm:
-                names.append("Intercept")
-            elif len(tm) == 1:
-                names.append(PARAMS[tm[0]])
-            elif tm[0] == tm[1]:
-                names.append(f"{PARAMS[tm[0]]}^2")
-            else:
-                names.append(f"{PARAMS[tm[0]]}*{PARAMS[tm[1]]}")
-            coefs.append(float(b))
-        models.append((names, coefs))
+    from .design import fit_surface_backward_uncoded
+
+    # Two properties of the historical method, reproduced rather than repaired.
+    #
+    # Orientation: the dissertation MAXIMIZES its two scores (Score_Quality, and
+    # Score_Cost which is a negated z-scored time), and its solver's feasibility
+    # box requires nadir <= prediction <= utopia. This campaign's objectives are
+    # canonicalized to minimization, so the historical arm sees their negation and
+    # its utopia is the component-wise maximum.
+    #
+    # Parameterization: the dissertation fits its surfaces in NATURAL units
+    # (METHODOLOGY_DECISIONS D6), and the frozen solver evaluates named terms at
+    # natural values. Handing it coded coefficients would silently evaluate the
+    # wrong surface.
+    Y_hist = -np.asarray(Y, dtype=float)
+    observed_utopia = tuple(float(Y_hist[:, j].max()) for j in range(2))
+    observed_nadir = tuple(float(Y_hist[:, j].min()) for j in range(2))
+    models = [fit_surface_backward_uncoded(design_df, Y_hist[:, j]) for j in range(2)]
     run = run_historical_ws(models[0], models[1],
                             observed_utopia=observed_utopia,
                             observed_nadir=observed_nadir,
                             bounds={p: BOUNDS[p] for p in PARAMS},
                             realizer=rz, surrogates_coded=surrogates, seed=seed)
-    return run.as_dict()
+    out = run.as_dict()
+    out["diagnostics"].update({
+        "orientation": ("the dissertation maximizes; this campaign's objectives are "
+                        "minimized, so the historical arm sees their negation"),
+        "surface_parameterization": "uncoded natural units, as the dissertation fits",
+        "surface_terms": [len(m[0]) for m in models],
+        "observed_utopia_maximization_orientation": list(observed_utopia),
+        "observed_nadir_maximization_orientation": list(observed_nadir)})
+    return out
 
 
 def _empirical_anchors(cache, compute, fm, cfg, seed) -> tuple[np.ndarray, np.ndarray, dict]:
