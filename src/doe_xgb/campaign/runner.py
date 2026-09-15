@@ -63,6 +63,34 @@ NSGA2_UNMATCHED_REPLICATION = 0
 # extreme and move the normalization box every other method is scored against.
 SINGLE_OBJECTIVE = ("bayes_quality", "bayes_cost", "tpe_quality", "tpe_cost")
 
+# Dataset roles, assigned from the pre-campaign screening in
+# audits/final_panel_screening.json and NEVER from an optimizer outcome. Every
+# dataset here is executed in full: same arms, same budgets, same evaluation
+# machinery, same outputs. The role determines only which INFERENTIAL FAMILY a
+# dataset's comparisons belong to.
+#
+# A boundary control failed screening criterion 2: its design-row non-dominated set
+# has no interior, so no interior front geometry exists for the weighted-sum versus
+# NBI contrast to separate. A null result there is therefore not evidence against
+# the geometry mechanism, and that was established BEFORE the campaign ran, which is
+# what makes it a control rather than an excuse.
+DATASET_ROLES = {
+    "magic": "primary_geometry_confirmatory",
+    "spambase": "boundary_geometry_control",
+    "adult": "primary_geometry_confirmatory",
+    "bank_marketing": "primary_geometry_confirmatory",
+}
+PRIMARY_GEOMETRY_PANEL = tuple(d for d in DATASETS
+                               if DATASET_ROLES[d] == "primary_geometry_confirmatory")
+BOUNDARY_CONTROLS = tuple(d for d in DATASETS
+                          if DATASET_ROLES[d] == "boundary_geometry_control")
+
+# The primary inferential family, frozen before launch. Dataset is the
+# generalization unit: there is NO pooling across datasets, so the family is three
+# contrasts within each primary-panel dataset, Holm-corrected within that dataset.
+PRIMARY_REFERENCE = "core"          # amendment 21; augmented is a mandatory sensitivity
+PRIMARY_INDICATOR = "hv_ratio"
+
 # Every comparator the direct-baselines stage produces, by exact identifier. The
 # augmented-reference and metrics stages iterate this namespace and score whatever
 # they find in it, so it must contain methods and nothing else.

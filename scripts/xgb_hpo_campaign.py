@@ -37,7 +37,10 @@ from doe_xgb.campaign.design import (external_validation_set, load_design)  # no
 from doe_xgb.campaign.runner import (DATASETS, N_REPLICATIONS, PROTOCOL_TAG,  # noqa: E402
                                      STAGES, Checkpoint, campaign_budget,
                                      logical_budget_plan, method_stage_ledger,
-                                     reconcile_unit_accounting, run_unit, unit_seed)
+                                     reconcile_unit_accounting, run_unit, unit_seed,
+                                     BOUNDARY_CONTROLS, DATASET_ROLES,
+                                     PRIMARY_GEOMETRY_PANEL, PRIMARY_INDICATOR,
+                                     PRIMARY_REFERENCE)
 
 CONFIRMATORY_ROOT = REPO / "experiments" / "xgboost_hpo_vrfnbi_confirmatory"
 PILOT_ROOTS = [REPO / "papers" / "xgboost_hpo_vrfnbi" / "audits" / "pilot_stage_a"]
@@ -82,6 +85,15 @@ def plan() -> dict:
         "campaign_audit_only_logical": cb["campaign_audit_only_logical"],
         "budget_by_stage_per_unit": cb["by_stage"],
         "budget_arithmetic_consistent": cb["arithmetic_consistent"],
+        "dataset_roles": dict(DATASET_ROLES),
+        "primary_geometry_panel": list(PRIMARY_GEOMETRY_PANEL),
+        "boundary_controls": list(BOUNDARY_CONTROLS),
+        "primary_panel_units": len(PRIMARY_GEOMETRY_PANEL) * N_REPLICATIONS,
+        "boundary_control_units": len(BOUNDARY_CONTROLS) * N_REPLICATIONS,
+        "primary_indicator": PRIMARY_INDICATOR,
+        "primary_reference": PRIMARY_REFERENCE,
+        "augmented_reference_role": "mandatory sensitivity; never an alternate primary test",
+        "replacement_dataset_selected": False,
         "nsga2_unmatched_evaluations": unmatched,
         "nsga2_unmatched_scope": cb["unmatched_nsga2_scope"],
         "projected_hours": round(total * SECONDS_PER_EVALUATION / 3600, 2),
@@ -172,6 +184,26 @@ def dry_run() -> int:
                                   "candidate_validation", "direct_search",
                                   "holdout_audit"},
           str(sorted(cb["by_stage"])))
+    check("every dataset has a declared role",
+          set(DATASET_ROLES) == set(DATASETS),
+          str({d: DATASET_ROLES[d] for d in DATASETS}))
+    check("the primary panel and boundary controls partition the executed datasets",
+          sorted(list(PRIMARY_GEOMETRY_PANEL) + list(BOUNDARY_CONTROLS)) == sorted(DATASETS)
+          and not set(PRIMARY_GEOMETRY_PANEL) & set(BOUNDARY_CONTROLS),
+          f"{len(PRIMARY_GEOMETRY_PANEL)} primary + {len(BOUNDARY_CONTROLS)} boundary "
+          f"= {len(DATASETS)} executed")
+    check("the unit split matches the declared roles",
+          len(PRIMARY_GEOMETRY_PANEL) * N_REPLICATIONS
+          + len(BOUNDARY_CONTROLS) * N_REPLICATIONS
+          == len(DATASETS) * N_REPLICATIONS,
+          f"{len(PRIMARY_GEOMETRY_PANEL)*N_REPLICATIONS} primary-panel + "
+          f"{len(BOUNDARY_CONTROLS)*N_REPLICATIONS} boundary-control = "
+          f"{len(DATASETS)*N_REPLICATIONS} units")
+    check("the code's dataset roles match the committed screening artifact",
+          _roles_match_screening(), _roles_detail())
+    check("the primary reference is named and is the method-independent core",
+          PRIMARY_REFERENCE == "core", f"{PRIMARY_INDICATOR} against {PRIMARY_REFERENCE}")
+
     smoke = _latest_smoke_accounting()
     if smoke is None:
         check("a completed unit's ledger reconciles against the registry", False,
@@ -208,6 +240,31 @@ def _disjoint() -> bool:
 # dry run reads only its accounting ledger, never any arm's outcome.
 SMOKE_ROOTS = [pathlib.Path("/tmp/smoke_v3"),
                REPO / "experiments" / "_xgb_hpo_v3_smoke"]
+
+
+def _screening_artifact() -> dict | None:
+    p = (REPO / "papers" / "xgboost_hpo_vrfnbi" / "audits" / "final_panel_screening.json")
+    try:
+        return json.loads(p.read_text())
+    except Exception:
+        return None
+
+
+def _roles_match_screening() -> bool:
+    a = _screening_artifact()
+    if a is None:
+        return False
+    return (list(PRIMARY_GEOMETRY_PANEL) == a["primary_geometry_panel"]
+            and list(BOUNDARY_CONTROLS) == a["boundary_controls"]
+            and all(DATASET_ROLES[r["dataset"]] == r["final_role"] for r in a["datasets"]))
+
+
+def _roles_detail() -> str:
+    a = _screening_artifact()
+    if a is None:
+        return "audits/final_panel_screening.json is missing"
+    return (f"primary {a['primary_geometry_panel']}, boundary {a['boundary_controls']}, "
+            f"no replacement selected" if not a["replacement_dataset_selected"] else "")
 
 
 def _latest_smoke_accounting():

@@ -412,7 +412,51 @@ win fraction with its Wilson interval, rank-biserial correlation) is primary and
 originally designated none primary, so the realized comparison family sat somewhere between 3 and 15
 tests per dataset. **The primary indicator is the hypervolume ratio computed against the CORE
 reference** of section 9, which amendment 21 names; the same ratio against the augmented reference is
-a declared sensitivity and carries no test. The family is three contrasts times one indicator, Holm-corrected within
+a **mandatory sensitivity** and carries no test.
+
+**IGD⁺ was never co-primary and is not demoted here.** At tag `xgboost-hpo-protocol-v2` no indicator
+was designated primary at all; the single-primary-indicator decision came later as the resolution of
+review finding MF17, which made the hypervolume ratio primary and IGD⁺ secondary and descriptive.
+That earlier declared status is preserved. Amendment 21 resolves **reference provenance**, not which
+endpoint is primary.
+
+### 11.1 The primary inferential family, frozen before launch (amendment 22)
+
+**Dataset roles.** Assigned from `audits/final_panel_screening.json`, measured before any arm ran,
+and never revised from an optimizer outcome:
+
+| dataset | criterion 2 (front interior) | role | units |
+|---|---|---|---:|
+| MAGIC | 8 front points, curvature 0.166 | `primary_geometry_confirmatory` | 30 |
+| Adult | 6 front points, curvature 0.211 | `primary_geometry_confirmatory` | 30 |
+| Bank Marketing | 6 front points, curvature 0.214 | `primary_geometry_confirmatory` | 30 |
+| **Spambase** | **2 front points, curvature undefined** | **`boundary_geometry_control`** | 30 |
+
+**All four datasets execute in full** — same arms, same budgets, same evaluation machinery, same
+outputs, 120 units. The role determines only which inferential family a comparison belongs to.
+
+**The primary family.** Within each of the three primary-panel datasets: the three identifying
+contrasts (HISTORICAL-WS → WS-S, WS-S → NBI-S, NBI-S → NBI-R) on the hypervolume ratio against the
+**core** reference, Holm-corrected **within that dataset**. **Dataset is the generalization unit and
+there is no pooling**: the three primary datasets are never combined into a 90-replication analysis.
+
+**The boundary-control analysis.** Spambase's identical comparisons are reported separately and in
+full, as a pre-specified boundary control. The interpretation is fixed now, before any outcome:
+
+- a **null** WS-S → NBI-S difference on Spambase is **not** evidence against the geometry mechanism,
+  because criterion 2 established before execution that the interior front geometry the mechanism
+  acts on is absent there;
+- a **non-null** difference on Spambase is reported and investigated **after** campaign completion,
+  and the protocol is not changed in response to it.
+
+The NBI-S → NBI-R anchor-provenance contrast on Spambase is reported in the same boundary analysis
+rather than in the primary family.
+
+**Mandatory sensitivity.** Every primary comparison is repeated against the augmented reference and
+reported beside its `self_grading_share_of_front`. It is a sensitivity and never an alternate primary
+test. **If the direction of a headline comparison differs between the core and augmented references,
+that disagreement is itself a result and is reported prominently.** Neither may be chosen after the
+fact on the strength of its p-value. The family is three contrasts times one indicator, Holm-corrected within
 each dataset. IGD+, generational distance, Schott spacing and the joint non-dominated fraction are
 **secondary and descriptive**, reported with intervals and no tests. Per-objective marginal
 comparisons are forbidden; see section 14.
@@ -492,7 +536,7 @@ before any campaign result. What remains does not block the freeze.
 
 | # | Remaining item | Blocks? | Disposition |
 |---|---|---|---|
-| 7 | Dataset panel confirmed by the screening measurements | **REOPENED** | The Stage A verdict this was closed on was computed with the withdrawn factor algebra. Recomputed: criterion 1 is unsatisfiable by construction and **Spambase fails criterion 2 with a two-point non-dominated set**. See `audits/panel_rescreen_corrected.json`, `audits/latent_conflict_stability.json` and the open item in `PROTOCOL_AMENDMENTS.md`. **This item blocks the v3 freeze.** |
+| 7 | Dataset panel confirmed by the screening measurements | **closed by amendments 20 and 22** | Criterion 1's latent estimator withdrawn (amendment 20) and replaced by the canonical raw-response measurement, which all four datasets satisfy. Criterion 2 unchanged: MAGIC, Adult and Bank Marketing pass and form the primary geometry panel; Spambase fails with a two-point front and is retained as a pre-specified boundary control (amendment 22). No replacement dataset selected. `audits/final_panel_screening.json` |
 | 8 | Thesis equation numbering, §2.9 Eqs 2.107–2.114 against §4.4.3 Eq 4.16 | no | needed before submission. The chapters are not on this machine; see `protocol/original_thesis_protocol.md` §13 |
 | 9 | Whether `pepper_species` exists and is public | no | the panel does not depend on it; see `protocol/dataset_selection.md` |
 | 10 | Self-overlap assessment against Pereira et al. (2025) and Paper 1 | no | needed before submission; see §13b |

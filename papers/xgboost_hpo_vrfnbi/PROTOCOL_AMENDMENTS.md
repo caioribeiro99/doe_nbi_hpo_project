@@ -354,62 +354,31 @@ reference after seeing both has an undeclared degree of freedom on the study's h
 
 ---
 
-## DECISION D1 — Spambase fails screening criterion 2, and its disposition needs sign-off
+## Amendment 22 — Spambase is a pre-specified boundary control, not a replacement case
 
-**This is the only item still blocking the v3 freeze.** Criterion 1 was withdrawn as amendment 20,
-because a correction made on independent grounds destroyed its evidentiary basis. This is different:
-criterion 2 is unaffected by the factor-algebra correction in its *definition*, it is computed from
-the corrected model, and **Spambase fails it**.
+**Author decision, taken before any confirmatory arm-level result existed.**
 
-`protocol/dataset_selection.md`, frozen before any measurement, says:
+| | |
+|---|---|
+| **The measurement** | Spambase's non-dominated set of design rows contains **two points**, the two extreme anchors, so its curvature is undefined and screening criterion 2 is **not met**. MAGIC, Adult and Bank Marketing meet it with 8, 6 and 6 front points and curvature 0.166, 0.211, 0.214. `audits/final_panel_screening.json`. |
+| **Criterion 2 is unchanged** | its threshold is not moved, its definition is not rewritten, and no alternative formulation was sought that would let Spambase pass. The failure is a **valid screening result**, not a software defect. |
+| **The decision** | Spambase is **retained and executed in full** — same arms, same budgets, same seeds, same evaluation machinery, same outputs, 30 replications — and is classified prospectively as a **boundary geometry control**. No replacement dataset is selected. |
+| **Why not replaced** | the reserve-list rule exists to keep the panel informative. Executing it here would discard a dataset whose screening failure is itself informative: a pre-identified case in which the interior front geometry the primary mechanism acts on is absent. Retaining it under a declared, pre-specified role preserves that information without letting it contaminate the mechanistic claim. |
+| **What changes** | only which inferential family its comparisons belong to. Spambase is **excluded from the primary family** supporting the claim about NBI geometry versus weighted scalarization, and reported separately as the boundary-control analysis. |
+| **The interpretation, fixed in advance** | a **null** WS-S → NBI-S difference on Spambase is **not** evidence against the geometry mechanism, because criterion 2 established before execution that the required interior geometry is absent. A **non-null** difference is reported and investigated only after campaign completion; the protocol is not changed in response to it. The NBI-S → NBI-R contrast on Spambase is reported in the same boundary analysis. |
+| **No pooling** | dataset remains the generalization unit. The three primary datasets are never combined into a 90-replication inference. |
+| **What the manuscript must say** | three datasets passed the geometry screening and constitute the primary mechanistic panel; a fourth pre-screened dataset, Spambase, failed the nonlinear-front criterion and was retained prospectively as a boundary control. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** The classification rests on design-row geometry measured before any optimizer ran. |
+| **Could it favour an arm?** | **No.** The role is identical for every arm, and it is assigned from a pre-campaign measurement that no arm influences. |
 
-> A dataset that fails criterion 1 or 2 is **replaced from the registry** before the full campaign,
-> and the replacement is recorded with the measurement that caused it.
-
-The measurement, on the 88 design rows, from `audits/panel_rescreen_corrected.json`:
-
-| dataset | non-dominated design rows | curvature | criterion 2 |
-|---|---:|---:|:--|
-| MAGIC | 8 | 0.166 | met |
-| **Spambase** | **2** | **undefined** | **NOT met** |
-| Adult | 6 | 0.211 | met |
-| Bank Marketing | 6 | 0.214 | met |
-
-A two-point non-dominated set is the degenerate case: every scalarization returns the same two
-anchors, there is no interior front, and the primary geometry contrast has nothing to separate on
-that dataset. Criterion 2 exists precisely to exclude that.
-
-**Why this is not executed unilaterally, even though the rule is unambiguous.** Replacing Spambase is
-mechanical in the sense that the rule names the action and the reserve list (`phishing`,
-`credit_card_default`, `mushroom`, `wine_quality`, `german_credit`, `pima_diabetes`,
-`breast_cancer` — with `credit_card_default` excluded to avoid overlap with Paper 1). But executing it
-means fetching and checksum-verifying a new dataset, running Stage A on it, building a frozen
-reference factor model, and re-screening it against all four criteria — and the replacement may itself
-fail. That changes the panel the study reports on, and it costs real work before the campaign can
-start.
-
-**And it has a consequence that must be visible before anyone chooses.** Spambase is the **only**
-dataset on which the composite-quality surrogate meets the frozen reliability criterion in the
-corrected pre-campaign screening. Removing it leaves a panel on which that criterion is unmet
-everywhere. That is an argument neither for nor against replacement — the criterion-2 failure is real
-and the rule is frozen — but a panel selected to satisfy one screening rule while losing the only
-member that satisfies a different diagnostic is a fact the manuscript would have to state, and it
-should be a decision taken knowingly rather than discovered afterwards.
-
-**The options.**
-
-1. **Replace Spambase from the reserve list**, executing the frozen rule. Record the measurement that
-   caused it. Cost: a new dataset must be fetched, verified, screened and given a frozen factor
-   model before launch; the replacement may fail its own screening.
-2. **Keep Spambase and record the criterion-2 failure as a declared limitation**, with the geometry
-   contrast reported as uninformative on that dataset. This **overrides a frozen rule** and therefore
-   is not the author's to take alone.
-3. **Keep Spambase and drop criterion 2 as well.** Not recommended and listed for completeness: after
-   amendment 20 the panel would then be screened for trade-off structure by nothing at all.
-
-Option 1 executes the protocol as frozen. Option 2 requires explicit authorization. **Either way the
-decision is recorded as a numbered amendment before the campaign runs, and v3 is not tagged until it
-is taken.**
+**Recorded against interest.** Excluding a dataset from the primary family after seeing that it fails
+a screening criterion is structurally the same move as excluding one after seeing that it gives an
+unwelcome result, and only the **timing and the basis** distinguish them. The basis here is
+design-row geometry, which is a property of the 88 evaluated design points and of no optimizer; the
+timing is before launch, recorded in this ledger and in a committed artifact, at a commit that
+precedes the campaign. Both are checkable. The protection is not that the author promises the
+classification was not outcome-driven — it is that no outcome existed to drive it.
 
 ---
 

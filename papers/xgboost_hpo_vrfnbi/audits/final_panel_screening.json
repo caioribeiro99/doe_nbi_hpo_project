@@ -1,0 +1,273 @@
+{
+  "all_datasets_executed": [
+    "magic",
+    "spambase",
+    "adult",
+    "bank_marketing"
+  ],
+  "bootstrap_resamples": 2000,
+  "boundary_controls": [
+    "spambase"
+  ],
+  "criterion_1_operationalization": "canonical raw_conflict(): equally weighted standardized quality badness against the RAW Leaves_Mean complexity response. The latent quality-factor versus latent cost-factor rank correlation is WITHDRAWN (amendment 20) and is not computed here.",
+  "datasets": [
+    {
+      "criterion_1_pass": true,
+      "criterion_1_raw_conflict_value": -0.2509,
+      "criterion_2_curvature": 0.1662,
+      "criterion_2_front_size": 8,
+      "criterion_2_pass": true,
+      "criterion_3_pass": true,
+      "criterion_3_value": 0.6913,
+      "criterion_4_pass": true,
+      "criterion_4_value": 2706.3,
+      "dataset": "magic",
+      "detail": {
+        "criterion_1": {
+          "ci95": [
+            -0.4452,
+            -0.0288
+          ],
+          "ci_excludes_zero": true,
+          "implementation": "doe_xgb.campaign.factor_model.raw_conflict",
+          "measures": "equally weighted standardized quality badness against the RAW complexity response Leaves_Mean; no factor stage on either side",
+          "pass": true,
+          "rule": "clearly negative (dataset_selection.md, amendment 20)",
+          "value": -0.2509
+        },
+        "criterion_2": {
+          "curvature": 0.1662,
+          "front_size": 8,
+          "pass": true,
+          "rule": "detectably non-linear (dataset_selection.md)",
+          "why": "deviation of the non-dominated set from its own endpoint chord"
+        },
+        "criterion_3": {
+          "pass": true,
+          "per_objective": {
+            "cost": {
+              "external_r2": 0.9049,
+              "external_spearman": 0.9415,
+              "meets_frozen_reliability_gate": true,
+              "pass": true,
+              "surface_terms": 16
+            },
+            "quality": {
+              "external_r2": 0.6913,
+              "external_spearman": 0.8297,
+              "meets_frozen_reliability_gate": false,
+              "pass": true,
+              "surface_terms": 13
+            }
+          },
+          "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
+          "value": 0.6913
+        },
+        "criterion_4": {
+          "max": 294989.4,
+          "min": 109.0,
+          "pass": true,
+          "rule": "large enough that cost differences exceed run-to-run variation; Leaves_Mean is a deterministic complexity count at fixed config and seed, so its run-to-run variation is zero",
+          "value": 2706.3
+        }
+      },
+      "final_role": "primary_geometry_confirmatory"
+    },
+    {
+      "criterion_1_pass": true,
+      "criterion_1_raw_conflict_value": -0.4621,
+      "criterion_2_curvature": null,
+      "criterion_2_front_size": 2,
+      "criterion_2_pass": false,
+      "criterion_3_pass": true,
+      "criterion_3_value": 0.9017,
+      "criterion_4_pass": true,
+      "criterion_4_value": 591.2,
+      "dataset": "spambase",
+      "detail": {
+        "criterion_1": {
+          "ci95": [
+            -0.6162,
+            -0.2677
+          ],
+          "ci_excludes_zero": true,
+          "implementation": "doe_xgb.campaign.factor_model.raw_conflict",
+          "measures": "equally weighted standardized quality badness against the RAW complexity response Leaves_Mean; no factor stage on either side",
+          "pass": true,
+          "rule": "clearly negative (dataset_selection.md, amendment 20)",
+          "value": -0.4621
+        },
+        "criterion_2": {
+          "curvature": null,
+          "front_size": 2,
+          "pass": false,
+          "rule": "detectably non-linear (dataset_selection.md)",
+          "why": "a non-dominated set of fewer than three points has no interior and no defined curvature: every scalarization returns the same extreme points, so there is no interior front geometry for the primary contrast to separate"
+        },
+        "criterion_3": {
+          "pass": true,
+          "per_objective": {
+            "cost": {
+              "external_r2": 0.9017,
+              "external_spearman": 0.9486,
+              "meets_frozen_reliability_gate": true,
+              "pass": true,
+              "surface_terms": 11
+            },
+            "quality": {
+              "external_r2": 0.9172,
+              "external_spearman": 0.9177,
+              "meets_frozen_reliability_gate": true,
+              "pass": true,
+              "surface_terms": 13
+            }
+          },
+          "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
+          "value": 0.9017
+        },
+        "criterion_4": {
+          "max": 41264.4,
+          "min": 69.8,
+          "pass": true,
+          "rule": "large enough that cost differences exceed run-to-run variation; Leaves_Mean is a deterministic complexity count at fixed config and seed, so its run-to-run variation is zero",
+          "value": 591.2
+        }
+      },
+      "final_role": "boundary_geometry_control"
+    },
+    {
+      "criterion_1_pass": true,
+      "criterion_1_raw_conflict_value": -0.3977,
+      "criterion_2_curvature": 0.2108,
+      "criterion_2_front_size": 6,
+      "criterion_2_pass": true,
+      "criterion_3_pass": true,
+      "criterion_3_value": 0.9044,
+      "criterion_4_pass": true,
+      "criterion_4_value": 3421.3,
+      "dataset": "adult",
+      "detail": {
+        "criterion_1": {
+          "ci95": [
+            -0.5649,
+            -0.1975
+          ],
+          "ci_excludes_zero": true,
+          "implementation": "doe_xgb.campaign.factor_model.raw_conflict",
+          "measures": "equally weighted standardized quality badness against the RAW complexity response Leaves_Mean; no factor stage on either side",
+          "pass": true,
+          "rule": "clearly negative (dataset_selection.md, amendment 20)",
+          "value": -0.3977
+        },
+        "criterion_2": {
+          "curvature": 0.2108,
+          "front_size": 6,
+          "pass": true,
+          "rule": "detectably non-linear (dataset_selection.md)",
+          "why": "deviation of the non-dominated set from its own endpoint chord"
+        },
+        "criterion_3": {
+          "pass": true,
+          "per_objective": {
+            "cost": {
+              "external_r2": 0.9249,
+              "external_spearman": 0.9141,
+              "meets_frozen_reliability_gate": true,
+              "pass": true,
+              "surface_terms": 16
+            },
+            "quality": {
+              "external_r2": 0.9044,
+              "external_spearman": 0.8868,
+              "meets_frozen_reliability_gate": false,
+              "pass": true,
+              "surface_terms": 12
+            }
+          },
+          "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
+          "value": 0.9044
+        },
+        "criterion_4": {
+          "max": 236072.2,
+          "min": 69.0,
+          "pass": true,
+          "rule": "large enough that cost differences exceed run-to-run variation; Leaves_Mean is a deterministic complexity count at fixed config and seed, so its run-to-run variation is zero",
+          "value": 3421.3
+        }
+      },
+      "final_role": "primary_geometry_confirmatory"
+    },
+    {
+      "criterion_1_pass": true,
+      "criterion_1_raw_conflict_value": -0.41,
+      "criterion_2_curvature": 0.214,
+      "criterion_2_front_size": 6,
+      "criterion_2_pass": true,
+      "criterion_3_pass": true,
+      "criterion_3_value": 0.8598,
+      "criterion_4_pass": true,
+      "criterion_4_value": 4355.5,
+      "dataset": "bank_marketing",
+      "detail": {
+        "criterion_1": {
+          "ci95": [
+            -0.5939,
+            -0.2118
+          ],
+          "ci_excludes_zero": true,
+          "implementation": "doe_xgb.campaign.factor_model.raw_conflict",
+          "measures": "equally weighted standardized quality badness against the RAW complexity response Leaves_Mean; no factor stage on either side",
+          "pass": true,
+          "rule": "clearly negative (dataset_selection.md, amendment 20)",
+          "value": -0.41
+        },
+        "criterion_2": {
+          "curvature": 0.214,
+          "front_size": 6,
+          "pass": true,
+          "rule": "detectably non-linear (dataset_selection.md)",
+          "why": "deviation of the non-dominated set from its own endpoint chord"
+        },
+        "criterion_3": {
+          "pass": true,
+          "per_objective": {
+            "cost": {
+              "external_r2": 0.9347,
+              "external_spearman": 0.9444,
+              "meets_frozen_reliability_gate": true,
+              "pass": true,
+              "surface_terms": 20
+            },
+            "quality": {
+              "external_r2": 0.8598,
+              "external_spearman": 0.8571,
+              "meets_frozen_reliability_gate": false,
+              "pass": true,
+              "surface_terms": 7
+            }
+          },
+          "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
+          "value": 0.8598
+        },
+        "criterion_4": {
+          "max": 270909.6,
+          "min": 62.2,
+          "pass": true,
+          "rule": "large enough that cost differences exceed run-to-run variation; Leaves_Mean is a deterministic complexity count at fixed config and seed, so its run-to-run variation is zero",
+          "value": 4355.5
+        }
+      },
+      "final_role": "primary_geometry_confirmatory"
+    }
+  ],
+  "primary_geometry_panel": [
+    "magic",
+    "adult",
+    "bank_marketing"
+  ],
+  "purpose": "the authoritative pre-campaign panel screening and dataset-role map",
+  "replacement_dataset_selected": false,
+  "role_rule": "criterion 2 is the geometry criterion. A dataset meeting it is primary_geometry_confirmatory; one failing it is boundary_geometry_control, executed in full under the identical pipeline and excluded ONLY from the primary inferential family. Roles are assigned from these pre-campaign measurements and are never revised from optimizer outcomes.",
+  "seed": 20260914,
+  "status": "PRE-CONFIRMATORY SCREENING EVIDENCE; no arm has executed"
+}
