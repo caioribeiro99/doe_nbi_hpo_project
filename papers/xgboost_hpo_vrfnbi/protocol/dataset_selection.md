@@ -59,7 +59,7 @@ intermediate recomputation and must not be cited.)
 
 | dataset | C1 raw conflict | C2 front / curvature | C3 | C4 | role |
 |---|---:|---|:--:|:--:|---|
-| MAGIC | −0.251 | 8 points, 0.166 | met | met | primary geometry confirmatory |
+| MAGIC | −0.251 | 7 points, 0.173 | met | met | primary geometry confirmatory |
 | Adult | −0.398 | 6 points, 0.199 | met | met | primary geometry confirmatory |
 | Bank Marketing | −0.410 | 6 points, 0.198 | met | met | primary geometry confirmatory |
 | **Spambase** | −0.462 | **2 points, undefined** | met | met | **boundary geometry control** |

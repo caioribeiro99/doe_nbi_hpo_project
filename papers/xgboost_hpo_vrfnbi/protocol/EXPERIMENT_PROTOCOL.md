@@ -436,9 +436,9 @@ and never revised from an optimizer outcome:
 
 | dataset | criterion 2 (front interior) | role | units |
 |---|---|---|---:|
-| MAGIC | 8 front points, curvature 0.166 | `primary_geometry_confirmatory` | 30 |
-| Adult | 6 front points, curvature 0.211 | `primary_geometry_confirmatory` | 30 |
-| Bank Marketing | 6 front points, curvature 0.214 | `primary_geometry_confirmatory` | 30 |
+| MAGIC | 7 front points, curvature 0.173 | `primary_geometry_confirmatory` | 30 |
+| Adult | 6 front points, curvature 0.199 | `primary_geometry_confirmatory` | 30 |
+| Bank Marketing | 6 front points, curvature 0.198 | `primary_geometry_confirmatory` | 30 |
 | **Spambase** | **2 front points, curvature undefined** | **`boundary_geometry_control`** | 30 |
 
 **All four datasets execute in full** — same arms, same budgets, same evaluation machinery, same
@@ -550,7 +550,7 @@ before any campaign result. What remains does not block the freeze.
 | 9 | Whether `pepper_species` exists and is public | no | the panel does not depend on it; see `protocol/dataset_selection.md` |
 | 10 | Self-overlap assessment against Pereira et al. (2025) and Paper 1 | no | needed before submission; see §13b |
 | 11 | Five failing tests in `test_stage0_extreme_lane_plan.py` | no | a wall-clock staleness gate refusing a 120-day-old summary, unrelated to this work; must not be left failing at submission |
-| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | The panel does not grow: the campaign projects 0.73 days at q = 2. The detectable effect size comes from Stage B and was **recomputed on the corrected factor model** — 0.8 to 2.8 percentage points of reference hypervolume uncorrected, 2.3 to 8.1 under the Nadeau-Bengio sensitivity. The panel's membership is settled by item 7, closed by amendments 20 and 22: three primary-panel datasets and one boundary control, all four executed |
+| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | The panel does not grow: the campaign projects 0.73 days at q = 2. The detectable effect size comes from Stage B and was **recomputed on the corrected factor model** — 0.8 to 2.8 percentage points of reference hypervolume uncorrected, 2.3 to 8.0 under the Nadeau-Bengio sensitivity. The panel's membership is settled by item 7, closed by amendments 20 and 22: three primary-panel datasets and one boundary control, all four executed |
 | 14 | Whether to run at q = 3 rather than q = 2 | **closed** | Stage A: q = 3 costs 5.8 days against a 5-day ceiling, so the campaign runs at q = 2. §8 |
 
 Items 8 and 9 both need the dissertation chapters, which are on a OneDrive path under a different

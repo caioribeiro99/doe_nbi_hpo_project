@@ -125,7 +125,7 @@ class FrozenFactorModel:
         """Rebuild a model persisted by :meth:`as_dict`.
 
         Protocol EXPERIMENT_PROTOCOL.md 7.2 freezes ONE factor model per dataset,
-        fitted on the 166-point Stage A reference set and APPLIED to every
+        fitted on the Stage A 88 design rows (amendment 23) and APPLIED to every
         replication. Refitting per replication makes the objective a different
         variable in each pair, so 30 paired indicator values would not live in one
         objective space and no normalized indicator is invariant to that. The model
@@ -156,7 +156,7 @@ class FrozenFactorModel:
 
 
 # The committed per-dataset reference models. EXPERIMENT_PROTOCOL.md 7.2 freezes
-# one model per dataset, fitted on the 166-point Stage A reference set and APPLIED
+# one model per dataset, fitted on the Stage A 88 design rows and APPLIED
 # to every replication; papers/.../scripts/build_reference_factor_models.py is what
 # produces these files, and the test suite rebuilds and compares them.
 REFERENCE_MODEL_DIR = (pathlib.Path(__file__).resolve().parents[3]
@@ -290,10 +290,12 @@ def composite_alignment(model: "FrozenFactorModel", df: pd.DataFrame) -> float:
     is a weighted sum of rotated quality factors and the cost objective is another
     factor from the same orthogonal basis, so their Pearson correlation is zero by
     construction ON THE SAMPLE THE MODEL WAS FITTED TO -- measured 1e-17 to 5e-16 on
-    the four 166-point reference sets. Away from it the identity is approximate, not
-    exact: resampling at n = 88, the design size each replication measures, gives
-    |r| with a 95th percentile of 0.14 to 0.17. It is NOT bounded by any small
-    constant, and an earlier version of this docstring claimed 0.04, which is false.
+    the four fitting samples. Away from that sample the identity is approximate, not
+    exact, and it is NOT bounded by any small constant -- an earlier version of this
+    docstring claimed 0.04, which is false. The measured percentiles live in
+    audits/latent_conflict_stability.json and are deliberately not duplicated here:
+    hardcoding them meant that refitting the models (amendment 23) silently falsified
+    a docstring, which is how this paragraph came to be wrong twice.
 
     What follows is about the RANK statistic, and it is not that the rank statistic
     is noise -- it is stable within a dataset. It is that it has no consistent

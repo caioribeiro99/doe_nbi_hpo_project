@@ -252,7 +252,7 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
 
         # ---- stage: factor model (APPLIED, never fitted here) ----------------
         # EXPERIMENT_PROTOCOL.md 7.2: ONE factor model per dataset, fitted on the
-        # 166-point Stage A reference set and APPLIED to every replication. This
+        # Stage A 88 design rows (amendment 23) and APPLIED to every replication. This
         # stage previously called fit_factor_model(design_df), refitting on each
         # replication's own design evaluations -- which is precisely the confound
         # 7.2 exists to remove: with a per-replication fit the objective is not the
@@ -320,16 +320,17 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                                           "weighted sum of rotated factors and the "
                                           "cost factor is another from the same "
                                           "orthogonal basis. Exactly zero on the "
-                                          "166-point set the model was fitted to; at "
-                                          "n = 88 the identity is approximate, |r| "
-                                          "p95 = 0.14 to 0.17, and is NOT bounded by "
-                                          "any small constant. The rank statistic is "
-                                          "stable within a dataset but has no "
-                                          "consistent direction across the panel. The "
-                                          "conflict between the RAW responses is the "
+                                          "Stage A 88 design rows the model is fitted "
+                                          "to (amendment 23); approximate on any "
+                                          "other sample and NOT bounded by any small "
+                                          "constant. The rank statistic is stable "
+                                          "within a dataset but has no consistent "
+                                          "direction across the panel. The conflict "
+                                          "between the RAW responses is the "
                                           "meaningful quantity and is reported "
-                                          "beside it. See "
-                                          "audits/latent_conflict_stability.json.")})
+                                          "beside it. Measured figures are in "
+                                          "audits/latent_conflict_stability.json and "
+                                          "are deliberately not duplicated here.")})
 
         Y = fm.objectives(design_df)                   # (88, 2), both minimized
 
