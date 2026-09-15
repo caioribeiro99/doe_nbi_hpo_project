@@ -31,8 +31,8 @@ REPO = PAPER.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from doe_xgb.campaign.design import external_scores  # noqa: E402
-from doe_xgb.campaign.factor_model import (RESPONSES, apply_transforms,  # noqa: E402
-                                           load_reference_factor_model)
+from doe_xgb.campaign.factor_model import (load_reference_factor_model,  # noqa: E402
+                                           raw_conflict)
 from doe_xgb.reporting import pareto_front  # noqa: E402
 
 PILOT = PAPER / "audits" / "pilot_stage_a"
@@ -74,15 +74,19 @@ def screen(ds: str) -> dict:
     q, c = t["quality"], t["cost"]
 
     # --- criterion 1: latent conflict, AND the raw-response conflict beside it ---
-    M = apply_transforms(design)
-    names = list(RESPONSES)
-    qi = [i for i, n in enumerate(names) if RESPONSES[n]["role"] == "quality"]
-    raw_ref = np.column_stack(
-        [(M[:, i] - M[:, i].mean()) / M[:, i].std(ddof=1) for i in qi]).mean(axis=1)
+    # raw_conflict() is the canonical measurement and correlates the equally weighted
+    # quality badness against the RAW cost response, log leaf count. An earlier
+    # version of this script reimplemented it and correlated the raw quality
+    # composite against the LATENT cost factor instead, which is a third quantity
+    # that is neither criterion: it put a different "raw conflict" number in this
+    # artifact from the one in audits/reference_factor_models/.
     c1 = {
         "latent_spearman": round(float(spearmanr(q, c).statistic), 4),
         "latent_pearson": float(np.corrcoef(q, c)[0, 1]),
-        "raw_response_spearman": round(float(spearmanr(raw_ref, c).statistic), 4),
+        "raw_response_spearman": round(float(raw_conflict(design)), 4),
+        "raw_response_definition": ("equally weighted quality badness against the RAW "
+                                    "cost response (log leaf count); factor stage not "
+                                    "involved on either side"),
         "criterion_text": "clearly negative; a value near zero means no conflict",
         "latent_is_zero_by_construction": bool(abs(np.corrcoef(q, c)[0, 1]) < 1e-10),
     }

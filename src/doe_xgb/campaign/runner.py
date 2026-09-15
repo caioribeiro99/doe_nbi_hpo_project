@@ -292,13 +292,16 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                                           "weighted sum of rotated factors and the "
                                           "cost factor is another from the same "
                                           "orthogonal basis. Exactly zero on the "
-                                          "166-point set the frozen model was fitted "
-                                          "to; |r| <= 0.04 on any subsample of it. "
-                                          "What this Spearman measures is therefore "
-                                          "rank-nonlinearity residual and its sign is "
-                                          "not stable. The conflict between the RAW "
-                                          "responses is the meaningful quantity and "
-                                          "is reported beside it.")})
+                                          "166-point set the model was fitted to; at "
+                                          "n = 88 the identity is approximate, |r| "
+                                          "p95 = 0.14 to 0.17, and is NOT bounded by "
+                                          "any small constant. The rank statistic is "
+                                          "stable within a dataset but has no "
+                                          "consistent direction across the panel. The "
+                                          "conflict between the RAW responses is the "
+                                          "meaningful quantity and is reported "
+                                          "beside it. See "
+                                          "audits/latent_conflict_stability.json.")})
 
         Y = fm.objectives(design_df)                   # (88, 2), both minimized
 

@@ -6,7 +6,8 @@
         "latent_is_zero_by_construction": false,
         "latent_pearson": 0.036124420207102104,
         "latent_spearman": 0.1394,
-        "raw_response_spearman": -0.2514
+        "raw_response_definition": "equally weighted quality badness against the RAW cost response (log leaf count); factor stage not involved on either side",
+        "raw_response_spearman": -0.3977
       },
       "criterion_2_front_curvature": {
         "curvature": 0.2108,
@@ -46,7 +47,8 @@
         "latent_is_zero_by_construction": false,
         "latent_pearson": -0.004484598871338584,
         "latent_spearman": -0.0021,
-        "raw_response_spearman": -0.2383
+        "raw_response_definition": "equally weighted quality badness against the RAW cost response (log leaf count); factor stage not involved on either side",
+        "raw_response_spearman": -0.41
       },
       "criterion_2_front_curvature": {
         "curvature": 0.214,
@@ -86,7 +88,8 @@
         "latent_is_zero_by_construction": false,
         "latent_pearson": -0.030012908755448056,
         "latent_spearman": -0.2235,
-        "raw_response_spearman": -0.1982
+        "raw_response_definition": "equally weighted quality badness against the RAW cost response (log leaf count); factor stage not involved on either side",
+        "raw_response_spearman": -0.2509
       },
       "criterion_2_front_curvature": {
         "curvature": 0.1662,
@@ -126,7 +129,8 @@
         "latent_is_zero_by_construction": false,
         "latent_pearson": -0.0024419984126332955,
         "latent_spearman": 0.3212,
-        "raw_response_spearman": -0.6802
+        "raw_response_definition": "equally weighted quality badness against the RAW cost response (log leaf count); factor stage not involved on either side",
+        "raw_response_spearman": -0.4621
       },
       "criterion_2_front_curvature": {
         "curvature": null,

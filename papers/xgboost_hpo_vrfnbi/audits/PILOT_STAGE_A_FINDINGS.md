@@ -222,7 +222,23 @@ no stable sign. **The instrument is broken, not the panel.**
 
 The conflict between the **raw responses** and the leaf-count cost — which is what "these objectives
 trade off" means physically — is clearly negative on every dataset: **−0.223, −0.500, −0.440,
-−0.431**. Criteria 2, 3 and 4 are unaffected by the factor correction and are unchanged.
+−0.223, −0.500, −0.440, −0.431** on the 166-point reference sets and −0.251, −0.462, −0.398,
+−0.410 on the 88 design rows.
+
+**Criteria 2 and 3 are NOT unaffected, and an earlier version of this paragraph said they were.**
+Both are computed from the factor model, so correcting it moves them. Recomputed in
+`audits/panel_rescreen_corrected.json`:
+
+- **Criterion 2** (non-dominated set of design rows, detectably non-linear) is met by MAGIC, Adult
+  and Bank Marketing with 8, 6 and 6 front points and curvature 0.17 to 0.21. **Spambase has two
+  front points**, so its curvature is undefined rather than small — the degenerate case in which
+  every scalarization returns the same two anchors and there is no interior geometry for the primary
+  contrast to separate.
+- **Criterion 3** (external R² strictly between trivial and perfect) is met on all eight cells, but
+  the values moved: quality R² is now 0.691, 0.917, 0.904, 0.860 against 0.775, 0.953, 0.911, 0.917
+  before.
+- **Criterion 4** (cost dynamic range) is the only one genuinely unaffected, since it is computed
+  from the raw leaf counts and never touches the factor stage: 2706×, 591×, 3421×, 4356×.
 
 **What follows from this is NOT decided here.** Restating a frozen screening criterion after seeing
 the numbers it produces is exactly the move the pilot/confirmatory boundary exists to prevent, and it
