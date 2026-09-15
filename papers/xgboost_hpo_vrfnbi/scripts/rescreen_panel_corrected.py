@@ -1,5 +1,17 @@
 #!/usr/bin/env python
-"""Re-run ALL FOUR Stage-A screening criteria on the corrected factor model.
+"""
+SUPERSEDED by final_panel_screening.py.
+
+This script computes criterion 1 with the WITHDRAWN latent operationalization (the
+Spearman between the latent quality composite and the latent cost factor), which
+amendment 20 permanently retired. Its output, audits/panel_rescreen_corrected.json,
+is retained only as the record of the intermediate recomputation that led to
+amendments 20 and 22. It also predates amendment 23, so its factor models were fitted
+on the 166-point set that included audit-only rows.
+
+audits/final_panel_screening.json is the authoritative panel artifact. Do not cite
+this script's output as current evidence.
+Re-run ALL FOUR Stage-A screening criteria on the corrected factor model.
 
 `audits/PILOT_STAGE_A_FINDINGS.md` recorded "all four datasets pass all four
 criteria" on the factor algebra the protocol has since withdrawn. Only the

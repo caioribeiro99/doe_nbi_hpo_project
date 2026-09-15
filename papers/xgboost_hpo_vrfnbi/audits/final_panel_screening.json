@@ -14,8 +14,8 @@
     {
       "criterion_1_pass": true,
       "criterion_1_raw_conflict_value": -0.2509,
-      "criterion_2_curvature": 0.1662,
-      "criterion_2_front_size": 8,
+      "criterion_2_curvature": 0.1729,
+      "criterion_2_front_size": 7,
       "criterion_2_pass": true,
       "criterion_3_pass": true,
       "criterion_3_value": 0.6913,
@@ -36,8 +36,8 @@
           "value": -0.2509
         },
         "criterion_2": {
-          "curvature": 0.1662,
-          "front_size": 8,
+          "curvature": 0.1729,
+          "front_size": 7,
           "pass": true,
           "rule": "detectably non-linear (dataset_selection.md)",
           "why": "deviation of the non-dominated set from its own endpoint chord"
@@ -46,15 +46,15 @@
           "pass": true,
           "per_objective": {
             "cost": {
-              "external_r2": 0.9049,
-              "external_spearman": 0.9415,
+              "external_r2": 0.8997,
+              "external_spearman": 0.9411,
               "meets_frozen_reliability_gate": true,
               "pass": true,
               "surface_terms": 16
             },
             "quality": {
               "external_r2": 0.6913,
-              "external_spearman": 0.8297,
+              "external_spearman": 0.8324,
               "meets_frozen_reliability_gate": false,
               "pass": true,
               "surface_terms": 13
@@ -80,7 +80,7 @@
       "criterion_2_front_size": 2,
       "criterion_2_pass": false,
       "criterion_3_pass": true,
-      "criterion_3_value": 0.9017,
+      "criterion_3_value": 0.8987,
       "criterion_4_pass": true,
       "criterion_4_value": 591.2,
       "dataset": "spambase",
@@ -108,22 +108,22 @@
           "pass": true,
           "per_objective": {
             "cost": {
-              "external_r2": 0.9017,
-              "external_spearman": 0.9486,
+              "external_r2": 0.8987,
+              "external_spearman": 0.9449,
               "meets_frozen_reliability_gate": true,
               "pass": true,
               "surface_terms": 11
             },
             "quality": {
-              "external_r2": 0.9172,
-              "external_spearman": 0.9177,
+              "external_r2": 0.9242,
+              "external_spearman": 0.9192,
               "meets_frozen_reliability_gate": true,
               "pass": true,
               "surface_terms": 13
             }
           },
           "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
-          "value": 0.9017
+          "value": 0.8987
         },
         "criterion_4": {
           "max": 41264.4,
@@ -138,11 +138,11 @@
     {
       "criterion_1_pass": true,
       "criterion_1_raw_conflict_value": -0.3977,
-      "criterion_2_curvature": 0.2108,
+      "criterion_2_curvature": 0.1992,
       "criterion_2_front_size": 6,
       "criterion_2_pass": true,
       "criterion_3_pass": true,
-      "criterion_3_value": 0.9044,
+      "criterion_3_value": 0.9078,
       "criterion_4_pass": true,
       "criterion_4_value": 3421.3,
       "dataset": "adult",
@@ -160,7 +160,7 @@
           "value": -0.3977
         },
         "criterion_2": {
-          "curvature": 0.2108,
+          "curvature": 0.1992,
           "front_size": 6,
           "pass": true,
           "rule": "detectably non-linear (dataset_selection.md)",
@@ -170,22 +170,22 @@
           "pass": true,
           "per_objective": {
             "cost": {
-              "external_r2": 0.9249,
-              "external_spearman": 0.9141,
+              "external_r2": 0.9168,
+              "external_spearman": 0.9012,
               "meets_frozen_reliability_gate": true,
               "pass": true,
-              "surface_terms": 16
+              "surface_terms": 14
             },
             "quality": {
-              "external_r2": 0.9044,
-              "external_spearman": 0.8868,
+              "external_r2": 0.9078,
+              "external_spearman": 0.8928,
               "meets_frozen_reliability_gate": false,
               "pass": true,
               "surface_terms": 12
             }
           },
           "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
-          "value": 0.9044
+          "value": 0.9078
         },
         "criterion_4": {
           "max": 236072.2,
@@ -200,11 +200,11 @@
     {
       "criterion_1_pass": true,
       "criterion_1_raw_conflict_value": -0.41,
-      "criterion_2_curvature": 0.214,
+      "criterion_2_curvature": 0.1983,
       "criterion_2_front_size": 6,
       "criterion_2_pass": true,
       "criterion_3_pass": true,
-      "criterion_3_value": 0.8598,
+      "criterion_3_value": 0.87,
       "criterion_4_pass": true,
       "criterion_4_value": 4355.5,
       "dataset": "bank_marketing",
@@ -222,7 +222,7 @@
           "value": -0.41
         },
         "criterion_2": {
-          "curvature": 0.214,
+          "curvature": 0.1983,
           "front_size": 6,
           "pass": true,
           "rule": "detectably non-linear (dataset_selection.md)",
@@ -232,22 +232,22 @@
           "pass": true,
           "per_objective": {
             "cost": {
-              "external_r2": 0.9347,
-              "external_spearman": 0.9444,
+              "external_r2": 0.9366,
+              "external_spearman": 0.9503,
               "meets_frozen_reliability_gate": true,
               "pass": true,
               "surface_terms": 20
             },
             "quality": {
-              "external_r2": 0.8598,
-              "external_spearman": 0.8571,
+              "external_r2": 0.87,
+              "external_spearman": 0.8566,
               "meets_frozen_reliability_gate": false,
               "pass": true,
               "surface_terms": 7
             }
           },
           "rule": "strictly between the trivial and the perfect (0 < R2 < 1)",
-          "value": 0.8598
+          "value": 0.87
         },
         "criterion_4": {
           "max": 270909.6,

@@ -64,9 +64,7 @@ labelled as single-objective runs, and never appear in the front-indicator table
 
 ## 4. Datasets
 
-MAGIC, Adult, Spambase and Bank Marketing, provisionally, per `protocol/dataset_selection.md`. Each
-must pass the four screening measurements in the pilot or be replaced from the registry, with the
-measurement that caused the replacement recorded.
+**The panel is settled** (amendments 20 and 22, `audits/final_panel_screening.json`). Every member was screened on the corrected factor model before any arm ran. **MAGIC, Adult and Bank Marketing** meet all four criteria and form the **primary geometry panel**. **Spambase** meets criteria 1, 3 and 4 but fails criterion 2 with a two-point non-dominated set, and is retained and executed in full as a **pre-specified boundary geometry control**; the replacement rule of `dataset_selection.md` was considered and deliberately not exercised, and no replacement dataset was selected. All four datasets run every arm at every replication; the role determines only which inferential family a comparison belongs to.
 
 ## 5. Design and evaluation
 
@@ -301,10 +299,21 @@ did not say whether the model is **refit per replication**. It matters: if it is
 not the same variable in every pair, so 30 paired indicator values do not live in one objective
 space, and no normalized indicator is invariant to that.
 
-**Decision.** One factor model per dataset, fitted on a declared reference set - the Stage A 88
-design rows plus their 78-point complement, 166 points, already evaluated and committed - and
-**applied** to every replication. The per-replication refit is reported as a sensitivity, with Tucker
-congruence coefficients between the reference model and each replication's own model.
+**Decision, as corrected by amendment 23.** One factor model per dataset, fitted on a declared
+reference set - **the Stage A 88 design rows, and nothing else** - and **applied** to every
+replication. The per-replication refit is reported as a sensitivity, with Tucker congruence
+coefficients between the reference model and each replication's own model.
+
+The reference set was originally specified here as those 88 rows **plus their 78-point complement,
+166 points**. That is withdrawn. The complement is the audit-only external validation construction:
+64 of its 78 coded points are identical to `design.external_validation_set()` and the remaining 14
+are the same axial runs, differing only by integer rounding of `max_depth`. Fitting the objective
+definition on them routed audit-only data into a fitting stage, and made the surrogate gate validate
+a surface against data that had helped define that surface's target.
+`protocol/OBJECTIVE_DEFINITIONS.md` §7.0 identified this and is the reason it was caught; its
+proposed remedy - one model per **replication** - is not adopted, because it reintroduces the
+confound this section exists to remove. Fitting on the design rows alone satisfies both rules at
+once.
 
 This removes a confound that exists at two objectives and is merely smaller there.
 
@@ -541,7 +550,7 @@ before any campaign result. What remains does not block the freeze.
 | 9 | Whether `pepper_species` exists and is public | no | the panel does not depend on it; see `protocol/dataset_selection.md` |
 | 10 | Self-overlap assessment against Pereira et al. (2025) and Paper 1 | no | needed before submission; see §13b |
 | 11 | Five failing tests in `test_stage0_extreme_lane_plan.py` | no | a wall-clock staleness gate refusing a 120-day-old summary, unrelated to this work; must not be left failing at submission |
-| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | The panel does not grow: the campaign projects 0.73 days at q = 2. The detectable effect size comes from Stage B and was **recomputed on the corrected factor model** — 0.8 to 2.8 percentage points of reference hypervolume uncorrected, 2.3 to 8.1 under the Nadeau-Bengio sensitivity. Whether the panel's membership stands is item 7, which is reopened |
+| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | The panel does not grow: the campaign projects 0.73 days at q = 2. The detectable effect size comes from Stage B and was **recomputed on the corrected factor model** — 0.8 to 2.8 percentage points of reference hypervolume uncorrected, 2.3 to 8.1 under the Nadeau-Bengio sensitivity. The panel's membership is settled by item 7, closed by amendments 20 and 22: three primary-panel datasets and one boundary control, all four executed |
 | 14 | Whether to run at q = 3 rather than q = 2 | **closed** | Stage A: q = 3 costs 5.8 days against a 5-day ceiling, so the campaign runs at q = 2. §8 |
 
 Items 8 and 9 both need the dissertation chapters, which are on a OneDrive path under a different

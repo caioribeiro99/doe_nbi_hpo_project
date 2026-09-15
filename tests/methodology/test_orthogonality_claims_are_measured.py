@@ -39,10 +39,8 @@ def _audit() -> dict:
 def test_orthogonality_is_exact_on_the_fitting_sample(dataset):
     """The identity, recomputed here rather than read from the artifact."""
     pilot = PAPER / "audits" / "pilot_stage_a"
-    both = pd.concat([pd.read_csv(pilot / f"{dataset}_design.csv"),
-                      pd.read_csv(pilot / f"{dataset}_validation_complement.csv")],
-                     ignore_index=True)
-    F = load_reference_factor_model(dataset).objectives(both)
+    design = pd.read_csv(pilot / f"{dataset}_design.csv")   # the fitting sample
+    F = load_reference_factor_model(dataset).objectives(design)
     r = float(np.corrcoef(F[:, 0], F[:, 1])[0, 1])
     assert abs(r) < 1e-10, f"{dataset}: expected the construction identity, got {r}"
     assert _audit()["datasets"][dataset]["pearson_is_exactly_zero_where_fitted"]

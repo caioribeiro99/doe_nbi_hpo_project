@@ -38,14 +38,14 @@ Two-sided paired test at α = 0.05 and 80% power, 200 resampling draws per datas
 
 | Dataset | indicator | paired sd (proxy) | minimum detectable difference | expected 95% interval half-width | detectable at n_test/n_train = 0.25 (80/20) |
 |---|---|---:|---:|---:|---:|
-| MAGIC | hypervolume ratio | 0.0150 | **0.0079** | 0.0056 | 0.0231 |
-| MAGIC | IGD⁺ | 0.0098 | 0.0052 | 0.0037 | 0.0152 |
-| Spambase | hypervolume ratio | 0.0522 | **0.0276** | 0.0195 | 0.0805 |
-| Spambase | IGD⁺ | 0.0379 | 0.0201 | 0.0141 | 0.0585 |
-| Adult | hypervolume ratio | 0.0277 | **0.0147** | 0.0103 | 0.0428 |
-| Adult | IGD⁺ | 0.0184 | 0.0097 | 0.0069 | 0.0283 |
-| Bank Marketing | hypervolume ratio | 0.0417 | **0.0221** | 0.0156 | 0.0644 |
-| Bank Marketing | IGD⁺ | 0.0196 | 0.0104 | 0.0073 | 0.0302 |
+| MAGIC | hypervolume ratio | 0.0150 | **0.0079** | 0.0056 | 0.0232 |
+| MAGIC | IGD⁺ | 0.0105 | 0.0056 | 0.0039 | 0.0163 |
+| Spambase | hypervolume ratio | 0.0520 | **0.0275** | 0.0194 | 0.0802 |
+| Spambase | IGD⁺ | 0.0377 | 0.0199 | 0.0141 | 0.0581 |
+| Adult | hypervolume ratio | 0.0286 | **0.0152** | 0.0107 | 0.0442 |
+| Adult | IGD⁺ | 0.0188 | 0.0100 | 0.0070 | 0.0290 |
+| Bank Marketing | hypervolume ratio | 0.0428 | **0.0226** | 0.0160 | 0.0660 |
+| Bank Marketing | IGD⁺ | 0.0193 | 0.0102 | 0.0072 | 0.0298 |
 
 The standardized effect R = 30 detects at 80% power is **0.532 paired standard deviations**, which
 is a medium effect. The design cannot resolve small ones.
@@ -58,7 +58,7 @@ replication count, however suggestive it looks, and will not be reported as one.
 
 **The hypervolume-ratio differences the study can resolve are between about 0.8 and 2.8 percentage
 points of the reference hypervolume** under the uncorrected paired test, depending on the dataset,
-and between **2.3 and 8.1 percentage points** under the corrected test at n_test/n_train = 0.25.
+and between **2.3 and 8.0 percentage points** under the corrected test at n_test/n_train = 0.25.
 Magic is the most sensitive, by a factor of 3.5, and Spambase the least. Every figure in this
 paragraph is regenerated from `audits/stage_b_sensitivity.json`; an earlier version published 0.6 to
 2.4 and 2.0 to 8.0, computed on the superseded factor algebra.
@@ -86,7 +86,7 @@ understates it badly at R = 30.
 
 Corrected, the cost of the correction is much larger than previously reported: the standard error
 inflates by **sqrt(8.5) = 2.9155×** at n_test/n_train = 0.25, not 1.15×. An earlier version of this sentence said 3.31× “at ρ = 0.25”, which is the equicorrelation variant and corresponds to a 75/25 split, not this protocol's 80/20. The detectable hypervolume-ratio difference under the
-corrected test is therefore **0.023 to 0.081** depending on dataset, not 0.008 to 0.028.
+corrected test is therefore **0.023 to 0.080** depending on dataset, not 0.008 to 0.028.
 
 That is a material change and it is reported rather than buried. It is also why the correction is a
 **sensitivity and never the primary test**: it was derived for the generalization error of a learner

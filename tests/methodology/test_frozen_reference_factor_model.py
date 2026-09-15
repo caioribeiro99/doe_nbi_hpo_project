@@ -42,12 +42,23 @@ def test_a_frozen_model_is_committed_for_every_dataset(dataset):
 
 
 @pytest.mark.parametrize("dataset", DATASETS)
-def test_the_frozen_model_was_fitted_on_the_declared_166_point_set(dataset):
+def test_the_frozen_model_was_fitted_on_the_design_rows_alone(dataset):
+    """The reference set is the 88 design rows and NOTHING else.
+
+    It was the 88 design rows plus their 78-point complement, per an earlier reading
+    of EXPERIMENT_PROTOCOL.md 7.2. That complement is the audit-only external
+    validation construction -- 64 of its 78 coded points identical to
+    design.external_validation_set(), the other 14 the same axial runs differing only
+    by integer rounding of max_depth. Fitting the objective definition on it made the
+    surrogate gate validate a surface against data that had helped define its target.
+    """
     d = json.loads((REFERENCE_MODEL_DIR / f"{dataset}.json").read_text())
     ref = d["reference_set"]
     assert ref["n_design"] == 88
-    assert ref["n_complement"] == 78
-    assert ref["n_total"] == 166
+    assert ref["n_complement"] == 0
+    assert ref["n_total"] == 88
+    assert ref["external_validation_rows_used"] == 0
+    assert ref["files"] == [f"{dataset}_design.csv"]
     assert "APPLIED to every replication" in d["fitted_on"]
     assert d["no_arm_result_in_input"] is True
 
@@ -56,8 +67,7 @@ def test_the_frozen_model_was_fitted_on_the_declared_166_point_set(dataset):
 def test_the_committed_model_is_reproducible_from_its_declared_inputs(dataset):
     """The artifact must be exactly what its stated reference set produces."""
     design = pd.read_csv(PILOT / f"{dataset}_design.csv")
-    complement = pd.read_csv(PILOT / f"{dataset}_validation_complement.csv")
-    rebuilt = fit_factor_model(pd.concat([design, complement], ignore_index=True))
+    rebuilt = fit_factor_model(design)
     frozen = load_reference_factor_model(dataset)
     assert np.allclose(frozen.rotated_loadings, rebuilt.rotated_loadings, atol=1e-12)
     assert np.allclose(frozen.quality_weights, rebuilt.quality_weights, atol=1e-12)
@@ -188,3 +198,62 @@ def test_specificity_removal_does_not_explain_the_divergence():
             assert np.sign(latent) != np.sign(raw_no_spec), (
                 f"{dataset}: removing specificity reconciled the sign, which would "
                 f"support the withdrawn diagnosis")
+
+
+# ---------------------------------------------------------------------------
+# the leakage rule the reference set must obey (amendment 23)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("dataset", DATASETS)
+def test_the_reference_set_contains_no_audit_only_row(dataset):
+    """The objective definition must not be fitted on the external validation set.
+
+    It was, for the life of the 166-point reference set: that set's second half is
+    the audit-only external construction -- 64 of 78 coded points identical to
+    design.external_validation_set(), the other 14 the same axial runs differing only
+    by integer rounding of max_depth. The consequence is circular rather than merely
+    procedural: the surrogate gate scores a fitted surface's prediction of the
+    objective ON the external set, so if those responses helped define the objective,
+    the gate validates a surface against data that informed its own target.
+    """
+    import numpy as np
+    from doe_xgb.campaign.design import external_validation_set, to_coded
+    from doe_xgb.campaign.evaluator import PARAMS
+
+    d = json.loads((REFERENCE_MODEL_DIR / f"{dataset}.json").read_text())
+    assert d["reference_set"]["n_complement"] == 0
+    assert d["reference_set"]["external_validation_rows_used"] == 0
+
+    design = pd.read_csv(PILOT / f"{dataset}_design.csv")
+    ext = external_validation_set()
+    fitted = {tuple(r) for r in np.round(to_coded(design[list(PARAMS)]), 6).tolist()}
+    audit = {tuple(r) for r in np.round(to_coded(ext[list(PARAMS)]), 6).tolist()}
+    shared = fitted & audit
+    assert not shared, (
+        f"{dataset}: {len(shared)} audit-only coded points are inside the factor "
+        f"model's fitting sample")
+
+
+def test_the_complement_really_is_the_audit_only_construction():
+    """The premise of amendment 23, asserted so the reasoning stays checkable."""
+    import numpy as np
+    from doe_xgb.campaign.design import external_validation_set, to_coded
+    from doe_xgb.campaign.evaluator import PARAMS
+
+    comp = pd.read_csv(PILOT / "magic_validation_complement.csv")
+    ext = external_validation_set()
+    assert len(comp) == len(ext) == 78
+    c = {tuple(r) for r in np.round(to_coded(comp[list(PARAMS)]), 6).tolist()}
+    e = {tuple(r) for r in np.round(to_coded(ext[list(PARAMS)]), 6).tolist()}
+    assert len(c & e) >= 64, (
+        f"only {len(c & e)} shared points; amendment 23's premise that the "
+        f"complement IS the audit-only construction needs rechecking")
+
+
+@pytest.mark.parametrize("dataset", DATASETS)
+def test_the_gate_scores_a_surface_whose_target_the_external_set_did_not_define(dataset):
+    """The circularity amendment 23 removes, stated as an end-to-end property."""
+    d = json.loads((REFERENCE_MODEL_DIR / f"{dataset}.json").read_text())
+    assert d["reference_set"]["files"] == [f"{dataset}_design.csv"], (
+        "the objective definition is fitted on something other than the design rows, "
+        "so the surrogate gate may be validating against data that defined its target")

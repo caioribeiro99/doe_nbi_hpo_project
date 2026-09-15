@@ -382,6 +382,27 @@ classification was not outcome-driven — it is that no outcome existed to drive
 
 ---
 
+## Amendment 23 — the frozen factor model's reference set excludes the audit-only rows
+
+**Found by the V11 static review. The implementation was correct against §7.2 as written; §7.2 as
+written contradicted the study's own leakage rule.**
+
+| | |
+|---|---|
+| **Prior specification** | §7.2: one factor model per dataset, fitted on "the Stage A 88 design rows plus their 78-point complement, 166 points". Implemented exactly that way in `scripts/build_reference_factor_models.py` and in the four committed models. |
+| **The defect** | that 78-point complement **is** the audit-only external validation construction. Measured: 64 of its 78 coded points are identical to `design.external_validation_set()`, and the remaining 14 are the same axial runs differing only by integer rounding of `max_depth`. So the objective definition was fitted on rows the protocol declares audit-only. |
+| **Why it matters beyond the rule** | it is circular in the one place that most needs not to be. The surrogate gate scores a fitted surface's prediction of the objective **on the external set**. If the external responses helped define that objective, the gate validates a surface against data that informed its own target. The external set's entire purpose is to be untouched. |
+| **Who caught it** | `protocol/OBJECTIVE_DEFINITIONS.md` §7.0 had identified this leakage and withdrawn §7.2 on that ground. The two documents then sat in the repository specifying **mutually exclusive** objective definitions, both marked frozen, neither marked superseded, and the code implemented one of them. The V11 review found the contradiction. |
+| **Revised specification** | the reference set is **the 88 design rows and nothing else**. One model per dataset, applied to every replication, exactly as §7.2 requires — and no audit-only row in the fit. |
+| **Why not §7.0's remedy** | §7.0 proposed one model **per replication**. That removes the leakage but reintroduces the confound §7.2 exists to remove: a per-replication refit makes the objective a different variable in every pair, so 30 paired indicator values do not live in one objective space. Fitting per dataset on the design rows alone satisfies both constraints at once, which neither document had noticed was possible. §7.0's leakage argument is adopted; its conclusion is not. |
+| **What changed numerically** | every frozen model was refitted and every dependent artifact regenerated. The **panel roles are unchanged**: MAGIC, Adult and Bank Marketing still meet criterion 2 (8, 6, 6 front points; curvature 0.166, 0.199, 0.198) and Spambase still fails it with two points. Criterion 1 is unchanged to three decimals. Composite alignment stays positive everywhere: +0.929, +0.243, +0.835, +0.896. The detectable-effect range moves from 0.8–2.8 to 0.8–2.8 percentage points uncorrected and 2.3–8.0 corrected. |
+| **A scope question left open rather than settled quietly** | `scripts/stage_b_statistical_sensitivity.py` still *applies* the frozen model to the 166-point concatenation to measure indicator spread for the power analysis. That is not fitting, and it changes no execution and no confirmatory inference — it sizes the design. Whether "audit-only" should also forbid a pre-campaign power calculation from touching those rows is a narrower question than the one this amendment settles, and it is flagged here rather than resolved by the author mid-freeze. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | **No.** A shared measurement definition, identical for every arm. |
+
+---
+
 ## Engineering defects caught by the pre-freeze smoke — *not* protocol amendments
 
 The pre-freeze engineering smoke ran one full unit end to end on `spambase`. It exposed four defects

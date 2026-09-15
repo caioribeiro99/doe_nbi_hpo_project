@@ -398,15 +398,27 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             hist_hi = Y.max(axis=0)
             # Everything except the reference must match WS-S: that is what makes
             # WS-S to HISTORICAL-WS a single-factor contrast on normalization.
-            _require_same(contrast_fp,
-                          _contrast_fingerprint(cfg, rz, weights, s_anchors, surrogates),
-                          arm="HISTORICAL-WS", except_keys=("reference_utopia",))
+            # The fingerprint must record the reference this arm ACTUALLY used --
+            # the dissertation's observed-extrema box -- not the surrogate anchors it
+            # was compared against. Recording s_anchors on both sides made the
+            # persisted artifact claim WS-S's reference for an arm that ran on a
+            # different one, which is the single fact the contrast turns on.
+            class _HistRef:
+                utopia = hist_lo
+            hist_fp = _contrast_fingerprint(cfg, rz, weights, _HistRef, surrogates)
+            _require_same(contrast_fp, hist_fp, arm="HISTORICAL-WS",
+                          except_keys=("reference_utopia",))
+            if hist_fp["reference_utopia"] == contrast_fp["reference_utopia"]:
+                raise MethodologicalFailure(
+                    f"{dataset} rep {rep}: the dissertation's observed-extrema box "
+                    f"equals the surrogate payoff reference, so WS-S to HISTORICAL-WS "
+                    f"varies nothing and cannot isolate normalization.")
             ck.save("historical_ws", {**run_ws_s(
                 surrogates, cfg, s_anchors, rz, weights, arm="HISTORICAL-WS",
                 reference_override=(hist_lo, hist_hi),
                 reference_label=("component-wise observed extrema of the design rows, "
                                  "as the dissertation normalizes")).as_dict(),
-                "contrast_fingerprint": contrast_fp})
+                "contrast_fingerprint": hist_fp})
         if not ck.done("nbi_s"):
             _require_same(contrast_fp,
                           _contrast_fingerprint(cfg, rz, weights, s_anchors, surrogates),
@@ -644,11 +656,11 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                     # choose after seeing them.
                     "core": indicators(F, core_front),
                     "augmented": indicators(F, aug_front),
-                    "primary_reference": "core",
+                    "primary_reference": PRIMARY_REFERENCE,
                     "augmented_is_a_declared_sensitivity": True}
             ck.save("metrics_by_method", {
-                "methods": per_method, "primary_indicator": "hv_ratio",
-                "primary_reference": "core",
+                "methods": per_method, "primary_indicator": PRIMARY_INDICATOR,
+                "primary_reference": PRIMARY_REFERENCE,
                 "references_computed": ["core", "augmented"],
                 "augmented_is_a_declared_sensitivity": True,
                 "single_objective_endpoints": endpoints,

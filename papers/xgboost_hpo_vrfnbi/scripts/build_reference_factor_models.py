@@ -46,18 +46,33 @@ PILOT = PAPER / "audits" / "pilot_stage_a"
 OUT = PAPER / "audits" / "reference_factor_models"
 DATASETS = ("magic", "spambase", "adult", "bank_marketing")
 
-# The declared reference set, by file. Both halves are committed Stage A output.
+# THE REFERENCE SET IS THE 88 DESIGN ROWS, AND NOTHING ELSE.
+#
+# An earlier version fitted on the 88 design rows PLUS their 78-point complement,
+# following EXPERIMENT_PROTOCOL.md 7.2's "166 points". That complement is, to within
+# integer rounding of max_depth, the same construction as the audit-only external
+# validation set: 64 of its 78 coded points are shared exactly with
+# design.external_validation_set() and the remaining 14 are the same axial runs.
+#
+# Fitting the objective definition on those rows routes audit-only data into a
+# fitting stage. Worse, it is circular in the one place the study most needs it not
+# to be: the surrogate gate scores a surface's prediction of an objective on the
+# external set, and if the external responses helped DEFINE that objective, the gate
+# is validating a surface against data that informed its target.
+# OBJECTIVE_DEFINITIONS.md 7.0 identified exactly this.
+#
+# Fitting on the design rows alone satisfies both frozen rules at once: ONE model per
+# dataset applied to every replication (7.2's requirement, which exists so that 30
+# paired indicator values live in one objective space), and the external set touched
+# by nothing but the gate diagnostics.
 DESIGN = "{ds}_design.csv"
-COMPLEMENT = "{ds}_validation_complement.csv"
 
 
-def reference_frame(ds: str) -> pd.DataFrame:
+def reference_frame(ds: str):
     design = pd.read_csv(PILOT / DESIGN.format(ds=ds))
-    complement = pd.read_csv(PILOT / COMPLEMENT.format(ds=ds))
-    frame = pd.concat([design, complement], ignore_index=True)
-    if len(frame) != len(design) + len(complement):
-        raise SystemExit(f"{ds}: concatenation lost rows")
-    return frame, len(design), len(complement)
+    if len(design) != 88:
+        raise SystemExit(f"{ds}: expected 88 design rows, found {len(design)}")
+    return design, len(design), 0
 
 
 def build(ds: str) -> dict:
@@ -69,12 +84,16 @@ def build(ds: str) -> dict:
         "dataset": ds,
         "protocol_clause": "EXPERIMENT_PROTOCOL.md 7.2",
         "reference_set": {
-            "description": ("the Stage A design rows plus their complementary half "
-                            "fraction, already evaluated and committed"),
-            "files": [DESIGN.format(ds=ds), COMPLEMENT.format(ds=ds)],
+            "description": ("the Stage A design rows ONLY. The 78-point complement is "
+                            "excluded because it is the audit-only external validation "
+                            "construction, and fitting the objective definition on it "
+                            "would make the surrogate gate validate a surface against "
+                            "data that helped define its target."),
+            "files": [DESIGN.format(ds=ds)],
             "n_design": int(n_design),
             "n_complement": int(n_complement),
             "n_total": int(len(frame)),
+            "external_validation_rows_used": 0,
         },
         "fitted_on": "the reference set above, once; APPLIED to every replication",
         "no_arm_result_in_input": True,

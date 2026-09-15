@@ -2,76 +2,77 @@
   "datasets": {
     "adult": {
       "abs_pearson_at_n88": {
-        "max": 0.2328,
-        "median": 0.0481,
-        "p95": 0.1365
+        "max": 0.4098,
+        "median": 0.0725,
+        "p95": 0.2058
       },
       "criterion_1_would_pass": false,
       "latent_spearman_at_n88": {
-        "fraction_positive": 0.9267,
-        "median": 0.1048,
-        "p05": -0.0147,
-        "p95": 0.2197,
+        "fraction_positive": 0.806,
+        "median": 0.0983,
+        "p05": -0.087,
+        "p95": 0.2833,
         "sign_is_a_coin_flip": false
       },
       "pearson_is_exactly_zero_where_fitted": true,
-      "pearson_on_the_fitting_sample": 4.883133348332765e-16
+      "pearson_on_the_fitting_sample": 7.90580696841542e-17
     },
     "bank_marketing": {
       "abs_pearson_at_n88": {
-        "max": 0.256,
-        "median": 0.0507,
-        "p95": 0.142
+        "max": 0.3921,
+        "median": 0.0736,
+        "p95": 0.2025
       },
       "criterion_1_would_pass": false,
       "latent_spearman_at_n88": {
-        "fraction_positive": 0.5313,
-        "median": 0.0042,
-        "p05": -0.1084,
-        "p95": 0.1166,
+        "fraction_positive": 0.4,
+        "median": -0.029,
+        "p05": -0.1935,
+        "p95": 0.1413,
         "sign_is_a_coin_flip": true
       },
       "pearson_is_exactly_zero_where_fitted": true,
-      "pearson_on_the_fitting_sample": 1.512430466753366e-17
+      "pearson_on_the_fitting_sample": 2.7731950966251296e-16
     },
     "magic": {
       "abs_pearson_at_n88": {
-        "max": 0.3244,
-        "median": 0.0575,
-        "p95": 0.1712
+        "max": 0.4677,
+        "median": 0.0904,
+        "p95": 0.2708
       },
       "criterion_1_would_pass": true,
       "latent_spearman_at_n88": {
-        "fraction_positive": 0.004,
-        "median": -0.1996,
-        "p05": -0.3289,
-        "p95": -0.0718,
+        "fraction_positive": 0.0387,
+        "median": -0.2012,
+        "p05": -0.3901,
+        "p95": -0.009,
         "sign_is_a_coin_flip": false
       },
       "pearson_is_exactly_zero_where_fitted": true,
-      "pearson_on_the_fitting_sample": 8.808698686560703e-17
+      "pearson_on_the_fitting_sample": -3.156829336815672e-16
     },
     "spambase": {
       "abs_pearson_at_n88": {
-        "max": 0.3012,
-        "median": 0.0444,
-        "p95": 0.1374
+        "max": 0.3332,
+        "median": 0.0735,
+        "p95": 0.2098
       },
       "criterion_1_would_pass": false,
       "latent_spearman_at_n88": {
-        "fraction_positive": 1.0,
-        "median": 0.3098,
-        "p05": 0.1762,
-        "p95": 0.4467,
+        "fraction_positive": 0.9933,
+        "median": 0.3295,
+        "p05": 0.1177,
+        "p95": 0.525,
         "sign_is_a_coin_flip": false
       },
       "pearson_is_exactly_zero_where_fitted": true,
-      "pearson_on_the_fitting_sample": -3.394261769787695e-16
+      "pearson_on_the_fitting_sample": 3.668975243066945e-16
     }
   },
   "draws": 1500,
   "purpose": "stability of screening criterion 1's statistic, resampled at the design size the campaign actually measures",
   "resample_size": 88,
+  "resampling": "bootstrap of the 88 design rows",
   "status": "PRE-CONFIRMATORY SCREENING EVIDENCE; no arm involved",
   "what_this_settles": "the LINEAR association between the two frozen objectives is zero by construction on the sample the factor model is fitted to, and small but not exactly zero elsewhere. The RANK association that criterion 1 tests is not noise: it is stable within a dataset. What it is not is a consistent DIRECTION -- it is negative on MAGIC, positive on Spambase and Adult, and a coin flip on Bank Marketing. A criterion requiring it to be 'clearly negative' therefore partitions the panel by the sign of a monotone-nonlinearity residual around a structural zero."
 }

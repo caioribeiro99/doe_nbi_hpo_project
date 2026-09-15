@@ -46,18 +46,20 @@ N = 88          # the design size every replication measures
 
 
 def measure(ds: str, rng) -> dict:
-    both = pd.concat([pd.read_csv(PILOT / f"{ds}_design.csv"),
-                      pd.read_csv(PILOT / f"{ds}_validation_complement.csv")],
-                     ignore_index=True)
+    # The fitting sample IS the 88 design rows: the frozen model is fitted on them
+    # and on nothing else, so the exact-orthogonality identity is a property of this
+    # frame. Resampling is a bootstrap of those same rows, which is what a
+    # replication's own design measurement is a draw from.
+    design = pd.read_csv(PILOT / f"{ds}_design.csv")
     fm = load_reference_factor_model(ds)
 
-    F_fit = fm.objectives(both)
+    F_fit = fm.objectives(design)
     r_fit = float(np.corrcoef(F_fit[:, 0], F_fit[:, 1])[0, 1])
 
     pear, spear = [], []
     for _ in range(DRAWS):
-        idx = rng.choice(len(both), size=N, replace=False)
-        F = fm.objectives(both.iloc[idx])
+        idx = rng.integers(0, len(design), len(design))     # bootstrap, n = 88
+        F = fm.objectives(design.iloc[idx])
         pear.append(abs(float(np.corrcoef(F[:, 0], F[:, 1])[0, 1])))
         spear.append(float(spearmanr(F[:, 0], F[:, 1]).statistic))
     pear, spear = np.asarray(pear), np.asarray(spear)
@@ -87,7 +89,7 @@ def main() -> int:
         "purpose": ("stability of screening criterion 1's statistic, resampled at the "
                     "design size the campaign actually measures"),
         "status": "PRE-CONFIRMATORY SCREENING EVIDENCE; no arm involved",
-        "draws": DRAWS, "resample_size": N,
+        "draws": DRAWS, "resample_size": N, "resampling": "bootstrap of the 88 design rows",
         "what_this_settles": (
             "the LINEAR association between the two frozen objectives is zero by "
             "construction on the sample the factor model is fitted to, and small but "

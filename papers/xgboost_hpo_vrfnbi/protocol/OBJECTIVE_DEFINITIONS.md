@@ -152,6 +152,29 @@ is a strong association and is not identity. Enforced by `scripts/check_claim_bl
 The mapping is **fit once on the design side and applied everywhere else**, so that every point a
 replication scores lives in one objective space.
 
+**7.0 SUPERSEDED BY AMENDMENT 23. The scope is ONE MODEL PER DATASET, fitted on the Stage A 88
+design rows and applied to every replication.** `protocol/EXPERIMENT_PROTOCOL.md` §7.2 governs, and
+the code, the committed reference models and the test suite all implement it.
+
+**The argument below is retained because half of it was right and it is the reason a real defect was
+caught.** Its leakage objection is correct and has been acted on: the 166-point reference set
+included the audit-only external validation construction, and fitting the objective definition on it
+was a genuine violation. Amendment 23 removes those rows. Its *conclusion* — one model per
+replication — is **not** adopted, because a per-replication refit means the objective is not the same
+variable in every pair, so 30 paired indicator values would not live in one objective space, and no
+normalized indicator is invariant to that. Fitting one model per dataset on the design rows alone
+satisfies both constraints simultaneously, which neither document had noticed was possible.
+
+Two corrections to the text below: it cites **amendment 19**, which is the methodological-guard
+amendment and has nothing to do with factor-model scope — that citation is wrong. And its claim that
+the withdrawn requirement "would let Stage A define the confirmatory objective" applies equally to
+the adopted rule, which does fix the objective definition from pilot design rows; that is what
+"prospectively frozen" means for a measurement definition, and it is recorded rather than denied.
+
+---
+
+**Superseded text, retained verbatim:**
+
 **7.0 Scope: one model per replication, from that replication's 88 design rows.** This resolves a
 contradiction between three documents and the code, recorded as amendment 19.
 

@@ -16,8 +16,13 @@ dataset separates them only if it makes at least one of those matter. That requi
 
 1. **Genuine objective conflict.** If quality and cost are not in tension over the hyperparameter
    box, every arm returns nearly the same point and the comparison is empty. Measured before the
-   campaign as the Spearman correlation between the two objectives over the design rows: conflict
-   needs a clearly negative value.
+   campaign, on the 88 design rows, as the Spearman correlation between the **raw quality responses**
+   and the **raw leaf-count complexity response** — the canonical
+   `doe_xgb.campaign.factor_model.raw_conflict`, with no factor stage on either side. Conflict needs
+   a clearly negative value. **The latent quality-factor versus latent cost-factor correlation is
+   NOT this criterion and is permanently withdrawn** (amendment 20): the two latent axes come from
+   one orthogonal rotated basis, so their linear association is zero by construction on the fitting
+   sample and the rank statistic has no consistent direction across datasets.
 2. **A front with curvature.** A linear front is the case where weighted sum and NBI agree by
    construction (`audits/NBI_GEOMETRY_AUDIT.md`). Datasets whose fronts are near-linear cannot
    detect the geometry factor. Measured on the design rows' non-dominated set.
@@ -42,19 +47,37 @@ and each carries a manifest with a SHA-256 for the raw file. MAGIC is already ca
 checksum verified byte for byte (`audits/provenance/`); the other three are not yet cached and must
 be fetched and verified before the pilot.
 
-**This panel is provisional.** Criteria 1 to 4 above are measurements, not opinions, and none has
-been taken yet except on MAGIC. The pilot takes them. A dataset that fails criterion 1 or 2 is
-replaced from the registry before the full campaign, and the replacement is recorded with the
-measurement that caused it.
+**The replacement rule, as frozen.** A dataset that fails criterion 1 or 2 is replaced from the
+registry before the full campaign, and the replacement is recorded with the measurement that caused
+it.
 
-**Status after the factor-model correction.** Criterion 1's original estimator — the Spearman between
-the *latent* quality composite and the cost objective — was withdrawn by amendment 20, because the
-factor algebra that produced its Stage A evidence was itself withdrawn. The construct is kept and
-measured on the raw responses, which all four datasets satisfy (−0.251, −0.462, −0.398, −0.410 on the
-88 design rows). **Criterion 2 is a different matter: Spambase fails it with a two-point
-non-dominated set.** The replacement rule above applies to it and its disposition is recorded as
-DECISION D1 in `PROTOCOL_AMENDMENTS.md`, unresolved at the time of writing. See
-`audits/panel_rescreen_corrected.json`.
+## Panel status — SETTLED before the confirmatory campaign
+
+Measured on the corrected factor model, before any arm ran. Authoritative artifact:
+`audits/final_panel_screening.json`. (`audits/panel_rescreen_corrected.json` is a **superseded**
+intermediate recomputation and must not be cited.)
+
+| dataset | C1 raw conflict | C2 front / curvature | C3 | C4 | role |
+|---|---:|---|:--:|:--:|---|
+| MAGIC | −0.251 | 8 points, 0.166 | met | met | primary geometry confirmatory |
+| Adult | −0.398 | 6 points, 0.199 | met | met | primary geometry confirmatory |
+| Bank Marketing | −0.410 | 6 points, 0.198 | met | met | primary geometry confirmatory |
+| **Spambase** | −0.462 | **2 points, undefined** | met | met | **boundary geometry control** |
+
+**Criterion 1** passes on all four under the canonical raw-response measurement (amendment 20).
+
+**Criterion 2: Spambase fails**, and the criterion was not weakened to avoid it — its threshold is
+unmoved, its definition unrewritten, and no alternative formulation was sought. A two-point
+non-dominated set has no interior: every scalarization returns the same two extreme points, so there
+is no interior front geometry for the weighted-sum-versus-NBI contrast to separate.
+
+**The replacement rule was considered and deliberately not exercised** (amendment 22). Spambase is
+**retained and executed in full** — same arms, same budgets, same seeds, same evaluation machinery,
+30 replications — and reclassified prospectively as a **boundary geometry control**. **No replacement
+dataset was selected.** It is excluded only from the primary inferential family, and the
+interpretation of its result is fixed in advance in `EXPERIMENT_PROTOCOL.md` §11.1: a null geometry
+difference there is not evidence against the mechanism, because the screening established before
+execution that the required interior geometry is absent.
 
 ## Candidates held in reserve
 

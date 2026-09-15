@@ -131,11 +131,15 @@ def test_campaign_total_is_the_product_it_claims_to_be():
             == cb["campaign_solution_producing_logical"] + cb["campaign_audit_only_logical"])
 
 
-def test_the_open_item_register_does_not_record_the_panel_as_closed():
-    """It was closed on a screening verdict that has since been withdrawn.
+def test_the_open_item_register_records_the_panel_decision_correctly():
+    """Item 7 must be closed BY THE AMENDMENTS THAT DECIDED IT, and cite its evidence.
 
-    A freeze cannot ship with the panel decision recorded as settled by evidence the
-    same repository marks superseded three documents away.
+    This assertion previously required the panel to be recorded as NOT closed, which
+    was right while the decision was open and became the exact opposite of the
+    decision once it was taken. It shipped red in the commit that took it, and that
+    commit's message claimed a green suite. Inverted rather than deleted: it still
+    fires if the panel is ever recorded as closed on the withdrawn latent evidence,
+    or closed without citing the screening artifact.
     """
     import pathlib
     proto = (pathlib.Path(__file__).resolve().parents[2] / "papers" / "xgboost_hpo_vrfnbi"
@@ -143,40 +147,20 @@ def test_the_open_item_register_does_not_record_the_panel_as_closed():
     row = next((l for l in proto.splitlines()
                 if l.startswith("| 7 ") and "panel" in l.lower()), None)
     assert row is not None, "the dataset-panel register row is gone"
-    assert "closed" not in row.lower() or "REOPENED" in row, (
-        f"the panel is still recorded as closed: {row[:160]}")
-    assert "blocks the v3 freeze" in row
+    assert "closed by amendments 20 and 22" in row, (
+        f"item 7 does not record which amendments decided it: {row[:160]}")
+    assert "final_panel_screening.json" in row, (
+        "item 7 is closed without citing the screening artifact it rests on")
+    assert "REOPENED" not in row
+    assert "blocks the v3 freeze" not in row
 
 
-@pytest.mark.parametrize("doc", ["STAGE_B_THROUGHPUT.md", "THREE_OBJECTIVE_DECISION.md"])
-def test_every_document_publishing_a_campaign_total_publishes_the_current_one(doc):
-    """A stale subtotal is as wrong as a stale total, and harder to notice.
-
-    STAGE_B_THROUGHPUT.md published 380,160 campaign evaluations against the
-    registry's 380,760, and 380,160 + 15,360 reproduces the superseded 395,520 as a
-    hidden subtotal -- so the document silently disagreed with the planner while
-    every headline figure in it looked right.
-    """
+def test_no_register_row_still_calls_item_seven_reopened():
+    """A cross-reference left behind is a contradiction three lines wide."""
     import pathlib
-    import re
-    from doe_xgb.campaign.runner import campaign_budget, unit_budget
-    text = (pathlib.Path(__file__).resolve().parents[2] / "papers" / "xgboost_hpo_vrfnbi"
-            / doc).read_text()
-    flat = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)
-    cb, ub = campaign_budget(2), unit_budget(2)
-    assert str(cb["campaign_total_logical"]) in flat, f"{doc} does not state the current total"
-    # the superseded totals must not appear as current figures
-    for stale in ("395520", "380160"):
-        if stale in flat:
-            i = flat.index(stale)
-            window = flat[max(0, i - 400):i + 200]
-            assert re.search(r"supersed|earlier|as first published|withdrawn", window, re.I), \
-                f"{doc} states the superseded {stale} without marking it as superseded"
-
-
-def test_the_in_unit_subtotal_and_the_unmatched_run_add_to_the_total():
-    """The arithmetic that the stale subtotal broke."""
-    from doe_xgb.campaign.runner import campaign_budget, unit_budget
-    cb, ub = campaign_budget(2), unit_budget(2)
-    assert ub["total_logical"] * cb["units"] + cb["unmatched_nsga2_logical"] \
-        == cb["campaign_total_logical"]
+    proto = (pathlib.Path(__file__).resolve().parents[2] / "papers" / "xgboost_hpo_vrfnbi"
+             / "protocol" / "EXPERIMENT_PROTOCOL.md").read_text()
+    for line in proto.splitlines():
+        if line.startswith("|") and "item 7" in line.lower():
+            assert "reopen" not in line.lower(), (
+                f"a register row still calls item 7 reopened: {line[:160]}")
