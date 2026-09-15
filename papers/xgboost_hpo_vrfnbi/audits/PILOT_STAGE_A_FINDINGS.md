@@ -221,9 +221,9 @@ construction are "clearly negatively" associated; its Spearman is rank-nonlinear
 no stable sign. **The instrument is broken, not the panel.**
 
 The conflict between the **raw responses** and the leaf-count cost — which is what "these objectives
-trade off" means physically — is clearly negative on every dataset: **−0.223, −0.500, −0.440,
-−0.223, −0.500, −0.440, −0.431** on the 166-point reference sets and −0.251, −0.462, −0.398,
-−0.410 on the 88 design rows.
+trade off" means physically — is clearly negative on every dataset: **−0.251, −0.462, −0.398,
+−0.410** on the 88 design rows, which is the basis `dataset_selection.md` specifies, and
+−0.223, −0.500, −0.440, −0.431 on the 166-point reference sets.
 
 **Criteria 2 and 3 are NOT unaffected, and an earlier version of this paragraph said they were.**
 Both are computed from the factor model, so correcting it moves them. Recomputed in

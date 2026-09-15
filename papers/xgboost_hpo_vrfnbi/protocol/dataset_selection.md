@@ -47,6 +47,15 @@ been taken yet except on MAGIC. The pilot takes them. A dataset that fails crite
 replaced from the registry before the full campaign, and the replacement is recorded with the
 measurement that caused it.
 
+**Status after the factor-model correction.** Criterion 1's original estimator — the Spearman between
+the *latent* quality composite and the cost objective — was withdrawn by amendment 20, because the
+factor algebra that produced its Stage A evidence was itself withdrawn. The construct is kept and
+measured on the raw responses, which all four datasets satisfy (−0.251, −0.462, −0.398, −0.410 on the
+88 design rows). **Criterion 2 is a different matter: Spambase fails it with a two-point
+non-dominated set.** The replacement rule above applies to it and its disposition is recorded as
+DECISION D1 in `PROTOCOL_AMENDMENTS.md`, unresolved at the time of writing. See
+`audits/panel_rescreen_corrected.json`.
+
 ## Candidates held in reserve
 
 `phishing`, `credit_card_default`, `mushroom`, `wine_quality`, `german_credit`, `pima_diabetes`,
@@ -81,7 +90,7 @@ For each candidate, on one partition, from the 88 design rows alone:
 
 | Measurement | Threshold to stay in the panel |
 |---|---|
-| Spearman between the quality composite and the cost objective | clearly negative; a value near zero means no conflict |
+| Spearman between the **raw quality responses** and the **raw leaf-count cost** | clearly negative (amendment 20: the latent-composite estimator is withdrawn, the construct is kept) |
 | curvature of the non-dominated set of design rows | detectably non-linear |
 | external R² of each surrogate on held-out compositions | strictly between the trivial and the perfect |
 | ratio of the most to the least expensive configuration | large enough that cost differences exceed run-to-run variation |

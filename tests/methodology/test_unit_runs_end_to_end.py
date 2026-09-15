@@ -391,3 +391,77 @@ def test_the_shared_specification_arm_differs_from_ws_s_only_in_normalization(un
     assert ws["n_weights"] == hist["n_weights"]
     assert ws["reference_construction"] != hist["reference_construction"], \
         "the normalization contrast did not change the reference construction"
+
+
+# ---------------------------------------------------------------------------
+# the contrast fingerprint, as a live runner invariant
+# ---------------------------------------------------------------------------
+
+def test_the_three_surrogate_reference_arms_share_a_contrast_fingerprint(unit):
+    """WS-S, HISTORICAL-WS and NBI-S must differ only in their declared mechanism."""
+    fps = {}
+    for stage in ("ws_s", "historical_ws", "nbi_s"):
+        payload = json.loads((unit["dir"] / f"{stage}.json").read_text())
+        assert "contrast_fingerprint" in payload, f"{stage} recorded no fingerprint"
+        fps[stage] = payload["contrast_fingerprint"]
+    for key in ("solver", "realizer", "weights", "surrogate_object_ids"):
+        vals = {s: fp[key] for s, fp in fps.items()}
+        assert len(set(map(json.dumps, vals.values()))) == 1, (
+            f"the three surrogate-reference arms differ in {key!r}: {vals}")
+
+
+def test_nbi_r_differs_from_nbi_s_only_in_the_reference(unit):
+    s = json.loads((unit["dir"] / "nbi_s.json").read_text())["contrast_fingerprint"]
+    r = json.loads((unit["dir"] / "nbi_r.json").read_text())["contrast_fingerprint"]
+    for key in ("solver", "realizer", "weights", "surrogate_object_ids"):
+        assert s[key] == r[key], f"NBI-S and NBI-R differ in {key!r} beyond the anchors"
+    assert s["reference_utopia"] != r["reference_utopia"], (
+        "NBI-S and NBI-R share a reference utopia, so the anchor contrast varies "
+        "nothing")
+
+
+def test_the_contrast_guard_rejects_a_mismatched_arm():
+    """The guard must fail on the mutation it exists to catch."""
+    from doe_xgb.campaign.runner import MethodologicalFailure, _require_same
+    base = {"solver": [10, 7, 500], "realizer": ["a"], "weights": [[1.0, 0.0]],
+            "surrogate_object_ids": [1, 2], "reference_utopia": [0.0, 0.0]}
+    _require_same(base, dict(base), arm="NBI-S")                       # identical: ok
+    with pytest.raises(MethodologicalFailure, match="configured differently"):
+        _require_same(base, {**base, "solver": [15, 7, 500]}, arm="NBI-S")
+    with pytest.raises(MethodologicalFailure, match="weights"):
+        _require_same(base, {**base, "weights": [[0.5, 0.5]]}, arm="NBI-S")
+    # the permitted difference for the anchor contrast
+    _require_same(base, {**base, "reference_utopia": [1.0, 1.0]},
+                  arm="NBI-R", except_keys=("reference_utopia",))
+
+
+def test_the_primary_reference_is_named(unit):
+    """Amendment 21: one reference carries the primary family, named before launch."""
+    m = json.loads((unit["dir"] / "metrics_by_method.json").read_text())
+    assert m["primary_reference"] == "core"
+    assert m["primary_indicator"] == "hv_ratio"
+    assert m["augmented_is_a_declared_sensitivity"] is True
+    for name, block in m["methods"].items():
+        assert block["primary_reference"] == "core", f"{name} names no primary reference"
+
+
+def test_both_references_are_still_computed_for_every_scored_method(unit):
+    """Naming a primary must not delete the sensitivity."""
+    m = json.loads((unit["dir"] / "metrics_by_method.json").read_text())
+    assert set(m["references_computed"]) == {"core", "augmented"}
+    for name, block in m["methods"].items():
+        assert "hv_ratio" in block["core"], f"{name} has no core hv_ratio"
+        assert "hv_ratio" in block["augmented"], f"{name} has no augmented hv_ratio"
+
+
+def test_single_objective_comparators_are_scored_on_endpoints_only(unit):
+    m = json.loads((unit["dir"] / "metrics_by_method.json").read_text())
+    for name in R.SINGLE_OBJECTIVE:
+        assert name not in m["methods"], f"{name} entered the front-indicator table"
+        assert name in m["single_objective_endpoints"]
+
+
+def test_the_anchor_injection_control_is_scored(unit):
+    m = json.loads((unit["dir"] / "metrics_by_method.json").read_text())
+    assert "nbi_s_plus_anchors" in m["methods"], \
+        "the mandatory anchor-injection control produced no indicator row"

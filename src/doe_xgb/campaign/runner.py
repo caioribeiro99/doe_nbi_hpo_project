@@ -352,8 +352,13 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                                                     "fitted surrogates over the coded box"})
         s_anchors, s_chim = surrogate_reference(surrogates, cfg)
 
+        # The geometry and normalization contrasts hold these fixed. Asserted here
+        # rather than assumed, and persisted so the artifacts prove it too.
+        contrast_fp = _contrast_fingerprint(cfg, rz, weights, s_anchors, surrogates)
+
         if not ck.done("ws_s"):
-            ck.save("ws_s", run_ws_s(surrogates, cfg, s_anchors, rz, weights).as_dict())
+            ck.save("ws_s", {**run_ws_s(surrogates, cfg, s_anchors, rz, weights).as_dict(),
+                             "contrast_fingerprint": contrast_fp})
         if not ck.done("historical_ws"):
             # The same weighted sum, the same solver, the same symmetric grid and the
             # same surrogates as WS-S, differing ONLY in the reference: the
@@ -363,14 +368,24 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
             # bit-faithful reproduction and the two are never mixed in one table.
             hist_lo = Y.min(axis=0)
             hist_hi = Y.max(axis=0)
-            ck.save("historical_ws", run_ws_s(
+            # Everything except the reference must match WS-S: that is what makes
+            # WS-S to HISTORICAL-WS a single-factor contrast on normalization.
+            _require_same(contrast_fp,
+                          _contrast_fingerprint(cfg, rz, weights, s_anchors, surrogates),
+                          arm="HISTORICAL-WS", except_keys=("reference_utopia",))
+            ck.save("historical_ws", {**run_ws_s(
                 surrogates, cfg, s_anchors, rz, weights, arm="HISTORICAL-WS",
                 reference_override=(hist_lo, hist_hi),
                 reference_label=("component-wise observed extrema of the design rows, "
-                                 "as the dissertation normalizes")).as_dict())
+                                 "as the dissertation normalizes")).as_dict(),
+                "contrast_fingerprint": contrast_fp})
         if not ck.done("nbi_s"):
-            ck.save("nbi_s", run_nbi_arm("NBI-S", surrogates, cfg, s_anchors, s_chim,
-                                         rz, weights).as_dict())
+            _require_same(contrast_fp,
+                          _contrast_fingerprint(cfg, rz, weights, s_anchors, surrogates),
+                          arm="NBI-S")
+            ck.save("nbi_s", {**run_nbi_arm("NBI-S", surrogates, cfg, s_anchors, s_chim,
+                                            rz, weights).as_dict(),
+                              "contrast_fingerprint": contrast_fp})
 
         # ---- empirical anchors (the only stage that spends B_anchor) ---------
         if ck.done("empirical_anchors"):
@@ -382,8 +397,21 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
 
         r_anchors, r_chim = empirical_reference(x_star, F_star, cfg)
         if not ck.done("nbi_r"):
-            ck.save("nbi_r", run_nbi_arm("NBI-R", surrogates, cfg, r_anchors, r_chim,
-                                         rz, weights).as_dict())
+            # The anchor contrast varies the reference and NOTHING else. The
+            # reference_utopia key is therefore the one permitted difference, and
+            # it MUST differ -- an identical one would mean the contrast varies
+            # nothing at all.
+            r_fp = _contrast_fingerprint(cfg, rz, weights, r_anchors, surrogates)
+            _require_same(contrast_fp, r_fp, arm="NBI-R",
+                          except_keys=("reference_utopia",))
+            if r_fp["reference_utopia"] == contrast_fp["reference_utopia"]:
+                raise MethodologicalFailure(
+                    f"{dataset} rep {rep}: the empirical anchors produced the same "
+                    f"utopia point as the surrogate anchors, so NBI-S to NBI-R "
+                    f"varies nothing and cannot isolate anchor provenance.")
+            ck.save("nbi_r", {**run_nbi_arm("NBI-R", surrogates, cfg, r_anchors, r_chim,
+                                            rz, weights).as_dict(),
+                              "contrast_fingerprint": r_fp})
 
         # ---- stage: direct baselines ----------------------------------------
         budget = logical_budget_plan()["comparator_budget"]
@@ -578,11 +606,23 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                                        "n_evaluations": int(len(F))}
                     continue
                 per_method[name] = {
+                    # Amendment 21: the CORE reference is primary and carries the
+                    # Holm-corrected family of EXPERIMENT_PROTOCOL.md 11. The
+                    # augmented reference is a declared sensitivity: it contains
+                    # every compared method's own candidates, so each method
+                    # contributes points to the front it is graded against, and its
+                    # self-grading share is reported beside it. Both are persisted;
+                    # which one is primary is named here so no later analysis has to
+                    # choose after seeing them.
+                    "core": indicators(F, core_front),
                     "augmented": indicators(F, aug_front),
-                    "core": indicators(F, core_front)}
+                    "primary_reference": "core",
+                    "augmented_is_a_declared_sensitivity": True}
             ck.save("metrics_by_method", {
                 "methods": per_method, "primary_indicator": "hv_ratio",
-                "references": ["augmented", "core"],
+                "primary_reference": "core",
+                "references_computed": ["core", "augmented"],
+                "augmented_is_a_declared_sensitivity": True,
                 "single_objective_endpoints": endpoints,
                 "note": ("single-objective runs are reported on their own endpoint only; "
                          "they are excluded from the front-indicator table and from the "
@@ -636,6 +676,46 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
         raise
     finally:
         cache.close()
+
+
+def _contrast_fingerprint(cfg, rz, weights, anchors, surrogates) -> dict:
+    """Everything the primary contrasts must hold fixed, in comparable form.
+
+    WS-S to NBI-S is a single-factor contrast on front-construction geometry only if
+    both arms receive the same solver configuration, the same realizer, the same
+    weight grid, the same surrogates and the same reference. They share those
+    variables in ``run_unit`` today. Nothing enforced it, and the geometry contrast
+    could be broken by a one-line edit here with the entire test suite green -- an
+    independent reviewer demonstrated exactly that. The identity is now asserted at
+    the point of use and persisted into every arm's checkpoint, so a violation is a
+    failed unit rather than a silent confound in the primary comparison.
+    """
+    return {
+        "solver": [int(cfg.n_starts), int(cfg.seed), int(cfg.maxiter),
+                   [list(map(float, row)) for row in np.asarray(cfg.bounds).tolist()],
+                   sorted(int(i) for i in cfg.integer_dims),
+                   bool(cfg.feasibility_constraint is not None),
+                   bool(cfg.restrict_t_nonnegative), str(cfg.quasi_normal)],
+        "realizer": [list(rz.params), [float(x) for x in np.asarray(rz.lo).tolist()],
+                     [float(x) for x in np.asarray(rz.hi).tolist()],
+                     sorted(rz.int_params)],
+        "weights": [[round(float(w), 12) for w in row]
+                    for row in np.asarray(weights).tolist()],
+        "surrogate_object_ids": [id(f) for f in surrogates],
+        "reference_utopia": [round(float(x), 12)
+                             for x in np.asarray(anchors.utopia).tolist()],
+    }
+
+
+def _require_same(reference: dict, other: dict, *, arm: str, except_keys: tuple = ()) -> None:
+    differing = [k for k in reference
+                 if k not in except_keys and reference[k] != other[k]]
+    if differing:
+        raise MethodologicalFailure(
+            f"{arm} was configured differently from the contrast baseline in "
+            f"{sorted(differing)}. The primary contrast would then vary more than "
+            f"the one mechanism it is declared to isolate, and every comparison "
+            f"resting on it would be confounded.")
 
 
 def _run_historical(design_df, Y, fm, surrogates, rz, seed) -> dict:

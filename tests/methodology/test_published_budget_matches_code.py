@@ -146,3 +146,37 @@ def test_the_open_item_register_does_not_record_the_panel_as_closed():
     assert "closed" not in row.lower() or "REOPENED" in row, (
         f"the panel is still recorded as closed: {row[:160]}")
     assert "blocks the v3 freeze" in row
+
+
+@pytest.mark.parametrize("doc", ["STAGE_B_THROUGHPUT.md", "THREE_OBJECTIVE_DECISION.md"])
+def test_every_document_publishing_a_campaign_total_publishes_the_current_one(doc):
+    """A stale subtotal is as wrong as a stale total, and harder to notice.
+
+    STAGE_B_THROUGHPUT.md published 380,160 campaign evaluations against the
+    registry's 380,760, and 380,160 + 15,360 reproduces the superseded 395,520 as a
+    hidden subtotal -- so the document silently disagreed with the planner while
+    every headline figure in it looked right.
+    """
+    import pathlib
+    import re
+    from doe_xgb.campaign.runner import campaign_budget, unit_budget
+    text = (pathlib.Path(__file__).resolve().parents[2] / "papers" / "xgboost_hpo_vrfnbi"
+            / doc).read_text()
+    flat = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)
+    cb, ub = campaign_budget(2), unit_budget(2)
+    assert str(cb["campaign_total_logical"]) in flat, f"{doc} does not state the current total"
+    # the superseded totals must not appear as current figures
+    for stale in ("395520", "380160"):
+        if stale in flat:
+            i = flat.index(stale)
+            window = flat[max(0, i - 400):i + 200]
+            assert re.search(r"supersed|earlier|as first published|withdrawn", window, re.I), \
+                f"{doc} states the superseded {stale} without marking it as superseded"
+
+
+def test_the_in_unit_subtotal_and_the_unmatched_run_add_to_the_total():
+    """The arithmetic that the stale subtotal broke."""
+    from doe_xgb.campaign.runner import campaign_budget, unit_budget
+    cb, ub = campaign_budget(2), unit_budget(2)
+    assert ub["total_logical"] * cb["units"] + cb["unmatched_nsga2_logical"] \
+        == cb["campaign_total_logical"]

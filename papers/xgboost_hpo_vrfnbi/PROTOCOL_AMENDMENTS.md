@@ -269,7 +269,7 @@ circumstance in which a protocol change most needs scrutiny, so it is stated fir
 | **v2 specification** | the runner raises a methodological failure when the latent objective conflict, Spearman between the quality composite and the cost factor, disagrees in sign with the same quantity computed from an equally weighted mean of the six canonicalized quality responses. The stated purpose was to catch a composite "inverted relative to the metrics it is built from". |
 | **What happened** | on the first smoke unit run against the **corrected** factor model, the guard fired on Spambase: latent +0.355 against raw −0.472. Investigated across the panel, it fires on **two of four** datasets (Spambase and Adult), which would record half the panel as methodological failures and exclude it. |
 | **Diagnosis, CORRECTED** | the guard was a proxy for inversion and the proxy is wrong. Measured directly, the composite is **not inverted anywhere**: its Spearman with the badness it aggregates is +0.929, +0.243, +0.835 and +0.896. **The mechanism behind the divergence is structural, not a property of any one response.** The quality composite is a weighted sum of rotated quality factors and the cost objective is another factor from the same orthogonal basis, so `Pearson(quality, cost)` is **zero by construction on the sample the model is fitted to**: measured +8.8e−17, −3.4e−16, +4.9e−16 and +1.5e−17 on the four 166-point reference sets. Away from that sample the identity is approximate, not exact: resampling at n = 88, the design size each replication measures, gives |r| with a 95th percentile of **0.14 to 0.17**. **An earlier version of this row claimed |r| ≤ 0.04 on any subsample. That is false** — at n = 30 roughly 80% of draws exceed it — and it is the second over-general claim this amendment has had to withdraw. The measurements are now in `audits/latent_conflict_stability.json` rather than in prose. A Spearman between two variables whose linear association is structurally zero is a monotone-nonlinearity residual. **It is not noise** — it is stable within a dataset (at n = 88: MAGIC ρ ∈ [−0.33, −0.07]; Spambase [+0.18, +0.45]; Adult [−0.02, +0.22]; Bank Marketing [−0.11, +0.12]). What it lacks is a consistent **direction**: it is negative on one dataset, positive on two, and a coin flip on the fourth, P(ρ > 0) = 53%. Comparing that sign against the sign of a genuine −0.22 to −0.50 raw-response conflict was never an invariant; it was close to a coin flip. |
-| **A diagnosis that was recorded here and is now withdrawn** | this row previously attributed the divergence to specificity trading off against the other quality responses at a fixed decision threshold. **That is false and was falsified by direct test.** Rebuilding the equally weighted raw reference with `Specificity_Mean` removed does not reconcile the sign on Spambase (latent +0.323 against raw-without-specificity −0.601) or on Adult (+0.103 against −0.284), and on Adult it is marginally *worse* than with specificity included (−0.398). No single-response exclusion reconciles either dataset. The false mechanism was found by the V10 independent review, not by the author, and is left visible here rather than quietly overwritten. `tests/methodology/test_frozen_reference_factor_model.py::test_specificity_removal_does_not_explain_the_divergence` keeps the falsification executable. |
+| **A diagnosis that was recorded here and is now withdrawn** | this row previously attributed the divergence to specificity trading off against the other quality responses at a fixed decision threshold. **That is false and was falsified by direct test.** Rebuilding the equally weighted raw reference with `Specificity_Mean` removed does not reconcile the sign on either dataset. All four figures below are on the **same basis** — the raw quality reference against the **latent cost factor**, on the 88 design rows — because an earlier version of this row compared a latent-basis number against a raw-basis one inside a single sentence. Spambase: latent +0.321, raw reference with specificity −0.680, without it −0.605. Adult: latent +0.139, with specificity −0.251, without it −0.265 — so removing specificity moves Adult marginally *further* from reconciliation, not closer. No single-response exclusion reconciles either dataset. The false mechanism was found by the V10 independent review, not by the author, and is left visible here rather than quietly overwritten. `tests/methodology/test_frozen_reference_factor_model.py::test_specificity_removal_does_not_explain_the_divergence` keeps the falsification executable. |
 | **Revised specification** | the guard is split. **Hard, still a methodological failure:** the composite's Spearman with the badness it aggregates must be positive. A negative value means the study would be optimizing toward worse models and no result from that unit is usable. **Reported, never fatal:** the conflict-sign comparison against the equally weighted reference, persisted per replication with its own note. |
 | **Commit** | this one |
 | **Arm results observed first?** | **No.** The smoke unit failed at stage 3 of 20, before any arm ran. |
@@ -280,7 +280,35 @@ circumstance in which a protocol change most needs scrutiny, so it is stated fir
 
 ---
 
-## OPEN ITEM 2 — the primary indicator is not fully specified
+## Amendment 20 — screening criterion 1's estimator is withdrawn; its construct is kept
+
+| | |
+|---|---|
+| **v2 specification** | `protocol/dataset_selection.md` criterion 1: "Spearman between the quality composite and the cost objective — clearly negative; a value near zero means no conflict." A dataset failing it is replaced from the reserve list. |
+| **What happened** | the criterion's Stage A evidence — −0.284, −0.428, −0.562, −0.688 — was computed with the **withdrawn** factor algebra, whose factors were correlated at 0.379 to 0.698 off-diagonal. The quality composite therefore carried cost variance, and the "clearly negative" signal was substantially the factor model's own defect. That algebra was withdrawn as part of the factor-model correction, for reasons having nothing to do with the panel. |
+| **Diagnosis** | this is a **withdrawal, not a judgement call**. When the algebra that produced a measurement is retracted, the measurement goes with it automatically; the author is not choosing to retire the criterion, its evidentiary basis was destroyed by a correction made on independent grounds. Recomputed on the corrected model, the estimator has no consistent direction across the panel: −0.224 (MAGIC), +0.321 (Spambase), +0.139 (Adult), −0.002 (Bank Marketing), with the linear association it stands in for being zero by construction on the fitting sample. |
+| **Revised specification** | the **construct is kept** — the panel must consist of datasets whose two objectives genuinely trade off — and the **estimator is replaced**. Conflict is measured between the raw quality responses and the raw leaf-count cost, the quantity that has a physical meaning and no factor stage on either side: −0.251, −0.462, −0.398, −0.410 on the 88 design rows. All four datasets satisfy the construct. |
+| **What this costs, stated against interest** | the replacement estimator is the one the study's own independent cross-check already used, so it is not new, but it is **weaker as a screen**: it cannot fail a dataset whose raw metrics trade off while its latent composite does not, which is exactly the configuration the corrected model produces on Spambase and Adult. After this amendment the panel is screened for objective conflict by a measurement that no candidate is likely to fail. **That is a limitation and it is carried into the manuscript**, not resolved here. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** |
+| **Could it favour an arm?** | **No.** Panel composition is shared by every arm. |
+
+## Amendment 21 — the primary indicator's reference is named
+
+| | |
+|---|---|
+| **v2 specification** | §11: "the primary indicator is the hypervolume ratio, computed against the reference convention of section 9", family of three contrasts Holm-corrected per dataset. §9 describes **two** references and the runner computes the indicator against both, with no primary designation. |
+| **Engineering problem** | two hypervolume ratios and one declared primary indicator leaves the Holm-corrected primary test ambiguous, and the ambiguity is resolvable **after** the numbers are visible. That is an undeclared analytic degree of freedom on the study's headline result, which is the precise failure a pre-campaign freeze exists to remove. |
+| **Revised specification** | the **core reference is primary**: the 88 design rows plus the 200 anchor-search rows, method-independent by construction, which no compared method contributes to. The augmented reference is reported for every contrast as a **declared sensitivity**, with its `self_grading_share_of_front` beside it. |
+| **Why this reading** | it is the conservative one and the one the protocol's own machinery already implies. The augmented reference contains every compared method's own revalidated candidates, so each method contributes points to the front it is graded against; the protocol reports the self-grading share precisely because that is a known contamination. A primary endpoint "built independently of any single method" is satisfied strictly only by the core. The alternative reading — that "independently of any single method" licenses a reference built from all of them jointly — is grammatically available and is recorded here as considered and rejected. |
+| **Direction of the choice** | self-grading inflates a method's own indicator, so scoring the primary test against the **uncontaminated** reference is the choice less likely to flatter any arm, including the ones this paper's own hypothesis favours. |
+| **Commit** | this one |
+| **Arm results observed first?** | **No.** No confirmatory indicator has been computed. |
+| **Could it favour an arm?** | **No.** One reference, applied identically to every arm. |
+
+---
+
+## CLOSED by amendment 21 — the primary indicator's reference was undeclared
 
 **The primary test does not name which reference it is computed against, and the runner computes it
 against both.**
@@ -303,12 +331,14 @@ They are materially different objects:
 | self-grading | none | reported per method as `self_grading_share_of_front` |
 | measured on the smoke unit | 288 points | core + all arms and comparators |
 
-**Why this blocks.** With two hypervolume ratios and one declared "primary indicator", the primary
+**Why it blocked, and how it was closed.** Amendment 21 names the CORE reference as primary and the augmented reference as a declared sensitivity, applied in `EXPERIMENT_PROTOCOL.md` §9 and §11 and in the runner's metrics stage, which now stamps `primary_reference: "core"` into every scored method. The reasoning below is retained because the alternative reading was genuinely available and the record should show it was considered rather than overlooked.
+
+**Why it blocked.** With two hypervolume ratios and one declared "primary indicator", the primary
 Holm-corrected test is ambiguous, and the ambiguity is resolvable after the numbers are visible. That
 is the failure mode the whole pre-campaign freeze exists to prevent: an analyst who can choose the
 reference after seeing both has an undeclared degree of freedom on the study's headline result.
 
-**The two readings, and neither is adopted here.**
+**The two readings. Reading 1 was adopted.**
 
 1. **Core is primary.** "Built independently of any single method" is read strictly, and only the
    core satisfies it; the augmented reference is the robustness view. This is the conservative
@@ -320,88 +350,66 @@ reference after seeing both has an undeclared degree of freedom on the study's h
    core is the "sampled core" that §9 says the result is *repeated against*. On this reading §9's
    sentence order names the augmented reference first and therefore as primary.
 
-§9's own wording supports reading 2 grammatically and reading 1 methodologically, which is exactly
-why it needs deciding rather than interpreting. **The decision must be recorded before any
-confirmatory arm-level result is produced**, and it is a decision about what the paper's headline
-test measures, so it is not made here.
+§9's own wording supports reading 2 grammatically and reading 1 methodologically. Reading 1 was adopted: it is the conservative choice, since self-grading inflates a method's own indicator, so scoring the primary test against the uncontaminated reference is the option less likely to flatter any arm — including the ones this paper's own hypothesis favours. Recorded before any confirmatory indicator was computed.
 
 ---
 
-## OPEN ITEM 1 — blocks the v3 freeze, and is not decided here
+## DECISION D1 — Spambase fails screening criterion 2, and its disposition needs sign-off
 
-**Screening criterion 1 cannot be satisfied under the corrected factor algebra, and deciding what to
-do about that changes a frozen screening rule.**
+**This is the only item still blocking the v3 freeze.** Criterion 1 was withdrawn as amendment 20,
+because a correction made on independent grounds destroyed its evidentiary basis. This is different:
+criterion 2 is unaffected by the factor-algebra correction in its *definition*, it is computed from
+the corrected model, and **Spambase fails it**.
 
-`protocol/dataset_selection.md` requires, for a dataset to stay in the panel:
+`protocol/dataset_selection.md`, frozen before any measurement, says:
 
-> Spearman between the quality composite and the cost objective — **clearly negative**; a value near
-> zero means no conflict.
+> A dataset that fails criterion 1 or 2 is **replaced from the registry** before the full campaign,
+> and the replacement is recorded with the measurement that caused it.
 
-| dataset | Stage A value (superseded algebra) | corrected latent ρ | corrected latent *Pearson* | raw-response ρ |
-|---|---:|---:|---:|---:|
-| MAGIC | −0.284 | −0.201 | +8.8e−17 | **−0.223** |
-| Spambase | −0.428 | **+0.310** | −3.4e−16 | **−0.500** |
-| Adult | −0.562 | **+0.103** | +4.9e−16 | **−0.440** |
-| Bank Marketing | −0.688 | **+0.001** | +1.5e−17 | **−0.431** |
+The measurement, on the 88 design rows, from `audits/panel_rescreen_corrected.json`:
 
-**A SECOND screening result the corrected model changes, found while re-running all four criteria
-(`audits/panel_rescreen_corrected.json`, produced by `scripts/rescreen_panel_corrected.py`).**
+| dataset | non-dominated design rows | curvature | criterion 2 |
+|---|---:|---:|:--|
+| MAGIC | 8 | 0.166 | met |
+| **Spambase** | **2** | **undefined** | **NOT met** |
+| Adult | 6 | 0.211 | met |
+| Bank Marketing | 6 | 0.214 | met |
 
-| dataset | C1 latent ρ | C1 raw ρ | C2 \|front\| on the 88 design rows | C2 curvature | C3 quality R² | C3 cost R² | C4 cost range |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| MAGIC | −0.224 | −0.198 | 8 | 0.166 | 0.691 | 0.905 | 2706× |
-| Spambase | +0.321 | −0.680 | **2** | **undefined** | 0.917 | 0.902 | 591× |
-| Adult | +0.139 | −0.251 | 6 | 0.211 | 0.904 | 0.925 | 3421× |
-| Bank Marketing | −0.002 | −0.238 | 6 | 0.214 | 0.860 | 0.935 | 4356× |
+A two-point non-dominated set is the degenerate case: every scalarization returns the same two
+anchors, there is no interior front, and the primary geometry contrast has nothing to separate on
+that dataset. Criterion 2 exists precisely to exclude that.
 
-Criterion 2 requires the non-dominated set of design rows to be **detectably non-linear**. On
-Spambase that set has **two points**, so its curvature is not merely small — it is undefined, and a
-two-point front is the degenerate case in which every scalarization returns the same two anchors and
-there is no interior geometry for NBI and weighted sum to differ over. This is **dataset-specific and
-not structural**: the other three have 6 to 8 front points and curvature 0.17 to 0.21, which is
-exactly the regime the study is about. Criteria 3 and 4 are met by all four datasets.
+**Why this is not executed unilaterally, even though the rule is unambiguous.** Replacing Spambase is
+mechanical in the sense that the rule names the action and the reserve list (`phishing`,
+`credit_card_default`, `mushroom`, `wine_quality`, `german_credit`, `pima_diabetes`,
+`breast_cancer` — with `credit_card_default` excluded to avoid overlap with Paper 1). But executing it
+means fetching and checksum-verifying a new dataset, running Stage A on it, building a frozen
+reference factor model, and re-screening it against all four criteria — and the replacement may itself
+fail. That changes the panel the study reports on, and it costs real work before the campaign can
+start.
 
-Spambase is also the dataset with the weakest composite alignment (+0.249 on its reference set), so
-two independent screening concerns land on the same member of the panel. **Whether that is grounds to
-treat Spambase differently is part of the same open decision and is likewise not made here.**
+**And it has a consequence that must be visible before anyone chooses.** Spambase is the **only**
+dataset on which the composite-quality surrogate meets the frozen reliability criterion in the
+corrected pre-campaign screening. Removing it leaves a panel on which that criterion is unmet
+everywhere. That is an argument neither for nor against replacement — the criterion-2 failure is real
+and the rule is frozen — but a panel selected to satisfy one screening rule while losing the only
+member that satisfies a different diagnostic is a fact the manuscript would have to state, and it
+should be a decision taken knowingly rather than discovered afterwards.
 
-**Why this is not a panel problem.** The quality composite is a weighted sum of rotated quality
-factors and the cost objective is another factor of the same orthogonal basis, so their linear
-correlation is **zero by construction**, everywhere, for any dataset. Criterion 1 therefore asks
-whether two variables that are uncorrelated by construction are clearly negatively associated. Its
-Spearman is rank-nonlinearity residual with no stable sign. Under the corrected algebra the criterion
-is **unsatisfiable in principle**, not failed in fact — it would reject every dataset that could ever
-be proposed, including datasets whose objectives obviously trade off.
+**The options.**
 
-The trade-off these datasets actually have is intact and is clearly negative on all four: the raw
-quality responses against the leaf-count cost, −0.223 to −0.500.
+1. **Replace Spambase from the reserve list**, executing the frozen rule. Record the measurement that
+   caused it. Cost: a new dataset must be fetched, verified, screened and given a frozen factor
+   model before launch; the replacement may fail its own screening.
+2. **Keep Spambase and record the criterion-2 failure as a declared limitation**, with the geometry
+   contrast reported as uninformative on that dataset. This **overrides a frozen rule** and therefore
+   is not the author's to take alone.
+3. **Keep Spambase and drop criterion 2 as well.** Not recommended and listed for completeness: after
+   amendment 20 the panel would then be screened for trade-off structure by nothing at all.
 
-**Why it is recorded rather than fixed.** Restating a screening criterion *after* seeing the numbers
-it produces is the exact move the pilot/confirmatory boundary exists to prevent, and the fact that
-the obvious restatement leaves the panel unchanged makes it more dangerous to do quietly, not less:
-an author who rewrites a rejection rule and finds nothing rejected has no evidence that the rule was
-ever binding. The direction of any change would also be self-serving — it keeps the panel the study
-already has.
-
-So it is stated, with its numbers, and left for an explicit decision. **`xgboost-hpo-protocol-v3` is
-not frozen while this is open.**
-
-The options, without a recommendation attached to any of them:
-
-1. **Restate criterion 1 on the raw responses**, where "these objectives conflict" is measurable and
-   is satisfied by all four datasets. The panel is unchanged, which is precisely why adopting it
-   requires the reasoning to be recorded before the numbers are cited, not after.
-2. **Retire criterion 1**, on the ground that the corrected construction makes it vacuous, and rely
-   on criteria 2, 3 and 4. **This option's stated basis has since been falsified and it no longer
-   leaves the panel unchanged.** Criteria 2 and 3 are not unaffected — both are computed from the
-   factor model — and under the corrected algebra **Spambase fails criterion 2 with a two-point
-   non-dominated set**. Retiring criterion 1 therefore does not close the question; it moves it to
-   criterion 2 and to one dataset.
-3. **Keep it as written.** No dataset qualifies and the panel is empty. Not viable, and listed only
-   so that "the criterion as frozen" is on the record as having been considered.
-
-Whichever is chosen becomes a numbered amendment recording that no arm had been executed when it was
-made, which remains true: this is written before the confirmatory campaign has run.
+Option 1 executes the protocol as frozen. Option 2 requires explicit authorization. **Either way the
+decision is recorded as a numbered amendment before the campaign runs, and v3 is not tagged until it
+is taken.**
 
 ---
 

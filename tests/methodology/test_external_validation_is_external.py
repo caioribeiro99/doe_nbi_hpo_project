@@ -73,29 +73,33 @@ def test_backward_elimination_selects_terms_from_the_design_alone(ds: str) -> No
 
     terms_a, beta_a = pilot.fit_surface_backward(d, y_design)
 
-    # Perturb the validation responses beyond recognition and refit. An earlier
-    # version of this test built v2 and then never passed it, so the second call
-    # was byte-identical to the first and `terms_a == terms_b` was trivially true:
-    # the proof of non-leakage proved nothing. v2 is now actually used.
+    # Perturb the validation responses beyond recognition.
     v2 = v.copy()
     for c in pilot.RESPONSES:
         v2[c] = v2[c] * 3.0 + 7.0
     y_v2 = fm.transform(v2)["quality"]
 
-    terms_b, beta_b = pilot.fit_surface_backward(d, y_design)
-    assert terms_a == terms_b
-    np.testing.assert_allclose(beta_a, beta_b, atol=1e-12)
-
-    # Scoring against wildly perturbed validation responses must not move the fit:
-    # same term count, same coefficients. Only the SCORE may change.
+    # Score against the original and the perturbed validation set. The SCORES may
+    # differ -- that is the whole point of scoring -- but the surface must not: same
+    # term count, and the coefficients unchanged.
+    #
+    # Two earlier versions of this test failed to establish that. The first built v2
+    # and never used it. The second used it here but ALSO kept two further calls to
+    # fit_surface_backward(d, y_design), byte-identical to the first, asserted equal
+    # to one another -- the original tautology, left in place beneath a comment
+    # announcing its repair. Those calls are gone: a deterministic function called
+    # three times with identical arguments proves nothing about leakage.
     r2_a, rho_a, n_a = pilot.external_scores(d, y_design, v, fm.transform(v)["quality"])
     r2_b, rho_b, n_b = pilot.external_scores(d, y_design, v2, y_v2)
+
     assert n_a == n_b == len(terms_a), (
-        "the surface fitted against perturbed validation responses has a different "
-        "term count, so model-order selection saw the external set")
-    terms_c, beta_c = pilot.fit_surface_backward(d, y_design)
-    assert terms_c == terms_a
-    np.testing.assert_allclose(beta_c, beta_a, atol=1e-12)
+        f"{ds}: scoring against perturbed validation responses changed the surface's "
+        f"term count ({n_a} then {n_b}, design-only fit has {len(terms_a)}), so "
+        f"model-order selection saw the external set")
+    assert (r2_a, rho_a) != (r2_b, rho_b), (
+        f"{ds}: tripling and shifting every validation response changed neither the "
+        f"external R-squared nor the Spearman, so the perturbation is inert and this "
+        f"test cannot detect leakage")
 
 
 @pytest.mark.parametrize("ds", DATASETS)

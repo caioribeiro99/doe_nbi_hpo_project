@@ -356,9 +356,15 @@ throughput before the campaign launches.
 
 ## 9. Scoring
 
-The full front is persisted for every method and replication. Primary endpoints are computed against
-an empirical reference built independently of any single method, and repeated against a sampled core
-the compared methods do not contribute to. Indicators follow Paper 1: inverted generational distance
+The full front is persisted for every method and replication.
+
+**The primary reference is the CORE reference** (amendment 21): the 88 design rows plus the 200
+anchor-search rows, method-independent by construction, which no compared method contributes to.
+Every primary endpoint is computed against it. The **augmented reference** — the core together with
+every compared method's real-revalidated candidates — is reported for every contrast as a **declared
+sensitivity**, always beside its `self_grading_share_of_front`, because each method contributes
+points to the front it is graded against. Both are computed for every method and replication; only
+the core carries the Holm-corrected primary family of §11. Indicators follow Paper 1: inverted generational distance
 plus, hypervolume ratio, generational distance, Schott spacing, joint non-dominated fraction.
 `max(Accuracy_Mean)` is a legacy continuity column only.
 
@@ -404,8 +410,9 @@ win fraction with its Wilson interval, rank-biserial correlation) is primary and
 
 **One primary indicator (resolution of review finding MF17).** Section 9 lists five indicators and
 originally designated none primary, so the realized comparison family sat somewhere between 3 and 15
-tests per dataset. **The primary indicator is the hypervolume ratio**, computed against the reference
-convention of section 9. The family is three contrasts times one indicator, Holm-corrected within
+tests per dataset. **The primary indicator is the hypervolume ratio computed against the CORE
+reference** of section 9, which amendment 21 names; the same ratio against the augmented reference is
+a declared sensitivity and carries no test. The family is three contrasts times one indicator, Holm-corrected within
 each dataset. IGD+, generational distance, Schott spacing and the joint non-dominated fraction are
 **secondary and descriptive**, reported with intervals and no tests. Per-objective marginal
 comparisons are forbidden; see section 14.
