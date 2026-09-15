@@ -289,8 +289,10 @@ def composite_alignment(model: "FrozenFactorModel", df: pd.DataFrame) -> float:
     comparison cannot be an invariant here, for a structural reason: the composite
     is a weighted sum of rotated quality factors and the cost objective is another
     factor from the same orthogonal basis, so their Pearson correlation is zero by
-    construction -- measured between 1e-17 and 5e-16 on every design set and every
-    166-point reference set in the panel. A Spearman between two linearly
+    construction ON THE SAMPLE THE MODEL WAS FITTED TO -- measured 1e-17 to 5e-16 on
+    the four 166-point reference sets. On a subsample it is approximate rather than
+    exact: |r| <= 0.04 on the 88 design rows and on the 78-point complement. Either
+    way there is no linear association for a rank statistic to be a proxy for. A Spearman between two linearly
     uncorrelated variables is rank-nonlinearity residual and its sign is not stable,
     so comparing that sign against the sign of a genuine raw-response conflict was
     close to a coin flip.

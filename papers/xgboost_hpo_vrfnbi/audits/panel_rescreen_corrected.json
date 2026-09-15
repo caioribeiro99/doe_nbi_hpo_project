@@ -1,0 +1,165 @@
+{
+  "datasets": {
+    "adult": {
+      "criterion_1_objective_conflict": {
+        "criterion_text": "clearly negative; a value near zero means no conflict",
+        "latent_is_zero_by_construction": false,
+        "latent_pearson": 0.036124420207102104,
+        "latent_spearman": 0.1394,
+        "raw_response_spearman": -0.2514
+      },
+      "criterion_2_front_curvature": {
+        "curvature": 0.2108,
+        "front_share_of_points": 0.0682,
+        "max_deviation_away_from_utopia": 0.0,
+        "max_deviation_toward_utopia": 0.2108,
+        "n_front": 6
+      },
+      "criterion_3_surrogate_usefulness": {
+        "cost": {
+          "external_r2": 0.9249,
+          "external_spearman": 0.9141,
+          "meets_frozen_gate": true,
+          "spread_ratio_design_over_external": 1.016,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 16
+        },
+        "quality": {
+          "external_r2": 0.9044,
+          "external_spearman": 0.8868,
+          "meets_frozen_gate": false,
+          "spread_ratio_design_over_external": 0.991,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 12
+        }
+      },
+      "criterion_4_cost_dynamic_range": {
+        "max": 236072.2,
+        "max_over_min_leaf_count": 3421.3,
+        "min": 69.0
+      },
+      "dataset": "adult"
+    },
+    "bank_marketing": {
+      "criterion_1_objective_conflict": {
+        "criterion_text": "clearly negative; a value near zero means no conflict",
+        "latent_is_zero_by_construction": false,
+        "latent_pearson": -0.004484598871338584,
+        "latent_spearman": -0.0021,
+        "raw_response_spearman": -0.2383
+      },
+      "criterion_2_front_curvature": {
+        "curvature": 0.214,
+        "front_share_of_points": 0.0682,
+        "max_deviation_away_from_utopia": 0.214,
+        "max_deviation_toward_utopia": -0.0,
+        "n_front": 6
+      },
+      "criterion_3_surrogate_usefulness": {
+        "cost": {
+          "external_r2": 0.9347,
+          "external_spearman": 0.9444,
+          "meets_frozen_gate": true,
+          "spread_ratio_design_over_external": 0.981,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 20
+        },
+        "quality": {
+          "external_r2": 0.8598,
+          "external_spearman": 0.8571,
+          "meets_frozen_gate": false,
+          "spread_ratio_design_over_external": 0.975,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 7
+        }
+      },
+      "criterion_4_cost_dynamic_range": {
+        "max": 270909.6,
+        "max_over_min_leaf_count": 4355.5,
+        "min": 62.2
+      },
+      "dataset": "bank_marketing"
+    },
+    "magic": {
+      "criterion_1_objective_conflict": {
+        "criterion_text": "clearly negative; a value near zero means no conflict",
+        "latent_is_zero_by_construction": false,
+        "latent_pearson": -0.030012908755448056,
+        "latent_spearman": -0.2235,
+        "raw_response_spearman": -0.1982
+      },
+      "criterion_2_front_curvature": {
+        "curvature": 0.1662,
+        "front_share_of_points": 0.0909,
+        "max_deviation_away_from_utopia": 0.0,
+        "max_deviation_toward_utopia": 0.1662,
+        "n_front": 8
+      },
+      "criterion_3_surrogate_usefulness": {
+        "cost": {
+          "external_r2": 0.9049,
+          "external_spearman": 0.9415,
+          "meets_frozen_gate": true,
+          "spread_ratio_design_over_external": 0.963,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 16
+        },
+        "quality": {
+          "external_r2": 0.6913,
+          "external_spearman": 0.8297,
+          "meets_frozen_gate": false,
+          "spread_ratio_design_over_external": 0.915,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 13
+        }
+      },
+      "criterion_4_cost_dynamic_range": {
+        "max": 294989.4,
+        "max_over_min_leaf_count": 2706.3,
+        "min": 109.0
+      },
+      "dataset": "magic"
+    },
+    "spambase": {
+      "criterion_1_objective_conflict": {
+        "criterion_text": "clearly negative; a value near zero means no conflict",
+        "latent_is_zero_by_construction": false,
+        "latent_pearson": -0.0024419984126332955,
+        "latent_spearman": 0.3212,
+        "raw_response_spearman": -0.6802
+      },
+      "criterion_2_front_curvature": {
+        "curvature": null,
+        "n_front": 2,
+        "note": "fewer than three non-dominated points; curvature undefined"
+      },
+      "criterion_3_surrogate_usefulness": {
+        "cost": {
+          "external_r2": 0.9017,
+          "external_spearman": 0.9486,
+          "meets_frozen_gate": true,
+          "spread_ratio_design_over_external": 0.96,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 11
+        },
+        "quality": {
+          "external_r2": 0.9172,
+          "external_spearman": 0.9177,
+          "meets_frozen_gate": true,
+          "spread_ratio_design_over_external": 0.993,
+          "strictly_between_trivial_and_perfect": true,
+          "surface_terms": 13
+        }
+      },
+      "criterion_4_cost_dynamic_range": {
+        "max": 41264.4,
+        "max_over_min_leaf_count": 591.2,
+        "min": 69.8
+      },
+      "dataset": "spambase"
+    }
+  },
+  "no_arm_executed": true,
+  "purpose": "all four Stage-A screening criteria recomputed on the corrected factor model and the frozen per-dataset reference models",
+  "status": "PRE-CONFIRMATORY SCREENING EVIDENCE; not a study result"
+}

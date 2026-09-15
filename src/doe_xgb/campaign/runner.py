@@ -290,13 +290,15 @@ def run_unit(dataset: str, rep: int, root: Path, *, threads: int = 1,
                                           "two axes that are Pearson-orthogonal BY "
                                           "CONSTRUCTION -- the quality composite is a "
                                           "weighted sum of rotated factors and the "
-                                          "cost factor is another, so their linear "
-                                          "correlation is ~1e-16 on every dataset. "
-                                          "What it measures is rank-nonlinearity "
-                                          "residual, and its sign is not stable. The "
-                                          "conflict between the RAW responses is the "
-                                          "meaningful quantity and is reported "
-                                          "alongside it.")})
+                                          "cost factor is another from the same "
+                                          "orthogonal basis. Exactly zero on the "
+                                          "166-point set the frozen model was fitted "
+                                          "to; |r| <= 0.04 on any subsample of it. "
+                                          "What this Spearman measures is therefore "
+                                          "rank-nonlinearity residual and its sign is "
+                                          "not stable. The conflict between the RAW "
+                                          "responses is the meaningful quantity and "
+                                          "is reported beside it.")})
 
         Y = fm.objectives(design_df)                   # (88, 2), both minimized
 

@@ -268,7 +268,7 @@ circumstance in which a protocol change most needs scrutiny, so it is stated fir
 |---|---|
 | **v2 specification** | the runner raises a methodological failure when the latent objective conflict, Spearman between the quality composite and the cost factor, disagrees in sign with the same quantity computed from an equally weighted mean of the six canonicalized quality responses. The stated purpose was to catch a composite "inverted relative to the metrics it is built from". |
 | **What happened** | on the first smoke unit run against the **corrected** factor model, the guard fired on Spambase: latent +0.355 against raw −0.472. Investigated across the panel, it fires on **two of four** datasets (Spambase and Adult), which would record half the panel as methodological failures and exclude it. |
-| **Diagnosis, CORRECTED** | the guard was a proxy for inversion and the proxy is wrong. Measured directly, the composite is **not inverted anywhere**: its Spearman with the badness it aggregates is +0.929, +0.243, +0.835 and +0.896. **The mechanism behind the divergence is structural, not a property of any one response.** The quality composite is a weighted sum of rotated quality factors and the cost objective is another factor from the same orthogonal basis, so `Pearson(quality, cost)` is **zero by construction**: measured −3.3e−16, +3.9e−16, +7.6e−17, +3.1e−16 on the four design sets and −8.8e−17 to +4.9e−16 on the four 166-point reference sets. A Spearman between two variables with zero linear correlation is rank-nonlinearity residual, and its **sign is not stable**. Comparing that sign against the sign of a genuine −0.22 to −0.50 raw-response conflict was never an invariant; it was close to a coin flip. |
+| **Diagnosis, CORRECTED** | the guard was a proxy for inversion and the proxy is wrong. Measured directly, the composite is **not inverted anywhere**: its Spearman with the badness it aggregates is +0.929, +0.243, +0.835 and +0.896. **The mechanism behind the divergence is structural, not a property of any one response.** The quality composite is a weighted sum of rotated quality factors and the cost objective is another factor from the same orthogonal basis, so `Pearson(quality, cost)` is **zero by construction on the sample the model is fitted to**: measured +8.8e−17, −3.4e−16, +4.9e−16 and +1.5e−17 on the four 166-point reference sets. On a subsample it is approximate rather than exact — |r| ≤ 0.04 on the 88 design rows and on the 78-point complement — which does not change the substance: there is no linear association for a rank statistic to stand in for. A Spearman between two variables with zero linear correlation is rank-nonlinearity residual, and its **sign is not stable**. Comparing that sign against the sign of a genuine −0.22 to −0.50 raw-response conflict was never an invariant; it was close to a coin flip. |
 | **A diagnosis that was recorded here and is now withdrawn** | this row previously attributed the divergence to specificity trading off against the other quality responses at a fixed decision threshold. **That is false and was falsified by direct test.** Rebuilding the equally weighted raw reference with `Specificity_Mean` removed does not reconcile the sign on Spambase (latent +0.323 against raw-without-specificity −0.601) or on Adult (+0.103 against −0.284), and on Adult it is marginally *worse* than with specificity included (−0.398). No single-response exclusion reconciles either dataset. The false mechanism was found by the V10 independent review, not by the author, and is left visible here rather than quietly overwritten. `tests/methodology/test_frozen_reference_factor_model.py::test_specificity_removal_does_not_explain_the_divergence` keeps the falsification executable. |
 | **Revised specification** | the guard is split. **Hard, still a methodological failure:** the composite's Spearman with the badness it aggregates must be positive. A negative value means the study would be optimizing toward worse models and no result from that unit is usable. **Reported, never fatal:** the conflict-sign comparison against the equally weighted reference, persisted per replication with its own note. |
 | **Commit** | this one |
@@ -296,6 +296,27 @@ do about that changes a frozen screening rule.**
 | Spambase | −0.428 | **+0.310** | −3.4e−16 | **−0.500** |
 | Adult | −0.562 | **+0.103** | +4.9e−16 | **−0.440** |
 | Bank Marketing | −0.688 | **+0.001** | +1.5e−17 | **−0.431** |
+
+**A SECOND screening result the corrected model changes, found while re-running all four criteria
+(`audits/panel_rescreen_corrected.json`, produced by `scripts/rescreen_panel_corrected.py`).**
+
+| dataset | C1 latent ρ | C1 raw ρ | C2 \|front\| on the 88 design rows | C2 curvature | C3 quality R² | C3 cost R² | C4 cost range |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| MAGIC | −0.224 | −0.198 | 8 | 0.166 | 0.691 | 0.905 | 2706× |
+| Spambase | +0.321 | −0.680 | **2** | **undefined** | 0.917 | 0.902 | 591× |
+| Adult | +0.139 | −0.251 | 6 | 0.211 | 0.904 | 0.925 | 3421× |
+| Bank Marketing | −0.002 | −0.238 | 6 | 0.214 | 0.860 | 0.935 | 4356× |
+
+Criterion 2 requires the non-dominated set of design rows to be **detectably non-linear**. On
+Spambase that set has **two points**, so its curvature is not merely small — it is undefined, and a
+two-point front is the degenerate case in which every scalarization returns the same two anchors and
+there is no interior geometry for NBI and weighted sum to differ over. This is **dataset-specific and
+not structural**: the other three have 6 to 8 front points and curvature 0.17 to 0.21, which is
+exactly the regime the study is about. Criteria 3 and 4 are met by all four datasets.
+
+Spambase is also the dataset with the weakest composite alignment (+0.249 on its reference set), so
+two independent screening concerns land on the same member of the panel. **Whether that is grounds to
+treat Spambase differently is part of the same open decision and is likewise not made here.**
 
 **Why this is not a panel problem.** The quality composite is a weighted sum of rotated quality
 factors and the cost objective is another factor of the same orthogonal basis, so their linear
