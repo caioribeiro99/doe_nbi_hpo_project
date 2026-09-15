@@ -129,3 +129,20 @@ def test_campaign_total_is_the_product_it_claims_to_be():
             == unit_budget(2)["total_logical"] * units + cb["unmatched_nsga2_logical"])
     assert (cb["campaign_total_logical"]
             == cb["campaign_solution_producing_logical"] + cb["campaign_audit_only_logical"])
+
+
+def test_the_open_item_register_does_not_record_the_panel_as_closed():
+    """It was closed on a screening verdict that has since been withdrawn.
+
+    A freeze cannot ship with the panel decision recorded as settled by evidence the
+    same repository marks superseded three documents away.
+    """
+    import pathlib
+    proto = (pathlib.Path(__file__).resolve().parents[2] / "papers" / "xgboost_hpo_vrfnbi"
+             / "protocol" / "EXPERIMENT_PROTOCOL.md").read_text()
+    row = next((l for l in proto.splitlines()
+                if l.startswith("| 7 ") and "panel" in l.lower()), None)
+    assert row is not None, "the dataset-panel register row is gone"
+    assert "closed" not in row.lower() or "REOPENED" in row, (
+        f"the panel is still recorded as closed: {row[:160]}")
+    assert "blocks the v3 freeze" in row

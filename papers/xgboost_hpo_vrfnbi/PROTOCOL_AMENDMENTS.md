@@ -280,7 +280,54 @@ circumstance in which a protocol change most needs scrutiny, so it is stated fir
 
 ---
 
-## OPEN ITEM — blocks the v3 freeze, and is not decided here
+## OPEN ITEM 2 — the primary indicator is not fully specified
+
+**The primary test does not name which reference it is computed against, and the runner computes it
+against both.**
+
+`EXPERIMENT_PROTOCOL.md` §11 declares "**the primary indicator is the hypervolume ratio**, computed
+against the reference convention of section 9", with a family of three contrasts Holm-corrected
+within each dataset. §9's convention reads: "Primary endpoints are computed against an empirical
+reference built independently of any single method, **and repeated against** a sampled core the
+compared methods do not contribute to."
+
+The implementation produces both, per method, per replication
+(`runner.py`, metrics stage): `{"augmented": indicators(F, aug_front), "core": indicators(F, core_front)}`.
+
+They are materially different objects:
+
+| | core reference | augmented reference |
+|---|---|---|
+| composition | 88 design rows + 200 anchor-search rows | the core **plus every compared method's revalidated candidates** |
+| method-independent? | **yes**, by construction | no — each method contributes points to the front it is graded against |
+| self-grading | none | reported per method as `self_grading_share_of_front` |
+| measured on the smoke unit | 288 points | core + all arms and comparators |
+
+**Why this blocks.** With two hypervolume ratios and one declared "primary indicator", the primary
+Holm-corrected test is ambiguous, and the ambiguity is resolvable after the numbers are visible. That
+is the failure mode the whole pre-campaign freeze exists to prevent: an analyst who can choose the
+reference after seeing both has an undeclared degree of freedom on the study's headline result.
+
+**The two readings, and neither is adopted here.**
+
+1. **Core is primary.** "Built independently of any single method" is read strictly, and only the
+   core satisfies it; the augmented reference is the robustness view. This is the conservative
+   reading and the one consistent with the protocol's care about self-grading elsewhere — the fact
+   that `self_grading_share_of_front` is reported at all is an admission that the augmented reference
+   is contaminated by the methods being compared.
+2. **Augmented is primary.** "Built independently of any SINGLE method" is read literally: the
+   augmented reference is built from all methods jointly, so no single method determines it, and the
+   core is the "sampled core" that §9 says the result is *repeated against*. On this reading §9's
+   sentence order names the augmented reference first and therefore as primary.
+
+§9's own wording supports reading 2 grammatically and reading 1 methodologically, which is exactly
+why it needs deciding rather than interpreting. **The decision must be recorded before any
+confirmatory arm-level result is produced**, and it is a decision about what the paper's headline
+test measures, so it is not made here.
+
+---
+
+## OPEN ITEM 1 — blocks the v3 freeze, and is not decided here
 
 **Screening criterion 1 cannot be satisfied under the corrected factor algebra, and deciding what to
 do about that changes a frozen screening rule.**

@@ -485,12 +485,12 @@ before any campaign result. What remains does not block the freeze.
 
 | # | Remaining item | Blocks? | Disposition |
 |---|---|---|---|
-| 7 | Dataset panel confirmed by the screening measurements | **closed** | Stage A: all four datasets pass all four criteria; no replacement needed. `audits/PILOT_STAGE_A_FINDINGS.md` |
+| 7 | Dataset panel confirmed by the screening measurements | **REOPENED** | The Stage A verdict this was closed on was computed with the withdrawn factor algebra. Recomputed: criterion 1 is unsatisfiable by construction and **Spambase fails criterion 2 with a two-point non-dominated set**. See `audits/panel_rescreen_corrected.json`, `audits/latent_conflict_stability.json` and the open item in `PROTOCOL_AMENDMENTS.md`. **This item blocks the v3 freeze.** |
 | 8 | Thesis equation numbering, §2.9 Eqs 2.107–2.114 against §4.4.3 Eq 4.16 | no | needed before submission. The chapters are not on this machine; see `protocol/original_thesis_protocol.md` §13 |
 | 9 | Whether `pepper_species` exists and is public | no | the panel does not depend on it; see `protocol/dataset_selection.md` |
 | 10 | Self-overlap assessment against Pereira et al. (2025) and Paper 1 | no | needed before submission; see §13b |
 | 11 | Five failing tests in `test_stage0_extreme_lane_plan.py` | no | a wall-clock staleness gate refusing a 120-day-old summary, unrelated to this work; must not be left failing at submission |
-| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | Stage A measured 4.6 days serial for the four-dataset panel at q = 2, so the panel does not grow; the detectable effect size still comes from Stage B |
+| 13 | Panel size beyond four, and the detectable effect size at R = 30 | partly closed | The panel does not grow: the campaign projects 0.73 days at q = 2. The detectable effect size comes from Stage B and was **recomputed on the corrected factor model** — 0.8 to 2.8 percentage points of reference hypervolume uncorrected, 2.3 to 8.1 under the Nadeau-Bengio sensitivity. Whether the panel's membership stands is item 7, which is reopened |
 | 14 | Whether to run at q = 3 rather than q = 2 | **closed** | Stage A: q = 3 costs 5.8 days against a 5-day ceiling, so the campaign runs at q = 2. §8 |
 
 Items 8 and 9 both need the dissertation chapters, which are on a OneDrive path under a different

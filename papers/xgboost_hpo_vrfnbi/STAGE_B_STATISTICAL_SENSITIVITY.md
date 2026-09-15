@@ -56,10 +56,12 @@ replication count, however suggestive it looks, and will not be reported as one.
 
 ## What this means for the study, stated before any result exists
 
-**The hypervolume-ratio differences the study can resolve are between about 0.6 and 2.4 percentage
+**The hypervolume-ratio differences the study can resolve are between about 0.8 and 2.8 percentage
 points of the reference hypervolume** under the uncorrected paired test, depending on the dataset,
-and between **2.0 and 8.0 percentage points** under the corrected test at ρ = 0.25. MAGIC is the most
-sensitive by a factor of four and Spambase the least.
+and between **2.3 and 8.1 percentage points** under the corrected test at n_test/n_train = 0.25.
+Magic is the most sensitive, by a factor of 3.5, and Spambase the least. Every figure in this
+paragraph is regenerated from `audits/stage_b_sensitivity.json`; an earlier version published 0.6 to
+2.4 and 2.0 to 8.0, computed on the superseded factor algebra.
 
 Two consequences follow, and both are written down now rather than after the campaign.
 
@@ -84,13 +86,13 @@ understates it badly at R = 30.
 
 Corrected, the cost of the correction is much larger than previously reported: the standard error
 inflates by **sqrt(8.5) = 2.9155×** at n_test/n_train = 0.25, not 1.15×. An earlier version of this sentence said 3.31× “at ρ = 0.25”, which is the equicorrelation variant and corresponds to a 75/25 split, not this protocol's 80/20. The detectable hypervolume-ratio difference under the
-corrected test is therefore **0.020 to 0.080** depending on dataset, not 0.007 to 0.026.
+corrected test is therefore **0.023 to 0.081** depending on dataset, not 0.008 to 0.028.
 
 That is a material change and it is reported rather than buried. It is also why the correction is a
 **sensitivity and never the primary test**: it was derived for the generalization error of a learner
 under repeated resampling, and a Pareto quality indicator computed on a returned set is not that
-quantity. Applying it here is a transfer, and at ρ = 0.25 it would leave this design able to resolve
-only fairly large differences.
+quantity. Applying it here is a transfer, and at n_test/n_train = 0.25 it would leave this design able to
+resolve only fairly large differences.
 
 Primary evidence remains the paired effect distribution: the median with its bootstrap interval, the
 win, tie and loss counts with Wilson intervals, and the matched-pairs rank-biserial correlation.

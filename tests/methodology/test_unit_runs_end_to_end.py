@@ -306,3 +306,88 @@ def test_the_holdout_measurement_is_keyed_apart_from_the_internal_one(unit):
     assert "holdout" in folds and "all" in folds
     assert dupes, ("no configuration was measured both internally and on the "
                    "holdout, so this test cannot show they are keyed apart")
+
+
+# ---------------------------------------------------------------------------
+# contrast isolation AS THE RUNNER WIRED IT, not as the arm API allows
+#
+# tests/methodology/test_primary_contrasts.py exercises the arm functions directly
+# and now does so non-vacuously, but it constructs the arms itself. It therefore
+# proves that the API CAN isolate one mechanism, not that run_unit DID. The
+# contrast could be broken by the runner passing a different anchor set, weight
+# grid or config to one arm, and that test would still pass. These read the
+# artifacts a real unit wrote.
+# ---------------------------------------------------------------------------
+
+def _diag(unit, stage):
+    return json.loads((unit["dir"] / f"{stage}.json").read_text())["diagnostics"]
+
+
+def test_the_geometry_contrast_shares_its_reference_as_the_runner_ran_it(unit):
+    """WS-S and NBI-S must have been given the SAME surrogate reference."""
+    ws, nbi_s = _diag(unit, "ws_s"), _diag(unit, "nbi_s")
+    assert ws["utopia"] == nbi_s["utopia"], (
+        "WS-S and NBI-S were run against different utopia points, so the geometry "
+        "contrast also varies the reference")
+    assert ws["n_weights"] == nbi_s["n_weights"]
+    assert ws["scalarization"] != nbi_s["scalarization"], \
+        "the contrast does not actually change the scalarization"
+
+
+def test_the_anchor_contrast_changes_only_the_payoff_as_the_runner_ran_it(unit):
+    """NBI-S and NBI-R must differ in anchor provenance and in nothing else."""
+    s, r = _diag(unit, "nbi_s"), _diag(unit, "nbi_r")
+    assert s["anchor_source"] != r["anchor_source"], \
+        "the anchor contrast did not change anchor provenance"
+    assert s["payoff_matrix"] != r["payoff_matrix"], \
+        "the anchor contrast did not change the payoff matrix"
+    # quasi_normal is NOT a setting: it is the Das and Dennis direction
+    # n_hat = -Phi.1 / ||Phi.1||, derived from the payoff matrix. It must move when
+    # the payoff matrix moves, and holding it fixed would mean the contrast had not
+    # actually relocated the CHIM. It is checked below as a derived quantity.
+    for key in ("scalarization", "n_weights", "equality_tolerance",
+                "restrict_t_nonnegative", "feasibility_constraint_applied"):
+        assert s[key] == r[key], (
+            f"NBI-S and NBI-R differ in {key!r} as the runner ran them, which is "
+            f"beyond anchor/payoff provenance")
+
+
+def test_the_quasi_normal_is_derived_from_each_arms_own_payoff_matrix(unit):
+    """n_hat = -Phi.1 / ||Phi.1||, recomputed from what each arm recorded.
+
+    This is the mechanism the NBI-S to NBI-R contrast varies. Asserting the two arms
+    share a quasi-normal would assert the contrast does nothing; asserting each
+    derives its own from its own payoff matrix is the real invariant.
+    """
+    for stage in ("nbi_s", "nbi_r"):
+        d = _diag(unit, stage)
+        Phi = np.asarray(d["payoff_matrix"], dtype=float)
+        got = np.asarray(d["quasi_normal"], dtype=float)
+        want = -(Phi @ np.ones(Phi.shape[1]))
+        want = want / np.linalg.norm(want)
+        assert np.allclose(got, want, atol=1e-9), (
+            f"{stage}: recorded quasi-normal {got} is not -Phi.1/||Phi.1|| = {want}")
+    assert not np.allclose(np.asarray(_diag(unit, "nbi_s")["quasi_normal"]),
+                           np.asarray(_diag(unit, "nbi_r")["quasi_normal"])), (
+        "NBI-S and NBI-R share a quasi-normal, so relocating the anchors did not "
+        "relocate the CHIM and the contrast varies nothing")
+
+
+def test_both_historical_arms_used_the_same_weight_grid_shape_as_declared(unit):
+    """HISTORICAL-WS-asrun keeps the dissertation's asymmetric grid; the shared-
+    specification arm uses the symmetric one. That difference is the point."""
+    asrun = _diag(unit, "historical_ws_asrun")
+    shared = _diag(unit, "historical_ws")
+    assert asrun["weight_grid_is_symmetric"] is False, \
+        "the as-run arm lost the dissertation's missing pure-quality vertex"
+    assert shared.get("weight_grid_symmetric") is True, \
+        "the shared-specification arm is not on the symmetric grid"
+
+
+def test_the_shared_specification_arm_differs_from_ws_s_only_in_normalization(unit):
+    """HISTORICAL-WS vs WS-S is the normalization contrast and nothing else."""
+    ws, hist = _diag(unit, "ws_s"), _diag(unit, "historical_ws")
+    assert ws["scalarization"] == hist["scalarization"]
+    assert ws["n_weights"] == hist["n_weights"]
+    assert ws["reference_construction"] != hist["reference_construction"], \
+        "the normalization contrast did not change the reference construction"

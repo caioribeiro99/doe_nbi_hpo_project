@@ -104,3 +104,46 @@ def test_the_sensitivity_uses_the_campaigns_own_factor_model():
         "the power analysis is computed on the superseded pilot factor algebra"
     assert "pilot_stage_a_screening.py" not in src.split("# The objective definition")[-1] \
         or "superseded" in src
+
+
+# ---------------------------------------------------------------------------
+# the NARRATIVE too, not only the table
+#
+# The table was regenerated from the audit and the prose beneath it was not, so
+# four narrative lines went on publishing the superseded-algebra ranges (0.6-2.4
+# and 2.0-8.0 percentage points) directly under a corrected table, and two of them
+# still labelled the correction by rho. A document-conformance test that checks
+# only the machine-shaped part of a document is a test that the prose can drift
+# past.
+# ---------------------------------------------------------------------------
+
+def test_the_narrative_ranges_match_the_audit():
+    a = _audit()["datasets"]
+    hv = [b["hv_ratio"] for b in a.values()]
+    lo_u = min(v["minimum_detectable_paired_difference_80pct"] for v in hv)
+    hi_u = max(v["minimum_detectable_paired_difference_80pct"] for v in hv)
+    lo_c = min(v["mde_corrected_test_train_0.25"] for v in hv)
+    hi_c = max(v["mde_corrected_test_train_0.25"] for v in hv)
+    text = _doc()
+    for pp in (lo_u * 100, hi_u * 100, lo_c * 100, hi_c * 100):
+        assert f"{pp:.1f}" in text, f"the narrative does not state {pp:.1f} percentage points"
+    for raw in (lo_c, hi_c):
+        assert f"{raw:.3f}" in text, f"the narrative does not state {raw:.3f}"
+
+
+def test_the_superseded_narrative_ranges_are_gone():
+    """The exact strings the prose published from the withdrawn algebra."""
+    text = _doc()
+    for stale in ("0.6 and 2.4", "2.0 and 8.0", "0.020 to 0.080", "0.007 to 0.026"):
+        head = text.split("an earlier version")[0] if "an earlier version" in text else text
+        assert stale not in head, f"the narrative still asserts the superseded {stale!r}"
+
+
+def test_no_line_labels_the_correction_by_rho_except_the_withdrawal_note():
+    """rho and n_test/n_train coincide only at a 75/25 split, which this is not."""
+    import re
+    for i, line in enumerate(_doc().splitlines(), 1):
+        if re.search(r"(rho|ρ)\s*=\s*0\.25", line):
+            assert "equicorrelation" in line, (
+                f"line {i} labels the Nadeau-Bengio correction by rho = 0.25 without "
+                f"flagging it as the superseded equicorrelation reading: {line.strip()[:120]}")
