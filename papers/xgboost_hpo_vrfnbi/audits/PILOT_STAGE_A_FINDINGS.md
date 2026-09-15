@@ -229,6 +229,13 @@ trade off" means physically — is clearly negative on every dataset: **−0.251
 Both are computed from the factor model, so correcting it moves them. Recomputed in
 `audits/panel_rescreen_corrected.json`:
 
+> **The figures in this subsection are quoted from that intermediate artifact and are correct for
+> it.** They are NOT the current panel figures. `audits/panel_rescreen_corrected.json` was computed
+> before amendment 23 removed the audit-only rows from the factor model's fitting sample, and the
+> refit moved MAGIC's front from 8 points to 7 and its curvature from 0.166 to 0.173.
+> **`audits/final_panel_screening.json` is the authoritative panel artifact.** This subsection is
+> retained as the record of the recomputation that led to amendments 20 and 22.
+
 - **Criterion 2** (non-dominated set of design rows, detectably non-linear) is met by MAGIC, Adult
   and Bank Marketing with 8, 6 and 6 front points and curvature 0.17 to 0.21. **Spambase has two
   front points**, so its curvature is undefined rather than small — the degenerate case in which
