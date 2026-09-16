@@ -13,7 +13,8 @@ required **377,316 unique physical fits**, a 4.75% cache hit rate. The two are k
 every statement below: only the logical figure enters a fairness comparison, and the physical figure
 is an engineering quantity that enters none. The 15,360 evaluations of the
 unmatched NSGA-II context baseline are **already inside the four `rep_00` ledgers** summing to
-396,120; they are not added again, and no total of 411,480 appears in this paper.
+396,120; they are not added again. A total that adds them a second time is
+wrong by construction.
 
 Objective definitions were frozen before execution and **applied, never refitted**. One factor model
 per dataset was fitted on that dataset's 88 face-centred central composite design rows and nothing

@@ -3,7 +3,7 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-Manuscript commit `3ed41af5933d`. Protocol tag `xgboost-hpo-protocol-v3`.
+Manuscript commit `fc10a84f0bbc`. Protocol tag `xgboost-hpo-protocol-v3`.
 Results tag `xgboost-hpo-confirmatory-results-v1`.
 
 ## S1. Protocol lineage and tags
@@ -380,7 +380,7 @@ because independent verification refuted the author's version.
 
 | item | value |
 |---|---|
-| manuscript commit | `3ed41af5933da46ff27419c125ad4684fcec0a41` |
+| manuscript commit | `fc10a84f0bbca943ae53a78cc1d4247f6d453441` |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |
 | datasets | MAGIC, Spambase, Adult, Bank Marketing |

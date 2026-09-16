@@ -103,3 +103,4 @@ venv-*/
 /reports/pco213_postwork_benchmark/
 /.frozen/
 uv.lock
+papers/xgboost_hpo_vrfnbi/manuscript/*.html

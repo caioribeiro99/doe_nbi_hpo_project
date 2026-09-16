@@ -21,7 +21,7 @@ generalization; nothing is pooled.
 ## 5.2 Decision space
 
 Seven XGBoost hyperparameters are optimized, with the bounds of the reconstructed
-historical configuration retained unchanged Table 1.
+historical configuration retained unchanged (Table 1).
 
 | Hyperparameter | Low | High | Type |
 |---|---:|---:|---|
@@ -32,6 +32,10 @@ historical configuration retained unchanged Table 1.
 | `max_depth` | 3 | 18 | integer |
 | `gamma` | 0.05 | 5.00 | continuous |
 | `n_estimators` | 50 | 700 | integer |
+
+**Table 1.** The seven XGBoost hyperparameters and their frozen bounds. All enter
+the design in coded units on $[-1,1]$; integers are cast by `int(round(\cdot))` at
+evaluation time.
 
 A configuration is written in coded units as $x \in [-1, 1]^7$ and mapped to natural units
 by $\text{natural}_i(x) = lo_i + (x_i + 1)(hi_i - lo_i)/2$. `max_depth` and `n_estimators`

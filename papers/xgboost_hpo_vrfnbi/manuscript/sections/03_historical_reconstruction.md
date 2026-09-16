@@ -28,7 +28,7 @@ about any other implementation of NBI in the surrounding literature.
 ### 3.2 Four properties carried forward verbatim
 
 Four further properties of the archived implementation are relevant because each could, on its own,
-displace a returned front Table 2.
+displace a returned front (Table 2).
 
 | Property | Archived implementation |
 |---|---|
@@ -38,6 +38,10 @@ displace a returned front Table 2.
 | Objective orientation | maximization, larger-is-better objectives |
 | Surrogate fit | full quadratic response surfaces in uncoded natural units |
 | Surrogate adequacy | no external validation and no gate |
+
+**Table 2.** Properties of the archived implementation, reproduced rather than
+repaired. `HISTORICAL-WS-asrun` calls the frozen `v0.1.0-dissertation` solver
+unmodified.
 
 The normalization box is built from the component-wise maxima and minima of the design rows. These
 are not the objective values attained at the other objective's minimizer, which is what a payoff
