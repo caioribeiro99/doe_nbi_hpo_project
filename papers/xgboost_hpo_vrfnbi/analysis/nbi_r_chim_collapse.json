@@ -1,0 +1,50 @@
+{
+  "magic": {
+    "chim_extent_nbi_s_median": 3.2882851625827136,
+    "chim_extent_nbi_r_median": 2.5201223749978796,
+    "extent_ratio_median": 0.8108832967673812,
+    "extent_ratio_range": [
+      0.40545279641634296,
+      1.2972039740314363
+    ],
+    "hv_gap_median": -0.07414992974020673,
+    "spearman_extent_ratio_vs_hv_gap": -0.11056729699666296,
+    "n": 30
+  },
+  "spambase": {
+    "chim_extent_nbi_s_median": 1.1492757971355798,
+    "chim_extent_nbi_r_median": 0.467274485900921,
+    "extent_ratio_median": 0.36976644287498384,
+    "extent_ratio_range": [
+      0.02184034480603636,
+      1.1996244672654217
+    ],
+    "hv_gap_median": -0.6932438222530626,
+    "spearman_extent_ratio_vs_hv_gap": 0.32027601659618815,
+    "n": 30
+  },
+  "adult": {
+    "chim_extent_nbi_s_median": 3.852811502524098,
+    "chim_extent_nbi_r_median": 0.7162391544113497,
+    "extent_ratio_median": 0.2039644885908686,
+    "extent_ratio_range": [
+      0.03066226614768858,
+      0.5150387205652165
+    ],
+    "hv_gap_median": -0.019207524009663857,
+    "spearman_extent_ratio_vs_hv_gap": 0.6827586206896552,
+    "n": 30
+  },
+  "bank_marketing": {
+    "chim_extent_nbi_s_median": 3.325089782279681,
+    "chim_extent_nbi_r_median": 0.8912394544984619,
+    "extent_ratio_median": 0.2723746655582648,
+    "extent_ratio_range": [
+      0.07586859271885904,
+      0.5817076006878781
+    ],
+    "hv_gap_median": -0.4093376880920574,
+    "spearman_extent_ratio_vs_hv_gap": 0.6778642936596218,
+    "n": 30
+  }
+}
