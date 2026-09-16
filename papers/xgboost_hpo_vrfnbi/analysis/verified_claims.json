@@ -1,0 +1,115 @@
+{
+  "status": "VERIFIED CLAIM SET \u2014 every figure independently recomputed from raw unit artifacts",
+  "verification": {
+    "verifiers": 5,
+    "claims_checked": 11,
+    "confirmed": 9,
+    "corrected": 2,
+    "note": "the central contrast was rebuilt from candidate_revalidation rows through the frozen factor model with an independent dominance filter and 2-D hypervolume sweep, reproducing all 480 published per-unit values to 0.000e+00"
+  },
+  "CORRECTION_1_non_finite": {
+    "withdrawn_claim": "zero non-finite values in any artifact",
+    "why_it_was_wrong": "the completeness sweep iterated runner.STAGES, which does NOT contain metrics_by_method.json, so the indicator blocks were never examined",
+    "correct_statement": "140 non-finite cells exist, all of them spacing and spacing_cv on the 70 method-by-reference blocks whose front has ONE point. Schott spacing is undefined without at least two gaps; NaN is the correct value, not a defect, and those units are excluded from spacing summaries rather than propagated through a median",
+    "n_cells": 140,
+    "n_blocks": 70,
+    "indicators": [
+      "spacing",
+      "spacing_cv"
+    ],
+    "only_when_n_front": 1
+  },
+  "CORRECTION_2_boundary_control": {
+    "withdrawn_phrasing": "the geometry contrast is null on Spambase because there is no interior geometry for it to act on",
+    "why_it_overstates": "Spambase's geometry difference has median +0.0500 -- LARGER than MAGIC's significant +0.0374 -- with sd 1.7706 against MAGIC's 0.0594, a ~30x dispersion. The null is a failure to resolve at R = 30, not a demonstrated absence of effect",
+    "also": "'Spambase's design-row front has two points' is the PRE-CAMPAIGN screening value. Across the 30 confirmatory replications that front is median 3, range 2-5, and exactly 2 in 9 of 30",
+    "correct_statement": "the geometry contrast is NOT RESOLVABLE on Spambase at R = 30. That is consistent with the pre-specified reasoning about a degenerate reference front, and the pre-specification is what licenses reporting it separately, but it does not demonstrate that the mechanism is absent there",
+    "dispersion": {
+      "magic": {
+        "geometry_diff_median": 0.03744346173598184,
+        "sd": 0.05941719399543105,
+        "min": -0.008819451925790478,
+        "max": 0.2024215671977162,
+        "ties": 0,
+        "design_front_screening": 7,
+        "design_front_campaign_median": 9,
+        "design_front_campaign_range": [
+          6,
+          19
+        ],
+        "design_front_equals_two_in": 0
+      },
+      "spambase": {
+        "geometry_diff_median": 0.05001922979874765,
+        "sd": 1.7705934828737475,
+        "min": -5.287387349868834,
+        "max": 5.745658470420505,
+        "ties": 2,
+        "design_front_screening": 2,
+        "design_front_campaign_median": 3,
+        "design_front_campaign_range": [
+          2,
+          5
+        ],
+        "design_front_equals_two_in": 9
+      },
+      "adult": {
+        "geometry_diff_median": 0.25485334242289653,
+        "sd": 0.2827132337157429,
+        "min": 0.05928473703150372,
+        "max": 0.8413428100942398,
+        "ties": 0,
+        "design_front_screening": 6,
+        "design_front_campaign_median": 6,
+        "design_front_campaign_range": [
+          4,
+          8
+        ],
+        "design_front_equals_two_in": 0
+      },
+      "bank_marketing": {
+        "geometry_diff_median": 0.22807352871514036,
+        "sd": 0.33216556060363345,
+        "min": -0.20541902566542192,
+        "max": 1.1137972363580328,
+        "ties": 0,
+        "design_front_screening": 6,
+        "design_front_campaign_median": 5,
+        "design_front_campaign_range": [
+          3,
+          7
+        ],
+        "design_front_equals_two_in": 0
+      }
+    }
+  },
+  "OTHER_CAVEATS": {
+    "estimand": "every primary claim is about the returned FRONT, not about a deployed configuration. The holdout stage measures internal-versus-holdout optimism and was never designed to rank arms",
+    "indicator_specificity": {
+      "note": "the geometry effect is a hypervolume-and-IGD+ effect. Joint non-dominated fraction shows no significant difference on ANY dataset, so a general better-coverage claim is not supported",
+      "joint_nondominated_fraction": {
+        "magic": {
+          "median_diff": 0.020833333333333315,
+          "wilcoxon_p_raw": 0.15985804459730224
+        },
+        "spambase": {
+          "median_diff": 0.0,
+          "wilcoxon_p_raw": 0.5856465963806736
+        },
+        "adult": {
+          "median_diff": 0.0714285714285714,
+          "wilcoxon_p_raw": 0.09260557205438057
+        },
+        "bank_marketing": {
+          "median_diff": 0.0,
+          "wilcoxon_p_raw": 0.6271697535393987
+        }
+      }
+    },
+    "gate_regime": "the Adult and Bank Marketing geometry results were obtained where the composite-quality gate passes in 0 of 30 replications. The effect is therefore not conditional on a passing surrogate -- a strength, but one to state plainly rather than leave implicit",
+    "anchor_injection": "C7 holds for medians and signs. The control set is a SUPERSET of NBI-S's, so its effect is non-negative by construction; it is nonzero in 29/30 MAGIC units. The claim is that set composition explains none of the gap in the median, not that it is identically zero",
+    "budget_double_count": "396,120 logical evaluations ALREADY includes the unmatched NSGA-II charge inside the four rep_00 ledgers. Adding the manifest's 15,360 again gives 411,480 and is wrong. Logical (396,120) and unique physical (377,316, 4.75% cache) are distinct and only the logical figure enters fairness",
+    "frozen_factor_model": "factor_model.json differs byte-for-byte across the 30 replications of a dataset because it carries per-replication diagnostics including the refit sensitivity. The 15 MODEL-DEFINING fields are invariant, one hash per dataset. State the qualifier",
+    "spambase_not_globally_null": "Spambase's anchor-provenance contrast IS strongly negative and significant (median -0.6932, 5/30, Holm 0.00057) and its historical reconstruction gap is the panel's largest. It is excluded from the primary family, not from the findings"
+  }
+}

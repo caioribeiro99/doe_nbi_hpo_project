@@ -1,0 +1,39 @@
+{
+  "boundary_controls": [
+    "spambase"
+  ],
+  "entities": [
+    "ANCHOR-INJECTION-CONTROL",
+    "GRID",
+    "HISTORICAL-WS",
+    "HISTORICAL-WS-asrun",
+    "NBI-R",
+    "NBI-S",
+    "NSGA2-MATCHED",
+    "RANDOM",
+    "WS-S"
+  ],
+  "note": "every indicator was computed inside its own unit against that unit's own references by the frozen code; this file collects them and computes nothing new",
+  "primary_geometry_panel": [
+    "magic",
+    "adult",
+    "bank_marketing"
+  ],
+  "primary_indicator": "hv_ratio",
+  "primary_reference": "core",
+  "protocol_tag": "xgboost-hpo-protocol-v3",
+  "rows": 1080,
+  "single_objective_excluded_from_front_indicators": [
+    "bayes_quality",
+    "bayes_cost",
+    "tpe_quality",
+    "tpe_cost"
+  ],
+  "source_commit": "9b15ba7c9f99915f84f1863407479d729fe1badb",
+  "units_per_dataset": {
+    "adult": 30,
+    "bank_marketing": 30,
+    "magic": 30,
+    "spambase": 30
+  }
+}

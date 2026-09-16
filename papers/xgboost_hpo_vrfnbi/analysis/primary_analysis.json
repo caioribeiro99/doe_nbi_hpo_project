@@ -1,0 +1,2351 @@
+{
+  "primary_family": {
+    "core": {
+      "magic": [
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.861281311342603,
+          "median_b": 0.8613711353026456,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            -0.002175142308918243,
+            0.005592745446833303
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.0073593204680243735,
+          "wins_for_second": 14,
+          "losses": 13,
+          "ties": 3,
+          "win_fraction": 0.4666666666666667,
+          "win_fraction_ci95": [
+            0.3023238890435784,
+            0.6385770038378349
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.14285714285714285,
+          "wilcoxon_p": 0.5165484841465026,
+          "nadeau_bengio": {
+            "t": 0.4308854215154617,
+            "p": 0.6697375701205179,
+            "se_corrected": 0.0170795299644648,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.5165484841465026,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.8613711353026456,
+          "median_b": 0.9430370989571621,
+          "median_diff": 0.03744346173598179,
+          "median_diff_ci95": [
+            0.014411734315127267,
+            0.06868247441653907
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.056213688799720156,
+          "wins_for_second": 26,
+          "losses": 4,
+          "ties": 0,
+          "win_fraction": 0.8666666666666667,
+          "win_fraction_ci95": [
+            0.7031867331340118,
+            0.9469034451704432
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.9225806451612903,
+          "wilcoxon_p": 4.7124922275543213e-07,
+          "nadeau_bengio": {
+            "t": 1.777383365861717,
+            "p": 0.08599559872799596,
+            "se_corrected": 0.03162721665984898,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 9.424984455108643e-07,
+          "holm_significant_at_05": true
+        },
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.9430370989571621,
+          "median_b": 0.858848836438554,
+          "median_diff": -0.07414992974020662,
+          "median_diff_ci95": [
+            -0.09567779624726547,
+            -0.048220326919485634
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.07941362286806149,
+          "wins_for_second": 2,
+          "losses": 28,
+          "ties": 0,
+          "win_fraction": 0.06666666666666667,
+          "win_fraction_ci95": [
+            0.018477023786309332,
+            0.213234583672062
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.9870967741935484,
+          "wilcoxon_p": 9.313225746154785e-09,
+          "nadeau_bengio": {
+            "t": -2.3559793631716808,
+            "p": 0.025446299447994664,
+            "se_corrected": 0.033707265907946156,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 2.7939677238464355e-08,
+          "holm_significant_at_05": true
+        }
+      ],
+      "adult": [
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.5421871694865856,
+          "median_b": 0.6027905361047101,
+          "median_diff": -0.0006243628518724925,
+          "median_diff_ci95": [
+            -0.003322561610693206,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.016772571319753425,
+          "wins_for_second": 9,
+          "losses": 17,
+          "ties": 4,
+          "win_fraction": 0.3,
+          "win_fraction_ci95": [
+            0.16664748265873214,
+            0.4787578746297469
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.28205128205128205,
+          "wilcoxon_p": 0.20868126881333193,
+          "nadeau_bengio": {
+            "t": 0.3261081755030383,
+            "p": 0.7466842004835551,
+            "se_corrected": 0.05143253858594894,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.20868126881333193,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.6027905361047101,
+          "median_b": 0.9950936676208005,
+          "median_diff": 0.25485334242289653,
+          "median_diff_ci95": [
+            0.174033694932126,
+            0.561402138170086
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.38987190823424545,
+          "wins_for_second": 30,
+          "losses": 0,
+          "ties": 0,
+          "win_fraction": 1.0,
+          "win_fraction_ci95": [
+            0.8864866067788025,
+            1.0
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 1.862645149230957e-09,
+          "nadeau_bengio": {
+            "t": 2.5907587289686482,
+            "p": 0.014833113921610902,
+            "se_corrected": 0.15048561020942658,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 5.587935447692871e-09,
+          "holm_significant_at_05": true
+        },
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.9950936676208005,
+          "median_b": 0.9097750084202736,
+          "median_diff": -0.019207524009663857,
+          "median_diff_ci95": [
+            -0.16101408375157678,
+            0.029949187863140492
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": -0.14501398200659774,
+          "wins_for_second": 11,
+          "losses": 19,
+          "ties": 0,
+          "win_fraction": 0.36666666666666664,
+          "win_fraction_ci95": [
+            0.2187392080330897,
+            0.544864363492563
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": -0.36774193548387096,
+          "wilcoxon_p": 0.0803273618221283,
+          "nadeau_bengio": {
+            "t": -0.8250005796692577,
+            "p": 0.4161061557675511,
+            "se_corrected": 0.175774400140099,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 0.1606547236442566,
+          "holm_significant_at_05": false
+        }
+      ],
+      "bank_marketing": [
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.6081643775521925,
+          "median_b": 0.6010139038614799,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            -0.008783147637516725,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.007285976065853498,
+          "wins_for_second": 8,
+          "losses": 14,
+          "ties": 8,
+          "win_fraction": 0.26666666666666666,
+          "win_fraction_ci95": [
+            0.14182663317453809,
+            0.44447961699535415
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.20948616600790515,
+          "wilcoxon_p": 0.3896017975794498,
+          "nadeau_bengio": {
+            "t": 0.14037361363080111,
+            "p": 0.8893352752042939,
+            "se_corrected": 0.05190417114299316,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.3896017975794498,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.6010139038614799,
+          "median_b": 0.997869306784872,
+          "median_diff": 0.2280735287151403,
+          "median_diff_ci95": [
+            0.167023338378018,
+            0.47407849989425765
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.32491428325422084,
+          "wins_for_second": 24,
+          "losses": 6,
+          "ties": 0,
+          "win_fraction": 0.8,
+          "win_fraction_ci95": [
+            0.6269430358236961,
+            0.9049489282435853
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.875268817204301,
+          "wilcoxon_p": 3.2391399145126343e-06,
+          "nadeau_bengio": {
+            "t": 1.837660860968452,
+            "p": 0.07637831086695443,
+            "se_corrected": 0.17680862130512492,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 9.717419743537903e-06,
+          "holm_significant_at_05": true
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.997869306784872,
+          "median_b": 0.532961220553549,
+          "median_diff": -0.4093376880920575,
+          "median_diff_ci95": [
+            -0.5821029843104399,
+            -0.20586278889392884
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.379727819066687,
+          "wins_for_second": 7,
+          "losses": 23,
+          "ties": 0,
+          "win_fraction": 0.23333333333333334,
+          "win_fraction_ci95": [
+            0.11792388142587479,
+            0.40928326162543066
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.8150537634408602,
+          "wilcoxon_p": 2.366676926612854e-05,
+          "nadeau_bengio": {
+            "t": -1.8198164947745858,
+            "p": 0.07912441474247367,
+            "se_corrected": 0.20866269767146084,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 4.733353853225708e-05,
+          "holm_significant_at_05": true
+        }
+      ]
+    },
+    "augmented": {
+      "magic": [
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.7957312599688342,
+          "median_b": 0.795519058706579,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            -0.0029133595902381404,
+            0.004715674531201586
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.003994245631089662,
+          "wins_for_second": 13,
+          "losses": 14,
+          "ties": 3,
+          "win_fraction": 0.43333333333333335,
+          "win_fraction_ci95": [
+            0.273774855732975,
+            0.6080269300298514
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.047619047619047616,
+          "wilcoxon_p": 0.8288123742464508,
+          "nadeau_bengio": {
+            "t": 0.2809931445101031,
+            "p": 0.7807107786970046,
+            "se_corrected": 0.01421474405738055,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.8288123742464508,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.795519058706579,
+          "median_b": 0.9044153711208127,
+          "median_diff": 0.03823211361231671,
+          "median_diff_ci95": [
+            0.01786733809496205,
+            0.06683737271202542
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.06226684693735005,
+          "wins_for_second": 27,
+          "losses": 3,
+          "ties": 0,
+          "win_fraction": 0.9,
+          "win_fraction_ci95": [
+            0.7437891741623459,
+            0.965400111260696
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.9526881720430107,
+          "wilcoxon_p": 1.0244548320770264e-07,
+          "nadeau_bengio": {
+            "t": 1.7386289823962575,
+            "p": 0.0927079691810401,
+            "se_corrected": 0.03581376335480791,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 2.0489096641540527e-07,
+          "holm_significant_at_05": true
+        },
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.9044153711208127,
+          "median_b": 0.8333520235990737,
+          "median_diff": -0.07935860745958545,
+          "median_diff_ci95": [
+            -0.09391406441954575,
+            -0.04506733025474058
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.07913031795495747,
+          "wins_for_second": 1,
+          "losses": 29,
+          "ties": 0,
+          "win_fraction": 0.03333333333333333,
+          "win_fraction_ci95": [
+            0.0059085903796663175,
+            0.1667039099601182
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.9870967741935484,
+          "wilcoxon_p": 9.313225746154785e-09,
+          "nadeau_bengio": {
+            "t": -2.304445654523198,
+            "p": 0.028553670226213235,
+            "se_corrected": 0.03433811415758031,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 2.7939677238464355e-08,
+          "holm_significant_at_05": true
+        }
+      ],
+      "adult": [
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.5958105843429251,
+          "median_b": 0.6302262440134121,
+          "median_diff": -0.0005861097718626862,
+          "median_diff_ci95": [
+            -0.0018173598564469318,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.013585674619015338,
+          "wins_for_second": 8,
+          "losses": 18,
+          "ties": 4,
+          "win_fraction": 0.26666666666666666,
+          "win_fraction_ci95": [
+            0.14182663317453809,
+            0.44447961699535415
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.22507122507122507,
+          "wilcoxon_p": 0.3157546761755551,
+          "nadeau_bengio": {
+            "t": 0.330906448271068,
+            "p": 0.7430942829109198,
+            "se_corrected": 0.04105593798488443,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.3157546761755551,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.6302262440134121,
+          "median_b": 0.8902159361157242,
+          "median_diff": 0.19357493937683817,
+          "median_diff_ci95": [
+            0.13217716755296038,
+            0.37172619578888955
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.2847171097557987,
+          "wins_for_second": 30,
+          "losses": 0,
+          "ties": 0,
+          "win_fraction": 1.0,
+          "win_fraction_ci95": [
+            0.8864866067788025,
+            1.0
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 1.862645149230957e-09,
+          "nadeau_bengio": {
+            "t": 2.452873508231567,
+            "p": 0.020423845310901603,
+            "se_corrected": 0.11607492551096509,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 5.587935447692871e-09,
+          "holm_significant_at_05": true
+        },
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.8902159361157242,
+          "median_b": 0.8214053553454221,
+          "median_diff": -0.05348995906186066,
+          "median_diff_ci95": [
+            -0.11805584040882239,
+            0.0035237847546748524
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": -0.1273726809995628,
+          "wins_for_second": 10,
+          "losses": 20,
+          "ties": 0,
+          "win_fraction": 0.3333333333333333,
+          "win_fraction_ci95": [
+            0.1923049808108931,
+            0.5121994835961727
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": -0.5397849462365591,
+          "wilcoxon_p": 0.008705463260412216,
+          "nadeau_bengio": {
+            "t": -0.8997845524578869,
+            "p": 0.3756461903670495,
+            "se_corrected": 0.141559088396913,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 0.017410926520824432,
+          "holm_significant_at_05": true
+        }
+      ],
+      "bank_marketing": [
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.469174681844848,
+          "median_b": 0.505647307199366,
+          "median_diff": -6.570839921045402e-05,
+          "median_diff_ci95": [
+            -0.002081108996556641,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.011078580973170712,
+          "wins_for_second": 7,
+          "losses": 15,
+          "ties": 8,
+          "win_fraction": 0.23333333333333334,
+          "win_fraction_ci95": [
+            0.11792388142587479,
+            0.40928326162543066
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.233201581027668,
+          "wilcoxon_p": 0.3381955547039681,
+          "nadeau_bengio": {
+            "t": 0.26126212920764086,
+            "p": 0.7957369232265811,
+            "se_corrected": 0.04240408285261234,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.3381955547039681,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.505647307199366,
+          "median_b": 0.7448795423791708,
+          "median_diff": 0.17917302705609528,
+          "median_diff_ci95": [
+            0.1073772588114873,
+            0.20447206153747383
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.20606068891052567,
+          "wins_for_second": 25,
+          "losses": 5,
+          "ties": 0,
+          "win_fraction": 0.8333333333333334,
+          "win_fraction_ci95": [
+            0.6643564948905445,
+            0.9266345762953239
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.9354838709677419,
+          "wilcoxon_p": 2.551823854446411e-07,
+          "nadeau_bengio": {
+            "t": 1.9233719774340041,
+            "p": 0.06430081979594951,
+            "se_corrected": 0.10713512067771412,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 7.655471563339233e-07,
+          "holm_significant_at_05": true
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.7448795423791708,
+          "median_b": 0.5868309458917207,
+          "median_diff": -0.16990111756218132,
+          "median_diff_ci95": [
+            -0.2369360987988794,
+            -0.07721715645444632
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.20998930729596363,
+          "wins_for_second": 7,
+          "losses": 23,
+          "ties": 0,
+          "win_fraction": 0.23333333333333334,
+          "win_fraction_ci95": [
+            0.11792388142587479,
+            0.40928326162543066
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.8150537634408602,
+          "wilcoxon_p": 2.366676926612854e-05,
+          "nadeau_bengio": {
+            "t": -1.6442406972261916,
+            "p": 0.11092543502600817,
+            "se_corrected": 0.12771202394528508,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 4.733353853225708e-05,
+          "holm_significant_at_05": true
+        }
+      ]
+    }
+  },
+  "boundary_control": {
+    "core": {
+      "spambase": [
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.8582699342017639,
+          "median_b": 0.8819418956975393,
+          "median_diff": 0.001837315744337209,
+          "median_diff_ci95": [
+            0.0,
+            0.039775340701205975
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.23638900209003483,
+          "wins_for_second": 16,
+          "losses": 7,
+          "ties": 7,
+          "win_fraction": 0.5333333333333333,
+          "win_fraction_ci95": [
+            0.3614229961621652,
+            0.6976761109564217
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.4057971014492754,
+          "wilcoxon_p": 0.08852365377871517,
+          "nadeau_bengio": {
+            "t": 0.4103457717716934,
+            "p": 0.6845682975666553,
+            "se_corrected": 0.5760727131887106,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.11750839278420072,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.8819418956975393,
+          "median_b": 1.0811910341506035,
+          "median_diff": 0.05001922979874762,
+          "median_diff_ci95": [
+            -0.004288783016032971,
+            0.4369352504899325
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.4255729830704438,
+          "wins_for_second": 18,
+          "losses": 10,
+          "ties": 2,
+          "win_fraction": 0.6,
+          "win_fraction_ci95": [
+            0.42320360249392197,
+            0.7540937188618385
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.4088669950738916,
+          "wilcoxon_p": 0.05875419639210036,
+          "nadeau_bengio": {
+            "t": 0.4515505262039035,
+            "p": 0.6549518009843003,
+            "se_corrected": 0.9424703513207086,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 0.11750839278420072,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 1.0811910341506035,
+          "median_b": 0.0792885253360132,
+          "median_diff": -0.6932438222530626,
+          "median_diff_ci95": [
+            -0.983866381254543,
+            -0.5217165968184743
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -1.2092880837873878,
+          "wins_for_second": 5,
+          "losses": 25,
+          "ties": 0,
+          "win_fraction": 0.16666666666666666,
+          "win_fraction_ci95": [
+            0.07336542370467614,
+            0.3356435051094557
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.7806451612903226,
+          "wilcoxon_p": 0.00018880082520824886,
+          "nadeau_bengio": {
+            "t": -1.109675495516272,
+            "p": 0.2762561807792863,
+            "se_corrected": 1.0897673136638666,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 0.0005664024756247465,
+          "holm_significant_at_05": true
+        }
+      ]
+    },
+    "augmented": {
+      "spambase": [
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS -> WS-S",
+          "first": "HISTORICAL-WS",
+          "second": "WS-S",
+          "n_pairs": 30,
+          "median_a": 0.33566003991936744,
+          "median_b": 0.4023560893564938,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.00955404063499568
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.04071499444426009,
+          "wins_for_second": 14,
+          "losses": 5,
+          "ties": 11,
+          "win_fraction": 0.4666666666666667,
+          "win_fraction_ci95": [
+            0.3023238890435784,
+            0.6385770038378349
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.4842105263157895,
+          "wilcoxon_p": 0.06414936248047727,
+          "nadeau_bengio": {
+            "t": 0.452210559072815,
+            "p": 0.6544818488922411,
+            "se_corrected": 0.0900354793301148,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "normalization / historical reconstruction",
+          "holm_p": 0.12829872496095454,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "WS-S -> NBI-S",
+          "first": "WS-S",
+          "second": "NBI-S",
+          "n_pairs": 30,
+          "median_a": 0.4023560893564938,
+          "median_b": 0.45473654890584203,
+          "median_diff": 0.05025152056288901,
+          "median_diff_ci95": [
+            0.0,
+            0.2078998775535361
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.08898769124618526,
+          "wins_for_second": 19,
+          "losses": 9,
+          "ties": 2,
+          "win_fraction": 0.6333333333333333,
+          "win_fraction_ci95": [
+            0.45513563650743694,
+            0.7812607919669102
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.33004926108374383,
+          "wilcoxon_p": 0.12708824029768626,
+          "nadeau_bengio": {
+            "t": 0.45414829933600853,
+            "p": 0.6531029852615106,
+            "se_corrected": 0.1959441252478331,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "front-construction geometry",
+          "holm_p": 0.12829872496095454,
+          "holm_significant_at_05": false
+        },
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NBI-R",
+          "first": "NBI-S",
+          "second": "NBI-R",
+          "n_pairs": 30,
+          "median_a": 0.45473654890584203,
+          "median_b": 0.0,
+          "median_diff": -0.3464320561478538,
+          "median_diff_ci95": [
+            -0.4879783197007681,
+            -0.2553318560941872
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.35447214716825914,
+          "wins_for_second": 4,
+          "losses": 25,
+          "ties": 1,
+          "win_fraction": 0.13333333333333333,
+          "win_fraction_ci95": [
+            0.05309655482955683,
+            0.29681326686598813
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.8390804597701149,
+          "wilcoxon_p": 7.938995833231943e-05,
+          "nadeau_bengio": {
+            "t": -1.9122105870025081,
+            "p": 0.06577338244542134,
+            "se_corrected": 0.18537296549744195,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "anchor / payoff provenance",
+          "holm_p": 0.0002381698749969583,
+          "holm_significant_at_05": true
+        }
+      ]
+    }
+  },
+  "secondary": {
+    "core": {
+      "magic": [
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.7627011876082905,
+          "median_b": 0.861281311342603,
+          "median_diff": 0.09942897086554475,
+          "median_diff_ci95": [
+            0.06229622161404019,
+            0.12805103312484262
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.10104056191922581,
+          "wins_for_second": 29,
+          "losses": 1,
+          "ties": 0,
+          "win_fraction": 0.9666666666666667,
+          "win_fraction_ci95": [
+            0.8332960900398818,
+            0.9940914096203337
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.9956989247311828,
+          "wilcoxon_p": 3.725290298461914e-09,
+          "nadeau_bengio": {
+            "t": 2.975107471913162,
+            "p": 0.005851018150172888,
+            "se_corrected": 0.03396198721327234,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.9430370989571621,
+          "median_b": 0.960717994785362,
+          "median_diff": 0.013304725842464615,
+          "median_diff_ci95": [
+            0.006576151321991852,
+            0.028137082343559994
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.02958128554269819,
+          "wins_for_second": 29,
+          "losses": 0,
+          "ties": 1,
+          "win_fraction": 0.9666666666666667,
+          "win_fraction_ci95": [
+            0.8332960900398818,
+            0.9940914096203337
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 2.5630832507250074e-06,
+          "nadeau_bengio": {
+            "t": 1.403901002950503,
+            "p": 0.17096724474993774,
+            "se_corrected": 0.02107077741274406,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.9430370989571621,
+          "median_b": 1.0067713861699206,
+          "median_diff": 0.06276564314885696,
+          "median_diff_ci95": [
+            0.048008234423053575,
+            0.1122385409590359
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.0905088281758161,
+          "wins_for_second": 30,
+          "losses": 0,
+          "ties": 0,
+          "win_fraction": 1.0,
+          "win_fraction_ci95": [
+            0.8864866067788025,
+            1.0
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 1.862645149230957e-09,
+          "nadeau_bengio": {
+            "t": 2.8854632371300855,
+            "p": 0.007302897050288861,
+            "se_corrected": 0.03136717425859052,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.9430370989571621,
+          "median_b": 0.8906783897137823,
+          "median_diff": -0.05676886926588787,
+          "median_diff_ci95": [
+            -0.07579814733896534,
+            -0.008928689477530727
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.03462976289987399,
+          "wins_for_second": 10,
+          "losses": 20,
+          "ties": 0,
+          "win_fraction": 0.3333333333333333,
+          "win_fraction_ci95": [
+            0.1923049808108931,
+            0.5121994835961727
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": -0.4967741935483871,
+          "wilcoxon_p": 0.016431212425231934,
+          "nadeau_bengio": {
+            "t": -0.8835139376226623,
+            "p": 0.3842246808826015,
+            "se_corrected": 0.03919549135020429,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "magic",
+          "reference": "core",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.9430370989571621,
+          "median_b": 0.9580275270412296,
+          "median_diff": 0.024907321837007335,
+          "median_diff_ci95": [
+            -0.012537548199181403,
+            0.07580131702487813
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.03144902404612442,
+          "wins_for_second": 18,
+          "losses": 12,
+          "ties": 0,
+          "win_fraction": 0.6,
+          "win_fraction_ci95": [
+            0.42320360249392197,
+            0.7540937188618385
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.35913978494623655,
+          "wilcoxon_p": 0.08793856762349606,
+          "nadeau_bengio": {
+            "t": 0.5703784875764616,
+            "p": 0.5728141967163268,
+            "se_corrected": 0.05513711461971741,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ],
+      "spambase": [
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.0221488772681981,
+          "median_b": 0.8582699342017639,
+          "median_diff": 0.5404052404376034,
+          "median_diff_ci95": [
+            0.15264899609227572,
+            0.8736055382244863
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.33242213257626635,
+          "wins_for_second": 21,
+          "losses": 8,
+          "ties": 1,
+          "win_fraction": 0.7,
+          "win_fraction_ci95": [
+            0.521242125370253,
+            0.8333525173412679
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.4574712643678161,
+          "wilcoxon_p": 0.03143608436149796,
+          "nadeau_bengio": {
+            "t": 0.339396216118091,
+            "p": 0.7367569312203109,
+            "se_corrected": 0.9794514988363981,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 1.0811910341506035,
+          "median_b": 1.0811910341506035,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.0,
+          "wins_for_second": 0,
+          "losses": 0,
+          "ties": 30,
+          "win_fraction": 0.0,
+          "win_fraction_ci95": [
+            0.0,
+            0.11351339322119768
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.0,
+          "wilcoxon_p": NaN,
+          "nadeau_bengio": {
+            "t": NaN,
+            "p": NaN,
+            "se_corrected": 0.0,
+            "se_inflation": NaN
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 1.0811910341506035,
+          "median_b": 1.019240478305556,
+          "median_diff": 0.1285869264474938,
+          "median_diff_ci95": [
+            -0.1511002303665403,
+            0.3471877011635811
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": -0.5607042914723621,
+          "wins_for_second": 18,
+          "losses": 12,
+          "ties": 0,
+          "win_fraction": 0.6,
+          "win_fraction_ci95": [
+            0.42320360249392197,
+            0.7540937188618385
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.03225806451612903,
+          "wilcoxon_p": 0.8773898625008879,
+          "nadeau_bengio": {
+            "t": -0.5449929571718672,
+            "p": 0.5899254850642008,
+            "se_corrected": 1.028828508871061,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 1.0811910341506035,
+          "median_b": 0.0,
+          "median_diff": -1.0811910341506035,
+          "median_diff_ci95": [
+            -1.365713684107286,
+            -0.6925518218015633
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -1.8358042509443075,
+          "wins_for_second": 0,
+          "losses": 30,
+          "ties": 0,
+          "win_fraction": 0.0,
+          "win_fraction_ci95": [
+            0.0,
+            0.11351339322119768
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -1.0,
+          "wilcoxon_p": 1.7300371292901247e-06,
+          "nadeau_bengio": {
+            "t": -1.6229651768502802,
+            "p": 0.11541925007299772,
+            "se_corrected": 1.13114210774817,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "core",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 1.0811910341506035,
+          "median_b": 0.4163752875352794,
+          "median_diff": -0.2719168198511519,
+          "median_diff_ci95": [
+            -0.6110498293471882,
+            0.0047342727138403595
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": -0.7002584537009137,
+          "wins_for_second": 10,
+          "losses": 20,
+          "ties": 0,
+          "win_fraction": 0.3333333333333333,
+          "win_fraction_ci95": [
+            0.1923049808108931,
+            0.5121994835961727
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": -0.3118279569892473,
+          "wilcoxon_p": 0.13586638884724878,
+          "nadeau_bengio": {
+            "t": -0.5059768460832117,
+            "p": 0.6166977519216909,
+            "se_corrected": 1.3839733164109072,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ],
+      "adult": [
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.5196254542441561,
+          "median_b": 0.5421871694865856,
+          "median_diff": 0.1480043150501975,
+          "median_diff_ci95": [
+            -0.08148242385113719,
+            0.27024064206471676
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.09452433854474382,
+          "wins_for_second": 18,
+          "losses": 12,
+          "ties": 0,
+          "win_fraction": 0.6,
+          "win_fraction_ci95": [
+            0.42320360249392197,
+            0.7540937188618385
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.35913978494623655,
+          "wilcoxon_p": 0.08793856762349606,
+          "nadeau_bengio": {
+            "t": 0.5887850151068573,
+            "p": 0.5605640817377372,
+            "se_corrected": 0.16054134551571222,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.9950936676208005,
+          "median_b": 0.9950936676208005,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.002173769403019765,
+          "wins_for_second": 7,
+          "losses": 0,
+          "ties": 23,
+          "win_fraction": 0.23333333333333334,
+          "win_fraction_ci95": [
+            0.11792388142587479,
+            0.40928326162543066
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 0.017960477526078763,
+          "nadeau_bengio": {
+            "t": 0.8060044372328151,
+            "p": 0.42680052997798196,
+            "se_corrected": 0.0026969695234963947,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.9950936676208005,
+          "median_b": 1.0475699276497623,
+          "median_diff": 0.04875315293514726,
+          "median_diff_ci95": [
+            0.024538606747122382,
+            0.07834781181969613
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.06923102959630797,
+          "wins_for_second": 25,
+          "losses": 5,
+          "ties": 0,
+          "win_fraction": 0.8333333333333334,
+          "win_fraction_ci95": [
+            0.6643564948905445,
+            0.9266345762953239
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.7505376344086021,
+          "wilcoxon_p": 0.00013739429414272308,
+          "nadeau_bengio": {
+            "t": 1.3555720115857353,
+            "p": 0.18569928728760918,
+            "se_corrected": 0.05107145102186211,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.9950936676208005,
+          "median_b": 0.4368540836123888,
+          "median_diff": -0.5762025404222315,
+          "median_diff_ci95": [
+            -0.6563293091381504,
+            -0.44248921337388547
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.5472179357095013,
+          "wins_for_second": 0,
+          "losses": 30,
+          "ties": 0,
+          "win_fraction": 0.0,
+          "win_fraction_ci95": [
+            0.0,
+            0.11351339322119768
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -1.0,
+          "wilcoxon_p": 1.862645149230957e-09,
+          "nadeau_bengio": {
+            "t": -5.935436759878142,
+            "p": 1.9017273999861766e-06,
+            "se_corrected": 0.09219505789507157,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "adult",
+          "reference": "core",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.9950936676208005,
+          "median_b": 0.8649613778093327,
+          "median_diff": -0.11073597772698085,
+          "median_diff_ci95": [
+            -0.18950609448128797,
+            -0.011397079661895626
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.13234046649328304,
+          "wins_for_second": 8,
+          "losses": 22,
+          "ties": 0,
+          "win_fraction": 0.26666666666666666,
+          "win_fraction_ci95": [
+            0.14182663317453809,
+            0.44447961699535415
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.6430107526881721,
+          "wilcoxon_p": 0.0014574769884347916,
+          "nadeau_bengio": {
+            "t": -1.25251626236853,
+            "p": 0.22038859887084647,
+            "se_corrected": 0.10565967921488295,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ],
+      "bank_marketing": [
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.27430641599669037,
+          "median_b": 0.6081643775521925,
+          "median_diff": 0.3126082420837216,
+          "median_diff_ci95": [
+            0.19806469341204494,
+            0.44842214403651715
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.3969862979367223,
+          "wins_for_second": 25,
+          "losses": 5,
+          "ties": 0,
+          "win_fraction": 0.8333333333333334,
+          "win_fraction_ci95": [
+            0.6643564948905445,
+            0.9266345762953239
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.810752688172043,
+          "wilcoxon_p": 2.6885420083999634e-05,
+          "nadeau_bengio": {
+            "t": 1.5113589064088826,
+            "p": 0.1415183463337435,
+            "se_corrected": 0.26266844774812326,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.997869306784872,
+          "median_b": 0.997869306784872,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.023104226393334114,
+          "wins_for_second": 4,
+          "losses": 0,
+          "ties": 26,
+          "win_fraction": 0.13333333333333333,
+          "win_fraction_ci95": [
+            0.05309655482955683,
+            0.29681326686598813
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 0.06788915486182899,
+          "nadeau_bengio": {
+            "t": 0.5298425586986439,
+            "p": 0.6002545343672067,
+            "se_corrected": 0.04360583349529496,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.997869306784872,
+          "median_b": 1.0625136455275337,
+          "median_diff": 0.13226232326201776,
+          "median_diff_ci95": [
+            0.018212171090099982,
+            0.28914123134822145
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.031131119954455205,
+          "wins_for_second": 20,
+          "losses": 10,
+          "ties": 0,
+          "win_fraction": 0.6666666666666666,
+          "win_fraction_ci95": [
+            0.4878005164038272,
+            0.8076950191891068
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.2946236559139785,
+          "wilcoxon_p": 0.1641840822994709,
+          "nadeau_bengio": {
+            "t": 0.1349437375443874,
+            "p": 0.8935886224350926,
+            "se_corrected": 0.23069703360050453,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.997869306784872,
+          "median_b": 0.3190409816280322,
+          "median_diff": -0.6523585475178345,
+          "median_diff_ci95": [
+            -0.8470018887219113,
+            -0.47216472113944585
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.6899519102289574,
+          "wins_for_second": 2,
+          "losses": 28,
+          "ties": 0,
+          "win_fraction": 0.06666666666666667,
+          "win_fraction_ci95": [
+            0.018477023786309332,
+            0.213234583672062
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.9827956989247312,
+          "wilcoxon_p": 1.30385160446167e-08,
+          "nadeau_bengio": {
+            "t": -2.962849347474536,
+            "p": 0.00603201542900485,
+            "se_corrected": 0.23286769906713495,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "core",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.997869306784872,
+          "median_b": 0.9673861856808124,
+          "median_diff": 0.007911552315485848,
+          "median_diff_ci95": [
+            -0.2219363939009126,
+            0.24486611077546283
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": -0.09721471852464415,
+          "wins_for_second": 15,
+          "losses": 15,
+          "ties": 0,
+          "win_fraction": 0.5,
+          "win_fraction_ci95": [
+            0.3315412563702928,
+            0.6684587436297071
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": -0.04516129032258064,
+          "wilcoxon_p": 0.8393927440047264,
+          "nadeau_bengio": {
+            "t": -0.3078192720855296,
+            "p": 0.7604198694067178,
+            "se_corrected": 0.3158175180715534,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ]
+    },
+    "augmented": {
+      "magic": [
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.7087988923431114,
+          "median_b": 0.7957312599688342,
+          "median_diff": 0.0934812815990248,
+          "median_diff_ci95": [
+            0.05107728590053262,
+            0.11711711899911964
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.09869973845351347,
+          "wins_for_second": 29,
+          "losses": 1,
+          "ties": 0,
+          "win_fraction": 0.9666666666666667,
+          "win_fraction_ci95": [
+            0.8332960900398818,
+            0.9940914096203337
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.9956989247311828,
+          "wilcoxon_p": 3.725290298461914e-09,
+          "nadeau_bengio": {
+            "t": 2.421043024265586,
+            "p": 0.02196365347981393,
+            "se_corrected": 0.04076744504920711,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.9044153711208127,
+          "median_b": 0.9182347806918548,
+          "median_diff": 0.009020801030991066,
+          "median_diff_ci95": [
+            0.0049438800509297165,
+            0.023353562689014395
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.020955568407636172,
+          "wins_for_second": 24,
+          "losses": 0,
+          "ties": 6,
+          "win_fraction": 0.8,
+          "win_fraction_ci95": [
+            0.6269430358236961,
+            0.9049489282435853
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 1.8215297148968006e-05,
+          "nadeau_bengio": {
+            "t": 1.4617495908783493,
+            "p": 0.1545623344035518,
+            "se_corrected": 0.014335949562362593,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.9044153711208127,
+          "median_b": 0.9677092021026603,
+          "median_diff": 0.057430528116434065,
+          "median_diff_ci95": [
+            0.04595824762376838,
+            0.10545379818274214
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.0814208371824108,
+          "wins_for_second": 30,
+          "losses": 0,
+          "ties": 0,
+          "win_fraction": 1.0,
+          "win_fraction_ci95": [
+            0.8864866067788025,
+            1.0
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 1.862645149230957e-09,
+          "nadeau_bengio": {
+            "t": 3.0150195369369506,
+            "p": 0.005296721917550402,
+            "se_corrected": 0.02700507780627143,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.9044153711208127,
+          "median_b": 0.8362190774838223,
+          "median_diff": -0.0717617484239651,
+          "median_diff_ci95": [
+            -0.09258565785258333,
+            -0.021289103061295056
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.051381698136943606,
+          "wins_for_second": 9,
+          "losses": 21,
+          "ties": 0,
+          "win_fraction": 0.3,
+          "win_fraction_ci95": [
+            0.16664748265873214,
+            0.4787578746297469
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.6860215053763441,
+          "wilcoxon_p": 0.0006084088236093521,
+          "nadeau_bengio": {
+            "t": -1.3677501462095882,
+            "p": 0.18189693476027013,
+            "se_corrected": 0.037566582083238244,
+            "se_inflation": 2.915475947422651
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "magic",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.9044153711208127,
+          "median_b": 0.9037207535486829,
+          "median_diff": 0.020294669771678764,
+          "median_diff_ci95": [
+            -0.021159915396120943,
+            0.05957835518101062
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.013383712616447833,
+          "wins_for_second": 16,
+          "losses": 14,
+          "ties": 0,
+          "win_fraction": 0.5333333333333333,
+          "win_fraction_ci95": [
+            0.3614229961621652,
+            0.6976761109564217
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.2172043010752688,
+          "wilcoxon_p": 0.308520769700408,
+          "nadeau_bengio": {
+            "t": 0.27116084380274147,
+            "p": 0.7881881938404229,
+            "se_corrected": 0.04935709901457579,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ],
+      "spambase": [
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.0,
+          "median_b": 0.33566003991936744,
+          "median_diff": 0.10810765597403,
+          "median_diff_ci95": [
+            0.0,
+            0.42697458497737906
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.19356190581326363,
+          "wins_for_second": 16,
+          "losses": 7,
+          "ties": 7,
+          "win_fraction": 0.5333333333333333,
+          "win_fraction_ci95": [
+            0.3614229961621652,
+            0.6976761109564217
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.5,
+          "wilcoxon_p": 0.03584937324277264,
+          "nadeau_bengio": {
+            "t": 0.7843331935895337,
+            "p": 0.439204736027813,
+            "se_corrected": 0.24678530424986794,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.45473654890584203,
+          "median_b": 0.45473654890584203,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.0
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.0,
+          "wins_for_second": 0,
+          "losses": 0,
+          "ties": 30,
+          "win_fraction": 0.0,
+          "win_fraction_ci95": [
+            0.0,
+            0.11351339322119768
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.0,
+          "wilcoxon_p": NaN,
+          "nadeau_bengio": {
+            "t": NaN,
+            "p": NaN,
+            "se_corrected": 0.0,
+            "se_inflation": NaN
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.45473654890584203,
+          "median_b": 0.6912311775136236,
+          "median_diff": 0.08331583700908213,
+          "median_diff_ci95": [
+            -0.0021152637030044,
+            0.21131861148992956
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.08003086808863778,
+          "wins_for_second": 17,
+          "losses": 10,
+          "ties": 3,
+          "win_fraction": 0.5666666666666667,
+          "win_fraction_ci95": [
+            0.3919730699701486,
+            0.726225144267025
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.3862433862433862,
+          "wilcoxon_p": 0.07946051037588754,
+          "nadeau_bengio": {
+            "t": 0.4454738156903677,
+            "p": 0.6592852391132406,
+            "se_corrected": 0.17965336069104512,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.45473654890584203,
+          "median_b": 0.0,
+          "median_diff": -0.45473654890584203,
+          "median_diff_ci95": [
+            -0.6113941725983958,
+            -0.3931947396808811
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.508856473455182,
+          "wins_for_second": 0,
+          "losses": 28,
+          "ties": 2,
+          "win_fraction": 0.0,
+          "win_fraction_ci95": [
+            0.0,
+            0.11351339322119768
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -1.0,
+          "wilcoxon_p": 3.78961944158087e-06,
+          "nadeau_bengio": {
+            "t": -3.3534198980790744,
+            "p": 0.0022355003527431273,
+            "se_corrected": 0.1517425460935173,
+            "se_inflation": 2.915475947422651
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "spambase",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.45473654890584203,
+          "median_b": 0.25038728502794283,
+          "median_diff": -0.23888338721587377,
+          "median_diff_ci95": [
+            -0.41642140154407337,
+            -0.0038853646478060333
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.14054949286261795,
+          "wins_for_second": 10,
+          "losses": 20,
+          "ties": 0,
+          "win_fraction": 0.3333333333333333,
+          "win_fraction_ci95": [
+            0.1923049808108931,
+            0.5121994835961727
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": -0.2838709677419355,
+          "wilcoxon_p": 0.17460769472511573,
+          "nadeau_bengio": {
+            "t": -0.450647003270219,
+            "p": 0.6555953545018464,
+            "se_corrected": 0.3118837845202335,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ],
+      "adult": [
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.5214383535984565,
+          "median_b": 0.5958105843429251,
+          "median_diff": 0.13496929177117145,
+          "median_diff_ci95": [
+            0.0010936082012797943,
+            0.25018288889494195
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.07965512227790812,
+          "wins_for_second": 20,
+          "losses": 10,
+          "ties": 0,
+          "win_fraction": 0.6666666666666666,
+          "win_fraction_ci95": [
+            0.4878005164038272,
+            0.8076950191891068
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.4021505376344086,
+          "wilcoxon_p": 0.054921628907322884,
+          "nadeau_bengio": {
+            "t": 0.6217213864221276,
+            "p": 0.5389824084555654,
+            "se_corrected": 0.12812028670319056,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.8902159361157242,
+          "median_b": 0.8918962215642856,
+          "median_diff": 0.00010381402234804771,
+          "median_diff_ci95": [
+            0.0,
+            0.0034398262639052657
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.003954485887496158,
+          "wins_for_second": 15,
+          "losses": 0,
+          "ties": 15,
+          "win_fraction": 0.5,
+          "win_fraction_ci95": [
+            0.3315412563702928,
+            0.6684587436297071
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 0.0006549583433856956,
+          "nadeau_bengio": {
+            "t": 1.2492030702856012,
+            "p": 0.2215801761339738,
+            "se_corrected": 0.0031656069229737457,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.8902159361157242,
+          "median_b": 0.9314275245996027,
+          "median_diff": 0.0413158883551214,
+          "median_diff_ci95": [
+            0.024567437621215882,
+            0.05190680806819309
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.04935444865097757,
+          "wins_for_second": 25,
+          "losses": 5,
+          "ties": 0,
+          "win_fraction": 0.8333333333333334,
+          "win_fraction_ci95": [
+            0.6643564948905445,
+            0.9266345762953239
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.8494623655913979,
+          "wilcoxon_p": 7.994472980499268e-06,
+          "nadeau_bengio": {
+            "t": 1.4268573330245138,
+            "p": 0.1642997803564684,
+            "se_corrected": 0.03458961699160266,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.8902159361157242,
+          "median_b": 0.5119495498559129,
+          "median_diff": -0.37383786677982067,
+          "median_diff_ci95": [
+            -0.433522583357471,
+            -0.33811236963404107
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.38849533674677306,
+          "wins_for_second": 0,
+          "losses": 30,
+          "ties": 0,
+          "win_fraction": 0.0,
+          "win_fraction_ci95": [
+            0.0,
+            0.11351339322119768
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -1.0,
+          "wilcoxon_p": 1.862645149230957e-09,
+          "nadeau_bengio": {
+            "t": -5.962108115022307,
+            "p": 1.7673741554591202e-06,
+            "se_corrected": 0.06516073329296201,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "adult",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.8902159361157242,
+          "median_b": 0.8114593072685372,
+          "median_diff": -0.07899821733862267,
+          "median_diff_ci95": [
+            -0.12495597546388049,
+            -0.027539217221733525
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.09558467630530564,
+          "wins_for_second": 7,
+          "losses": 23,
+          "ties": 0,
+          "win_fraction": 0.23333333333333334,
+          "win_fraction_ci95": [
+            0.11792388142587479,
+            0.40928326162543066
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.6602150537634408,
+          "wilcoxon_p": 0.001038169488310814,
+          "nadeau_bengio": {
+            "t": -1.268732889803119,
+            "p": 0.21462605602993184,
+            "se_corrected": 0.07533869191342427,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ],
+      "bank_marketing": [
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "HISTORICAL-WS-asrun -> HISTORICAL-WS",
+          "first": "HISTORICAL-WS-asrun",
+          "second": "HISTORICAL-WS",
+          "n_pairs": 30,
+          "median_a": 0.30126451652774255,
+          "median_b": 0.469174681844848,
+          "median_diff": 0.1635263022596121,
+          "median_diff_ci95": [
+            0.06920273439560115,
+            0.22137918186517835
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.17110239510022793,
+          "wins_for_second": 24,
+          "losses": 6,
+          "ties": 0,
+          "win_fraction": 0.8,
+          "win_fraction_ci95": [
+            0.6269430358236961,
+            0.9049489282435853
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.7548387096774194,
+          "wilcoxon_p": 0.00012333691120147705,
+          "nadeau_bengio": {
+            "t": 1.4530401819105825,
+            "p": 0.15694863985862945,
+            "se_corrected": 0.11775475807919347,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "shared specification vs bit-faithful"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "NBI-S -> ANCHOR-INJECTION-CONTROL",
+          "first": "NBI-S",
+          "second": "ANCHOR-INJECTION-CONTROL",
+          "n_pairs": 30,
+          "median_a": 0.7448795423791708,
+          "median_b": 0.7609908670994536,
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.00799057060805608
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.033070925414971225,
+          "wins_for_second": 14,
+          "losses": 0,
+          "ties": 16,
+          "win_fraction": 0.4666666666666667,
+          "win_fraction_ci95": [
+            0.3023238890435784,
+            0.6385770038378349
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 1.0,
+          "wilcoxon_p": 0.0009815397525216685,
+          "nadeau_bengio": {
+            "t": 0.7914309775225987,
+            "p": 0.4351182806234835,
+            "se_corrected": 0.041786240814698096,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "set composition at fixed geometry"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "NBI-S -> GRID",
+          "first": "NBI-S",
+          "second": "GRID",
+          "n_pairs": 30,
+          "median_a": 0.7448795423791708,
+          "median_b": 0.8529639694561852,
+          "median_diff": 0.14933626052399107,
+          "median_diff_ci95": [
+            0.05765018987775916,
+            0.24080425578355752
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": 0.13878524769464567,
+          "wins_for_second": 21,
+          "losses": 9,
+          "ties": 0,
+          "win_fraction": 0.7,
+          "win_fraction_ci95": [
+            0.521242125370253,
+            0.8333525173412679
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": 0.6172043010752688,
+          "wilcoxon_p": 0.0023674946278333664,
+          "nadeau_bengio": {
+            "t": 1.1026358774499248,
+            "p": 0.2792520823743838,
+            "se_corrected": 0.12586679839913742,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched grid"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "NBI-S -> RANDOM",
+          "first": "NBI-S",
+          "second": "RANDOM",
+          "n_pairs": 30,
+          "median_a": 0.7448795423791708,
+          "median_b": 0.39506909994644474,
+          "median_diff": -0.34009922773706364,
+          "median_diff_ci95": [
+            -0.41794759343114574,
+            -0.19405530658697293
+          ],
+          "ci_excludes_zero": true,
+          "mean_diff": -0.3072576687509624,
+          "wins_for_second": 4,
+          "losses": 26,
+          "ties": 0,
+          "win_fraction": 0.13333333333333333,
+          "win_fraction_ci95": [
+            0.05309655482955683,
+            0.29681326686598813
+          ],
+          "win_ci_excludes_half": true,
+          "rank_biserial": -0.9053763440860215,
+          "wilcoxon_p": 9.98377799987793e-07,
+          "nadeau_bengio": {
+            "t": -2.3150932293318855,
+            "p": 0.02788476855608348,
+            "se_corrected": 0.13271935007111316,
+            "se_inflation": 2.9154759474226504
+          },
+          "mechanism": "vs evaluation-matched random"
+        },
+        {
+          "dataset": "bank_marketing",
+          "reference": "augmented",
+          "contrast": "NBI-S -> NSGA2-MATCHED",
+          "first": "NBI-S",
+          "second": "NSGA2-MATCHED",
+          "n_pairs": 30,
+          "median_a": 0.7448795423791708,
+          "median_b": 0.8128616367246728,
+          "median_diff": 0.09428375917535553,
+          "median_diff_ci95": [
+            -0.084556861688036,
+            0.16602104011449964
+          ],
+          "ci_excludes_zero": false,
+          "mean_diff": 0.028475164160420733,
+          "wins_for_second": 18,
+          "losses": 12,
+          "ties": 0,
+          "win_fraction": 0.6,
+          "win_fraction_ci95": [
+            0.42320360249392197,
+            0.7540937188618385
+          ],
+          "win_ci_excludes_half": false,
+          "rank_biserial": 0.14408602150537633,
+          "wilcoxon_p": 0.5027610473334789,
+          "nadeau_bengio": {
+            "t": 0.15639500810120505,
+            "p": 0.8768053523724529,
+            "se_corrected": 0.18207207829801142,
+            "se_inflation": 2.91547594742265
+          },
+          "mechanism": "vs evaluation-matched NSGA-II"
+        }
+      ]
+    }
+  },
+  "convention": {
+    "indicator": "hv_ratio",
+    "primary_reference": "core",
+    "sensitivity_reference": "augmented",
+    "sign": "difference is (second - first); positive favours the second arm",
+    "correction": "Holm within each dataset; no pooling across datasets",
+    "primary_evidence": "median paired difference with percentile bootstrap interval, win fraction with Wilson interval, matched-pairs rank-biserial correlation",
+    "test_status": "secondary; Nadeau-Bengio corrected t a further sensitivity",
+    "bootstrap_resamples": 10000,
+    "seed": 20260915
+  }
+}
