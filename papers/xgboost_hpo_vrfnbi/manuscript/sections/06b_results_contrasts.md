@@ -27,7 +27,7 @@ surrogate architecture, two objectives and this budget. It is not a claim that N
 recovers a true Pareto front: the endpoint is a ratio against CORE, a finite
 method-independent empirical reference of 288 points before Pareto filtering, so a
 ratio above 1 means only that the candidate set improved on that finite reference
-([TAB:primary_contrasts]).
+(Table 4).
 
 Two qualifications belong in the same breath as the result. First, the geometry
 advantage did not require a surrogate that passed the study's own external reliability
@@ -36,10 +36,13 @@ replications, and the geometry effect is Holm-significant on both. The gate was
 diagnostic rather than adaptive — every arm ran at every replication regardless of its
 outcome — and absolute surrogate trustworthiness and relative front-construction
 geometry are different questions, of which this study answers only the second. Second,
-at the frozen comparator budget an evaluation-matched coarse grid attained a higher
-median CORE-relative hypervolume than every surrogate-assisted arm on every dataset in
-the panel (NBI-S 0.9430 vs grid 1.0068 on MAGIC; 0.9951 vs 1.0476 on Adult; 0.9979 vs
-1.0625 on Bank Marketing; 1.0812 vs 1.0192 on Spambase). The budget rule is matched to
+under the frozen direct-search comparator budget the median paired difference
+favoured the coarse grid over NBI-S on all four datasets ($-0.0628$, $-0.0488$,
+$-0.1323$, $-0.1286$), and the grid's marginal median exceeded NBI-S on three of the
+four (grid 1.0068 vs NBI-S 0.9430 on MAGIC; 1.0476 vs 0.9951 on Adult; 1.0625 vs
+0.9979 on Bank Marketing) but **not on Spambase**, where NBI-S is the higher at 1.0812
+against 1.0192. The two statistics answer different questions and only the paired one
+is a within-replication comparison. The budget rule is matched to
 the most expensive arm (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186
 standalone, so the comparators received roughly twice the real evaluations those arms
 require; the rule was frozen before any result existed and is not revised here. The
@@ -47,7 +50,7 @@ geometry contrast compares two front constructions at a fixed surrogate budget; 
 not a demonstration that the surrogate-assisted family is preferable to direct search.
 Section 6.7 reports this baseline in full.
 
-**[TAB:primary_contrasts] Primary paired contrasts on CORE-relative hypervolume ratio,
+**Table 4 Primary paired contrasts on CORE-relative hypervolume ratio,
 $R = 30$, differences formed as (second − first).**
 
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
@@ -62,6 +65,8 @@ $R = 30$, differences formed as (second − first).**
 | NBI-S → NBI-R | MAGIC | **−0.0741** | [−0.0957, −0.0482] | 2/0/28 | — | 0.0000 |
 | NBI-S → NBI-R | Adult | −0.0192 | [−0.1610, +0.0299] | 11/0/19 | — | 0.1607 |
 | NBI-S → NBI-R | Bank Marketing | **−0.4093** | [−0.5821, −0.2059] | 7/0/23 | — | 0.0000 |
+
+**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, Holm-corrected within dataset, $R=30$.
 
 Spambase is shown for completeness and is excluded from the primary inferential family
 by prospective designation; it is treated in Section 6.6.
@@ -81,7 +86,27 @@ is described as significant. The defensible statement is therefore narrow: under
 frozen study conditions the advantage is specifically an improvement in convergence and
 coverage geometry as measured by hypervolume and IGD⁺. The data do not support a
 general better-coverage claim, and in particular do not support a claim that NBI
-construction returned more non-dominated solutions [FIG:indicator_panel].
+construction returned more non-dominated solutions Figure 2.
+
+
+### 6.3.1 The pre-declared corrected test
+
+Section 5.15 declared the Nadeau–Bengio corrected resampled $t$ as a sensitivity, with
+an inflation of $\sqrt{8.5} = 2.9155$ at $R = 30$ and $n_{\text{test}}/n_{\text{train}} = 0.25$.
+It is reported here whichever way it falls. **Under the corrected test the geometry
+contrast reaches $0.05$ on Adult ($p = 0.0148$) and on neither MAGIC
+($p = 0.0860$) nor Bank Marketing ($p = 0.0764$).** The
+anchor-provenance contrast reaches it on MAGIC ($p = 0.0254$) and on neither
+Adult ($p = 0.4161$) nor Bank Marketing ($p = 0.0791$).
+
+This correction was derived for the generalization error of a learner under repeated
+resampling, and a Pareto quality indicator computed on a returned set is not that
+quantity; applying it here is a transfer, which is why it was declared a sensitivity
+and not the primary test. The descriptive triple remains primary. But a sensitivity
+declared before any result existed is reported whether or not it flatters the
+finding, and under this one the geometry contrast clears $0.05$ on one of the three
+primary datasets rather than three. Every corrected $p$-value appears in
+Supplement S9.
 
 ## 6.4 Anchor and payoff provenance: NBI-S versus NBI-R
 
@@ -115,9 +140,12 @@ MAGIC and +0.0000 on the other three datasets, against full NBI-S → NBI-R gaps
 geometric consequences of the relocated payoff matrix rather than with anchor
 point-set composition, though the control does not establish that the negative is
 entirely geometric. Solver health is identical between the two arms — certified
-fraction 1.000, maximum equality residual 0.000, and 20 distinct realized
-configurations for both on every dataset — so the deficit is not solver failure, not
-rounding and not candidate collapse.
+fraction has median 1.000 over the 240 arm-units, with two exceptions at 0.900 and
+0.950; the per-unit maximum equality residual has median $6.6\times10^{-10}$, with a
+campaign maximum of $6.9\times10^{-1}$ on a single MAGIC NBI-S unit; and both arms
+return 20 distinct realized configurations in every unit. Solver behaviour is
+therefore comparable between the arms and does not account for the deficit, but it
+is not identical and we do not state it as a universal.
 
 The second diagnostic is the CHIM extent $\|\Phi_{:,0} - \Phi_{:,1}\|$, which at $q = 2$
 is the segment along which the subproblems distribute their targets. Under empirical
@@ -127,7 +155,7 @@ correlations between the per-replication extent ratio and the per-replication
 hypervolume gap are +0.683 on Adult, +0.678 on Bank Marketing, +0.320 on Spambase and
 **−0.111 on MAGIC**. This is an association measured across 30 replications within a
 dataset, present on three datasets and absent on the fourth; it is not a demonstrated
-cause of the deficit, and it is not presented as one [FIG:chim_contraction].
+cause of the deficit, and it is not presented as one Figure 4.
 
 ## 6.5 Reference sensitivity
 
@@ -146,4 +174,4 @@ CORE remains primary because it was prospectively frozen as method-independent b
 any result existed; AUGMENTED remains a mandatory sensitivity, not an alternative from
 which a reference may be selected after the fact. The reported Adult conclusion is
 accordingly the CORE non-detection, with the AUGMENTED result stated alongside it here
-and in [TAB:reference_sensitivity].
+and in Supplement S9.

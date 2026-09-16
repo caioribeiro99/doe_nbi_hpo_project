@@ -29,7 +29,7 @@ before Pareto filtering, present in every unit** — that no compared method con
 the true Pareto front, and a ratio above 1 is not an error: it means the returned set improved on
 that finite reference.
 
-Dataset roles were assigned by prospective screening and not revised (see [TAB:panel_screening]).
+Dataset roles were assigned by prospective screening and not revised (see Supplement S5).
 MAGIC, Adult and Bank Marketing met the nonlinear-front criterion and form the primary geometry
 panel; Spambase failed it and was retained in advance as a **boundary geometry control**, executed
 in full under identical arms, budgets and seeds, and excluded only from the primary inferential
@@ -57,13 +57,15 @@ needs a separate, specification-matched contrast.
 **HISTORICAL-WS $\rightarrow$ WS-S isolates normalization alone**: the same weighted sum, the same
 surrogates, the same symmetric weight grid, differing only in whether the normalization box comes
 from observed design-row extrema or from the payoff matrix. The effect is undetectable on every
-primary dataset ([TAB:historical_specification]).
+primary dataset (Table 3).
 
 | dataset | median difference | bootstrap interval | win/tie/loss | Holm $p$ |
 |---|---:|---|---:|---:|
 | MAGIC | +0.0000 | [-0.0022, +0.0056] | 14/3/13 | 0.5165 |
 | Adult | -0.0006 | [-0.0033, +0.0000] | 9/4/17 | 0.2087 |
 | Bank Marketing | +0.0000 | [-0.0088, +0.0000] | 8/8/14 | 0.3896 |
+
+**Table 3.** The historical specification contrast, HISTORICAL-WS $\rightarrow$ WS-S, CORE reference, $R=30$.
 
 This is a **non-detection at $R = 30$**, not a demonstration of no effect: exact ties occur in 3, 4
 and 8 of the 30 replications on MAGIC, Adult and Bank Marketing, and the frozen design resolves only
@@ -79,4 +81,4 @@ Adult, +0.3126 [+0.1981, +0.4484] on Bank Marketing and +0.5404 [+0.1526, +0.873
 panel's largest. That gap is the whole historical reconstruction effect, and it is confounded by
 construction: surrogate identity, coding and weight-grid symmetry move together in it. Given the
 non-detection above, the normalization reference is not what explains it, and we attribute it no
-further [FIG:historical_reconstruction].
+further Figure 1.

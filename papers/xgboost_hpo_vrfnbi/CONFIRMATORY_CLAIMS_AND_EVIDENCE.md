@@ -120,7 +120,7 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 | **Uncertainty** | the control set is a **superset** of NBI-S's, so its effect is non-negative by construction; it is nonzero in 29/30 MAGIC units (max +0.1755) |
 | **Multiplicity-adjusted inference** | within-dataset Spearman between the per-replication CHIM extent ratio and the per-replication hypervolume gap: MAGIC rho = -0.111; Adult rho = +0.683; Bank Marketing rho = +0.678; Spambase rho = +0.320 |
 | **Machine-readable source** | `analysis/secondary_analysis.json` → `controls`; `analysis/nbi_r_chim_collapse.json`; `analysis/nbi_r_mechanism.json` |
-| **Verification status** | CONFIRMED for medians and signs (verifier C7). Solver health is identical between the arms: certified fraction 1.000, max equality residual 0.000, and 20 distinct realized configurations for both, on every dataset — so the deficit is not solver failure, not rounding and not candidate collapse. |
+| **Verification status** | CONFIRMED for medians and signs (verifier C7). Solver health is comparable between the arms and does not explain the deficit, but it is NOT identical and must not be stated as a universal: over 240 arm-units the certified fraction has median 1.000 with two exceptions (0.900 and 0.950), the per-unit maximum equality residual has median 6.6e-10 with a campaign maximum of 6.9e-01 on one MAGIC NBI-S unit, and both arms return 20 distinct realized configurations. An earlier version of this row asserted 1.000 and 0.000 "on every dataset", which is false. |
 
 **Allowed wording.** "Inserting NBI-R's empirical anchors into NBI-S's returned set moves the indicator by approximately zero on three of four datasets, while the full provenance change moves it substantially. The deficit is therefore associated with the geometric consequences of the relocated payoff matrix rather than with anchor point-set composition. The CHIM segment contracts to 20–81% of its surrogate-derived extent under empirical anchors, and within three of four datasets replications with greater contraction show larger deficits."
 
@@ -255,16 +255,36 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 | **Dataset role** | all four datasets |
 | **Endpoint** | CORE-relative hypervolume ratio |
 | **Reference** | CORE |
-| **Effect estimate** | **GRID has the higher median on all four datasets.** MAGIC NBI-S 0.9430 vs GRID 1.0068 (median -0.0628); Adult NBI-S 0.9951 vs GRID 1.0476 (median -0.0488); Bank Marketing NBI-S 0.9979 vs GRID 1.0625 (median -0.1323); Spambase NBI-S 1.0812 vs GRID 1.0192 (median -0.1286) |
+| **Effect estimate** | **Two distinct statements, and they differ.** The median PAIRED difference favours the grid on all four datasets. The grid's MARGINAL median exceeds NBI-S on three of four — **not on Spambase**, where NBI-S's marginal median is 1.0812 against the grid's 1.0192. MAGIC NBI-S 0.9430 vs GRID 1.0068 (median -0.0628); Adult NBI-S 0.9951 vs GRID 1.0476 (median -0.0488); Bank Marketing NBI-S 0.9979 vs GRID 1.0625 (median -0.1323); Spambase NBI-S 1.0812 vs GRID 1.0192 (median -0.1286) |
 | **Win / tie / loss** | MAGIC NBI-S wins 0/30; Adult NBI-S wins 5/30; Bank Marketing NBI-S wins 10/30; Spambase NBI-S wins 12/30 |
 | **Uncertainty** | descriptive only — this contrast is **not** part of the frozen primary family and carries no Holm correction |
 | **Multiplicity-adjusted inference** | MAGIC raw p = 0.0000; Adult raw p = 0.0001; Bank Marketing raw p = 0.1642; Spambase raw p = 0.8774 — the gap is significant on MAGIC and Adult and not on Bank Marketing or Spambase |
 | **Machine-readable source** | `analysis/baseline_vs_arms.json`; `analysis/secondary_analysis.json` → `baselines` |
 | **Verification status** | CONFIRMED by direct recomputation from the raw indicator blocks. |
 
-**Allowed wording.** "At the frozen comparator budget, an evaluation-matched coarse grid attained higher median CORE-relative hypervolume than every surrogate-assisted arm on every dataset in the panel." **This must be reported with the budget asymmetry stated in the same breath:** the comparator budget is the maximum over arms (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators received roughly **twice** the real evaluations those arms require. The frozen rule was chosen before any result existed and is not revised now.
+**Allowed wording.** "Under the frozen direct-search comparator budget, the median paired difference in CORE-relative hypervolume ratio favoured the coarse grid over NBI-S on all four datasets, and the grid's marginal median exceeded every surrogate-assisted arm on three of the four." **The universal form — higher on every dataset — is FALSE and must not be written: on Spambase NBI-S's marginal median is the higher of the two.** This must be reported with the budget asymmetry stated in the same breath:** the comparator budget is the maximum over arms (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators received roughly **twice** the real evaluations those arms require. The frozen rule was chosen before any result existed and is not revised now.
 
 **Prohibited stronger wording.** Do NOT bury this. Do NOT present the geometry result without it. Do NOT claim the grid is *more efficient* — the budgets are not equal and the rule is matched-to-the-most-expensive-arm, not matched-to-each-arm. Equally, do NOT explain the result away on that basis: at the budget the protocol froze, direct search led.
+
+### Claim 13 — The pre-declared corrected test, including where it is adverse
+
+| field | value |
+|---|---|
+| **Scientific question** | What does the Nadeau-Bengio corrected resampled t say about the primary contrasts? |
+| **Estimand** | The same paired differences as Claims 2 and 4, under SE_corr^2 = (1/R + n_test/n_train) s^2 with R = 30 and n_test/n_train = 0.25, an inflation of sqrt(8.5) = 2.9155. |
+| **Dataset role** | primary geometry-confirmatory panel |
+| **Endpoint** | CORE-relative hypervolume ratio |
+| **Reference** | CORE |
+| **Effect estimate** | MAGIC Holm 9.42e-07 vs corrected 0.0860; Adult Holm 5.59e-09 vs corrected 0.0148; Bank Marketing Holm 9.72e-06 vs corrected 0.0764 |
+| **Win / tie / loss** | not applicable |
+| **Uncertainty** | the correction was declared in advance as a sensitivity and is reported here whichever way it falls |
+| **Multiplicity-adjusted inference** | **Under the corrected test the geometry contrast reaches 0.05 on Adult (0.0148) only, and not on MAGIC (0.0860) or Bank Marketing (0.0764).** The anchor contrast reaches it on MAGIC (0.0254) and not elsewhere. |
+| **Machine-readable source** | `analysis/primary_analysis.json` → `nadeau_bengio` within each cell |
+| **Verification status** | CONFIRMED. The values were computed by the frozen analysis and stored; they were omitted from the first manuscript draft, which a reviewer caught. |
+
+**Allowed wording.** Report the corrected p-values in the results and in the supplement tables. State plainly that under this correction the geometry contrast clears 0.05 on one of three primary datasets. The correction is a SENSITIVITY and the descriptive triple remains primary — but a sensitivity declared in advance is reported whether or not it flatters the result.
+
+**Prohibited stronger wording.** Do NOT omit it. Do NOT report it only where it agrees with the Holm result. Do NOT use its stringency to argue the primary evidence is stronger than it is, and do NOT use the descriptive-triple-primary rule as a reason to bury it.
 
 ---
 

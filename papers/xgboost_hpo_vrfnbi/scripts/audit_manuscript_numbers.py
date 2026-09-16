@@ -205,6 +205,10 @@ def main() -> int:
     unexplained: list[tuple[str, int, str, str]] = []
     total = 0
     for path in sorted(SECTIONS.glob("*.md")):
+        # A references section is bibliographic data, not results. It is checked by the
+        # citation audit, not by this one.
+        if path.name.startswith("11_references"):
+            continue
         for i, line in enumerate(path.read_text().splitlines(), 1):
             if line.strip().startswith("[FIG:") or line.strip().startswith("[TAB:"):
                 continue

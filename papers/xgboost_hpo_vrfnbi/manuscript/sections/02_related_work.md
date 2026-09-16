@@ -86,6 +86,6 @@ about any implementation not reconstructed here, including that of Pereira et al
 search located no work applying NBI or NBI-VRF to hyperparameter optimization; non-location is weaker
 than absence, and the transfer is not offered as the contribution. NBI, Varimax-rotated factor
 objectives, and design of experiments for hyperparameter tuning are all prior art, and none of them
-is claimed here — [TAB:prior_art] records each element with its owner. What this paper contributes is
+is claimed here — §2.7 records each element with its owner. What this paper contributes is
 the prospectively frozen decomposition of that inherited construction into the three mechanisms it
 bundles, described in §3.

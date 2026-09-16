@@ -20,13 +20,24 @@ CORE-relative hypervolume than specification-matched weighted scalarization: med
 differences of $+0.0374$ on MAGIC, $+0.2549$ on Adult and $+0.2281$ on Bank Marketing,
 favoured in 26/30, 30/30 and 24/30 replications, rank-biserial $\geq +0.88$ in all three,
 Holm-significant within every primary dataset, which is the generalization unit
-[TAB:primary_contrasts].
+Table 4.
 
 The scope is part of the claim: two objectives, this surrogate architecture, this budget,
 these three datasets. Nothing licenses "NBI is better than weighted sum" in general. The
 endpoint is a CORE-relative hypervolume ratio against a finite method-independent set of
 288 points, where a value above 1 is expected and means only that the returned set
 improved on that finite reference.
+
+
+The strength of the geometry evidence depends on which test is read. Under the
+Holm-corrected signed-rank test declared primary, the contrast is significant in all
+three primary datasets. Under the Nadeau–Bengio correction declared in advance as a
+sensitivity, it clears $0.05$ on Adult alone ($p = 0.0148$, against
+0.0860 and 0.0764). We take the descriptive triple as
+primary, as specified before the campaign ran, and report the corrected test because
+it was promised — not because it agrees. A reader who weights the corrected test more
+heavily than we do should read the geometry result as one clearly resolved dataset and
+two suggestive ones.
 
 ## 7.3 Why hypervolume and IGD⁺ move while the non-dominated count does not
 
@@ -58,16 +69,11 @@ panel's one reference disagreement on Adult's anchor contrast, significant under
 
 ## 7.5 CHIM contraction is the associated mechanism, and only that
 
-The deficit is not solver failure: certified fraction 1.000, zero maximum equality
-residual, 20 distinct realized configurations per arm on every dataset. Inserting NBI-R's
-empirical anchors into NBI-S's returned set and changing nothing else moves the indicator
-by $+0.0133$ on MAGIC and $+0.0000$ on the other three, against the full provenance gaps
-above and $-0.6932$ on Spambase: the deficit is associated with the geometric consequences
-of the relocated payoff matrix rather than with anchor point-set composition. And the CHIM
-segment contracts to 20–81% of its surrogate-derived extent under empirical anchors —
-extent ratios 0.811, 0.204, 0.272 and 0.370 on MAGIC, Adult, Bank Marketing and Spambase
-[FIG:chim_contraction]. At $q = 2$ that segment is what the subproblems distribute targets
-along, so a shorter one spreads the set over a narrower band.
+The deficit is not attributable to solver failure. Over the 240 arm-units the
+certified fraction has median 1.000 with two exceptions (0.900, 0.950), the
+per-unit maximum equality residual has median $6.6\times10^{-10}$ against a
+campaign maximum of $6.9\times10^{-1}$ on one unit, and both arms return 20
+distinct realized configurations throughout. Comparable, not identical.
 
 This is an association across 30 replications within a dataset, not a demonstrated cause:
 the within-dataset Spearman between contraction and deficit is $+0.683$ on Adult, $+0.678$
@@ -87,11 +93,11 @@ driver.
 
 ## 7.7 The grid baseline, and what it costs the argument
 
-At the frozen comparator budget, an evaluation-matched coarse grid attained higher median
-CORE-relative hypervolume than every surrogate-assisted arm on every dataset in the panel
+At the frozen comparator budget, the frozen-budget direct grid baseline attained higher median
+CORE-relative hypervolume than every surrogate-assisted arm on three of the four datasets
 — NBI-S against GRID, 0.9430/1.0068 on MAGIC, 0.9951/1.0476 on Adult, 0.9979/1.0625 on
 Bank Marketing and 1.0812/1.0192 on Spambase, NBI-S winning 0/30, 5/30, 10/30 and 12/30
-replications [TAB:baseline_vs_arms]. The budget asymmetry belongs in the same breath: the
+replications Supplement S13. The budget asymmetry belongs in the same breath: the
 comparator budget is the maximum over arms, 386 real evaluations set by NBI-R, while WS-S
 and NBI-S cost 186 standalone, so comparators received roughly twice the real evaluations
 those arms require. The contrast is outside the frozen primary family, uncorrected, and
@@ -110,7 +116,7 @@ The advantage of NBI over weighted scalarization persisted even where the extern
 audited surrogate failed the frozen quality criterion. On Adult and Bank Marketing the
 composite-quality gate passed in 0 of 30 replications and the geometry effect is
 Holm-significant on both, against 8 of 30 on MAGIC and 9 of 30 on Spambase
-[FIG:gate_regime]. The gate was diagnostic: every arm ran at every replication whatever it
+Figure 6. The gate was diagnostic: every arm ran at every replication whatever it
 said, so it annotates the evidence instead of selecting it. The inference is narrow:
 absolute surrogate trustworthiness and relative front-construction geometry are different
 questions and this study answers only the second. We do not conclude that the geometry

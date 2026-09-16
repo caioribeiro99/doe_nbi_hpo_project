@@ -3,18 +3,18 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-Manuscript commit `cbefdcf89072`. Protocol tag `xgboost-hpo-protocol-v3`.
+Manuscript commit `3ed41af5933d`. Protocol tag `xgboost-hpo-protocol-v3`.
 Results tag `xgboost-hpo-confirmatory-results-v1`.
 
 ## S1. Protocol lineage and tags
 
 | tag | commit | what it records |
 |---|---|---|
-| `v0.1.0-dissertation` | `54c062d` | the historical implementation this study reconstructs |
-| `xgboost-hpo-protocol-v1` | `40eb026` | the specification frozen before the pilot |
-| `xgboost-hpo-protocol-v2` | `d37d48d` | the confirmatory protocol after pilot Stage A |
-| `xgboost-hpo-protocol-v3` | `63af6f1` | the final frozen protocol, before any comparative result |
-| `xgboost-hpo-confirmatory-results-v1` | `6037e34` | the first adversarially verified analysis |
+| `v0.1.0-dissertation` | `67d9fe5` | the historical implementation this study reconstructs |
+| `xgboost-hpo-protocol-v1` | `355c290` | the specification frozen before the pilot |
+| `xgboost-hpo-protocol-v2` | `c50c380` | the confirmatory protocol after pilot Stage A |
+| `xgboost-hpo-protocol-v3` | `9b15ba7` | the final frozen protocol, before any comparative result |
+| `xgboost-hpo-confirmatory-results-v1` | `a4f20ed` | the first adversarially verified analysis |
 
 The protocol tag records what was specified **before** any comparative result
 existed; the results tag records the first verified analysis. Neither was moved.
@@ -179,37 +179,45 @@ All 3,840 campaign streams are distinct and stable across processes and
 
 ### S9.1 CORE reference (primary)
 
-| dataset | contrast | median Δ | 95% CI | W/T/L | rank-biserial | Holm $p$ |
-|---|---|---:|---|---:|---:|---:|
-| MAGIC | HISTORICAL-WS -> WS-S | +0.0000 | [-0.0022, +0.0056] | 14/3/13 | +0.14 | 0.5165 |
-| MAGIC | WS-S -> NBI-S | +0.0374 | [+0.0144, +0.0687] | 26/0/4 | +0.92 | 9.425e-07 |
-| MAGIC | NBI-S -> NBI-R | -0.0741 | [-0.0957, -0.0482] | 2/0/28 | -0.99 | 2.794e-08 |
-| Adult | HISTORICAL-WS -> WS-S | -0.0006 | [-0.0033, +0.0000] | 9/4/17 | -0.28 | 0.2087 |
-| Adult | WS-S -> NBI-S | +0.2549 | [+0.1740, +0.5614] | 30/0/0 | +1.00 | 5.588e-09 |
-| Adult | NBI-S -> NBI-R | -0.0192 | [-0.1610, +0.0299] | 11/0/19 | -0.37 | 0.1607 |
-| Bank Marketing | HISTORICAL-WS -> WS-S | +0.0000 | [-0.0088, +0.0000] | 8/8/14 | -0.21 | 0.3896 |
-| Bank Marketing | WS-S -> NBI-S | +0.2281 | [+0.1670, +0.4741] | 24/0/6 | +0.88 | 9.717e-06 |
-| Bank Marketing | NBI-S -> NBI-R | -0.4093 | [-0.5821, -0.2059] | 7/0/23 | -0.82 | 4.733e-05 |
-| Spambase | HISTORICAL-WS -> WS-S | +0.0018 | [+0.0000, +0.0398] | 16/7/7 | +0.41 | 0.1175 |
-| Spambase | WS-S -> NBI-S | +0.0500 | [-0.0043, +0.4369] | 18/2/10 | +0.41 | 0.1175 |
-| Spambase | NBI-S -> NBI-R | -0.6932 | [-0.9839, -0.5217] | 5/0/25 | -0.78 | 0.0005664 |
+| dataset | contrast | median Δ | 95% CI | W/T/L | rank-biserial | Holm $p$ | Nadeau–Bengio $p$ |
+|---|---|---:|---|---:|---:|---:|---:|
+| MAGIC | HISTORICAL-WS -> WS-S | +0.0000 | [-0.0022, +0.0056] | 14/3/13 | +0.14 | 0.5165 | 0.6697 |
+| MAGIC | WS-S -> NBI-S | +0.0374 | [+0.0144, +0.0687] | 26/0/4 | +0.92 | 9.425e-07 | 0.0860 |
+| MAGIC | NBI-S -> NBI-R | -0.0741 | [-0.0957, -0.0482] | 2/0/28 | -0.99 | 2.794e-08 | 0.0254 |
+| Adult | HISTORICAL-WS -> WS-S | -0.0006 | [-0.0033, +0.0000] | 9/4/17 | -0.28 | 0.2087 | 0.7467 |
+| Adult | WS-S -> NBI-S | +0.2549 | [+0.1740, +0.5614] | 30/0/0 | +1.00 | 5.588e-09 | 0.0148 |
+| Adult | NBI-S -> NBI-R | -0.0192 | [-0.1610, +0.0299] | 11/0/19 | -0.37 | 0.1607 | 0.4161 |
+| Bank Marketing | HISTORICAL-WS -> WS-S | +0.0000 | [-0.0088, +0.0000] | 8/8/14 | -0.21 | 0.3896 | 0.8893 |
+| Bank Marketing | WS-S -> NBI-S | +0.2281 | [+0.1670, +0.4741] | 24/0/6 | +0.88 | 9.717e-06 | 0.0764 |
+| Bank Marketing | NBI-S -> NBI-R | -0.4093 | [-0.5821, -0.2059] | 7/0/23 | -0.82 | 4.733e-05 | 0.0791 |
+| Spambase | HISTORICAL-WS -> WS-S | +0.0018 | [+0.0000, +0.0398] | 16/7/7 | +0.41 | 0.1175 | 0.6846 |
+| Spambase | WS-S -> NBI-S | +0.0500 | [-0.0043, +0.4369] | 18/2/10 | +0.41 | 0.1175 | 0.6550 |
+| Spambase | NBI-S -> NBI-R | -0.6932 | [-0.9839, -0.5217] | 5/0/25 | -0.78 | 0.0005664 | 0.2763 |
+
+The Nadeau–Bengio column is the pre-declared corrected resampled $t$, at an
+inflation of $\sqrt{8.5} = 2.9155$. It is a sensitivity, not the primary test,
+and is reported in full including where it is adverse to the finding.
 
 ### S9.2 AUGMENTED reference (mandatory sensitivity)
 
-| dataset | contrast | median Δ | 95% CI | W/T/L | rank-biserial | Holm $p$ |
-|---|---|---:|---|---:|---:|---:|
-| MAGIC | HISTORICAL-WS -> WS-S | +0.0000 | [-0.0029, +0.0047] | 13/3/14 | +0.05 | 0.8288 |
-| MAGIC | WS-S -> NBI-S | +0.0382 | [+0.0179, +0.0668] | 27/0/3 | +0.95 | 2.049e-07 |
-| MAGIC | NBI-S -> NBI-R | -0.0794 | [-0.0939, -0.0451] | 1/0/29 | -0.99 | 2.794e-08 |
-| Adult | HISTORICAL-WS -> WS-S | -0.0006 | [-0.0018, +0.0000] | 8/4/18 | -0.23 | 0.3158 |
-| Adult | WS-S -> NBI-S | +0.1936 | [+0.1322, +0.3717] | 30/0/0 | +1.00 | 5.588e-09 |
-| Adult | NBI-S -> NBI-R | -0.0535 | [-0.1181, +0.0035] | 10/0/20 | -0.54 | 0.01741 |
-| Bank Marketing | HISTORICAL-WS -> WS-S | -0.0001 | [-0.0021, +0.0000] | 7/8/15 | -0.23 | 0.3382 |
-| Bank Marketing | WS-S -> NBI-S | +0.1792 | [+0.1074, +0.2045] | 25/0/5 | +0.94 | 7.655e-07 |
-| Bank Marketing | NBI-S -> NBI-R | -0.1699 | [-0.2369, -0.0772] | 7/0/23 | -0.82 | 4.733e-05 |
-| Spambase | HISTORICAL-WS -> WS-S | +0.0000 | [+0.0000, +0.0096] | 14/11/5 | +0.48 | 0.1283 |
-| Spambase | WS-S -> NBI-S | +0.0503 | [+0.0000, +0.2079] | 19/2/9 | +0.33 | 0.1283 |
-| Spambase | NBI-S -> NBI-R | -0.3464 | [-0.4880, -0.2553] | 4/1/25 | -0.84 | 0.0002382 |
+| dataset | contrast | median Δ | 95% CI | W/T/L | rank-biserial | Holm $p$ | Nadeau–Bengio $p$ |
+|---|---|---:|---|---:|---:|---:|---:|
+| MAGIC | HISTORICAL-WS -> WS-S | +0.0000 | [-0.0029, +0.0047] | 13/3/14 | +0.05 | 0.8288 | 0.7807 |
+| MAGIC | WS-S -> NBI-S | +0.0382 | [+0.0179, +0.0668] | 27/0/3 | +0.95 | 2.049e-07 | 0.0927 |
+| MAGIC | NBI-S -> NBI-R | -0.0794 | [-0.0939, -0.0451] | 1/0/29 | -0.99 | 2.794e-08 | 0.0286 |
+| Adult | HISTORICAL-WS -> WS-S | -0.0006 | [-0.0018, +0.0000] | 8/4/18 | -0.23 | 0.3158 | 0.7431 |
+| Adult | WS-S -> NBI-S | +0.1936 | [+0.1322, +0.3717] | 30/0/0 | +1.00 | 5.588e-09 | 0.0204 |
+| Adult | NBI-S -> NBI-R | -0.0535 | [-0.1181, +0.0035] | 10/0/20 | -0.54 | 0.01741 | 0.3756 |
+| Bank Marketing | HISTORICAL-WS -> WS-S | -0.0001 | [-0.0021, +0.0000] | 7/8/15 | -0.23 | 0.3382 | 0.7957 |
+| Bank Marketing | WS-S -> NBI-S | +0.1792 | [+0.1074, +0.2045] | 25/0/5 | +0.94 | 7.655e-07 | 0.0643 |
+| Bank Marketing | NBI-S -> NBI-R | -0.1699 | [-0.2369, -0.0772] | 7/0/23 | -0.82 | 4.733e-05 | 0.1109 |
+| Spambase | HISTORICAL-WS -> WS-S | +0.0000 | [+0.0000, +0.0096] | 14/11/5 | +0.48 | 0.1283 | 0.6545 |
+| Spambase | WS-S -> NBI-S | +0.0503 | [+0.0000, +0.2079] | 19/2/9 | +0.33 | 0.1283 | 0.6531 |
+| Spambase | NBI-S -> NBI-R | -0.3464 | [-0.4880, -0.2553] | 4/1/25 | -0.84 | 0.0002382 | 0.0658 |
+
+The Nadeau–Bengio column is the pre-declared corrected resampled $t$, at an
+inflation of $\sqrt{8.5} = 2.9155$. It is a sensitivity, not the primary test,
+and is reported in full including where it is adverse to the finding.
 
 ## S10. Secondary indicators
 
@@ -320,7 +328,7 @@ to it and it enters no budget-matched comparison and neither reference.
 
 ## S14. Holdout confirmation
 
-| dataset | arm | internal | holdout | median drop |
+| dataset | arm | internal | holdout | median paired drop |
 |---|---|---:|---:|---:|
 | MAGIC | historical_ws | 0.8580 | 0.8604 | -0.0017 |
 | MAGIC | historical_ws_asrun | 0.8477 | 0.8541 | -0.0034 |
@@ -372,7 +380,7 @@ because independent verification refuted the author's version.
 
 | item | value |
 |---|---|
-| manuscript commit | `cbefdcf89072f37f643db43cd3e60d02dd669ffa` |
+| manuscript commit | `3ed41af5933da46ff27419c125ad4684fcec0a41` |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |
 | datasets | MAGIC, Spambase, Adult, Bank Marketing |

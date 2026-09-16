@@ -10,7 +10,9 @@ ORDER = ["00_title_abstract.md", "01_introduction.md", "02_related_work.md",
          "05a_methods_design.md", "05b_methods_arms.md",
          "06a_results_integrity.md", "06b_results_contrasts.md",
          "06c_results_boundary_baselines.md", "07_discussion.md",
-         "08_limitations.md", "09_reproducibility.md", "10_conclusion.md"]
+         "08_limitations.md", "09_reproducibility.md", "10_conclusion.md",
+         "11_references_declarations.md",
+         "12_figure_captions.md"]
 
 def main() -> int:
     missing = [f for f in ORDER if not (SEC / f).exists()]

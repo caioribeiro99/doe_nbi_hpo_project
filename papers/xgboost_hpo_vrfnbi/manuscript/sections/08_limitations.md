@@ -25,9 +25,8 @@ published pipelines, and supports no estimate of how common the conflation is.
 
 The frozen comparator budget is the maximum over arms — `NBI-R`'s 386 evaluations — while
 `WS-S` and `NBI-S` cost 186 standalone. The comparators therefore received roughly twice the
-real evaluations those two arms require. The evaluation-matched grid nevertheless attained
-higher median CORE-relative hypervolume than every surrogate-assisted arm on every dataset in
-the panel [TAB:baseline_vs_arms], and that asymmetry belongs with the result: the rule was
+real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless attained
+favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) Supplement S13, and that asymmetry belongs with the result: the rule was
 fixed before any result existed and is not revised now, and the study can say neither what
 the surrogate-assisted arms would do at parity nor that the grid is more efficient. A
 budget-matched-per-arm comparison was not run.
@@ -55,7 +54,7 @@ anchor point-set composition, but the CHIM link is an association across 30 repl
 within a dataset. It is positive on Adult, Bank Marketing and Spambase and **absent on MAGIC**
 ($\rho = -0.11$), which is the dataset where the injection control is itself nonzero. No
 intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis
-[FIG:chim_vs_gap].
+Figure 4.
 
 ### 8.5 Known weaknesses in the frozen protocol
 

@@ -23,9 +23,10 @@ confound. A pre-declared anchor-injection control and the CHIM diagnostics accom
 lacking the interior front geometry the mechanism acts on? The RQ2 contrast on Spambase,
 analysed outside the primary family.
 
-**RQ5 — Direct search.** How does the surrogate-assisted family compare with evaluation-matched
-direct search — grid, random, Bayesian optimization, TPE, NSGA-II — at the frozen comparator
-budget? [TAB:rq_contrast_map] maps each question to its contrast and evidence.
+**RQ5 — Direct search.** How does the surrogate-assisted family compare with direct search at the
+frozen comparator budget — grid, random, Bayesian optimization, TPE, NSGA-II? That budget is matched to
+the most expensive arm, not to each arm, so a comparator receives about twice what
+WS-S and NBI-S require standalone. §4 maps each question to its contrast and evidence.
 
 ## 4.1 What was frozen
 

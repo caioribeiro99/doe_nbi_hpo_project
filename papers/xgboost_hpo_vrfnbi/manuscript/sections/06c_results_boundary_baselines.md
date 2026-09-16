@@ -16,7 +16,7 @@ losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.43
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is **1.7706** on Spambase against
 **0.0594** on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
-[TAB:boundary_dispersion], [FIG:boundary_dispersion].
+Figure 3, Figure 3.
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
 $R = 30$, not a demonstration that the effect is absent. It is **consistent with** the
@@ -54,14 +54,14 @@ status.
 Over the confirmatory campaign the composite-quality gate passed in **8 of 30**
 replications on MAGIC and **9 of 30** on Spambase, and in **0 of 30** on both Adult and
 Bank Marketing. The cost gate passed 30/30, 30/30, 22/30 and 27/30 respectively
-[TAB:gate_regimes].
+Supplement S11.
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
 composite-quality surrogate failed the frozen criterion in every replication — and they
 also carry the largest geometry effects, +0.2549 and +0.2281, Holm-significant on both.
 The relative advantage of NBI front construction over specification-matched weighted
 scalarization therefore persisted where the surrogate did not meet its own external
-standard. Within MAGIC, the only dataset with both strata populated, the geometry
+standard. Within MAGIC, the only primary-panel dataset with both strata populated (Spambase, the boundary control, also has both, with 9 of 30 passing), the geometry
 difference is positive in each: median +0.1173 with a win fraction of 1.00 across the 8
 gate-passing units, and +0.0165 with 0.82 across the 22 failing units. Both strata are
 small and are reported descriptively, without a test.
@@ -72,11 +72,11 @@ another on the same surrogate, are different questions; the study answers only t
 second. We do not claim that the geometry effect requires a reliable surrogate, requires
 an unreliable one, or that NBI compensates for surrogate error.
 
-## 6.8 Baselines: the evaluation-matched grid leads every surrogate-assisted arm
+## 6.8 Baselines: the frozen-budget direct grid baseline leads every surrogate-assisted arm
 
-At the frozen comparator budget, an evaluation-matched coarse grid attained a **higher
+At the frozen comparator budget, the frozen-budget direct grid baseline attained a **higher
 median CORE-relative hypervolume ratio than every surrogate-assisted arm on every
-dataset in the panel** [TAB:baselines_hv], [FIG:baseline_vs_arms]. Against NBI-S:
+dataset in the panel** Table 5, Figure 6. Against NBI-S:
 
 | dataset | NBI-S median | GRID median | median difference (NBI-S − GRID) | NBI-S wins | raw $p$ |
 |---|---:|---:|---:|---:|---:|
@@ -84,6 +84,8 @@ dataset in the panel** [TAB:baselines_hv], [FIG:baseline_vs_arms]. Against NBI-S
 | Adult | 0.9951 | 1.0476 | −0.0488 | 5/30 | 0.0001 |
 | Bank Marketing | 0.9979 | 1.0625 | −0.1323 | 10/30 | 0.1642 |
 | Spambase | 1.0812 | 1.0192 | −0.1286 | 12/30 | 0.8774 |
+
+**Table 5.** Median CORE-relative hypervolume ratio by method. Direct-search comparators operate under the frozen comparator budget of 386 evaluations; WS-S and NBI-S cost 186 standalone.
 
 The gap is significant on MAGIC and Adult and not on Bank Marketing or Spambase. This
 contrast is not in the frozen primary family, carries no Holm correction, and is
@@ -98,7 +100,7 @@ cannot be stated as an efficiency claim, the budgets not being equal — and equ
 cannot be explained away on that basis: at the budget the protocol froze, direct search
 led. Any account of the geometry result in Section 6.2 must carry this alongside it.
 
-The other evaluation-matched comparators sit below the grid: median CORE-relative
+The other direct-search comparators, under the same frozen budget, sit below the grid: median CORE-relative
 hypervolume ratios of 0.8907 (random) and 0.9580 (NSGA-II) on MAGIC, 0.4369 and 0.8650
 on Adult, 0.3190 and 0.9674 on Bank Marketing, and 0.0000 and 0.4164 on Spambase.
 Matched NSGA-II ran at $32 \times 12 = 384$ evaluations, two short of the comparator
@@ -109,15 +111,27 @@ contributes to neither reference set. The frozen protocol excludes the single-ob
 Bayesian-optimization and TPE endpoints from the front-indicator table, a
 single-objective optimizer not returning a front.
 
+Two properties of the comparator qualify this. The budget rule matches comparators to
+the most expensive arm rather than to each arm, so the grid received 386 real
+evaluations against the 186 WS-S and NBI-S require standalone. And the grid's 128-point
+mesh contains the design's 64 factorial corners, so 64 of its evaluations re-measure
+points inside the CORE reference it is scored against — an advantage on a core-relative
+indicator that the surrogate-assisted arms, which propose interior points, do not have.
+Neither fact was chosen after seeing the result, and neither is offered as a reason to
+set the comparison aside: at the budget and construction this protocol froze, direct
+search led on the paired statistic across all four datasets.
+
 ## 6.9 Holdout confirmation
 
 Each unit re-measured its selected candidates on a held-out partition whose labels were
 structurally unavailable until the confirmation stage, at 5 audit-only real evaluations
 per unit, charged to the study and to no arm. Across all four datasets and all five
-arms, the absolute difference between median internal and median holdout accuracy is
-below **0.012** in every dataset-by-arm cell, the largest magnitude being 0.0117, and in
+arms, the **median per-replication difference** between internal and holdout accuracy has
+magnitude below **0.012** in every one of the 20 dataset-by-arm cells, the largest
+being 0.0117, and is negative — the held-out partition scoring better — in 13 of
+them.0117, and in
 13 of the 20 cells the difference is negative — holdout accuracy exceeded internal
-accuracy [TAB:holdout_optimism]. These are descriptive audit figures read from
+accuracy Supplement S14. These are descriptive audit figures read from
 `analysis/secondary_analysis.json`, not confirmatory claims.
 
 The correct reading is an absence of gross optimism in the returned configurations at

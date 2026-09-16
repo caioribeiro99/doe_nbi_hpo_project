@@ -28,7 +28,7 @@ about any other implementation of NBI in the surrounding literature.
 ### 3.2 Four properties carried forward verbatim
 
 Four further properties of the archived implementation are relevant because each could, on its own,
-displace a returned front [TAB:historical_properties].
+displace a returned front Table 2.
 
 | Property | Archived implementation |
 |---|---|
@@ -72,8 +72,28 @@ Faithfulness and comparability are separate requirements, so the historical weig
 twice. `HISTORICAL-WS` applies the same weighted-sum solver under the shared specification — the
 symmetric weight grid with both vertices, minimization orientation, coded-unit surrogates, and the
 gated surrogates WS-S itself uses — and differs from WS-S in the normalization reference alone
-[FIG:arm_lattice]. The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
+Figure 1. The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
 normalization as a single factor, isolated from geometry and from anchor provenance. The two
 historical entities are separate registry identifiers with different budgets and are never mixed in
 one table. Both have every returned candidate revalidated on the real learner, as the archived
 protocol did.
+
+### 3.4 What is not carried forward
+
+The reconstruction preserves the archived *optimizer*, not its objective space. The
+archived pipeline optimized four threshold quality metrics — accuracy, precision,
+recall and specificity — against mean per-fold wall-clock time as its cost response,
+and used no ranking or calibration metric. This study optimizes a Varimax-rotated
+composite over six quality responses, which adds ROC AUC and log loss, against total
+leaf count.
+
+The cost substitution is deliberate and is a limitation of the comparison. A wall-clock
+response is not reproducible from a seed: it varies with machine load, thread
+scheduling and hardware, so a replicated design cannot hold it fixed across 30
+partitions. Total leaf count is a deterministic model-complexity proxy that the same
+configuration and seed reproduce exactly. The consequence is that `HISTORICAL-WS-asrun`
+reproduces the archived *solver, normalization, weight grid and surface
+parameterization* faithfully, while the objectives it optimizes are this study's, not
+the dissertation's. Differences between it and the other arms are therefore attributable
+to the optimizer's construction and not to the objective space, but no statement here
+should be read as reproducing the archived study's reported outcomes.

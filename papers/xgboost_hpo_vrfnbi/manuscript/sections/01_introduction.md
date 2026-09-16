@@ -62,7 +62,7 @@ datasets prospectively assigned to the primary geometry panel, canonical NBI con
 produced higher CORE-relative hypervolume than specification-matched weighted scalarization:
 median paired differences of $+0.0374$ on MAGIC (26/30 replications), $+0.2549$ on Adult
 (30/30) and $+0.2281$ on Bank Marketing (24/30), Holm-significant within every one of the three
-datasets [TAB:primary_contrasts]. This is the primary positive result, and its scope is these
+datasets Table 4. This is the primary positive result, and its scope is these
 datasets, this surrogate architecture, two objectives and this budget. It is also
 indicator-specific: the advantage appears in hypervolume and IGD⁺, while the joint
 non-dominated fraction comparison is non-significant on all four datasets.
@@ -73,9 +73,8 @@ improve the confirmatory NBI fronts: median differences of $-0.0741$ on MAGIC, $
 Adult (a non-detection, interval spanning zero) and $-0.4093$ on Bank Marketing. Two of three
 primary datasets degraded. The paid anchor stage bought nothing measurable here.
 
-**An evaluation-matched coarse grid led every surrogate-assisted arm.** At the frozen
-comparator budget, a coarse grid attained higher median CORE-relative hypervolume than every
-surrogate-assisted arm on every dataset in the panel [TAB:baselines]. The budget asymmetry
+**A frozen-budget direct grid baseline led every surrogate-assisted arm.** At the frozen
+comparator budget, a coarse grid favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) Table 5. The budget asymmetry
 belongs in the same sentence: the frozen rule matched comparators to the most expensive arm
 (NBI-R, 386 real evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators
 received roughly twice the real evaluations those arms require. The rule was fixed before any
@@ -101,4 +100,4 @@ $R = 30$ rather than as an absence of effect.
    effect, each given the same standing as the positive result.
 5. A mechanistic reading of the negative contrast — an anchor-injection control together with
    a measured contraction of the CHIM segment — reported as an association within datasets, not
-   as a demonstrated cause [FIG:chim_contraction].
+   as a demonstrated cause Figure 4.

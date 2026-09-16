@@ -16,8 +16,11 @@ three geometry-positive datasets, with 26, 30 and 24 of 30 paired wins and Holm-
 significance within each dataset. The third mechanism answered in the direction opposite
 to the one the pipeline's design would suggest: substituting a pre-specified
 empirical-real anchor procedure for surrogate-derived payoff information gave no
-benefit, and degraded the front on two of the three datasets. The frozen anchor-injection
-control shows that this is not a consequence of which points enter the returned set,
+benefit, and degraded the front on two of the three datasets. The frozen anchor-injection control moves the
+indicator by approximately zero on three of four datasets and by $+0.0133$ on MAGIC,
+where it accounts for about 18% of that dataset's gap, so the deficit is associated
+with the relocated payoff information rather than with which points enter the returned
+set,
 and the payoff matrices show a contraction of the convex hull of individual minima that
 is associated with the deficit on three of four datasets. That association is reported
 as an association.

@@ -12,7 +12,7 @@ One fact is recorded here once and not revisited: a code-level reconstruction es
 archived implementation performed front construction by normalized weighted scalarization, while the
 historical text described the procedure in Normal Boundary Intersection terms. The arm is reproduced,
 not repaired, and that reconstruction is what makes the decomposition in §5.8–§5.11 possible.
-The two historical entities are separate identifiers with different costs [TAB:arm_registry].
+The two historical entities are separate identifiers with different costs Supplement S6.
 
 ## 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
 
@@ -55,7 +55,7 @@ the objective displacement induced by rounding and is re-solved with those dimen
 because a backward-eliminated quadratic is often minimized on a box corner, two anchors can coincide
 and leave $\Phi$ rank-deficient; anchor vectors, rank and condition number are recorded, and a
 rank-deficient replication is excluded with the count published. Standalone cost 186; `WS-S` $\to$
-`NBI-S` changes the scalarization geometry and nothing else [FIG:nbi_geometry].
+`NBI-S` changes the scalarization geometry and nothing else Figure 1.
 
 ## 5.11 NBI-R — NBI with empirical-real anchors
 
@@ -93,7 +93,19 @@ That budget was frozen before any result existed as the maximum over arms, `NBI-
 asymmetry is stated wherever comparator results appear: `WS-S` and `NBI-S` cost 186 standalone, so
 the comparators received roughly twice the real evaluations those arms require. The rule is
 matched-to-the-most-expensive-arm, not matched-to-each-arm, and is not revised now
-[TAB:budget_ledger].
+Supplement S7.
+
+
+**The grid comparator's composition.** At the frozen 386-evaluation budget over seven
+factors the coarse grid admits $\lfloor 386^{1/7}\rfloor = 2$ levels per factor, so it
+is a 128-point two-level corner mesh plus 258 uniformly sampled points — **67% of the
+comparator is uniform random padding**, and the implementation reports the split rather
+than describing the whole set as a grid. The mesh also contains the design's 64
+factorial corners, so **64 of the grid's 386 evaluations re-measure points that are
+themselves among the 88 design rows inside the CORE reference**. The grid is therefore
+scored partly against its own points, which favours it on a core-relative indicator
+relative to arms that propose elsewhere in the box. This is a property of the frozen
+comparator construction, disclosed here and carried into every comparison against it.
 
 ## 5.13 Real-model revalidation
 
@@ -121,7 +133,7 @@ presented as a fraction of true Pareto hypervolume. IGD$^{+}$, generational dist
 and the joint non-dominated fraction are secondary and descriptive, reported with intervals and no
 tests. Schott spacing is undefined on a single-point front, where NaN is correct; those 140 cells, on
 the 70 method-by-reference blocks whose front has one point, are counted and excluded from spacing
-summaries rather than propagated through a median [TAB:indicator_registry].
+summaries rather than propagated through a median Supplement S10.
 
 ## 5.15 Statistical analysis
 

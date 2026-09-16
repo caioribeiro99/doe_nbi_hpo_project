@@ -53,7 +53,10 @@ def main() -> int:
     for t in ("v0.1.0-dissertation","xgboost-hpo-protocol-v1","xgboost-hpo-protocol-v2",
               "xgboost-hpo-protocol-v3","xgboost-hpo-confirmatory-results-v1"):
         if t in tags:
-            c = subprocess.run(["git","rev-parse","--short",t],cwd=REPO,
+            # ^{commit} dereferences an annotated tag to the commit it points at.
+            # Without it this column prints tag-object SHAs, which match nothing a
+            # reader can check out and contradict the manuscript's own table.
+            c = subprocess.run(["git","rev-parse","--short",f"{t}^{{commit}}"],cwd=REPO,
                                capture_output=True,text=True).stdout.strip()
             w(f"| `{t}` | `{c}` | {meaning[t]} |")
     w("\nThe protocol tag records what was specified **before** any comparative result")
@@ -154,15 +157,20 @@ def main() -> int:
     for ref in ("core","augmented"):
         w(f"\n### S9.{1 if ref=='core' else 2} {ref.upper()} reference"
           f"{' (primary)' if ref=='core' else ' (mandatory sensitivity)'}\n")
-        w("| dataset | contrast | median Δ | 95% CI | W/T/L | rank-biserial | Holm $p$ |")
-        w("|---|---|---:|---|---:|---:|---:|")
+        w("| dataset | contrast | median Δ | 95% CI | W/T/L | rank-biserial | Holm $p$ "
+          "| Nadeau–Bengio $p$ |")
+        w("|---|---|---:|---|---:|---:|---:|---:|")
         for blk in ("primary_family","boundary_control"):
             for ds in prim[blk][ref]:
                 for r in prim[blk][ref][ds]:
                     ci = f"[{r['median_diff_ci95'][0]:+.4f}, {r['median_diff_ci95'][1]:+.4f}]"
                     w(f"| {DISP[ds]} | {r['contrast']} | {r['median_diff']:+.4f} | {ci} | "
                       f"{r['wins_for_second']}/{r['ties']}/{r['losses']} | "
-                      f"{r['rank_biserial']:+.2f} | {r['holm_p']:.4g} |")
+                      f"{r['rank_biserial']:+.2f} | {r['holm_p']:.4g} "
+                      f"| {r['nadeau_bengio']['p']:.4f} |")
+        w("\nThe Nadeau–Bengio column is the pre-declared corrected resampled $t$, at an")
+        w("inflation of $\\sqrt{8.5} = 2.9155$. It is a sensitivity, not the primary test,")
+        w("and is reported in full including where it is adverse to the finding.")
 
     w("\n## S10. Secondary indicators\n")
     w("| dataset | entity | HV ratio | IGD⁺ | GD | spacing | joint-ND | front size |")
@@ -238,7 +246,7 @@ def main() -> int:
     w("to it and it enters no budget-matched comparison and neither reference.\n")
 
     w("## S14. Holdout confirmation\n")
-    w("| dataset | arm | internal | holdout | median drop |"); w("|---|---|---:|---:|---:|")
+    w("| dataset | arm | internal | holdout | median paired drop |"); w("|---|---|---:|---:|---:|")
     for ds in DATASETS:
         for arm, v in sorted(sec["holdout_confirmation"][ds].items()):
             w(f"| {DISP[ds]} | {arm} | {v['median_internal_accuracy']:.4f} | "

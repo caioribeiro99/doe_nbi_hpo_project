@@ -11,19 +11,17 @@ rows of each dataset on one partition, before any arm ran. Two of its four crite
 structural: a raw-response conflict between the six quality responses and the raw leaf-count
 response, and a non-dominated set of design rows with detectable curvature. MAGIC, Adult and
 Bank Marketing met all four and form the **primary geometry panel**. Spambase failed criterion 2
-with a two-point non-dominated set, which has no interior, so every scalarization returns the
-same two extreme points and no interior geometry remains for the weighted-sum-versus-NBI
-contrast to separate. It was therefore **retained prospectively as a boundary geometry
+with a two-point non-dominated set, which was treated by the screening rule as leaving no interior geometry for the front-construction contrast to act on. Whether that premise held in execution is a result, reported in §6.6, not an assumption carried forward here. It was therefore **retained prospectively as a boundary geometry
 control**: the replacement rule was considered and deliberately not exercised, no replacement
 dataset was selected, and Spambase runs every arm, budget, seed and all $R = 30$ replications,
 excluded only from the primary inferential family. These are pre-campaign screening
-measurements, not study results [TAB:panel_screening]. The dataset is the unit of
+measurements, not study results Supplement S5. The dataset is the unit of
 generalization; nothing is pooled.
 
 ## 5.2 Decision space
 
 Seven XGBoost hyperparameters are optimized, with the bounds of the reconstructed
-historical configuration retained unchanged [TAB:hyperparameter_bounds].
+historical configuration retained unchanged Table 1.
 
 | Hyperparameter | Low | High | Type |
 |---|---:|---:|---|
@@ -92,10 +90,10 @@ $$S = Z\,V\,\operatorname{diag}(1/\sqrt{\lambda})\,R,$$
 then standardized column-wise to $S_z$. The $\operatorname{diag}(1/\sqrt{\lambda})$ term is
 load-bearing: raw component scores have variances equal to the eigenvalues, so rotating them
 orthogonally mixes axes of unequal scale and yields correlated factors. On this panel the
-maximum off-diagonal correlation of the nominally orthogonal factors was 0.379, 0.541, 0.698 and
-0.678, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$ the loading
+maximum off-diagonal correlation of the nominally orthogonal factors ranged from 0.379 to
+0.698 across the panel, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$ the loading
 matrix of the scores actually in use, so the role and sign rules below are read off a matrix
-that describes what is being oriented [FIG:rotated_loadings].
+that describes what is being oriented Figure 1.
 
 **Role assignment and sign, both deterministic.** The **cost factor** is the component with the
 largest absolute rotated loading on `Leaves_Mean`; the other two are **quality factors**. The cost
@@ -131,7 +129,7 @@ which value optimizes better.
 R, \text{roles}, \text{signs}, \mu_S, \sigma_S, w)$ is fitted once per dataset on the 88 design
 rows and **nothing else**, then applied unchanged to the 78 audit-only rows, every arm's
 revalidated candidates, every direct baseline, the reference sets and the holdout confirmation
-[TAB:factor_model_provenance]. Two constraints force this scope at once. A per-replication refit
+Supplement S4.1. Two constraints force this scope at once. A per-replication refit
 makes the objective a different variable in every pair, so 30 paired indicator values would not
 live in one objective space. And an earlier specification adding the 78-point complement — 166
 points — was withdrawn, because that complement *is* the audit-only external construction (64 of

@@ -19,12 +19,12 @@ core-relative hypervolume over specification-matched weighted scalarization on a
 $+0.255$ (30/30) and $+0.228$ (24/30), Holm-significant within each dataset. Replacing
 surrogate-derived payoff information with a pre-specified empirical-real anchor
 procedure gave no benefit and degraded the front on two of the three ($-0.074$;
-$-0.019$, not significant under the core reference; $-0.409$); the deficit is associated
-with contraction of the convex hull of individual minima, not with anchor point-set
-composition. Core and augmented references agree in 11 of 12 cells. Under the frozen
-direct-search comparator budget a coarse grid attained higher median core-relative
-hypervolume than every surrogate-assisted arm, although the grid received 386 real
-evaluations against 186 standalone for the scalarization arms. A prospectively
+$-0.019$, not significant under the core reference; $-0.409$); the deficit is associated, on three of four
+datasets, with contraction of the convex hull of individual minima rather than with
+anchor point-set composition. Core and augmented references agree in 11 of 12 cells. Under the frozen
+direct-search comparator budget the median paired difference favoured a coarse grid
+over NBI-S on all four datasets, although the grid received 386 real evaluations
+against 186 standalone for the scalarization arms. A prospectively
 designated boundary dataset did not resolve: a larger point estimate than the smallest
 significant effect, at roughly thirty times its dispersion.
 
@@ -97,7 +97,7 @@ datasets prospectively assigned to the primary geometry panel, canonical NBI con
 produced higher CORE-relative hypervolume than specification-matched weighted scalarization:
 median paired differences of $+0.0374$ on MAGIC (26/30 replications), $+0.2549$ on Adult
 (30/30) and $+0.2281$ on Bank Marketing (24/30), Holm-significant within every one of the three
-datasets [TAB:primary_contrasts]. This is the primary positive result, and its scope is these
+datasets Table 4. This is the primary positive result, and its scope is these
 datasets, this surrogate architecture, two objectives and this budget. It is also
 indicator-specific: the advantage appears in hypervolume and IGD⁺, while the joint
 non-dominated fraction comparison is non-significant on all four datasets.
@@ -108,9 +108,8 @@ improve the confirmatory NBI fronts: median differences of $-0.0741$ on MAGIC, $
 Adult (a non-detection, interval spanning zero) and $-0.4093$ on Bank Marketing. Two of three
 primary datasets degraded. The paid anchor stage bought nothing measurable here.
 
-**An evaluation-matched coarse grid led every surrogate-assisted arm.** At the frozen
-comparator budget, a coarse grid attained higher median CORE-relative hypervolume than every
-surrogate-assisted arm on every dataset in the panel [TAB:baselines]. The budget asymmetry
+**A frozen-budget direct grid baseline led every surrogate-assisted arm.** At the frozen
+comparator budget, a coarse grid favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) Table 5. The budget asymmetry
 belongs in the same sentence: the frozen rule matched comparators to the most expensive arm
 (NBI-R, 386 real evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators
 received roughly twice the real evaluations those arms require. The rule was fixed before any
@@ -136,7 +135,7 @@ $R = 30$ rather than as an absence of effect.
    effect, each given the same standing as the positive result.
 5. A mechanistic reading of the negative contrast — an anchor-injection control together with
    a measured contraction of the CHIM segment — reported as an association within datasets, not
-   as a demonstrated cause [FIG:chim_contraction].
+   as a demonstrated cause Figure 4.
 
 
 ## 2. Related work and methodological lineage
@@ -227,7 +226,7 @@ about any implementation not reconstructed here, including that of Pereira et al
 search located no work applying NBI or NBI-VRF to hyperparameter optimization; non-location is weaker
 than absence, and the transfer is not offered as the contribution. NBI, Varimax-rotated factor
 objectives, and design of experiments for hyperparameter tuning are all prior art, and none of them
-is claimed here — [TAB:prior_art] records each element with its owner. What this paper contributes is
+is claimed here — §2.7 records each element with its owner. What this paper contributes is
 the prospectively frozen decomposition of that inherited construction into the three mechanisms it
 bundles, described in §3.
 
@@ -262,7 +261,7 @@ about any other implementation of NBI in the surrounding literature.
 ### 3.2 Four properties carried forward verbatim
 
 Four further properties of the archived implementation are relevant because each could, on its own,
-displace a returned front [TAB:historical_properties].
+displace a returned front Table 2.
 
 | Property | Archived implementation |
 |---|---|
@@ -306,11 +305,31 @@ Faithfulness and comparability are separate requirements, so the historical weig
 twice. `HISTORICAL-WS` applies the same weighted-sum solver under the shared specification — the
 symmetric weight grid with both vertices, minimization orientation, coded-unit surrogates, and the
 gated surrogates WS-S itself uses — and differs from WS-S in the normalization reference alone
-[FIG:arm_lattice]. The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
+Figure 1. The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
 normalization as a single factor, isolated from geometry and from anchor provenance. The two
 historical entities are separate registry identifiers with different budgets and are never mixed in
 one table. Both have every returned candidate revalidated on the real learner, as the archived
 protocol did.
+
+### 3.4 What is not carried forward
+
+The reconstruction preserves the archived *optimizer*, not its objective space. The
+archived pipeline optimized four threshold quality metrics — accuracy, precision,
+recall and specificity — against mean per-fold wall-clock time as its cost response,
+and used no ranking or calibration metric. This study optimizes a Varimax-rotated
+composite over six quality responses, which adds ROC AUC and log loss, against total
+leaf count.
+
+The cost substitution is deliberate and is a limitation of the comparison. A wall-clock
+response is not reproducible from a seed: it varies with machine load, thread
+scheduling and hardware, so a replicated design cannot hold it fixed across 30
+partitions. Total leaf count is a deterministic model-complexity proxy that the same
+configuration and seed reproduce exactly. The consequence is that `HISTORICAL-WS-asrun`
+reproduces the archived *solver, normalization, weight grid and surface
+parameterization* faithfully, while the objectives it optimizes are this study's, not
+the dissertation's. Differences between it and the other arms are therefore attributable
+to the optimizer's construction and not to the objective space, but no statement here
+should be read as reproducing the archived study's reported outcomes.
 
 
 # 4. Confirmatory questions and prior commitments
@@ -338,9 +357,10 @@ confound. A pre-declared anchor-injection control and the CHIM diagnostics accom
 lacking the interior front geometry the mechanism acts on? The RQ2 contrast on Spambase,
 analysed outside the primary family.
 
-**RQ5 — Direct search.** How does the surrogate-assisted family compare with evaluation-matched
-direct search — grid, random, Bayesian optimization, TPE, NSGA-II — at the frozen comparator
-budget? [TAB:rq_contrast_map] maps each question to its contrast and evidence.
+**RQ5 — Direct search.** How does the surrogate-assisted family compare with direct search at the
+frozen comparator budget — grid, random, Bayesian optimization, TPE, NSGA-II? That budget is matched to
+the most expensive arm, not to each arm, so a comparator receives about twice what
+WS-S and NBI-S require standalone. §4 maps each question to its contrast and evidence.
 
 ## 4.1 What was frozen
 
@@ -399,19 +419,17 @@ rows of each dataset on one partition, before any arm ran. Two of its four crite
 structural: a raw-response conflict between the six quality responses and the raw leaf-count
 response, and a non-dominated set of design rows with detectable curvature. MAGIC, Adult and
 Bank Marketing met all four and form the **primary geometry panel**. Spambase failed criterion 2
-with a two-point non-dominated set, which has no interior, so every scalarization returns the
-same two extreme points and no interior geometry remains for the weighted-sum-versus-NBI
-contrast to separate. It was therefore **retained prospectively as a boundary geometry
+with a two-point non-dominated set, which was treated by the screening rule as leaving no interior geometry for the front-construction contrast to act on. Whether that premise held in execution is a result, reported in §6.6, not an assumption carried forward here. It was therefore **retained prospectively as a boundary geometry
 control**: the replacement rule was considered and deliberately not exercised, no replacement
 dataset was selected, and Spambase runs every arm, budget, seed and all $R = 30$ replications,
 excluded only from the primary inferential family. These are pre-campaign screening
-measurements, not study results [TAB:panel_screening]. The dataset is the unit of
+measurements, not study results Supplement S5. The dataset is the unit of
 generalization; nothing is pooled.
 
 ## 5.2 Decision space
 
 Seven XGBoost hyperparameters are optimized, with the bounds of the reconstructed
-historical configuration retained unchanged [TAB:hyperparameter_bounds].
+historical configuration retained unchanged Table 1.
 
 | Hyperparameter | Low | High | Type |
 |---|---:|---:|---|
@@ -480,10 +498,10 @@ $$S = Z\,V\,\operatorname{diag}(1/\sqrt{\lambda})\,R,$$
 then standardized column-wise to $S_z$. The $\operatorname{diag}(1/\sqrt{\lambda})$ term is
 load-bearing: raw component scores have variances equal to the eigenvalues, so rotating them
 orthogonally mixes axes of unequal scale and yields correlated factors. On this panel the
-maximum off-diagonal correlation of the nominally orthogonal factors was 0.379, 0.541, 0.698 and
-0.678, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$ the loading
+maximum off-diagonal correlation of the nominally orthogonal factors ranged from 0.379 to
+0.698 across the panel, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$ the loading
 matrix of the scores actually in use, so the role and sign rules below are read off a matrix
-that describes what is being oriented [FIG:rotated_loadings].
+that describes what is being oriented Figure 1.
 
 **Role assignment and sign, both deterministic.** The **cost factor** is the component with the
 largest absolute rotated loading on `Leaves_Mean`; the other two are **quality factors**. The cost
@@ -519,7 +537,7 @@ which value optimizes better.
 R, \text{roles}, \text{signs}, \mu_S, \sigma_S, w)$ is fitted once per dataset on the 88 design
 rows and **nothing else**, then applied unchanged to the 78 audit-only rows, every arm's
 revalidated candidates, every direct baseline, the reference sets and the holdout confirmation
-[TAB:factor_model_provenance]. Two constraints force this scope at once. A per-replication refit
+Supplement S4.1. Two constraints force this scope at once. A per-replication refit
 makes the objective a different variable in every pair, so 30 paired indicator values would not
 live in one objective space. And an earlier specification adding the 78-point complement — 166
 points — was withdrawn, because that complement *is* the audit-only external construction (64 of
@@ -564,7 +582,7 @@ One fact is recorded here once and not revisited: a code-level reconstruction es
 archived implementation performed front construction by normalized weighted scalarization, while the
 historical text described the procedure in Normal Boundary Intersection terms. The arm is reproduced,
 not repaired, and that reconstruction is what makes the decomposition in §5.8–§5.11 possible.
-The two historical entities are separate identifiers with different costs [TAB:arm_registry].
+The two historical entities are separate identifiers with different costs Supplement S6.
 
 ## 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
 
@@ -607,7 +625,7 @@ the objective displacement induced by rounding and is re-solved with those dimen
 because a backward-eliminated quadratic is often minimized on a box corner, two anchors can coincide
 and leave $\Phi$ rank-deficient; anchor vectors, rank and condition number are recorded, and a
 rank-deficient replication is excluded with the count published. Standalone cost 186; `WS-S` $\to$
-`NBI-S` changes the scalarization geometry and nothing else [FIG:nbi_geometry].
+`NBI-S` changes the scalarization geometry and nothing else Figure 1.
 
 ## 5.11 NBI-R — NBI with empirical-real anchors
 
@@ -645,7 +663,19 @@ That budget was frozen before any result existed as the maximum over arms, `NBI-
 asymmetry is stated wherever comparator results appear: `WS-S` and `NBI-S` cost 186 standalone, so
 the comparators received roughly twice the real evaluations those arms require. The rule is
 matched-to-the-most-expensive-arm, not matched-to-each-arm, and is not revised now
-[TAB:budget_ledger].
+Supplement S7.
+
+
+**The grid comparator's composition.** At the frozen 386-evaluation budget over seven
+factors the coarse grid admits $\lfloor 386^{1/7}\rfloor = 2$ levels per factor, so it
+is a 128-point two-level corner mesh plus 258 uniformly sampled points — **67% of the
+comparator is uniform random padding**, and the implementation reports the split rather
+than describing the whole set as a grid. The mesh also contains the design's 64
+factorial corners, so **64 of the grid's 386 evaluations re-measure points that are
+themselves among the 88 design rows inside the CORE reference**. The grid is therefore
+scored partly against its own points, which favours it on a core-relative indicator
+relative to arms that propose elsewhere in the box. This is a property of the frozen
+comparator construction, disclosed here and carried into every comparison against it.
 
 ## 5.13 Real-model revalidation
 
@@ -673,7 +703,7 @@ presented as a fraction of true Pareto hypervolume. IGD$^{+}$, generational dist
 and the joint non-dominated fraction are secondary and descriptive, reported with intervals and no
 tests. Schott spacing is undefined on a single-point front, where NaN is correct; those 140 cells, on
 the 70 method-by-reference blocks whose front has one point, are counted and excluded from spacing
-summaries rather than propagated through a median [TAB:indicator_registry].
+summaries rather than propagated through a median Supplement S10.
 
 ## 5.15 Statistical analysis
 
@@ -732,7 +762,7 @@ before Pareto filtering, present in every unit** — that no compared method con
 the true Pareto front, and a ratio above 1 is not an error: it means the returned set improved on
 that finite reference.
 
-Dataset roles were assigned by prospective screening and not revised (see [TAB:panel_screening]).
+Dataset roles were assigned by prospective screening and not revised (see Supplement S5).
 MAGIC, Adult and Bank Marketing met the nonlinear-front criterion and form the primary geometry
 panel; Spambase failed it and was retained in advance as a **boundary geometry control**, executed
 in full under identical arms, budgets and seeds, and excluded only from the primary inferential
@@ -760,13 +790,15 @@ needs a separate, specification-matched contrast.
 **HISTORICAL-WS $\rightarrow$ WS-S isolates normalization alone**: the same weighted sum, the same
 surrogates, the same symmetric weight grid, differing only in whether the normalization box comes
 from observed design-row extrema or from the payoff matrix. The effect is undetectable on every
-primary dataset ([TAB:historical_specification]).
+primary dataset (Table 3).
 
 | dataset | median difference | bootstrap interval | win/tie/loss | Holm $p$ |
 |---|---:|---|---:|---:|
 | MAGIC | +0.0000 | [-0.0022, +0.0056] | 14/3/13 | 0.5165 |
 | Adult | -0.0006 | [-0.0033, +0.0000] | 9/4/17 | 0.2087 |
 | Bank Marketing | +0.0000 | [-0.0088, +0.0000] | 8/8/14 | 0.3896 |
+
+**Table 3.** The historical specification contrast, HISTORICAL-WS $\rightarrow$ WS-S, CORE reference, $R=30$.
 
 This is a **non-detection at $R = 30$**, not a demonstration of no effect: exact ties occur in 3, 4
 and 8 of the 30 replications on MAGIC, Adult and Bank Marketing, and the frozen design resolves only
@@ -782,7 +814,7 @@ Adult, +0.3126 [+0.1981, +0.4484] on Bank Marketing and +0.5404 [+0.1526, +0.873
 panel's largest. That gap is the whole historical reconstruction effect, and it is confounded by
 construction: surrogate identity, coding and weight-grid symmetry move together in it. Given the
 non-detection above, the normalization reference is not what explains it, and we attribute it no
-further [FIG:historical_reconstruction].
+further Figure 1.
 
 
 ## 6.3 Front-construction geometry: WS-S versus NBI-S
@@ -814,7 +846,7 @@ surrogate architecture, two objectives and this budget. It is not a claim that N
 recovers a true Pareto front: the endpoint is a ratio against CORE, a finite
 method-independent empirical reference of 288 points before Pareto filtering, so a
 ratio above 1 means only that the candidate set improved on that finite reference
-([TAB:primary_contrasts]).
+(Table 4).
 
 Two qualifications belong in the same breath as the result. First, the geometry
 advantage did not require a surrogate that passed the study's own external reliability
@@ -823,10 +855,13 @@ replications, and the geometry effect is Holm-significant on both. The gate was
 diagnostic rather than adaptive — every arm ran at every replication regardless of its
 outcome — and absolute surrogate trustworthiness and relative front-construction
 geometry are different questions, of which this study answers only the second. Second,
-at the frozen comparator budget an evaluation-matched coarse grid attained a higher
-median CORE-relative hypervolume than every surrogate-assisted arm on every dataset in
-the panel (NBI-S 0.9430 vs grid 1.0068 on MAGIC; 0.9951 vs 1.0476 on Adult; 0.9979 vs
-1.0625 on Bank Marketing; 1.0812 vs 1.0192 on Spambase). The budget rule is matched to
+under the frozen direct-search comparator budget the median paired difference
+favoured the coarse grid over NBI-S on all four datasets ($-0.0628$, $-0.0488$,
+$-0.1323$, $-0.1286$), and the grid's marginal median exceeded NBI-S on three of the
+four (grid 1.0068 vs NBI-S 0.9430 on MAGIC; 1.0476 vs 0.9951 on Adult; 1.0625 vs
+0.9979 on Bank Marketing) but **not on Spambase**, where NBI-S is the higher at 1.0812
+against 1.0192. The two statistics answer different questions and only the paired one
+is a within-replication comparison. The budget rule is matched to
 the most expensive arm (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186
 standalone, so the comparators received roughly twice the real evaluations those arms
 require; the rule was frozen before any result existed and is not revised here. The
@@ -834,7 +869,7 @@ geometry contrast compares two front constructions at a fixed surrogate budget; 
 not a demonstration that the surrogate-assisted family is preferable to direct search.
 Section 6.7 reports this baseline in full.
 
-**[TAB:primary_contrasts] Primary paired contrasts on CORE-relative hypervolume ratio,
+**Table 4 Primary paired contrasts on CORE-relative hypervolume ratio,
 $R = 30$, differences formed as (second − first).**
 
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
@@ -849,6 +884,8 @@ $R = 30$, differences formed as (second − first).**
 | NBI-S → NBI-R | MAGIC | **−0.0741** | [−0.0957, −0.0482] | 2/0/28 | — | 0.0000 |
 | NBI-S → NBI-R | Adult | −0.0192 | [−0.1610, +0.0299] | 11/0/19 | — | 0.1607 |
 | NBI-S → NBI-R | Bank Marketing | **−0.4093** | [−0.5821, −0.2059] | 7/0/23 | — | 0.0000 |
+
+**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, Holm-corrected within dataset, $R=30$.
 
 Spambase is shown for completeness and is excluded from the primary inferential family
 by prospective designation; it is treated in Section 6.6.
@@ -868,7 +905,27 @@ is described as significant. The defensible statement is therefore narrow: under
 frozen study conditions the advantage is specifically an improvement in convergence and
 coverage geometry as measured by hypervolume and IGD⁺. The data do not support a
 general better-coverage claim, and in particular do not support a claim that NBI
-construction returned more non-dominated solutions [FIG:indicator_panel].
+construction returned more non-dominated solutions Figure 2.
+
+
+### 6.3.1 The pre-declared corrected test
+
+Section 5.15 declared the Nadeau–Bengio corrected resampled $t$ as a sensitivity, with
+an inflation of $\sqrt{8.5} = 2.9155$ at $R = 30$ and $n_{\text{test}}/n_{\text{train}} = 0.25$.
+It is reported here whichever way it falls. **Under the corrected test the geometry
+contrast reaches $0.05$ on Adult ($p = 0.0148$) and on neither MAGIC
+($p = 0.0860$) nor Bank Marketing ($p = 0.0764$).** The
+anchor-provenance contrast reaches it on MAGIC ($p = 0.0254$) and on neither
+Adult ($p = 0.4161$) nor Bank Marketing ($p = 0.0791$).
+
+This correction was derived for the generalization error of a learner under repeated
+resampling, and a Pareto quality indicator computed on a returned set is not that
+quantity; applying it here is a transfer, which is why it was declared a sensitivity
+and not the primary test. The descriptive triple remains primary. But a sensitivity
+declared before any result existed is reported whether or not it flatters the
+finding, and under this one the geometry contrast clears $0.05$ on one of the three
+primary datasets rather than three. Every corrected $p$-value appears in
+Supplement S9.
 
 ## 6.4 Anchor and payoff provenance: NBI-S versus NBI-R
 
@@ -902,9 +959,12 @@ MAGIC and +0.0000 on the other three datasets, against full NBI-S → NBI-R gaps
 geometric consequences of the relocated payoff matrix rather than with anchor
 point-set composition, though the control does not establish that the negative is
 entirely geometric. Solver health is identical between the two arms — certified
-fraction 1.000, maximum equality residual 0.000, and 20 distinct realized
-configurations for both on every dataset — so the deficit is not solver failure, not
-rounding and not candidate collapse.
+fraction has median 1.000 over the 240 arm-units, with two exceptions at 0.900 and
+0.950; the per-unit maximum equality residual has median $6.6\times10^{-10}$, with a
+campaign maximum of $6.9\times10^{-1}$ on a single MAGIC NBI-S unit; and both arms
+return 20 distinct realized configurations in every unit. Solver behaviour is
+therefore comparable between the arms and does not account for the deficit, but it
+is not identical and we do not state it as a universal.
 
 The second diagnostic is the CHIM extent $\|\Phi_{:,0} - \Phi_{:,1}\|$, which at $q = 2$
 is the segment along which the subproblems distribute their targets. Under empirical
@@ -914,7 +974,7 @@ correlations between the per-replication extent ratio and the per-replication
 hypervolume gap are +0.683 on Adult, +0.678 on Bank Marketing, +0.320 on Spambase and
 **−0.111 on MAGIC**. This is an association measured across 30 replications within a
 dataset, present on three datasets and absent on the fourth; it is not a demonstrated
-cause of the deficit, and it is not presented as one [FIG:chim_contraction].
+cause of the deficit, and it is not presented as one Figure 4.
 
 ## 6.5 Reference sensitivity
 
@@ -933,7 +993,7 @@ CORE remains primary because it was prospectively frozen as method-independent b
 any result existed; AUGMENTED remains a mandatory sensitivity, not an alternative from
 which a reference may be selected after the fact. The reported Adult conclusion is
 accordingly the CORE non-detection, with the AUGMENTED result stated alongside it here
-and in [TAB:reference_sensitivity].
+and in Supplement S9.
 
 
 ## 6.6 The prospectively retained boundary dataset did not resolve
@@ -954,7 +1014,7 @@ losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.43
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is **1.7706** on Spambase against
 **0.0594** on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
-[TAB:boundary_dispersion], [FIG:boundary_dispersion].
+Figure 3, Figure 3.
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
 $R = 30$, not a demonstration that the effect is absent. It is **consistent with** the
@@ -992,14 +1052,14 @@ status.
 Over the confirmatory campaign the composite-quality gate passed in **8 of 30**
 replications on MAGIC and **9 of 30** on Spambase, and in **0 of 30** on both Adult and
 Bank Marketing. The cost gate passed 30/30, 30/30, 22/30 and 27/30 respectively
-[TAB:gate_regimes].
+Supplement S11.
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
 composite-quality surrogate failed the frozen criterion in every replication — and they
 also carry the largest geometry effects, +0.2549 and +0.2281, Holm-significant on both.
 The relative advantage of NBI front construction over specification-matched weighted
 scalarization therefore persisted where the surrogate did not meet its own external
-standard. Within MAGIC, the only dataset with both strata populated, the geometry
+standard. Within MAGIC, the only primary-panel dataset with both strata populated (Spambase, the boundary control, also has both, with 9 of 30 passing), the geometry
 difference is positive in each: median +0.1173 with a win fraction of 1.00 across the 8
 gate-passing units, and +0.0165 with 0.82 across the 22 failing units. Both strata are
 small and are reported descriptively, without a test.
@@ -1010,11 +1070,11 @@ another on the same surrogate, are different questions; the study answers only t
 second. We do not claim that the geometry effect requires a reliable surrogate, requires
 an unreliable one, or that NBI compensates for surrogate error.
 
-## 6.8 Baselines: the evaluation-matched grid leads every surrogate-assisted arm
+## 6.8 Baselines: the frozen-budget direct grid baseline leads every surrogate-assisted arm
 
-At the frozen comparator budget, an evaluation-matched coarse grid attained a **higher
+At the frozen comparator budget, the frozen-budget direct grid baseline attained a **higher
 median CORE-relative hypervolume ratio than every surrogate-assisted arm on every
-dataset in the panel** [TAB:baselines_hv], [FIG:baseline_vs_arms]. Against NBI-S:
+dataset in the panel** Table 5, Figure 6. Against NBI-S:
 
 | dataset | NBI-S median | GRID median | median difference (NBI-S − GRID) | NBI-S wins | raw $p$ |
 |---|---:|---:|---:|---:|---:|
@@ -1022,6 +1082,8 @@ dataset in the panel** [TAB:baselines_hv], [FIG:baseline_vs_arms]. Against NBI-S
 | Adult | 0.9951 | 1.0476 | −0.0488 | 5/30 | 0.0001 |
 | Bank Marketing | 0.9979 | 1.0625 | −0.1323 | 10/30 | 0.1642 |
 | Spambase | 1.0812 | 1.0192 | −0.1286 | 12/30 | 0.8774 |
+
+**Table 5.** Median CORE-relative hypervolume ratio by method. Direct-search comparators operate under the frozen comparator budget of 386 evaluations; WS-S and NBI-S cost 186 standalone.
 
 The gap is significant on MAGIC and Adult and not on Bank Marketing or Spambase. This
 contrast is not in the frozen primary family, carries no Holm correction, and is
@@ -1036,7 +1098,7 @@ cannot be stated as an efficiency claim, the budgets not being equal — and equ
 cannot be explained away on that basis: at the budget the protocol froze, direct search
 led. Any account of the geometry result in Section 6.2 must carry this alongside it.
 
-The other evaluation-matched comparators sit below the grid: median CORE-relative
+The other direct-search comparators, under the same frozen budget, sit below the grid: median CORE-relative
 hypervolume ratios of 0.8907 (random) and 0.9580 (NSGA-II) on MAGIC, 0.4369 and 0.8650
 on Adult, 0.3190 and 0.9674 on Bank Marketing, and 0.0000 and 0.4164 on Spambase.
 Matched NSGA-II ran at $32 \times 12 = 384$ evaluations, two short of the comparator
@@ -1047,15 +1109,27 @@ contributes to neither reference set. The frozen protocol excludes the single-ob
 Bayesian-optimization and TPE endpoints from the front-indicator table, a
 single-objective optimizer not returning a front.
 
+Two properties of the comparator qualify this. The budget rule matches comparators to
+the most expensive arm rather than to each arm, so the grid received 386 real
+evaluations against the 186 WS-S and NBI-S require standalone. And the grid's 128-point
+mesh contains the design's 64 factorial corners, so 64 of its evaluations re-measure
+points inside the CORE reference it is scored against — an advantage on a core-relative
+indicator that the surrogate-assisted arms, which propose interior points, do not have.
+Neither fact was chosen after seeing the result, and neither is offered as a reason to
+set the comparison aside: at the budget and construction this protocol froze, direct
+search led on the paired statistic across all four datasets.
+
 ## 6.9 Holdout confirmation
 
 Each unit re-measured its selected candidates on a held-out partition whose labels were
 structurally unavailable until the confirmation stage, at 5 audit-only real evaluations
 per unit, charged to the study and to no arm. Across all four datasets and all five
-arms, the absolute difference between median internal and median holdout accuracy is
-below **0.012** in every dataset-by-arm cell, the largest magnitude being 0.0117, and in
+arms, the **median per-replication difference** between internal and holdout accuracy has
+magnitude below **0.012** in every one of the 20 dataset-by-arm cells, the largest
+being 0.0117, and is negative — the held-out partition scoring better — in 13 of
+them.0117, and in
 13 of the 20 cells the difference is negative — holdout accuracy exceeded internal
-accuracy [TAB:holdout_optimism]. These are descriptive audit figures read from
+accuracy Supplement S14. These are descriptive audit figures read from
 `analysis/secondary_analysis.json`, not confirmatory claims.
 
 The correct reading is an absence of gross optimism in the returned configurations at
@@ -1088,13 +1162,24 @@ CORE-relative hypervolume than specification-matched weighted scalarization: med
 differences of $+0.0374$ on MAGIC, $+0.2549$ on Adult and $+0.2281$ on Bank Marketing,
 favoured in 26/30, 30/30 and 24/30 replications, rank-biserial $\geq +0.88$ in all three,
 Holm-significant within every primary dataset, which is the generalization unit
-[TAB:primary_contrasts].
+Table 4.
 
 The scope is part of the claim: two objectives, this surrogate architecture, this budget,
 these three datasets. Nothing licenses "NBI is better than weighted sum" in general. The
 endpoint is a CORE-relative hypervolume ratio against a finite method-independent set of
 288 points, where a value above 1 is expected and means only that the returned set
 improved on that finite reference.
+
+
+The strength of the geometry evidence depends on which test is read. Under the
+Holm-corrected signed-rank test declared primary, the contrast is significant in all
+three primary datasets. Under the Nadeau–Bengio correction declared in advance as a
+sensitivity, it clears $0.05$ on Adult alone ($p = 0.0148$, against
+0.0860 and 0.0764). We take the descriptive triple as
+primary, as specified before the campaign ran, and report the corrected test because
+it was promised — not because it agrees. A reader who weights the corrected test more
+heavily than we do should read the geometry result as one clearly resolved dataset and
+two suggestive ones.
 
 ## 7.3 Why hypervolume and IGD⁺ move while the non-dominated count does not
 
@@ -1126,16 +1211,11 @@ panel's one reference disagreement on Adult's anchor contrast, significant under
 
 ## 7.5 CHIM contraction is the associated mechanism, and only that
 
-The deficit is not solver failure: certified fraction 1.000, zero maximum equality
-residual, 20 distinct realized configurations per arm on every dataset. Inserting NBI-R's
-empirical anchors into NBI-S's returned set and changing nothing else moves the indicator
-by $+0.0133$ on MAGIC and $+0.0000$ on the other three, against the full provenance gaps
-above and $-0.6932$ on Spambase: the deficit is associated with the geometric consequences
-of the relocated payoff matrix rather than with anchor point-set composition. And the CHIM
-segment contracts to 20–81% of its surrogate-derived extent under empirical anchors —
-extent ratios 0.811, 0.204, 0.272 and 0.370 on MAGIC, Adult, Bank Marketing and Spambase
-[FIG:chim_contraction]. At $q = 2$ that segment is what the subproblems distribute targets
-along, so a shorter one spreads the set over a narrower band.
+The deficit is not attributable to solver failure. Over the 240 arm-units the
+certified fraction has median 1.000 with two exceptions (0.900, 0.950), the
+per-unit maximum equality residual has median $6.6\times10^{-10}$ against a
+campaign maximum of $6.9\times10^{-1}$ on one unit, and both arms return 20
+distinct realized configurations throughout. Comparable, not identical.
 
 This is an association across 30 replications within a dataset, not a demonstrated cause:
 the within-dataset Spearman between contraction and deficit is $+0.683$ on Adult, $+0.678$
@@ -1155,11 +1235,11 @@ driver.
 
 ## 7.7 The grid baseline, and what it costs the argument
 
-At the frozen comparator budget, an evaluation-matched coarse grid attained higher median
-CORE-relative hypervolume than every surrogate-assisted arm on every dataset in the panel
+At the frozen comparator budget, the frozen-budget direct grid baseline attained higher median
+CORE-relative hypervolume than every surrogate-assisted arm on three of the four datasets
 — NBI-S against GRID, 0.9430/1.0068 on MAGIC, 0.9951/1.0476 on Adult, 0.9979/1.0625 on
 Bank Marketing and 1.0812/1.0192 on Spambase, NBI-S winning 0/30, 5/30, 10/30 and 12/30
-replications [TAB:baseline_vs_arms]. The budget asymmetry belongs in the same breath: the
+replications Supplement S13. The budget asymmetry belongs in the same breath: the
 comparator budget is the maximum over arms, 386 real evaluations set by NBI-R, while WS-S
 and NBI-S cost 186 standalone, so comparators received roughly twice the real evaluations
 those arms require. The contrast is outside the frozen primary family, uncorrected, and
@@ -1178,7 +1258,7 @@ The advantage of NBI over weighted scalarization persisted even where the extern
 audited surrogate failed the frozen quality criterion. On Adult and Bank Marketing the
 composite-quality gate passed in 0 of 30 replications and the geometry effect is
 Holm-significant on both, against 8 of 30 on MAGIC and 9 of 30 on Spambase
-[FIG:gate_regime]. The gate was diagnostic: every arm ran at every replication whatever it
+Figure 6. The gate was diagnostic: every arm ran at every replication whatever it
 said, so it annotates the evidence instead of selecting it. The inference is narrow:
 absolute surrogate trustworthiness and relative front-construction geometry are different
 questions and this study answers only the second. We do not conclude that the geometry
@@ -1239,9 +1319,8 @@ published pipelines, and supports no estimate of how common the conflation is.
 
 The frozen comparator budget is the maximum over arms — `NBI-R`'s 386 evaluations — while
 `WS-S` and `NBI-S` cost 186 standalone. The comparators therefore received roughly twice the
-real evaluations those two arms require. The evaluation-matched grid nevertheless attained
-higher median CORE-relative hypervolume than every surrogate-assisted arm on every dataset in
-the panel [TAB:baseline_vs_arms], and that asymmetry belongs with the result: the rule was
+real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless attained
+favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) Supplement S13, and that asymmetry belongs with the result: the rule was
 fixed before any result existed and is not revised now, and the study can say neither what
 the surrogate-assisted arms would do at parity nor that the grid is more efficient. A
 budget-matched-per-arm comparison was not run.
@@ -1269,7 +1348,7 @@ anchor point-set composition, but the CHIM link is an association across 30 repl
 within a dataset. It is positive on Adult, Bank Marketing and Spambase and **absent on MAGIC**
 ($\rho = -0.11$), which is the dataset where the injection control is itself nonzero. No
 intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis
-[FIG:chim_vs_gap].
+Figure 4.
 
 ### 8.5 Known weaknesses in the frozen protocol
 
@@ -1312,7 +1391,7 @@ should be read as such.
 
 ### 9.1 Version tags
 
-Five tags separate what was specified from what was measured [TAB:tags]. `v0.1.0-dissertation`
+Five tags separate what was specified from what was measured Supplement S1. `v0.1.0-dissertation`
 (`67d9fe5`) is the historical implementation this study reconstructs; it is read and executed as
 archived, never edited. `xgboost-hpo-protocol-v1` froze the specification before the
 measurement-validation pilot, `-v2` incorporated the pilot, and `-v3` (`9b15ba7`) is the
@@ -1399,8 +1478,11 @@ three geometry-positive datasets, with 26, 30 and 24 of 30 paired wins and Holm-
 significance within each dataset. The third mechanism answered in the direction opposite
 to the one the pipeline's design would suggest: substituting a pre-specified
 empirical-real anchor procedure for surrogate-derived payoff information gave no
-benefit, and degraded the front on two of the three datasets. The frozen anchor-injection
-control shows that this is not a consequence of which points enter the returned set,
+benefit, and degraded the front on two of the three datasets. The frozen anchor-injection control moves the
+indicator by approximately zero on three of four datasets and by $+0.0133$ on MAGIC,
+where it accounts for about 18% of that dataset's gap, so the deficit is associated
+with the relocated payoff information rather than with which points enter the returned
+set,
 and the payoff matrices show a contraction of the convex hull of individual minima that
 is associated with the deficit on three of four datasets. That association is reported
 as an association.
@@ -1422,3 +1504,139 @@ designated boundary dataset did not resolve, which is consistent with the reason
 that separated it in advance without confirming that reasoning. Whether the geometry
 advantage survives at larger budgets, at more than two objectives, or against direct
 search given equal evaluations, this design cannot say, and we have tried not to say it.
+
+
+## Declarations
+
+**Prior dissemination and relationship to a dissertation.** This study extends work
+first developed in the first author's master's dissertation (Ribeiro, 2026, UNIFEI,
+unpublished), which applied a PCA/Varimax latent-objective construction to XGBoost
+hyperparameter optimization. The present work reconstructs that pipeline from its
+archived implementation, separates three mechanisms it changed together, and evaluates
+them under a protocol frozen before any comparative result existed. The archived
+implementation is reproduced by calling its frozen code unmodified rather than by
+reimplementation, and is reported neutrally: a code-level reconstruction established
+that it performs normalized weighted scalarization for front construction although the
+historical text used NBI terminology. No claim is made about the correctness of the
+dissertation's reported results, whose objective space differs from this study's
+(§3.4).
+
+**Relationship to companion work by the same authors.** Three instruments used here
+were developed in a companion manuscript by the present authors (Ribeiro, Pereira and
+de Paiva, 2026, unpublished, frozen and not submitted): the external surrogate
+reliability gate, the evaluation-matched comparator-budget rule, and the
+anchor-injection control. They are applied here, not introduced. The methodological
+lineage of the latent-objective construction is set out in §2.7 and includes Pereira
+et al. (2025) and de Azevedo et al. (2026), with which this work shares co-authors.
+
+**Overlap statement.** The datasets, the frozen protocol, the confirmatory campaign and
+every result reported here are specific to this study. No figure, table or result is
+reproduced from the dissertation or from the companion manuscript.
+
+**Data and code availability.** The protocol, the frozen factor models, every analysis
+artifact and every script are version-controlled and tagged; see §9. Raw datasets are
+public and are retrieved by checksum-verified loaders; evaluation caches are
+deliberately unversioned.
+
+**Competing interests.** The authors declare no competing interests.
+
+**Funding.** _To be completed by the authors._
+
+**Author contributions.** _To be completed by the authors._
+
+---
+
+## References
+
+Entries below are given with the bibliographic detail recorded in the project's
+lineage register. Entries marked **[complete before submission]** require full
+bibliographic data that is not held in the project record and must be supplied by the
+authors; they are cited in the text and must not be dropped.
+
+Das, I. and Dennis, J. E. (1998). Normal-Boundary Intersection: a new method for
+generating the Pareto surface in nonlinear multicriteria optimization problems.
+*SIAM Journal on Optimization*, 8(3), 631–657.
+
+Pereira, J. H. F., Tertuliano Ribeiro, C., Mendes, M. H. S., Campos, P. H. S. and
+de Paiva, A. P. (2025). Hybrid multivariate Normal Boundary Intersection with
+mixture-design post-optimization. *Engineering Applications of Artificial
+Intelligence*, 162, 112510.
+
+de Azevedo, R., Pereira, J. H. F., Cesário, A. and de Paiva, A. P. (2026). NBI-VRF
+applied to computational fluid dynamics. *Thermal Science and Engineering Progress*,
+74, 104722.
+
+Ribeiro, C. T. (2026). *Multiobjective optimization of XGBoost hyperparameters using
+design of experiments and latent objective construction*. MSc dissertation,
+Universidade Federal de Itajubá (UNIFEI). Unpublished.
+
+Ribeiro, C. T., Pereira, J. H. F. and de Paiva, A. P. (2026). *Surrogate reliability
+and evaluation-matched comparison in multivariate response-surface optimization*.
+Unpublished manuscript, frozen and not submitted.
+
+Lujan-Moreno, G. A., Howard, P. R., Rojas, O. G. and Montgomery, D. C. (2018).
+Design of experiments and response surface methodology to tune machine learning
+hyperparameters, with a random forest case study. **[complete before submission]**
+
+Vasquez-Ramos, et al. (2025). Response surface methodology for XGBoost hyperparameter
+tuning. **[complete before submission]**
+
+Ishibuchi, H., Masuda, H., Tanigaki, Y. and Nojima, Y. (2015). Modified distance
+calculation in generational distance and inverted generational distance.
+**[complete before submission]**
+
+Nadeau, C. and Bengio, Y. (2003). Inference for the generalization error.
+*Machine Learning*, 52(3), 239–281.
+
+Bergstra, J. and Bengio, Y. (2012). Random search for hyper-parameter optimization.
+*Journal of Machine Learning Research*, 13, 281–305.
+
+Morales-Hernández, A., Van Nieuwenhuyse, I. and Rojas Gonzalez, S. (2023). A survey on
+multi-objective hyperparameter optimization algorithms for machine learning.
+**[complete before submission]**
+
+Karl, F., et al. (2023). Multi-objective hyperparameter optimization in machine
+learning — an overview. **[complete before submission]**
+
+Costa, et al. (2016); Luz, et al. (2021); Streitenberger, et al. (2022). Prior
+applications of the latent-objective construction by the same research group.
+**[complete before submission]**
+
+Eggensperger, K., et al. (2021); Pfisterer, F., et al. (2022); Guerrero-Viu, J., et al.
+(2021). Benchmark suites and baseline sets for hyperparameter optimization.
+**[complete before submission]**
+
+
+## Figure captions
+
+**Figure 1. The arm lattice.** Each arrow is a single-factor contrast and the label
+names the one thing it varies; everything else is held fixed by a run-time fingerprint
+over the solver configuration, realizer, weight grid, surrogate identities and
+reference. The two primary contrasts are marked.
+
+**Figure 2. The geometry contrast, per replication.** Paired differences in
+CORE-relative hypervolume ratio, NBI-S minus WS-S, sorted within each dataset, $R = 30$,
+CORE reference. Blue favours NBI-S. The dashed line is the median. Note that the
+vertical scales differ by dataset.
+
+**Figure 3. Dispersion across the panel.** The same paired differences as Figure 2,
+shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
+which is why its contrast does not resolve at $R = 30$ despite a larger point estimate.
+
+**Figure 4. Anchor provenance and the associated geometry.** Left: the full
+NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which inserts
+NBI-R's empirical anchors into NBI-S's set and changes nothing else. Right: the CHIM
+extent under empirical anchors relative to surrogate-derived anchors, as a per-dataset
+median. The juxtaposition is an association, not a demonstrated cause, and it does not
+hold on MAGIC.
+
+**Figure 5. Reference sensitivity.** Median paired difference under the CORE reference
+(primary, horizontal) against the AUGMENTED reference (mandatory sensitivity,
+vertical), for all twelve dataset-by-contrast cells. Red marks the single cell whose
+significance differs between references; no cell changes direction.
+
+**Figure 6. Surrogate-gate regime and baselines.** Left: per-dataset pass rates of the
+frozen external reliability criterion over $R = 30$; the gate is diagnostic and filters
+nothing. Right: median CORE-relative hypervolume ratio by method. The dashed rule marks
+the CORE reference itself and is **not** an upper bound — a ratio above it means the
+candidate set improved on the finite reference.

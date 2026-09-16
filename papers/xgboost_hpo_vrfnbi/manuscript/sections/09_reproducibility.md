@@ -2,7 +2,7 @@
 
 ### 9.1 Version tags
 
-Five tags separate what was specified from what was measured [TAB:tags]. `v0.1.0-dissertation`
+Five tags separate what was specified from what was measured Supplement S1. `v0.1.0-dissertation`
 (`67d9fe5`) is the historical implementation this study reconstructs; it is read and executed as
 archived, never edited. `xgboost-hpo-protocol-v1` froze the specification before the
 measurement-validation pilot, `-v2` incorporated the pilot, and `-v3` (`9b15ba7`) is the
