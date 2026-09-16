@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 
 import numpy as np
@@ -24,6 +25,7 @@ prim = json.loads((A / "primary_analysis.json").read_text())
 sec = json.loads((A / "secondary_analysis.json").read_text())
 ver = json.loads((A / "verified_claims.json").read_text())
 chim = json.loads((A / "nbi_r_chim_collapse.json").read_text())
+bvsa = json.loads((A / "baseline_vs_arms.json").read_text())
 scr = {r["dataset"]: r for r in
        json.loads((PAPER / "audits" / "final_panel_screening.json").read_text())["datasets"]}
 DISP = {"magic": "MAGIC", "adult": "Adult", "bank_marketing": "Bank Marketing",
@@ -423,6 +425,43 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
         "that it counted CORE-reference rows only, while the verified count is cells "
         "across both references and both indicators."))
 
+    # ---- Claim 12: the evaluation-matched grid baseline ------------------------
+    eff = "; ".join("%s NBI-S %.4f vs GRID %.4f (median %+.4f)"
+                    % (DISP[d], bvsa[d]["nbi_s_median"], bvsa[d]["grid_median"],
+                       bvsa[d]["median_diff_nbi_s_minus_grid"])
+                    for d in PRIMARY + ("spambase",))
+    wtl = "; ".join("%s NBI-S wins %d/%d" % (DISP[d], bvsa[d]["nbi_s_wins"], bvsa[d]["n"])
+                    for d in PRIMARY + ("spambase",))
+    inf = "; ".join("%s raw p = %.4f" % (DISP[d], bvsa[d]["wilcoxon_p_raw"])
+                    for d in PRIMARY + ("spambase",))
+    L.append(claim_block(
+        12, "The evaluation-matched grid baseline leads every surrogate-assisted arm",
+        "How does the whole surrogate-assisted family compare with direct search at "
+        "the frozen comparator budget?",
+        "The paired per-replication difference in CORE-relative hypervolume ratio "
+        "between NBI-S and the evaluation-matched coarse grid.",
+        "all four datasets", "CORE-relative hypervolume ratio", "CORE",
+        "**GRID has the higher median on all four datasets.** " + eff, wtl,
+        "descriptive only — this contrast is **not** part of the frozen primary family "
+        "and carries no Holm correction",
+        inf + " — the gap is significant on MAGIC and Adult and not on Bank Marketing "
+        "or Spambase",
+        "`analysis/baseline_vs_arms.json`; `analysis/secondary_analysis.json` → `baselines`",
+        "CONFIRMED by direct recomputation from the raw indicator blocks.",
+        "\"At the frozen comparator budget, an evaluation-matched coarse grid attained "
+        "higher median CORE-relative hypervolume than every surrogate-assisted arm on "
+        "every dataset in the panel.\" **This must be reported with the budget "
+        "asymmetry stated in the same breath:** the comparator budget is the maximum "
+        "over arms (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186 standalone, "
+        "so the comparators received roughly **twice** the real evaluations those arms "
+        "require. The frozen rule was chosen before any result existed and is not "
+        "revised now.",
+        "Do NOT bury this. Do NOT present the geometry result without it. Do NOT claim "
+        "the grid is *more efficient* — the budgets are not equal and the rule is "
+        "matched-to-the-most-expensive-arm, not matched-to-each-arm. Equally, do NOT "
+        "explain the result away on that basis: at the budget the protocol froze, "
+        "direct search led."))
+
     L.append("""
 ---
 
@@ -439,7 +478,7 @@ got right is not a claims map.
 
     OUT.write_text("".join(L))
     words = len("".join(L).split())
-    print("wrote %s (%d words, 11 claims)" % (OUT, words))
+    print("wrote %s (%d words, %d claims)" % (OUT, words, len(re.findall(r"^### Claim ", "".join(L), re.M))))
     return 0
 
 

@@ -1,0 +1,45 @@
+{
+  "magic": {
+    "nbi_s_median": 0.9430370989571621,
+    "grid_median": 1.0067713861699206,
+    "median_diff_nbi_s_minus_grid": -0.06276564314885708,
+    "nbi_s_wins": 0,
+    "n": 30,
+    "wilcoxon_p_raw": 1.862645149230957e-09
+  },
+  "spambase": {
+    "nbi_s_median": 1.0811910341506035,
+    "grid_median": 1.0192404783055558,
+    "median_diff_nbi_s_minus_grid": -0.1285869264474938,
+    "nbi_s_wins": 12,
+    "n": 30,
+    "wilcoxon_p_raw": 0.8773898625008879
+  },
+  "adult": {
+    "nbi_s_median": 0.9950936676208004,
+    "grid_median": 1.0475699276497625,
+    "median_diff_nbi_s_minus_grid": -0.048753152935147315,
+    "nbi_s_wins": 5,
+    "n": 30,
+    "wilcoxon_p_raw": 0.00013739429414272308
+  },
+  "bank_marketing": {
+    "nbi_s_median": 0.9978693067848721,
+    "grid_median": 1.062513645527534,
+    "median_diff_nbi_s_minus_grid": -0.13226232326201776,
+    "nbi_s_wins": 10,
+    "n": 30,
+    "wilcoxon_p_raw": 0.1641840822994709
+  },
+  "_budget": {
+    "arms": {
+      "HISTORICAL-WS-asrun": 108,
+      "HISTORICAL-WS": 186,
+      "WS-S": 186,
+      "NBI-S": 186,
+      "NBI-R": 386
+    },
+    "comparator": 386,
+    "note": "the comparator budget is the maximum over arms (NBI-R, 386). WS-S and NBI-S cost 186 standalone, so evaluation-matched comparators receive about twice the real evaluations those two arms require. Any efficiency statement must say so."
+  }
+}

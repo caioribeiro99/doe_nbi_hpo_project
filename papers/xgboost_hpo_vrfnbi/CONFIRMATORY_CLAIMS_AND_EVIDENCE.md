@@ -246,6 +246,26 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 
 **Prohibited stronger wording.** Do NOT describe these as missing observations or numerical failures. Do NOT reuse the earlier pre-verification "35 rows / 3.2%" figure without explaining that it counted CORE-reference rows only, while the verified count is cells across both references and both indicators.
 
+### Claim 12 — The evaluation-matched grid baseline leads every surrogate-assisted arm
+
+| field | value |
+|---|---|
+| **Scientific question** | How does the whole surrogate-assisted family compare with direct search at the frozen comparator budget? |
+| **Estimand** | The paired per-replication difference in CORE-relative hypervolume ratio between NBI-S and the evaluation-matched coarse grid. |
+| **Dataset role** | all four datasets |
+| **Endpoint** | CORE-relative hypervolume ratio |
+| **Reference** | CORE |
+| **Effect estimate** | **GRID has the higher median on all four datasets.** MAGIC NBI-S 0.9430 vs GRID 1.0068 (median -0.0628); Adult NBI-S 0.9951 vs GRID 1.0476 (median -0.0488); Bank Marketing NBI-S 0.9979 vs GRID 1.0625 (median -0.1323); Spambase NBI-S 1.0812 vs GRID 1.0192 (median -0.1286) |
+| **Win / tie / loss** | MAGIC NBI-S wins 0/30; Adult NBI-S wins 5/30; Bank Marketing NBI-S wins 10/30; Spambase NBI-S wins 12/30 |
+| **Uncertainty** | descriptive only — this contrast is **not** part of the frozen primary family and carries no Holm correction |
+| **Multiplicity-adjusted inference** | MAGIC raw p = 0.0000; Adult raw p = 0.0001; Bank Marketing raw p = 0.1642; Spambase raw p = 0.8774 — the gap is significant on MAGIC and Adult and not on Bank Marketing or Spambase |
+| **Machine-readable source** | `analysis/baseline_vs_arms.json`; `analysis/secondary_analysis.json` → `baselines` |
+| **Verification status** | CONFIRMED by direct recomputation from the raw indicator blocks. |
+
+**Allowed wording.** "At the frozen comparator budget, an evaluation-matched coarse grid attained higher median CORE-relative hypervolume than every surrogate-assisted arm on every dataset in the panel." **This must be reported with the budget asymmetry stated in the same breath:** the comparator budget is the maximum over arms (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators received roughly **twice** the real evaluations those arms require. The frozen rule was chosen before any result existed and is not revised now.
+
+**Prohibited stronger wording.** Do NOT bury this. Do NOT present the geometry result without it. Do NOT claim the grid is *more efficient* — the budgets are not equal and the rule is matched-to-the-most-expensive-arm, not matched-to-each-arm. Equally, do NOT explain the result away on that basis: at the budget the protocol froze, direct search led.
+
 ---
 
 ## How to use this document
