@@ -99,7 +99,7 @@ an optimizer outcome.
 | `ANCHOR-INJECTION-CONTROL` | control | `anchor_injection_control` | — | yes | NBI-S's own revalidated candidate set augmented with the same empirical anchors NBI-R receives, changing nothing else. Separates the part of any NBI-S to NBI-R gap that is set composition from the part that is relocated geometry. Costs no new real evaluations. |
 | `GRID` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, which is matched to the most expensive arm (NBI-R) and not pairwise to each arm |
 | `RANDOM` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, matched to the most expensive arm and not pairwise to each arm |
-| `BAYES-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on quality, at the frozen comparator budget; excluded from front indicators and from the augmented reference |
+| `BAYES-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on quality, at the frozen comparator budget; excluded from front indicators and from the AUGMENTED reference |
 | `BAYES-COST` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on cost; same exclusion |
 | `TPE-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective TPE on quality; same exclusion |
 | `TPE-COST` | baseline | `direct_baselines` | — | n/a | single-objective TPE on cost; same exclusion |
@@ -371,7 +371,7 @@ of gross selection optimism, **not** as a ranking of arms.
 | Bank Marketing | 93/270 | 34% | 2.349 |
 
 Overall 27.8% of rows exceed 1, maximum
-9.912. The core reference is a finite method-independent set of
+9.912. The CORE reference is a finite method-independent set of
 288 points, not the true Pareto front; a ratio above 1 means the candidate set
 improved on that finite reference.
 
@@ -387,13 +387,13 @@ because independent verification refuted the author's version.
 | item | value |
 |---|---|
 | manuscript source commit | `9aa4f05cc96c06105293cfa46af3729635025c3c` |
-| final package tag | `paper2-manuscript-v3` |
+| final package tag | `paper2-manuscript-v4` — NOT YET CREATED; the freeze is held pending the Funding statement and the author-confirmed CRediT roles |
 | relationship | the package commit adds only this provenance metadata and the compiled PDFs; no manuscript text, analysis artifact or number differs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |
 | datasets | MAGIC, Spambase, Adult, Bank Marketing |
 | replications | 30 per dataset, 120 units |
-| primary endpoint | hv_ratio against the core reference |
+| primary endpoint | hv_ratio against the CORE reference |
 | campaign runtime | 9 h 46 min, 14 workers × 1 thread |
 
 Raw datasets and evaluation caches are deliberately unversioned; the design, the

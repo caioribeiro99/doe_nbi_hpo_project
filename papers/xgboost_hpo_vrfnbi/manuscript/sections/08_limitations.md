@@ -25,8 +25,10 @@ published pipelines, and supports no estimate of how common the conflation is.
 
 The frozen comparator budget is the maximum over arms — `NBI-R`'s 386 evaluations — while
 `WS-S` and `NBI-S` cost 186 standalone. The comparators therefore received roughly twice the
-real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless attained
-favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) (Supplement S13), and that asymmetry belongs with the result: the rule was
+real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless led: the median paired
+difference favoured it over NBI-S on all four datasets, and its marginal median was the
+higher of the two on three of the four — not on Spambase (Supplement S13). That asymmetry
+belongs with the result: the rule was
 fixed before any result existed and is not revised now, and the study can say neither what
 the surrogate-assisted arms would do at parity nor that the grid is more efficient. A
 budget-matched-per-arm comparison was not run.

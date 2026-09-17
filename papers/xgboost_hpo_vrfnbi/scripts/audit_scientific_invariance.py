@@ -49,6 +49,12 @@ DECLARED: dict[str, str] = {
     "4": "Table 4 alone carried two numbered captions; the title above the table was "
          "removed and its sign convention folded into the caption below",
     "30": "same removal: the duplicate Table 4 title also stated R = 30",
+    "6.2": "cross-reference corrected: the geometry result is 6.3, not 6.2 "
+           "(6.2 is the specification/normalization reconstruction); wrong since v1",
+    "6.3": "cross-reference corrected: the geometry result is 6.3, not 6.2",
+    "6.7": "cross-reference corrected: the grid baseline is reported in 6.8, not 6.7, "
+           "after the section renumbering",
+    "6.8": "cross-reference corrected: the grid baseline is reported in 6.8",
     "386": "'evaluation-matched' replaced by the explicit frozen comparator budget",
     "384": "the NSGA-II shortfall is now disclosed as '384 against 386'",
 }

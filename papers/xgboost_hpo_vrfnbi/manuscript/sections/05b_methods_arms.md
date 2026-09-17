@@ -84,7 +84,7 @@ payoff matrix and CHIM.
 Six direct-search comparators run at the frozen comparator budget of 386 real evaluations: coarse
 grid, random search, Bayesian optimization on quality and on cost, and TPE on quality and on cost.
 The four single-objective ones are reported on their own endpoint only and enter neither the
-front-indicator table nor the augmented reference. `NSGA2-MATCHED` runs at $32 \times 12 = 384$, a
+front-indicator table nor the AUGMENTED reference. `NSGA2-MATCHED` runs at $32 \times 12 = 384$, a
 two-evaluation shortfall that is published rather than absorbed. `NSGA2-UNMATCHED` receives ten times
 that budget on one replication per dataset and is a **context baseline only**: no fairness claim
 attaches to it, and it enters no budget-matched comparison and neither reference.
@@ -103,7 +103,7 @@ comparator is uniform random padding**, and the implementation reports the split
 than describing the whole set as a grid. The mesh also contains the design's 64
 factorial corners, so **64 of the grid's 386 evaluations re-measure points that are
 themselves among the 88 design rows inside the CORE reference**. The grid is therefore
-scored partly against its own points, which favours it on a core-relative indicator
+scored partly against its own points, which favours it on a CORE-relative indicator
 relative to arms that propose elsewhere in the box. This is a property of the frozen
 comparator construction, disclosed here and carried into every comparison against it.
 

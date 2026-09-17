@@ -56,7 +56,7 @@ ROLE = {
         "matched to the most expensive arm and not pairwise to each arm"),
     "BAYES-QUALITY": ("baseline", "direct_baselines",
         "single-objective Bayesian optimization on quality, at the frozen comparator "
-        "budget; excluded from front indicators and from the augmented reference"),
+        "budget; excluded from front indicators and from the AUGMENTED reference"),
     "BAYES-COST": ("baseline", "direct_baselines",
         "single-objective Bayesian optimization on cost; same exclusion"),
     "TPE-QUALITY": ("baseline", "direct_baselines",

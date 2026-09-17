@@ -73,8 +73,11 @@ improve the confirmatory NBI fronts: median differences of $-0.0741$ on MAGIC, $
 Adult (a non-detection, interval spanning zero) and $-0.4093$ on Bank Marketing. Two of three
 primary datasets degraded. The paid anchor stage bought nothing measurable here.
 
-**A frozen-budget direct grid baseline led every surrogate-assisted arm.** At the frozen
-comparator budget, a coarse grid favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) (Table 5). The budget asymmetry
+**A frozen-budget direct grid baseline led NBI-S at the frozen comparator budget.** The
+median paired difference favoured the direct grid baseline over NBI-S on all four datasets,
+and the grid held the higher marginal median on three of the four — not on Spambase, where
+NBI-S is the higher of the two (Table 5). The paired statistic is the within-replication
+comparison and the marginal medians are not, so the two need not agree. The budget asymmetry
 belongs in the same sentence: the frozen rule matched comparators to the most expensive arm
 (NBI-R, 386 real evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators
 received roughly twice the real evaluations those arms require. The rule was fixed before any

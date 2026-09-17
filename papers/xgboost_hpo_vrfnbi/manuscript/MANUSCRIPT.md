@@ -15,13 +15,13 @@ logical evaluations).
 Replacing the archived observed-extrema normalization with a payoff-matrix reference
 produced no detectable change. Holding the surrogate model, scaling, decision space,
 candidate realization and budget fixed, canonical Normal Boundary Intersection improved
-core-relative hypervolume over specification-matched weighted scalarization on all three geometry-positive datasets: $+0.037$ (26/30 wins),
+CORE-relative hypervolume over specification-matched weighted scalarization on all three geometry-positive datasets: $+0.037$ (26/30 wins),
 $+0.255$ (30/30) and $+0.228$ (24/30), Holm-significant within each dataset. Replacing
 surrogate-derived payoff information with a pre-specified empirical-real anchor
 procedure gave no benefit and degraded the front on two of the three ($-0.074$;
-$-0.019$, not significant under the core reference; $-0.409$); the deficit is associated, on three of four
+$-0.019$, not significant under the CORE reference; $-0.409$); the deficit is associated, on three of four
 datasets, with contraction of the convex hull of individual minima rather than with
-anchor point-set composition. Core and augmented references agree in 11 of 12 cells. Under the frozen
+anchor point-set composition. CORE and AUGMENTED references agree in 11 of 12 cells. Under the frozen
 direct-search comparator budget the median paired difference favoured a coarse grid
 over NBI-S on all four datasets, although the grid received 386 real evaluations
 against 186 standalone for the scalarization arms. A prospectively
@@ -108,8 +108,11 @@ improve the confirmatory NBI fronts: median differences of $-0.0741$ on MAGIC, $
 Adult (a non-detection, interval spanning zero) and $-0.4093$ on Bank Marketing. Two of three
 primary datasets degraded. The paid anchor stage bought nothing measurable here.
 
-**A frozen-budget direct grid baseline led every surrogate-assisted arm.** At the frozen
-comparator budget, a coarse grid favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) (Table 5). The budget asymmetry
+**A frozen-budget direct grid baseline led NBI-S at the frozen comparator budget.** The
+median paired difference favoured the direct grid baseline over NBI-S on all four datasets,
+and the grid held the higher marginal median on three of the four — not on Spambase, where
+NBI-S is the higher of the two (Table 5). The paired statistic is the within-replication
+comparison and the marginal medians are not, so the two need not agree. The budget asymmetry
 belongs in the same sentence: the frozen rule matched comparators to the most expensive arm
 (NBI-R, 386 real evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators
 received roughly twice the real evaluations those arms require. The rule was fixed before any
@@ -664,7 +667,7 @@ payoff matrix and CHIM.
 Six direct-search comparators run at the frozen comparator budget of 386 real evaluations: coarse
 grid, random search, Bayesian optimization on quality and on cost, and TPE on quality and on cost.
 The four single-objective ones are reported on their own endpoint only and enter neither the
-front-indicator table nor the augmented reference. `NSGA2-MATCHED` runs at $32 \times 12 = 384$, a
+front-indicator table nor the AUGMENTED reference. `NSGA2-MATCHED` runs at $32 \times 12 = 384$, a
 two-evaluation shortfall that is published rather than absorbed. `NSGA2-UNMATCHED` receives ten times
 that budget on one replication per dataset and is a **context baseline only**: no fairness claim
 attaches to it, and it enters no budget-matched comparison and neither reference.
@@ -683,7 +686,7 @@ comparator is uniform random padding**, and the implementation reports the split
 than describing the whole set as a grid. The mesh also contains the design's 64
 factorial corners, so **64 of the grid's 386 evaluations re-measure points that are
 themselves among the 88 design rows inside the CORE reference**. The grid is therefore
-scored partly against its own points, which favours it on a core-relative indicator
+scored partly against its own points, which favours it on a CORE-relative indicator
 relative to arms that propose elsewhere in the box. This is a property of the frozen
 comparator construction, disclosed here and carried into every comparison against it.
 
@@ -880,7 +883,7 @@ standalone, so the comparators received roughly twice the real evaluations those
 require; the rule was frozen before any result existed and is not revised here. The
 geometry contrast compares two front constructions at a fixed surrogate budget; it is
 not a demonstration that the surrogate-assisted family is preferable to direct search.
-Section 6.7 reports this baseline in full.
+Section 6.8 reports this baseline in full.
 
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
 |---|---|---|---|---|---|---|
@@ -1109,7 +1112,7 @@ comparators received roughly twice the real evaluations those two arms require. 
 was fixed before any result existed and is not revised now. The grid result therefore
 cannot be stated as an efficiency claim, the budgets not being equal — and equally
 cannot be explained away on that basis: at the budget the protocol froze, direct search
-led. Any account of the geometry result in Section 6.2 must carry this alongside it.
+led. Any account of the geometry result in Section 6.3 must carry this alongside it.
 
 The other direct-search comparators, under the same frozen budget, sit below the grid: median CORE-relative
 hypervolume ratios of 0.8907 (random) and 0.9580 (NSGA-II) on MAGIC, 0.4369 and 0.8650
@@ -1126,7 +1129,7 @@ Two properties of the comparator qualify this. The budget rule matches comparato
 the most expensive arm rather than to each arm, so the grid received 386 real
 evaluations against the 186 WS-S and NBI-S require standalone. And the grid's 128-point
 mesh contains the design's 64 factorial corners, so 64 of its evaluations re-measure
-points inside the CORE reference it is scored against — an advantage on a core-relative
+points inside the CORE reference it is scored against — an advantage on a CORE-relative
 indicator that the surrogate-assisted arms, which propose interior points, do not have.
 Neither fact was chosen after seeing the result, and neither is offered as a reason to
 set the comparison aside: at the budget and construction this protocol froze, direct
@@ -1330,8 +1333,10 @@ published pipelines, and supports no estimate of how common the conflation is.
 
 The frozen comparator budget is the maximum over arms — `NBI-R`'s 386 evaluations — while
 `WS-S` and `NBI-S` cost 186 standalone. The comparators therefore received roughly twice the
-real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless attained
-favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) (Supplement S13), and that asymmetry belongs with the result: the rule was
+real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless led: the median paired
+difference favoured it over NBI-S on all four datasets, and its marginal median was the
+higher of the two on three of the four — not on Spambase (Supplement S13). That asymmetry
+belongs with the result: the rule was
 fixed before any result existed and is not revised now, and the study can say neither what
 the surrogate-assisted arms would do at parity nor that the grid is more efficient. A
 budget-matched-per-arm comparison was not run.
@@ -1484,7 +1489,7 @@ every returned candidate on the real learner.
 Two of the three mechanisms produced clear answers, in opposite directions. Correcting
 the archived scalarization specification and its observed-extrema normalization changed
 nothing detectable. Replacing weighted scalarization with canonical Normal Boundary
-Intersection, holding everything else fixed, improved core-relative hypervolume on all
+Intersection, holding everything else fixed, improved CORE-relative hypervolume on all
 three geometry-positive datasets, with 26, 30 and 24 of 30 paired wins and Holm-adjusted
 significance within each dataset. The third mechanism answered in the direction opposite
 to the one the pipeline's design would suggest: substituting a pre-specified
@@ -1501,9 +1506,10 @@ as an association.
 Two results limit how far the geometry finding should be carried. The advantage is
 specific to hypervolume and IGD⁺; the joint non-dominated fraction shows no significant
 difference on any dataset in the panel. And under the frozen direct-search comparator
-budget, a coarse grid attained higher median core-relative hypervolume than every
-surrogate-assisted arm — while receiving 386 real evaluations against the 186 the
-scalarization arms require standalone. That asymmetry is a property of the frozen
+budget, the median paired difference favoured a coarse grid over NBI-S on all four
+datasets, and the grid held the higher marginal median on three of the four — not on
+Spambase — while receiving 386 real evaluations against the 186 the scalarization arms
+require standalone. That asymmetry is a property of the frozen
 comparator rule, not a defence of the arms: at the budget this protocol fixed in
 advance, direct search led.
 

@@ -48,7 +48,7 @@ standalone, so the comparators received roughly twice the real evaluations those
 require; the rule was frozen before any result existed and is not revised here. The
 geometry contrast compares two front constructions at a fixed surrogate budget; it is
 not a demonstration that the surrogate-assisted family is preferable to direct search.
-Section 6.7 reports this baseline in full.
+Section 6.8 reports this baseline in full.
 
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
 |---|---|---|---|---|---|---|

@@ -19,7 +19,16 @@ PATTERNS = ["leads every surrogate-assisted arm", "every surrogate-assisted arm 
             "no geometry effect on Spambase", "true Pareto",
             "fraction of optimal hypervolume", "significant on all three", "fc10a84",
             "Figure 3, Figure 3", "To be completed by the authors",
-            "higher median CORE-relative hypervolume ratio than every"]
+            "higher median CORE-relative hypervolume ratio than every",
+            # v4: the grid universal in its remaining forms, the broken prose the v3
+            # substitutions left behind, and the cross-reference the renumbering staled.
+            "led every surrogate-assisted arm",
+            "attained higher median core-relative hypervolume than every",
+            "attained favoured",
+            "favoured the coarse grid on all four datasets in median paired difference, and exceeded every",
+            "Section 6.7 reports this baseline",
+            "geometry result in Section 6.2",
+            "a coarse grid favoured the coarse grid"]
 # A forbidden phrase is acceptable only inside a denial, a prohibition, or a record of
 # something withdrawn.
 OK = re.compile(r"\b(?:not|never|no |wrong|must not|do not|does not|prohibited|forbidden|"

@@ -19,7 +19,9 @@ PAPER = pathlib.Path(__file__).resolve().parents[1] / "manuscript"
 
 SEC_HEAD = re.compile(r"^#{2,6}\s+(\d+(?:\.\d+)*)\.?\s", re.M)
 SUP_HEAD = re.compile(r"^#{2,6}\s+(S\d+)\b", re.M)
-SEC_REF = re.compile(r"§\s*(\d+(?:\.\d+)*)")
+# Both forms are used in the prose. Checking only the section-sign form let
+# "Section 6.7 reports this baseline in full." survive the 6.7/6.8 renumbering.
+SEC_REF = re.compile(r"§\s*(\d+(?:\.\d+)*)|\bSections?\s+(\d+(?:\.\d+)*)")
 SUP_REF = re.compile(r"\bSupplement\s+(S\d+)\b")
 TAB_REF = re.compile(r"\bTable\s+(\d+)\b")
 FIG_REF = re.compile(r"\bFigure\s+(\d+)\b")
@@ -127,7 +129,8 @@ def main() -> int:
     if dup:
         failures.append(f"duplicate section numbers: {dup}")
     print(f"    section numbers            {len(sections)} unique, duplicates: {dup or 'none'}")
-    failures += report("section references", set(SEC_REF.findall(man)), sections)
+    sec_refs = {a or b for a, b in SEC_REF.findall(man)}
+    failures += report("section references", sec_refs, sections)
     failures += report("table references", set(TAB_REF.findall(man)), set(TAB_DEF.findall(man)))
     failures += report("figure references", set(FIG_REF.findall(man)), set(FIG_DEF.findall(man)))
     failures += report("supplement references", set(SUP_REF.findall(man)), set(SUP_HEAD.findall(sup)))

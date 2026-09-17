@@ -64,7 +64,7 @@ def fig_primary_effects():
                      fontsize=8)
         ax.set_xlabel("replication (sorted)", fontsize=7.5)
         ax.tick_params(labelsize=7)
-    axes[0].set_ylabel("WS-S → NBI-S\nΔ core-relative HV", fontsize=8)
+    axes[0].set_ylabel("WS-S → NBI-S\nΔ CORE-relative HV", fontsize=8)
     fig.savefig(FIG/"fig2_geometry_effect.png"); plt.close(fig)
 
 
@@ -79,7 +79,7 @@ def fig_boundary_dispersion():
     ax.axhline(0, color="#999", lw=0.8)
     ax.set_xticklabels([DISP[d].replace(" (boundary)", "\n(boundary)") for d in
                         PRIMARY + ("spambase",)], fontsize=7)
-    ax.set_ylabel("WS-S → NBI-S\nΔ core-relative HV", fontsize=8)
+    ax.set_ylabel("WS-S → NBI-S\nΔ CORE-relative HV", fontsize=8)
     ax.tick_params(labelsize=7)
     fig.savefig(FIG/"fig3_boundary_dispersion.png"); plt.close(fig)
 
@@ -98,7 +98,7 @@ def fig_anchor_and_chim():
     a1.axhline(0, color="#999", lw=0.8)
     a1.set_xticks(x); a1.set_xticklabels([DISP[d].split(" (")[0] for d in ds_all],
                                          fontsize=7, rotation=20, ha="right")
-    a1.set_ylabel("Δ core-relative HV", fontsize=8); a1.legend(fontsize=6.5, frameon=False)
+    a1.set_ylabel("Δ CORE-relative HV", fontsize=8); a1.legend(fontsize=6.5, frameon=False)
     a1.tick_params(labelsize=7)
     r = [chim[d]["extent_ratio_median"] for d in ds_all]
     a2.bar(x, r, 0.5, color="#4f7ea8")
@@ -155,7 +155,7 @@ def fig_gate_and_baselines():
     a2.axhline(1.0, color="#999", lw=0.8, ls="--")
     a2.set_xticks(x); a2.set_xticklabels([DISP[d].split(" (")[0] for d in ds_all],
                                          fontsize=7, rotation=20, ha="right")
-    a2.set_ylabel("median core-relative HV", fontsize=8)
+    a2.set_ylabel("median CORE-relative HV", fontsize=8)
     a2.legend(fontsize=6, frameon=False, ncol=2); a2.tick_params(labelsize=7)
     fig.savefig(FIG/"fig6_gate_and_baselines.png"); plt.close(fig)
 

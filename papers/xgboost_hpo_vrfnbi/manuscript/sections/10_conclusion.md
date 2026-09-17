@@ -11,7 +11,7 @@ every returned candidate on the real learner.
 Two of the three mechanisms produced clear answers, in opposite directions. Correcting
 the archived scalarization specification and its observed-extrema normalization changed
 nothing detectable. Replacing weighted scalarization with canonical Normal Boundary
-Intersection, holding everything else fixed, improved core-relative hypervolume on all
+Intersection, holding everything else fixed, improved CORE-relative hypervolume on all
 three geometry-positive datasets, with 26, 30 and 24 of 30 paired wins and Holm-adjusted
 significance within each dataset. The third mechanism answered in the direction opposite
 to the one the pipeline's design would suggest: substituting a pre-specified
@@ -28,9 +28,10 @@ as an association.
 Two results limit how far the geometry finding should be carried. The advantage is
 specific to hypervolume and IGD⁺; the joint non-dominated fraction shows no significant
 difference on any dataset in the panel. And under the frozen direct-search comparator
-budget, a coarse grid attained higher median core-relative hypervolume than every
-surrogate-assisted arm — while receiving 386 real evaluations against the 186 the
-scalarization arms require standalone. That asymmetry is a property of the frozen
+budget, the median paired difference favoured a coarse grid over NBI-S on all four
+datasets, and the grid held the higher marginal median on three of the four — not on
+Spambase — while receiving 386 real evaluations against the 186 the scalarization arms
+require standalone. That asymmetry is a property of the frozen
 comparator rule, not a defence of the arms: at the budget this protocol fixed in
 advance, direct search led.
 

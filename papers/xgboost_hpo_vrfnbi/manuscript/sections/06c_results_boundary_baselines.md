@@ -101,7 +101,7 @@ comparators received roughly twice the real evaluations those two arms require. 
 was fixed before any result existed and is not revised now. The grid result therefore
 cannot be stated as an efficiency claim, the budgets not being equal — and equally
 cannot be explained away on that basis: at the budget the protocol froze, direct search
-led. Any account of the geometry result in Section 6.2 must carry this alongside it.
+led. Any account of the geometry result in Section 6.3 must carry this alongside it.
 
 The other direct-search comparators, under the same frozen budget, sit below the grid: median CORE-relative
 hypervolume ratios of 0.8907 (random) and 0.9580 (NSGA-II) on MAGIC, 0.4369 and 0.8650
@@ -118,7 +118,7 @@ Two properties of the comparator qualify this. The budget rule matches comparato
 the most expensive arm rather than to each arm, so the grid received 386 real
 evaluations against the 186 WS-S and NBI-S require standalone. And the grid's 128-point
 mesh contains the design's 64 factorial corners, so 64 of its evaluations re-measure
-points inside the CORE reference it is scored against — an advantage on a core-relative
+points inside the CORE reference it is scored against — an advantage on a CORE-relative
 indicator that the surrogate-assisted arms, which propose interior points, do not have.
 Neither fact was chosen after seeing the result, and neither is offered as a reason to
 set the comparison aside: at the budget and construction this protocol froze, direct

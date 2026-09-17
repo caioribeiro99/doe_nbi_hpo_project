@@ -9,6 +9,9 @@ import json, pathlib, subprocess, sys
 import numpy as np, pandas as pd
 
 REPO = pathlib.Path(__file__).resolve().parents[3]
+
+# The tag this package is destined for. Verified against the repository below.
+PACKAGE_TAG = "paper2-manuscript-v4"
 sys.path.insert(0, str(REPO / "src"))
 PAPER = REPO / "papers" / "xgboost_hpo_vrfnbi"
 A = PAPER / "analysis"
@@ -45,6 +48,16 @@ def main() -> int:
     # A supplement generated in commit N cannot contain commit N's own hash. So it
     # names the SOURCE commit it was generated from, and the package commit/tag is
     # stated separately. No byte-identity between the two is claimed.
+    # The package tag is named in one place and verified to exist. Hardcoding it let
+    # the v3 tag survive into a later candidate; a tag that has not been created is
+    # reported as pending rather than asserted.
+    import subprocess as _sp
+    tag_exists = _sp.run(["git", "rev-parse", "--verify", "--quiet",
+                          PACKAGE_TAG + "^{commit}"], cwd=REPO,
+                         capture_output=True, text=True).returncode == 0
+    package_tag = (f"`{PACKAGE_TAG}`" if tag_exists else
+                   f"`{PACKAGE_TAG}` — NOT YET CREATED; the freeze is held pending the "
+                   "Funding statement and the author-confirmed CRediT roles")
     src = pathlib.Path(REPO/"papers"/"xgboost_hpo_vrfnbi"/"manuscript"/"SOURCE_COMMIT")
     source_commit = src.read_text().strip() if src.exists() else head
     w(f"**Manuscript source commit** `{source_commit[:12]}` — the state of the")
@@ -275,7 +288,7 @@ def main() -> int:
         w(f"| {DISP[ds]} | {v['rows_hv_ratio_above_one']}/{v['rows']} | "
           f"{v['share']:.0%} | {v['max_hv_ratio']:.3f} |")
     w(f"\nOverall {fr['overall_share_above_one']:.1%} of rows exceed 1, maximum")
-    w(f"{fr['overall_max']:.3f}. The core reference is a finite method-independent set of")
+    w(f"{fr['overall_max']:.3f}. The CORE reference is a finite method-independent set of")
     w("288 points, not the true Pareto front; a ratio above 1 means the candidate set")
     w("improved on that finite reference.\n")
 
@@ -288,14 +301,15 @@ def main() -> int:
     w("## S17. Reproducibility manifest\n")
     w("| item | value |"); w("|---|---|")
     w(f"| manuscript source commit | `{source_commit}` |")
-    w("| final package tag | `paper2-manuscript-v3` |")
+    w(f"| final package tag | {package_tag} |")
     w("| relationship | the package commit adds only this provenance metadata and the "
       "compiled PDFs; no manuscript text, analysis artifact or number differs |")
     w("| protocol tag | `xgboost-hpo-protocol-v3` |")
     w("| results tag | `xgboost-hpo-confirmatory-results-v1` |")
     w(f"| datasets | {', '.join(DISP[d] for d in DATASETS)} |")
     w(f"| replications | {N_REPLICATIONS} per dataset, {len(DATASETS)*N_REPLICATIONS} units |")
-    w(f"| primary endpoint | {PRIMARY_INDICATOR} against the {PRIMARY_REFERENCE} reference |")
+    w(f"| primary endpoint | {PRIMARY_INDICATOR} against the "
+      f"{PRIMARY_REFERENCE.upper()} reference |")
     w("| campaign runtime | 9 h 46 min, 14 workers × 1 thread |")
     w("\nRaw datasets and evaluation caches are deliberately unversioned; the design, the")
     w("frozen factor models, every analysis artifact and every script are committed.\n")
