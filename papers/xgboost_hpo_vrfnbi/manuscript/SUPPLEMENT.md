@@ -3,7 +3,7 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-**Manuscript source commit** `479a4bfb8a5e` — the state of the
+**Manuscript source commit** `9aa4f05cc96c` — the state of the
 manuscript and analysis sources from which this supplement was generated.
 The final package commit and tag are recorded in S17; they differ from the
 source commit by the metadata-only step that records this provenance, and no
@@ -386,7 +386,7 @@ because independent verification refuted the author's version.
 
 | item | value |
 |---|---|
-| manuscript source commit | `479a4bfb8a5e5f84c4836549344feb2cac1fa9d0` |
+| manuscript source commit | `9aa4f05cc96c06105293cfa46af3729635025c3c` |
 | final package tag | `paper2-manuscript-v3` |
 | relationship | the package commit adds only this provenance metadata and the compiled PDFs; no manuscript text, analysis artifact or number differs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
