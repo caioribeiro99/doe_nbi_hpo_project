@@ -1,4 +1,4 @@
-## 6.3 Front-construction geometry: WS-S versus NBI-S
+### 6.3 Front-construction geometry: WS-S versus NBI-S
 
 The second contrast in the frozen decomposition holds the surrogate models, the
 canonicalized objective set, the scaling, the decision space, the candidate realizer,
@@ -50,9 +50,6 @@ geometry contrast compares two front constructions at a fixed surrogate budget; 
 not a demonstration that the surrogate-assisted family is preferable to direct search.
 Section 6.7 reports this baseline in full.
 
-**Table 4 Primary paired contrasts on CORE-relative hypervolume ratio,
-$R = 30$, differences formed as (second − first).**
-
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
 |---|---|---|---|---|---|---|
 | HISTORICAL-WS → WS-S | MAGIC | +0.0000 | [−0.0022, +0.0056] | 14/3/13 | — | 0.5165 |
@@ -66,12 +63,12 @@ $R = 30$, differences formed as (second − first).**
 | NBI-S → NBI-R | Adult | −0.0192 | [−0.1610, +0.0299] | 11/0/19 | — | 0.1607 |
 | NBI-S → NBI-R | Bank Marketing | **−0.4093** | [−0.5821, −0.2059] | 7/0/23 | — | 0.0000 |
 
-**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, Holm-corrected within dataset, $R=30$.
+**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, differences formed as (second − first), Holm-corrected within dataset, $R=30$.
 
 Spambase is shown for completeness and is excluded from the primary inferential family
 by prospective designation; it is treated in Section 6.6.
 
-### 6.3.1 The geometry effect is indicator-specific
+#### 6.3.1 The geometry effect is indicator-specific
 
 The advantage does not extend uniformly across the frozen secondary indicators, and
 that limitation is reported here rather than deferred. On convergence and coverage
@@ -86,10 +83,10 @@ is described as significant. The defensible statement is therefore narrow: under
 frozen study conditions the advantage is specifically an improvement in convergence and
 coverage geometry as measured by hypervolume and IGD⁺. The data do not support a
 general better-coverage claim, and in particular do not support a claim that NBI
-construction returned more non-dominated solutions Figure 2.
+construction returned more non-dominated solutions (Figure 2).
 
 
-### 6.3.2 The pre-declared corrected test
+#### 6.3.2 The pre-declared corrected test
 
 Section 5.15 declared the Nadeau–Bengio corrected resampled $t$ as a sensitivity, with
 an inflation of $\sqrt{8.5} = 2.9155$ at $R = 30$ and $n_{\text{test}}/n_{\text{train}} = 0.25$.
@@ -108,7 +105,7 @@ finding, and under this one the geometry contrast clears $0.05$ on one of the th
 primary datasets rather than three. Every corrected $p$-value appears in
 Supplement S9.
 
-## 6.4 Anchor and payoff provenance: NBI-S versus NBI-R
+### 6.4 Anchor and payoff provenance: NBI-S versus NBI-R
 
 The third contrast holds the NBI geometry fixed and changes only the provenance of the
 payoff matrix and anchors, from surrogate-derived (NBI-S) to the pre-specified
@@ -129,7 +126,7 @@ evaluations to relocate the payoff matrix onto empirically obtained anchors did 
 better fronts under these conditions, and no alternative formulation under which it
 does is offered here.
 
-### 6.4.1 What differs mechanically, stated as association
+#### 6.4.1 What differs mechanically, stated as association
 
 Two prospectively frozen diagnostics narrow where the deficit comes from. The
 anchor-injection control inserts NBI-R's empirical anchors into NBI-S's revalidated
@@ -155,14 +152,14 @@ correlations between the per-replication extent ratio and the per-replication
 hypervolume gap are +0.683 on Adult, +0.678 on Bank Marketing, +0.320 on Spambase and
 **−0.111 on MAGIC**. This is an association measured across 30 replications within a
 dataset, present on three datasets and absent on the fourth; it is not a demonstrated
-cause of the deficit, and it is not presented as one Figure 4.
+cause of the deficit, and it is not presented as one (Figure 4).
 
-## 6.5 Reference sensitivity
+### 6.5 Reference sensitivity
 
 Every dataset-by-contrast conclusion was recomputed under both the primary
 method-independent CORE reference and the mandatory AUGMENTED sensitivity reference.
 **Eleven of the twelve conclusions agree in direction and in significance, and no cell
-anywhere flips direction.** The single disagreement is Adult's anchor-provenance
+anywhere flips direction.** (Figure 5). The single disagreement is Adult's anchor-provenance
 contrast: under CORE the median is −0.0192 with Holm $p$ = 0.1607, non-significant;
 under AUGMENTED the median is −0.0535 with Holm $p$ = 0.0174, significant. The sign is
 negative under both references, so the disagreement is one of resolution, not of

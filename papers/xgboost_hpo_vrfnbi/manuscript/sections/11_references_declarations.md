@@ -11,7 +11,7 @@ reimplementation, and is reported neutrally: a code-level reconstruction establi
 that it performs normalized weighted scalarization for front construction although the
 historical text used NBI terminology. No claim is made about the correctness of the
 dissertation's reported results, whose objective space differs from this study's
-(§3.4).
+(§3.5).
 
 **Relationship to companion work by the same authors.** Three instruments used here
 were developed in a companion manuscript by the present authors (Ribeiro, Pereira and
@@ -33,7 +33,7 @@ deliberately unversioned.
 
 **Competing interests.** The authors declare no competing interests.
 
-**Funding.** > **AUTHOR ACTION REQUIRED — NOT YET ESTABLISHED.** No funding record
+**Funding.** **AUTHOR ACTION REQUIRED — NOT YET ESTABLISHED.** No funding record
 exists in the project's version-controlled record, and no grant, agency or finance code
 has been inferred or invented. The authors must supply this statement, or an explicit
 declaration that the work received no external funding, before submission. **This

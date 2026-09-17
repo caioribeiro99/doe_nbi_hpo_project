@@ -1,4 +1,4 @@
-## 6.6 The prospectively retained boundary dataset did not resolve
+### 6.6 The prospectively retained boundary dataset did not resolve
 
 Spambase was separated from the primary inferential family before any result existed.
 Screening placed its non-dominated design-row set at two points with undefined
@@ -41,7 +41,7 @@ Spambase method-unit rows, and reaches the campaign's overall maximum of 9.912 t
 against 2.349 outside Spambase. The large excursions concentrate on the dataset whose
 finite reference set is least informative about the trade-off surface.
 
-## 6.7 The geometry advantage persisted where the surrogate failed its own gate
+### 6.7 The geometry advantage persisted where the surrogate failed its own gate
 
 The external reliability gate is an audit-only diagnostic. It scores the fitted
 surrogates on a 78-point set — the design's complementary half fraction plus 14 axial
@@ -54,7 +54,7 @@ status.
 Over the confirmatory campaign the composite-quality gate passed in **8 of 30**
 replications on MAGIC and **9 of 30** on Spambase, and in **0 of 30** on both Adult and
 Bank Marketing. The cost gate passed 30/30, 30/30, 22/30 and 27/30 respectively
-Supplement S11.
+(Supplement S11).
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
 composite-quality surrogate failed the frozen criterion in every replication — and they
@@ -72,7 +72,7 @@ another on the same surrogate, are different questions; the study answers only t
 second. We do not claim that the geometry effect requires a reliable surrogate, requires
 an unreliable one, or that NBI compensates for surrogate error.
 
-## 6.8 Baselines: the frozen-budget direct grid comparison
+### 6.8 Baselines: the frozen-budget direct grid comparison
 
 At the frozen comparator budget, **the median paired difference favoured the direct grid
 baseline over NBI-S on all four datasets**. Its marginal median CORE-relative
@@ -124,7 +124,7 @@ Neither fact was chosen after seeing the result, and neither is offered as a rea
 set the comparison aside: at the budget and construction this protocol froze, direct
 search led on the paired statistic across all four datasets.
 
-## 6.9 Holdout confirmation
+### 6.9 Holdout confirmation
 
 Each unit re-measured its selected candidates on a held-out partition whose labels were
 structurally unavailable until the confirmation stage, at 5 audit-only real evaluations

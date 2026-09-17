@@ -1,4 +1,6 @@
-## 5.1 Datasets and their prospectively assigned roles
+## 5. Methods
+
+### 5.1 Datasets and their prospectively assigned roles
 
 Four public binary-classification datasets are used, each obtainable under CC BY 4.0 with a
 published SHA-256. MAGIC Gamma Telescope is the continuity dataset, the one the historical
@@ -15,10 +17,10 @@ with a two-point non-dominated set, which was treated by the screening rule as l
 control**: the replacement rule was considered and deliberately not exercised, no replacement
 dataset was selected, and Spambase runs every arm, budget, seed and all $R = 30$ replications,
 excluded only from the primary inferential family. These are pre-campaign screening
-measurements, not study results Supplement S5. The dataset is the unit of
+measurements, not study results (Supplement S5). The dataset is the unit of
 generalization; nothing is pooled.
 
-## 5.2 Decision space
+### 5.2 Decision space
 
 Seven XGBoost hyperparameters are optimized, with the bounds of the reconstructed
 historical configuration retained unchanged (Table 1).
@@ -34,7 +36,7 @@ historical configuration retained unchanged (Table 1).
 | `n_estimators` | 50 | 700 | integer |
 
 **Table 1.** The seven XGBoost hyperparameters and their frozen bounds. All enter
-the design in coded units on $[-1,1]$; integers are cast by `int(round(\cdot))` at
+the design in coded units on $[-1,1]$; integers are cast by `int(round(·))` at
 evaluation time.
 
 A configuration is written in coded units as $x \in [-1, 1]^7$ and mapped to natural units
@@ -43,7 +45,7 @@ are cast by `int(round(·))` at evaluation time, so every surrogate is fitted on
 relaxation whose evaluated points are rounded; the gap is carried rather than repaired, with
 each subproblem reporting the objective displacement induced by rounding beside its residual.
 
-## 5.3 The 88-run face-centred central composite design
+### 5.3 The 88-run face-centred central composite design
 
 The design is a version-controlled face-centred central composite in the seven factors, 88 runs,
 reused byte-identically across datasets and replications and checksummed. It comprises 64
@@ -62,7 +64,7 @@ nothing else. The gate passes when external $R^2 \ge 0.5$ and Spearman $\rho \ge
 response, and is **diagnostic, not adaptive** — every arm runs at every replication whatever it
 returns, and its pass rate is reported as a covariate, never used as a filter.
 
-## 5.4 Responses, transforms and orientation
+### 5.4 Responses, transforms and orientation
 
 Seven responses are recorded per evaluation as the mean over folds. Six carry the `quality`
 role — `Accuracy_Mean`, `Precision_Mean`, `Recall_Mean`, `Specificity_Mean`, `RocAuc_Mean`,
@@ -81,7 +83,7 @@ higher is better, giving $M$, whose columns are standardized to $Z$ using the me
 standard deviation ($\text{ddof} = 1$) computed **on the design side only**, with $\sigma_j
 \leftarrow 1$ wherever $\sigma_j = 0$.
 
-## 5.5 Latent objective construction
+### 5.5 Latent objective construction
 
 **Extraction and rotation.** PCA of $Z$ retains $k = 3$ components. Loadings are the eigenvector
 matrix scaled by the square roots of the eigenvalues, $\Lambda = V
@@ -97,7 +99,7 @@ orthogonally mixes axes of unequal scale and yields correlated factors. On this 
 maximum off-diagonal correlation of the nominally orthogonal factors ranged from 0.379 to
 0.698 across the panel, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$ the loading
 matrix of the scores actually in use, so the role and sign rules below are read off a matrix
-that describes what is being oriented Figure 1.
+that describes what is being oriented (Figure 1).
 
 **Role assignment and sign, both deterministic.** The **cost factor** is the component with the
 largest absolute rotated loading on `Leaves_Mean`; the other two are **quality factors**. The cost
@@ -133,7 +135,7 @@ which value optimizes better.
 R, \text{roles}, \text{signs}, \mu_S, \sigma_S, w)$ is fitted once per dataset on the 88 design
 rows and **nothing else**, then applied unchanged to the 78 audit-only rows, every arm's
 revalidated candidates, every direct baseline, the reference sets and the holdout confirmation
-Supplement S4.1. Two constraints force this scope at once. A per-replication refit
+(Supplement S4.1). Two constraints force this scope at once. A per-replication refit
 makes the objective a different variable in every pair, so 30 paired indicator values would not
 live in one objective space. And an earlier specification adding the 78-point complement — 166
 points — was withdrawn, because that complement *is* the audit-only external construction (64 of
@@ -143,7 +145,7 @@ define that surface's target; the intersection is verified as zero in coded spac
 datasets. The per-replication refit is computed and reported as a Tucker-congruence sensitivity,
 flips reported rather than corrected, and is never applied.
 
-## 5.6 Response surface models
+### 5.6 Response surface models
 
 Each objective is modelled by a full quadratic response surface in **coded** units, fitted by
 ordinary least squares on the 88 design rows only, with backward elimination at $\alpha = 0.05$

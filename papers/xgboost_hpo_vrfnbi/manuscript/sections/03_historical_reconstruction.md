@@ -76,7 +76,7 @@ Faithfulness and comparability are separate requirements, so the historical weig
 twice. `HISTORICAL-WS` applies the same weighted-sum solver under the shared specification — the
 symmetric weight grid with both vertices, minimization orientation, coded-unit surrogates, and the
 gated surrogates WS-S itself uses — and differs from WS-S in the normalization reference alone
-Figure 1. The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
+(Figure 1). The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
 normalization as a single factor, isolated from geometry and from anchor provenance. The two
 historical entities are separate registry identifiers with different budgets and are never mixed in
 one table. Both have every returned candidate revalidated on the real learner, as the archived

@@ -1,4 +1,4 @@
-# 1. Introduction
+## 1. Introduction
 
 Surrogate-assisted multiobjective hyperparameter optimization is usually reported as a
 pipeline rather than as a set of separable choices. A design of experiments is run, response
@@ -31,7 +31,7 @@ terminology. That fact is stated here once because it is the reason the arm set 
 it does; it is not itself a contribution and it is not treated as anything other than a
 specification detail to be carried forward correctly.
 
-## 1.1 Research questions
+### 1.1 Research questions
 
 Holding the decision space, design, surrogate family, weight grid, candidate realization,
 evaluation protocol and budget fixed, and changing exactly one mechanism per contrast:
@@ -55,14 +55,14 @@ contributes to. CORE is not the true Pareto front, and a ratio above 1 simply me
 set improved on that finite reference. Dataset is the generalization unit; nothing is pooled
 across datasets.
 
-## 1.2 What the study found
+### 1.2 What the study found
 
 **Geometry separates, on the datasets where the screening said it could.** On the three
 datasets prospectively assigned to the primary geometry panel, canonical NBI construction
 produced higher CORE-relative hypervolume than specification-matched weighted scalarization:
 median paired differences of $+0.0374$ on MAGIC (26/30 replications), $+0.2549$ on Adult
 (30/30) and $+0.2281$ on Bank Marketing (24/30), Holm-significant within every one of the three
-datasets Table 4. This is the primary positive result, and its scope is these
+datasets (Table 4). This is the primary positive result, and its scope is these
 datasets, this surrogate architecture, two objectives and this budget. It is also
 indicator-specific: the advantage appears in hypervolume and IGD⁺, while the joint
 non-dominated fraction comparison is non-significant on all four datasets.
@@ -74,7 +74,7 @@ Adult (a non-detection, interval spanning zero) and $-0.4093$ on Bank Marketing.
 primary datasets degraded. The paid anchor stage bought nothing measurable here.
 
 **A frozen-budget direct grid baseline led every surrogate-assisted arm.** At the frozen
-comparator budget, a coarse grid favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) Table 5. The budget asymmetry
+comparator budget, a coarse grid favoured the coarse grid on all four datasets in median paired difference, and exceeded every surrogate-assisted arm in marginal median on three of the four (not Spambase) (Table 5). The budget asymmetry
 belongs in the same sentence: the frozen rule matched comparators to the most expensive arm
 (NBI-R, 386 real evaluations), while WS-S and NBI-S cost 186 standalone, so the comparators
 received roughly twice the real evaluations those arms require. The rule was fixed before any
@@ -84,7 +84,7 @@ result existed and is not revised now, and the result is not explained away on t
 change in CORE-relative hypervolume on any primary dataset, reported as a non-detection at
 $R = 30$ rather than as an absence of effect.
 
-## 1.3 Contributions
+### 1.3 Contributions
 
 1. A single-factor decomposition of one surrogate-assisted multiobjective HPO pipeline into
    specification and normalization, front-construction geometry, and anchor and payoff
@@ -100,4 +100,4 @@ $R = 30$ rather than as an absence of effect.
    effect, each given the same standing as the positive result.
 5. A mechanistic reading of the negative contrast — an anchor-injection control together with
    a measured contraction of the CHIM segment — reported as an association within datasets, not
-   as a demonstrated cause Figure 4.
+   as a demonstrated cause (Figure 4).

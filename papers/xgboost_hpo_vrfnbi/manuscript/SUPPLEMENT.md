@@ -3,8 +3,14 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-Manuscript commit `fc10a84f0bbc`. Protocol tag `xgboost-hpo-protocol-v3`.
-Results tag `xgboost-hpo-confirmatory-results-v1`.
+**Manuscript source commit** `479a4bfb8a5e` — the state of the
+manuscript and analysis sources from which this supplement was generated.
+The final package commit and tag are recorded in S17; they differ from the
+source commit by the metadata-only step that records this provenance, and no
+byte identity between the two is claimed.
+
+Protocol tag `xgboost-hpo-protocol-v3`. Results tag
+`xgboost-hpo-confirmatory-results-v1`.
 
 ## S1. Protocol lineage and tags
 
@@ -41,7 +47,7 @@ reproduced in full in `PROTOCOL_AMENDMENTS.md`.
 | `n_estimators` | 50 | 700 | integer |
 
 All seven enter the design in coded units on $[-1, 1]$; integers are cast by
-`int(round(.))` at evaluation time.
+`int(round(·))` at evaluation time.
 
 ## S4. Responses and objective construction
 
@@ -91,13 +97,13 @@ an optimizer outcome.
 | `NBI-S` | arm | `nbi_s` | 186 | yes | Normal Boundary Intersection on the same surrogates and the same surrogate reference as WS-S. WS-S to NBI-S isolates front-construction geometry. |
 | `NBI-R` | arm | `nbi_r` | 386 | yes | NBI with anchors and payoff matrix from direct search on the REAL objectives. NBI-S to NBI-R isolates anchor and payoff provenance. |
 | `ANCHOR-INJECTION-CONTROL` | control | `anchor_injection_control` | — | yes | NBI-S's own revalidated candidate set augmented with the same empirical anchors NBI-R receives, changing nothing else. Separates the part of any NBI-S to NBI-R gap that is set composition from the part that is relocated geometry. Costs no new real evaluations. |
-| `GRID` | baseline | `direct_baselines` | — | n/a | evaluation-matched direct search |
-| `RANDOM` | baseline | `direct_baselines` | — | n/a | evaluation-matched direct search |
-| `BAYES-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on quality; excluded from front indicators and from the augmented reference |
+| `GRID` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, which is matched to the most expensive arm (NBI-R) and not pairwise to each arm |
+| `RANDOM` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, matched to the most expensive arm and not pairwise to each arm |
+| `BAYES-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on quality, at the frozen comparator budget; excluded from front indicators and from the augmented reference |
 | `BAYES-COST` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on cost; same exclusion |
 | `TPE-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective TPE on quality; same exclusion |
 | `TPE-COST` | baseline | `direct_baselines` | — | n/a | single-objective TPE on cost; same exclusion |
-| `NSGA2-MATCHED` | baseline | `direct_baselines` | — | n/a | NSGA-II at 32 x 12 = 384 evaluations, evaluation-matched against the comparator budget to within its stated shortfall |
+| `NSGA2-MATCHED` | baseline | `direct_baselines` | — | n/a | NSGA-II at 32 x 12 = 384 evaluations, run at the frozen comparator budget to within a disclosed two-evaluation shortfall (384 against 386); this is a budget-level match to the most expensive arm, not a pairwise match to NBI-S |
 | `NSGA2-UNMATCHED` | context | `nsga2_unmatched` | — | n/a | NSGA-II at 10x the matched budget, one replication per dataset. A CONTEXT baseline: no fairness claim attaches to it and it enters no budget-matched comparison. |
 | `DESIGN` | shared stage | `design` | — | n/a | 88 face-centred central composite runs |
 | `EXTERNAL-VALIDATION-AUDIT` | shared stage, AUDIT-ONLY | `external_validation` | — | n/a | 78 points: the design's complementary half fraction plus 14 axial runs at half radius. Reaches the reliability gate diagnostics and NOTHING else. A gate failure changes no execution. |
@@ -380,7 +386,9 @@ because independent verification refuted the author's version.
 
 | item | value |
 |---|---|
-| manuscript commit | `fc10a84f0bbca943ae53a78cc1d4247f6d453441` |
+| manuscript source commit | `479a4bfb8a5e5f84c4836549344feb2cac1fa9d0` |
+| final package tag | `paper2-manuscript-v3` |
+| relationship | the package commit adds only this provenance metadata and the compiled PDFs; no manuscript text, analysis artifact or number differs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |
 | datasets | MAGIC, Spambase, Adult, Bank Marketing |

@@ -439,7 +439,7 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
     inf = "; ".join("%s raw p = %.4f" % (DISP[d], bvsa[d]["wilcoxon_p_raw"])
                     for d in PRIMARY + ("spambase",))
     L.append(claim_block(
-        12, "The evaluation-matched grid baseline leads every surrogate-assisted arm",
+        12, "The frozen-budget direct grid comparison",
         "How does the whole surrogate-assisted family compare with direct search at "
         "the frozen comparator budget?",
         "The paired per-replication difference in CORE-relative hypervolume ratio "

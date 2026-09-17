@@ -1,4 +1,4 @@
-# 4. Confirmatory questions and prior commitments
+## 4. Confirmatory questions and prior commitments
 
 Pipelines of this kind bundle three choices usually made silently: how the objective reference
 is normalized, which scalarization geometry builds the front, and where the anchors and payoff
@@ -28,7 +28,7 @@ frozen comparator budget — grid, random, Bayesian optimization, TPE, NSGA-II? 
 the most expensive arm, not to each arm, so a comparator receives about twice what
 WS-S and NBI-S require standalone. §4 maps each question to its contrast and evidence.
 
-## 4.1 What was frozen
+### 4.1 What was frozen
 
 Fixed at protocol tag `xgboost-hpo-protocol-v3`, before any confirmatory arm-level result was
 inspected.

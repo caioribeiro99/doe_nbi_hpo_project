@@ -90,7 +90,7 @@ def main() -> int:
         lo, hi = BOUNDS[p]
         w(f"| `{p}` | {lo} | {hi} | {'integer' if p in INT_PARAMS else 'continuous'} |")
     w("\nAll seven enter the design in coded units on $[-1, 1]$; integers are cast by")
-    w("`int(round(.))` at evaluation time.\n")
+    w("`int(round(·))` at evaluation time.\n")
 
     w("## S4. Responses and objective construction\n")
     w("| response | role | transform |"); w("|---|---|---|")

@@ -3,7 +3,9 @@
 from __future__ import annotations
 import base64, pathlib, re, subprocess, sys
 import markdown
+from demath import demath
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 PAPER = pathlib.Path(__file__).resolve().parents[1]
 MAN = PAPER/"manuscript"
 FIG = MAN/"figures"
@@ -17,6 +19,8 @@ h1 { font-size: 16pt; line-height: 1.25; margin: 0 0 6pt; }
 h2 { font-size: 12.5pt; margin: 16pt 0 5pt; border-bottom: 0.6pt solid #bbb;
      padding-bottom: 2pt; page-break-after: avoid; }
 h3 { font-size: 11pt; margin: 12pt 0 4pt; page-break-after: avoid; }
+h4 { font-size: 10.5pt; font-style: italic; font-weight: 650;
+     margin: 10pt 0 3pt; page-break-after: avoid; }
 p { margin: 0 0 7pt; text-align: justify; }
 table { border-collapse: collapse; width: 100%; font-size: 8.5pt; margin: 7pt 0;
         page-break-inside: avoid; }
@@ -34,7 +38,7 @@ strong { font-weight: 650; }
 
 
 def render(md_path: pathlib.Path, out_pdf: pathlib.Path, title: str) -> None:
-    text = md_path.read_text()
+    text = demath(md_path.read_text())
     # inline every figure the text names, as a data URI
     def fig_for(n: str):
         hits = sorted(FIG.glob(f"fig{n}_*.png"))
@@ -58,9 +62,9 @@ def render(md_path: pathlib.Path, out_pdf: pathlib.Path, title: str) -> None:
 
 
 def main() -> int:
-    render(MAN/"MANUSCRIPT.md", MAN/"Paper2_MANUSCRIPT_FINAL_v2.pdf",
+    render(MAN/"MANUSCRIPT.md", MAN/"Paper2_MANUSCRIPT_FINAL_v3.pdf",
            "Separating Scalarization Specification, Pareto Geometry, and Anchor Provenance")
-    render(MAN/"SUPPLEMENT.md", MAN/"Paper2_SUPPLEMENT_FINAL_v2.pdf",
+    render(MAN/"SUPPLEMENT.md", MAN/"Paper2_SUPPLEMENT_FINAL_v3.pdf",
            "Supplementary material")
     return 0
 

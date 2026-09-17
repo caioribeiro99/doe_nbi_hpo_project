@@ -246,7 +246,7 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 
 **Prohibited stronger wording.** Do NOT describe these as missing observations or numerical failures. Do NOT reuse the earlier pre-verification "35 rows / 3.2%" figure without explaining that it counted CORE-reference rows only, while the verified count is cells across both references and both indicators.
 
-### Claim 12 — The evaluation-matched grid baseline leads every surrogate-assisted arm
+### Claim 12 — The frozen-budget direct grid comparison
 
 | field | value |
 |---|---|

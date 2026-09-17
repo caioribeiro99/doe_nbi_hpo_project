@@ -1,4 +1,4 @@
-## 5.7 HISTORICAL-WS-asrun — the archived solver, called unmodified
+### 5.7 HISTORICAL-WS-asrun — the archived solver, called unmodified
 
 `HISTORICAL-WS-asrun` executes the frozen dissertation pipeline (tag `v0.1.0-dissertation`) without
 modification: maximization orientation, uncoded natural-unit quadratic response surfaces with
@@ -12,9 +12,9 @@ One fact is recorded here once and not revisited: a code-level reconstruction es
 archived implementation performed front construction by normalized weighted scalarization, while the
 historical text described the procedure in Normal Boundary Intersection terms. The arm is reproduced,
 not repaired, and that reconstruction is what makes the decomposition in §5.8–§5.11 possible.
-The two historical entities are separate identifiers with different costs Supplement S6.
+The two historical entities are separate identifiers with different costs (Supplement S6).
 
-## 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
+### 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
 
 `HISTORICAL-WS` applies the same weighted-sum scalarization, solver and shared symmetric weight grid
 as the rest of the arm set, over the same gated surrogates fitted in coded units to the shared,
@@ -23,7 +23,7 @@ historical observed-extrema normalization box instead of the payoff-matrix refer
 `HISTORICAL-WS` $\to$ `WS-S` contrast isolates specification and normalization and nothing else.
 Standalone cost 186 real evaluations: 88 design, 78 external validation, 20 revalidations.
 
-## 5.9 WS-S — weighted sum over the surrogate payoff reference
+### 5.9 WS-S — weighted sum over the surrogate payoff reference
 
 `WS-S` minimizes a weighted sum of min–max normalized surrogate predictions over the shared
 symmetric weight grid, normalized against the payoff reference rather than observed extremes. The
@@ -33,7 +33,7 @@ and `NBI-S` share one reference object and differ only in what they do with it. 
 replication and the contrast's sensitivity to it is a reported secondary analysis. Standalone cost
 186.
 
-## 5.10 NBI-S — canonical Normal Boundary Intersection
+### 5.10 NBI-S — canonical Normal Boundary Intersection
 
 Surrogate anchors are obtained by per-objective minimization of the fitted surfaces over the coded
 box. With $q = 2$ minimized objectives and anchor vectors $x^{*i}$, the payoff matrix $\Phi$ has
@@ -55,9 +55,9 @@ the objective displacement induced by rounding and is re-solved with those dimen
 because a backward-eliminated quadratic is often minimized on a box corner, two anchors can coincide
 and leave $\Phi$ rank-deficient; anchor vectors, rank and condition number are recorded, and a
 rank-deficient replication is excluded with the count published. Standalone cost 186; `WS-S` $\to$
-`NBI-S` changes the scalarization geometry and nothing else Figure 1.
+`NBI-S` changes the scalarization geometry and nothing else (Figure 1).
 
-## 5.11 NBI-R — NBI with empirical-real anchors
+### 5.11 NBI-R — NBI with empirical-real anchors
 
 `NBI-R` is `NBI-S` with anchors and payoff matrix obtained by direct search on the real objectives
 under a pre-declared per-objective budget, 200 real evaluations per replication in total. Those
@@ -73,7 +73,7 @@ beyond the one mechanism that contrast declares. The rule runs in the other dire
 identical quasi-normal across `NBI-S` and `NBI-R` would mean the contrast varies nothing, and that
 also fails. The campaign completed 120 of 120 units with zero failures in 9 h 46 min.
 
-## 5.12 Controls and baselines
+### 5.12 Controls and baselines
 
 The **anchor-injection control** rescores `NBI-S`'s own real-revalidated set augmented with the same
 empirical anchors `NBI-R` receives, changing nothing else. That set is a superset of `NBI-S`'s, so
@@ -93,7 +93,7 @@ That budget was frozen before any result existed as the maximum over arms, `NBI-
 asymmetry is stated wherever comparator results appear: `WS-S` and `NBI-S` cost 186 standalone, so
 the comparators received roughly twice the real evaluations those arms require. The rule is
 matched-to-the-most-expensive-arm, not matched-to-each-arm, and is not revised now
-Supplement S7.
+(Supplement S7).
 
 
 **The grid comparator's composition.** At the frozen 386-evaluation budget over seven
@@ -107,7 +107,7 @@ scored partly against its own points, which favours it on a core-relative indica
 relative to arms that propose elsewhere in the box. This is a property of the frozen
 comparator construction, disclosed here and carried into every comparison against it.
 
-## 5.13 Real-model revalidation
+### 5.13 Real-model revalidation
 
 No indicator in this study is computed on a surrogate prediction. Every candidate returned by every
 arm is re-evaluated on the real learner under the replication's own partition and seed, by the same
@@ -118,7 +118,7 @@ unit are audit-only and steer nothing. The campaign charged
 396,120 logical evaluations — the ledger unit that enters every fairness comparison — realized as
 377,316 unique physical fits at a 4.75 % cache hit rate; the three figures are kept distinct.
 
-## 5.14 References and metrics
+### 5.14 References and metrics
 
 The **CORE** reference is the 88 design rows plus the 200 anchor-search rows, 288 points before
 Pareto filtering, to which no compared method contributes; it is primary. The **AUGMENTED** reference
@@ -133,9 +133,9 @@ presented as a fraction of true Pareto hypervolume. IGD$^{+}$, generational dist
 and the joint non-dominated fraction are secondary and descriptive, reported with intervals and no
 tests. Schott spacing is undefined on a single-point front, where NaN is correct; those 140 cells, on
 the 70 method-by-reference blocks whose front has one point, are counted and excluded from spacing
-summaries rather than propagated through a median Supplement S10.
+summaries rather than propagated through a median (Supplement S10).
 
-## 5.15 Statistical analysis
+### 5.15 Statistical analysis
 
 Comparisons are paired by replication, $R = 30$ per dataset. **The descriptive triple is primary**:
 the median paired difference with a percentile bootstrap interval, win/tie/loss counts with Wilson

@@ -1,4 +1,6 @@
-## 6.1 Protocol integrity, accounting and the screened panel
+## 6. Results
+
+### 6.1 Protocol integrity, accounting and the screened panel
 
 The confirmatory campaign executed **120 of 120 units with 0 failures and 0 methodological
 failures**, in 9 h 46 min of wall clock on 14 workers at one thread each. A unit is one
@@ -47,7 +49,7 @@ independent dominance filter and a two-dimensional hypervolume sweep, reproducin
 per-unit values to $0.000\mathrm{e}{+}00$. Nine claims reproduced exactly; two were corrected, and
 both were the author's.
 
-## 6.2 The historical reconstruction: specification and normalization
+### 6.2 The historical reconstruction: specification and normalization
 
 A code-level reconstruction of the archived dissertation implementation established that its front
 construction is a min–max normalized weighted scalarization over component-wise observed extrema of
@@ -82,4 +84,4 @@ Adult, +0.3126 [+0.1981, +0.4484] on Bank Marketing and +0.5404 [+0.1526, +0.873
 panel's largest. That gap is the whole historical reconstruction effect, and it is confounded by
 construction: surrogate identity, coding and weight-grid symmetry move together in it. Given the
 non-detection above, the normalization reference is not what explains it, and we attribute it no
-further Figure 1.
+further (Figure 1).

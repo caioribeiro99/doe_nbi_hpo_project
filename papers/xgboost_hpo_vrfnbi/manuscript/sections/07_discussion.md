@@ -1,6 +1,6 @@
-# 7. Discussion
+## 7. Discussion
 
-## 7.1 What the decomposition establishes
+### 7.1 What the decomposition establishes
 
 The campaign separates three mechanisms ordinarily bundled together in a
 surrogate-assisted multiobjective hyperparameter pipeline: the objective specification and
@@ -12,7 +12,7 @@ construction there used normalized weighted scalarization, although the historic
 used Normal Boundary Intersection terminology, which is why the historical-to-canonical
 difference decomposes into a normalization row and a geometry row.
 
-## 7.2 Geometry moved the indicator
+### 7.2 Geometry moved the indicator
 
 On three geometry-positive datasets and 30 replicated outer partitions, under the frozen
 study conditions, canonical NBI front construction produced higher real-revalidated
@@ -20,7 +20,7 @@ CORE-relative hypervolume than specification-matched weighted scalarization: med
 differences of $+0.0374$ on MAGIC, $+0.2549$ on Adult and $+0.2281$ on Bank Marketing,
 favoured in 26/30, 30/30 and 24/30 replications, rank-biserial $\geq +0.88$ in all three,
 Holm-significant within every primary dataset, which is the generalization unit
-Table 4.
+(Table 4).
 
 The scope is part of the claim: two objectives, this surrogate architecture, this budget,
 these three datasets. Nothing licenses "NBI is better than weighted sum" in general. The
@@ -39,7 +39,7 @@ it was promised — not because it agrees. A reader who weights the corrected te
 heavily than we do should read the geometry result as one clearly resolved dataset and
 two suggestive ones.
 
-## 7.3 Why hypervolume and IGD⁺ move while the non-dominated count does not
+### 7.3 Why hypervolume and IGD⁺ move while the non-dominated count does not
 
 The advantage is specifically an improvement in convergence and coverage geometry as
 measured by hypervolume and IGD⁺: median IGD⁺, NBI-S against WS-S, of 0.0511/0.0930 on
@@ -55,7 +55,7 @@ non-dominated by construction — an arm can sit nearer the reference while almo
 its points dominate the other arm's. The geometry result must not be read as NBI returning
 more non-dominated solutions: it did not, on any dataset.
 
-## 7.4 Anchor provenance: a negative result, not a caveat
+### 7.4 Anchor provenance: a negative result, not a caveat
 
 Holding NBI geometry fixed and replacing surrogate-derived payoff information with the
 pre-specified empirical-real anchor procedure did not improve the confirmatory fronts.
@@ -67,7 +67,7 @@ result went the other way. The sign is negative under CORE and AUGMENTED alike, 
 panel's one reference disagreement on Adult's anchor contrast, significant under AUGMENTED
 ($-0.0535$, Holm $p = 0.0174$) and not under CORE.
 
-## 7.5 CHIM contraction is the associated mechanism, and only that
+### 7.5 CHIM contraction is the associated mechanism, and only that
 
 The deficit is not attributable to solver failure. Over the 240 arm-units the
 certified fraction has median 1.000 with two exceptions (0.900, 0.950), the
@@ -81,7 +81,7 @@ on Bank Marketing and $+0.320$ on Spambase — and $-0.111$ on MAGIC, where it i
 Nor does the injection control prove the negative is entirely geometric: the control set
 is a superset of NBI-S's, so its effect cannot be negative.
 
-## 7.6 Specification: a non-detection at $R = 30$
+### 7.6 Specification: a non-detection at $R = 30$
 
 Replacing the historical observed-extrema normalization with the payoff-matrix reference
 produced no detectable change in CORE-relative hypervolume on any primary dataset: medians
@@ -91,13 +91,13 @@ that normalization has no effect — and it is where a DoE-range-normalization e
 of the historical pipeline's behaviour would have shown, had that been the principal
 driver.
 
-## 7.7 The grid baseline, and what it costs the argument
+### 7.7 The grid baseline, and what it costs the argument
 
 At the frozen comparator budget, the frozen-budget direct grid baseline attained higher median
 CORE-relative hypervolume than every surrogate-assisted arm on three of the four datasets
 — NBI-S against GRID, 0.9430/1.0068 on MAGIC, 0.9951/1.0476 on Adult, 0.9979/1.0625 on
 Bank Marketing and 1.0812/1.0192 on Spambase, NBI-S winning 0/30, 5/30, 10/30 and 12/30
-replications Supplement S13. The budget asymmetry belongs in the same breath: the
+replications (Supplement S13). The budget asymmetry belongs in the same breath: the
 comparator budget is the maximum over arms, 386 real evaluations set by NBI-R, while WS-S
 and NBI-S cost 186 standalone, so comparators received roughly twice the real evaluations
 those arms require. The contrast is outside the frozen primary family, uncorrected, and
@@ -110,13 +110,13 @@ is not grounds for setting it aside, and is not revised now the result is known.
 geometry finding says which construction to use *given* that a front is built on a
 surrogate — not that this family was the right instrument here.
 
-## 7.8 The surrogate-gate regime
+### 7.8 The surrogate-gate regime
 
 The advantage of NBI over weighted scalarization persisted even where the externally
 audited surrogate failed the frozen quality criterion. On Adult and Bank Marketing the
 composite-quality gate passed in 0 of 30 replications and the geometry effect is
 Holm-significant on both, against 8 of 30 on MAGIC and 9 of 30 on Spambase
-Figure 6. The gate was diagnostic: every arm ran at every replication whatever it
+(Figure 6). The gate was diagnostic: every arm ran at every replication whatever it
 said, so it annotates the evidence instead of selecting it. The inference is narrow:
 absolute surrogate trustworthiness and relative front-construction geometry are different
 questions and this study answers only the second. We do not conclude that the geometry
@@ -124,7 +124,7 @@ effect requires a reliable surrogate, still less that NBI compensates for an unr
 one. The regime removes one alternative explanation — the effect is not confined to
 replications where the surface was accurate.
 
-## 7.9 The estimand is the returned front
+### 7.9 The estimand is the returned front
 
 Every result above is a property of the set an arm returns, after real revalidation of
 every candidate and scoring against a finite method-independent reference — not the
@@ -133,7 +133,7 @@ rule collapses the front to a point, and the holdout stage is an audit. A median
 of $+0.2549$ on Adult says NBI-S's front occupies more space relative to CORE than WS-S's;
 it does not say by how much any chosen model improves.
 
-## 7.10 What the decomposition does not establish
+### 7.10 What the decomposition does not establish
 
 Spambase was prospectively separated from the primary family because screening showed
 insufficient interior front geometry. Its geometry contrast returned a median of
