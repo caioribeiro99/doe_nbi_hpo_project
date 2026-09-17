@@ -315,7 +315,7 @@ historical entities are separate registry identifiers with different budgets and
 one table. Both have every returned candidate revalidated on the real learner, as the archived
 protocol did.
 
-### 3.4 What is not carried forward
+### 3.5 What is not carried forward
 
 The reconstruction preserves the archived *optimizer*, not its objective space. The
 archived pipeline optimized four threshold quality metrics — accuracy, precision,
@@ -917,7 +917,7 @@ general better-coverage claim, and in particular do not support a claim that NBI
 construction returned more non-dominated solutions Figure 2.
 
 
-### 6.3.1 The pre-declared corrected test
+### 6.3.2 The pre-declared corrected test
 
 Section 5.15 declared the Nadeau–Bengio corrected resampled $t$ as a sensitivity, with
 an inflation of $\sqrt{8.5} = 2.9155$ at $R = 30$ and $n_{\text{test}}/n_{\text{train}} = 0.25$.
@@ -1023,7 +1023,7 @@ losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.43
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is **1.7706** on Spambase against
 **0.0594** on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
-Figure 3, Figure 3.
+(Figure 3).
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
 $R = 30$, not a demonstration that the effect is absent. It is **consistent with** the
@@ -1079,11 +1079,14 @@ another on the same surrogate, are different questions; the study answers only t
 second. We do not claim that the geometry effect requires a reliable surrogate, requires
 an unreliable one, or that NBI compensates for surrogate error.
 
-## 6.8 Baselines: the frozen-budget direct grid baseline leads every surrogate-assisted arm
+## 6.8 Baselines: the frozen-budget direct grid comparison
 
-At the frozen comparator budget, the frozen-budget direct grid baseline attained a **higher
-median CORE-relative hypervolume ratio than every surrogate-assisted arm on every
-dataset in the panel** Table 5, Figure 6. Against NBI-S:
+At the frozen comparator budget, **the median paired difference favoured the direct grid
+baseline over NBI-S on all four datasets**. Its marginal median CORE-relative
+hypervolume ratio is the higher of the two on MAGIC, Adult and Bank Marketing, but
+**not on Spambase**, where NBI-S is higher at 1.0812 against 1.0192. The paired
+statistic is the within-replication comparison; the marginal medians are not, and the
+two do not have to agree (Table 5, Figure 6). Against NBI-S:
 
 | dataset | NBI-S median | GRID median | median difference (NBI-S − GRID) | NBI-S wins | raw $p$ |
 |---|---:|---:|---:|---:|---:|
@@ -1135,10 +1138,8 @@ structurally unavailable until the confirmation stage, at 5 audit-only real eval
 per unit, charged to the study and to no arm. Across all four datasets and all five
 arms, the **median per-replication difference** between internal and holdout accuracy has
 magnitude below **0.012** in every one of the 20 dataset-by-arm cells, the largest
-being 0.0117, and is negative — the held-out partition scoring better — in 13 of
-them.0117, and in
-13 of the 20 cells the difference is negative — holdout accuracy exceeded internal
-accuracy Supplement S14. These are descriptive audit figures read from
+being **0.0117**, and is negative — the held-out partition scoring better than the
+internal resampling — in **13 of the 20** cells (Supplement S14). These are descriptive audit figures read from
 `analysis/secondary_analysis.json`, not confirmatory claims.
 
 The correct reading is an absence of gross optimism in the returned configurations at
@@ -1533,7 +1534,8 @@ dissertation's reported results, whose objective space differs from this study's
 **Relationship to companion work by the same authors.** Three instruments used here
 were developed in a companion manuscript by the present authors (Ribeiro, Pereira and
 de Paiva, 2026, unpublished, frozen and not submitted): the external surrogate
-reliability gate, the evaluation-matched comparator-budget rule, and the
+reliability gate, the comparator-budget rule — which matches direct-search
+comparators to the most expensive arm rather than pairwise to each arm — and the
 anchor-injection control. They are applied here, not introduced. The methodological
 lineage of the latent-objective construction is set out in §2.7 and includes Pereira
 et al. (2025) and de Azevedo et al. (2026), with which this work shares co-authors.
@@ -1549,9 +1551,37 @@ deliberately unversioned.
 
 **Competing interests.** The authors declare no competing interests.
 
-**Funding.** _To be completed by the authors._
+**Funding.** > **AUTHOR ACTION REQUIRED — NOT YET ESTABLISHED.** No funding record
+exists in the project's version-controlled record, and no grant, agency or finance code
+has been inferred or invented. The authors must supply this statement, or an explicit
+declaration that the work received no external funding, before submission. **This
+manuscript is not submission-ready while this marker remains.**
 
-**Author contributions.** _To be completed by the authors._
+**Author contributions (CRediT).** The roles below are drawn only from the
+version-controlled project record and the documented research lineage. Entries marked
+**AUTHOR REVIEW** could not be established at the level of specific contribution from
+that record and must be confirmed or corrected by the named author before submission;
+no specific work has been attributed speculatively.
+
+*Caio Tertuliano Ribeiro* — Conceptualization; Methodology; Software; Validation;
+Formal analysis; Investigation; Data curation; Writing – original draft;
+Visualization. (Supported by the record: the frozen protocol, the campaign
+implementation and execution, the analysis code and every committed artifact are his,
+and this study extends his MSc dissertation.)
+
+*Matheus Costa Pereira* — Methodology; Writing – review & editing. **AUTHOR REVIEW.**
+(Supported by the record only as: first author of Pereira et al. (2025), from which the
+latent-objective construction is inherited, and co-author of the companion manuscript
+from which the reliability gate, comparator-budget rule and anchor-injection control are
+taken. His specific contribution to the present study is not documented in the project
+record.)
+
+*Anderson Paulo de Paiva* — Conceptualization; Supervision; Writing – review & editing.
+**AUTHOR REVIEW.** (Supported by the record only as: senior author on the NBI-VRF
+methodological line — Costa et al. (2016), Luz et al. (2021), Streitenberger et al.
+(2022), Pereira et al. (2025), de Azevedo et al. (2026) — and on the companion
+manuscript. His specific contribution to the present study is not documented in the
+project record.)
 
 ---
 

@@ -40,8 +40,20 @@ def main() -> int:
     w("# Supplementary material\n")
     w("Every table in this document is generated from a committed artifact by")
     w("`scripts/build_supplement.py`. No figure is transcribed by hand.\n")
-    w(f"Manuscript commit `{head[:12]}`. Protocol tag `xgboost-hpo-protocol-v3`.")
-    w("Results tag `xgboost-hpo-confirmatory-results-v1`.\n")
+    # PROVENANCE, and the git-hash circularity handled explicitly.
+    #
+    # A supplement generated in commit N cannot contain commit N's own hash. So it
+    # names the SOURCE commit it was generated from, and the package commit/tag is
+    # stated separately. No byte-identity between the two is claimed.
+    src = pathlib.Path(REPO/"papers"/"xgboost_hpo_vrfnbi"/"manuscript"/"SOURCE_COMMIT")
+    source_commit = src.read_text().strip() if src.exists() else head
+    w(f"**Manuscript source commit** `{source_commit[:12]}` — the state of the")
+    w("manuscript and analysis sources from which this supplement was generated.")
+    w("The final package commit and tag are recorded in S17; they differ from the")
+    w("source commit by the metadata-only step that records this provenance, and no")
+    w("byte identity between the two is claimed.\n")
+    w("Protocol tag `xgboost-hpo-protocol-v3`. Results tag")
+    w("`xgboost-hpo-confirmatory-results-v1`.\n")
 
     w("## S1. Protocol lineage and tags\n")
     w("| tag | commit | what it records |"); w("|---|---|---|")
@@ -275,7 +287,10 @@ def main() -> int:
 
     w("## S17. Reproducibility manifest\n")
     w("| item | value |"); w("|---|---|")
-    w(f"| manuscript commit | `{head}` |")
+    w(f"| manuscript source commit | `{source_commit}` |")
+    w("| final package tag | `paper2-manuscript-v3` |")
+    w("| relationship | the package commit adds only this provenance metadata and the "
+      "compiled PDFs; no manuscript text, analysis artifact or number differs |")
     w("| protocol tag | `xgboost-hpo-protocol-v3` |")
     w("| results tag | `xgboost-hpo-confirmatory-results-v1` |")
     w(f"| datasets | {', '.join(DISP[d] for d in DATASETS)} |")

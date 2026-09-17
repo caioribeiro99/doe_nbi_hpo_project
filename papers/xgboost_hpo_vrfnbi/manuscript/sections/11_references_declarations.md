@@ -16,7 +16,8 @@ dissertation's reported results, whose objective space differs from this study's
 **Relationship to companion work by the same authors.** Three instruments used here
 were developed in a companion manuscript by the present authors (Ribeiro, Pereira and
 de Paiva, 2026, unpublished, frozen and not submitted): the external surrogate
-reliability gate, the evaluation-matched comparator-budget rule, and the
+reliability gate, the comparator-budget rule — which matches direct-search
+comparators to the most expensive arm rather than pairwise to each arm — and the
 anchor-injection control. They are applied here, not introduced. The methodological
 lineage of the latent-objective construction is set out in §2.7 and includes Pereira
 et al. (2025) and de Azevedo et al. (2026), with which this work shares co-authors.
@@ -32,9 +33,37 @@ deliberately unversioned.
 
 **Competing interests.** The authors declare no competing interests.
 
-**Funding.** _To be completed by the authors._
+**Funding.** > **AUTHOR ACTION REQUIRED — NOT YET ESTABLISHED.** No funding record
+exists in the project's version-controlled record, and no grant, agency or finance code
+has been inferred or invented. The authors must supply this statement, or an explicit
+declaration that the work received no external funding, before submission. **This
+manuscript is not submission-ready while this marker remains.**
 
-**Author contributions.** _To be completed by the authors._
+**Author contributions (CRediT).** The roles below are drawn only from the
+version-controlled project record and the documented research lineage. Entries marked
+**AUTHOR REVIEW** could not be established at the level of specific contribution from
+that record and must be confirmed or corrected by the named author before submission;
+no specific work has been attributed speculatively.
+
+*Caio Tertuliano Ribeiro* — Conceptualization; Methodology; Software; Validation;
+Formal analysis; Investigation; Data curation; Writing – original draft;
+Visualization. (Supported by the record: the frozen protocol, the campaign
+implementation and execution, the analysis code and every committed artifact are his,
+and this study extends his MSc dissertation.)
+
+*Matheus Costa Pereira* — Methodology; Writing – review & editing. **AUTHOR REVIEW.**
+(Supported by the record only as: first author of Pereira et al. (2025), from which the
+latent-objective construction is inherited, and co-author of the companion manuscript
+from which the reliability gate, comparator-budget rule and anchor-injection control are
+taken. His specific contribution to the present study is not documented in the project
+record.)
+
+*Anderson Paulo de Paiva* — Conceptualization; Supervision; Writing – review & editing.
+**AUTHOR REVIEW.** (Supported by the record only as: senior author on the NBI-VRF
+methodological line — Costa et al. (2016), Luz et al. (2021), Streitenberger et al.
+(2022), Pereira et al. (2025), de Azevedo et al. (2026) — and on the companion
+manuscript. His specific contribution to the present study is not documented in the
+project record.)
 
 ---
 

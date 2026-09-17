@@ -48,11 +48,15 @@ ROLE = {
         "anchors NBI-R receives, changing nothing else. Separates the part of any "
         "NBI-S to NBI-R gap that is set composition from the part that is relocated "
         "geometry. Costs no new real evaluations."),
-    "GRID": ("baseline", "direct_baselines", "evaluation-matched direct search"),
-    "RANDOM": ("baseline", "direct_baselines", "evaluation-matched direct search"),
+    "GRID": ("baseline", "direct_baselines",
+        "direct-search comparator at the frozen 386-evaluation comparator budget, "
+        "which is matched to the most expensive arm (NBI-R) and not pairwise to each arm"),
+    "RANDOM": ("baseline", "direct_baselines",
+        "direct-search comparator at the frozen 386-evaluation comparator budget, "
+        "matched to the most expensive arm and not pairwise to each arm"),
     "BAYES-QUALITY": ("baseline", "direct_baselines",
-        "single-objective Bayesian optimization on quality; excluded from front "
-        "indicators and from the augmented reference"),
+        "single-objective Bayesian optimization on quality, at the frozen comparator "
+        "budget; excluded from front indicators and from the augmented reference"),
     "BAYES-COST": ("baseline", "direct_baselines",
         "single-objective Bayesian optimization on cost; same exclusion"),
     "TPE-QUALITY": ("baseline", "direct_baselines",
@@ -61,7 +65,9 @@ ROLE = {
         "single-objective TPE on cost; same exclusion"),
     "NSGA2-MATCHED": ("baseline", "direct_baselines",
         f"NSGA-II at {NSGA2_POP} x {NSGA2_GEN} = {NSGA2_POP * NSGA2_GEN} evaluations, "
-        "evaluation-matched against the comparator budget to within its stated shortfall"),
+        "run at the frozen comparator budget to within a disclosed two-evaluation "
+        "shortfall (384 against 386); this is a budget-level match to the most "
+        "expensive arm, not a pairwise match to NBI-S"),
     "NSGA2-UNMATCHED": ("context", "nsga2_unmatched",
         f"NSGA-II at {NSGA2_UNMATCHED_MULTIPLIER}x the matched budget, one replication "
         "per dataset. A CONTEXT baseline: no fairness claim attaches to it and it "

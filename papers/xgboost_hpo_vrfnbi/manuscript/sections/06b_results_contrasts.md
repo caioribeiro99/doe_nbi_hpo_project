@@ -89,7 +89,7 @@ general better-coverage claim, and in particular do not support a claim that NBI
 construction returned more non-dominated solutions Figure 2.
 
 
-### 6.3.1 The pre-declared corrected test
+### 6.3.2 The pre-declared corrected test
 
 Section 5.15 declared the Nadeau–Bengio corrected resampled $t$ as a sensitivity, with
 an inflation of $\sqrt{8.5} = 2.9155$ at $R = 30$ and $n_{\text{test}}/n_{\text{train}} = 0.25$.

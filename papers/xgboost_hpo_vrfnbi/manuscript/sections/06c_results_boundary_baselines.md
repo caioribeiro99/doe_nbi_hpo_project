@@ -16,7 +16,7 @@ losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.43
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is **1.7706** on Spambase against
 **0.0594** on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
-Figure 3, Figure 3.
+(Figure 3).
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
 $R = 30$, not a demonstration that the effect is absent. It is **consistent with** the
@@ -72,11 +72,14 @@ another on the same surrogate, are different questions; the study answers only t
 second. We do not claim that the geometry effect requires a reliable surrogate, requires
 an unreliable one, or that NBI compensates for surrogate error.
 
-## 6.8 Baselines: the frozen-budget direct grid baseline leads every surrogate-assisted arm
+## 6.8 Baselines: the frozen-budget direct grid comparison
 
-At the frozen comparator budget, the frozen-budget direct grid baseline attained a **higher
-median CORE-relative hypervolume ratio than every surrogate-assisted arm on every
-dataset in the panel** Table 5, Figure 6. Against NBI-S:
+At the frozen comparator budget, **the median paired difference favoured the direct grid
+baseline over NBI-S on all four datasets**. Its marginal median CORE-relative
+hypervolume ratio is the higher of the two on MAGIC, Adult and Bank Marketing, but
+**not on Spambase**, where NBI-S is higher at 1.0812 against 1.0192. The paired
+statistic is the within-replication comparison; the marginal medians are not, and the
+two do not have to agree (Table 5, Figure 6). Against NBI-S:
 
 | dataset | NBI-S median | GRID median | median difference (NBI-S − GRID) | NBI-S wins | raw $p$ |
 |---|---:|---:|---:|---:|---:|
@@ -128,10 +131,8 @@ structurally unavailable until the confirmation stage, at 5 audit-only real eval
 per unit, charged to the study and to no arm. Across all four datasets and all five
 arms, the **median per-replication difference** between internal and holdout accuracy has
 magnitude below **0.012** in every one of the 20 dataset-by-arm cells, the largest
-being 0.0117, and is negative — the held-out partition scoring better — in 13 of
-them.0117, and in
-13 of the 20 cells the difference is negative — holdout accuracy exceeded internal
-accuracy Supplement S14. These are descriptive audit figures read from
+being **0.0117**, and is negative — the held-out partition scoring better than the
+internal resampling — in **13 of the 20** cells (Supplement S14). These are descriptive audit figures read from
 `analysis/secondary_analysis.json`, not confirmatory claims.
 
 The correct reading is an absence of gross optimism in the returned configurations at

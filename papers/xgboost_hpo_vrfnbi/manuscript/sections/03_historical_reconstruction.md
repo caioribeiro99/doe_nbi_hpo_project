@@ -82,7 +82,7 @@ historical entities are separate registry identifiers with different budgets and
 one table. Both have every returned candidate revalidated on the real learner, as the archived
 protocol did.
 
-### 3.4 What is not carried forward
+### 3.5 What is not carried forward
 
 The reconstruction preserves the archived *optimizer*, not its objective space. The
 archived pipeline optimized four threshold quality metrics — accuracy, precision,
