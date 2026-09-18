@@ -65,16 +65,6 @@ DECLARED: dict[str, str] = {
     "384": "the NSGA-II shortfall is now disclosed as '384 against 386'",
 }
 
-# The supplement names the source commit, so its leading digits appear as a numeric
-# token. Which digits those are depends on the commit, so the declaration is derived
-# from SOURCE_COMMIT rather than pinned to one hash that goes stale on the next commit.
-_sc = PAPER / "manuscript" / "SOURCE_COMMIT"
-if _sc.exists():
-    _short = _sc.read_text().strip()[:12]
-    for _tok in re.findall(r"(?<![\w.])\d+", _short):
-        DECLARED.setdefault(_tok, f"digits of the source commit {_short} that the "
-                                  "supplement provenance section names")
-
 NUM = re.compile(r"(?<![\w.])[-+]?\d[\d,]*(?:\.\d+)?(?:[eE][-+]?\d+)?")
 CITE = re.compile(
     r"\b((?:[A-Z][A-Za-z\u00c0-\u024f-]+"
@@ -102,8 +92,15 @@ FUNDING_BLOCK = re.compile(
     r"\*\*Funding\.\*\*.*?(?=\*\*Author contributions)", re.S)
 
 
+# A git object name is provenance metadata, not a scientific number: its digits are
+# incidental and change at every freeze. Declaring them was worse than excluding them --
+# the declaration whitelists whatever digits the current hash happens to contain, and
+# goes stale the moment the hash does. audit_package_tag.py owns provenance correctness.
+COMMIT_HASH = re.compile(r"`[0-9a-f]{7,40}`")
+
+
 def without_declarations(text: str) -> str:
-    return FUNDING_BLOCK.sub("", text)
+    return COMMIT_HASH.sub("``", FUNDING_BLOCK.sub("", text))
 
 
 def numbers(text: str) -> collections.Counter:
