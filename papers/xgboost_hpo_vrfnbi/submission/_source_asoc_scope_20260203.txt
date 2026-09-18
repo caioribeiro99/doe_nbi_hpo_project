@@ -1,0 +1,171 @@
+Applied Soft Computing | Journal | ScienceDirect.com by Elsevier
+Skip to main content
+ScienceDirect Journals & Books
+Help
+Search
+My account
+Sign in
+Applied Soft Computing
+Supports open access
+14.5 CiteScore
+6.6 Impact Factor
+Articles & Issues
+About
+Publish
+Order journal
+Menu Articles & Issues
+Latest issue
+All issues
+Articles in press
+Special issues and article collections
+Linked datasets
+Sign in to set up alerts
+RSS
+About
+Publish
+Order journal
+Submit search
+Submit your article Guide for authors
+About the journal
+Aims & Scope
+The Official Journal of the World Federation on Soft Computing (WFSC) http://www.softcomputing.org
+Applied Soft Computing is an international journal promoting an integrated view of soft computing to solve real life problems. Soft computing is a collection of methodologies, which aim to exploit tolerance for imprecision, uncertainty and partial truth to achieve tractability, robustness and low solution cost. The focus is to publish the highest quality research in application, advance and convergence of the areas of Fuzzy Logic , Neural Networks , Evolutionary Computing , Swarm Intelligence and other similar techniques to address real world complexities.
+Applied Soft Computing is a rolling publication: articles are published as soon as the editor-in-chief has accepted them. Therefore, the web site will continuously be updated with new articles and the publication time will be short.
+Major Topics:
+The scope of this journal covers the following soft computing and related techniques, interactions between several soft computing techniques, and their industrial applications:
+Evolutionary Computing
+Fuzzy Computing
+Hybrid Methods
+Immunological Computing
+Neuro Computing
+Swarm Intelligence
+Machine and Deep Learning
+Rough Sets
+The application areas of interest include but are not limited to applications of soft computing to:
+Agricultural Machinery, Smart Farming
+Autonomous Reasoning
+Big Data, IoT, Edge Computing
+Combinatorial Optimization
+Data Mining
+Decision Support
+Engineering Design Optimization
+Fault Diagnosis
+Finance
+Human-Machine Interface
+Intelligent Agents
+Manufacturing Systems
+Power Electronics
+Multi-objective Optimization
+Power and Energy
+Process and System Control
+Robotics
+Security
+Sensor Systems
+Signal or Image Processing
+Software Engineering
+Supply Chain Economy
+System Identification and Modelling
+Telecommunications
+Time Series Prediction
+Extended Reality, Metaverse, Digital Twins
+Vision or Pattern Recognition
+Authors are welcome to submit letters promoting original soft computing research to Applied Soft Computing's open access companion title, Systems and Soft Computing .
+The Official Journal of the World Federation on Soft Computing (WFSC) http://www.softcomputing.org
+Applied Soft Computing is an international journal promoting an integrated view of soft computing to solve real life problems. Soft computing is a collection of methodologies, which aim to exploit …
+View full aims & scope
+Article publishing options
+Open Access
+Article Publishing Charge (APC): USD 3,560 (excluding taxes). The amount you pay may be reduced during submission if applicable. Review this journal’s open access policy.
+Subscription
+No publication fee charged to authors, and published articles are immediately available to subscribers.
+Editor-in-Chief
+View full editorial board
+Mario Köppen
+Kyushu Institute of Technology, 680-4, Kawazu, Iizuka, Fukuoka 820-8502 JAPAN, Kitakyushu, 804-8550, Japan
+Articles
+Latest published
+Articles in press
+Top cited
+Most downloaded
+Most popular
+Research article Abstract only Incorporating mixed-effects into Adaptive time relation multi-task learning with longitudinal data for Alzheimer’s disease progression prediction
+Linting Miao, ... Tianrui Li
+April 2026 https://doi.org/10.1016/j.asoc.2026.114716
+Research article Abstract only A learning-driven artificial bee colony algorithm for mobile robot multi-objective path planning
+Fan Ye, ... Kaizhou Gao
+April 2026 https://doi.org/10.1016/j.asoc.2026.114692
+Research article Abstract only A novel graph neural network-based approach for android malware detection
+Donghai Tian, ... Ruilong Deng
+April 2026 https://doi.org/10.1016/j.asoc.2026.114689
+Research article Abstract only A differential evolutionary algorithm improvement framework based on artificial potential fields
+Zhe Yang, ... Lili Zhang
+April 2026 https://doi.org/10.1016/j.asoc.2026.114714
+Research article Abstract only A multi-feature collaborative computational neural architecture search method for classifying continuous time series signals
+Rui Zhang, ... Yan-Jun Zhang
+April 2026 https://doi.org/10.1016/j.asoc.2026.114731
+Research article Abstract only Triangle centroid search algorithm: A reliable optimization technique for modeling photovoltaic systems
+Haonan Zhao, Jing Li
+April 2026 https://doi.org/10.1016/j.asoc.2026.114694
+Research article Abstract only Hyper-heuristic enhanced teaching-learning-based optimization for energy-efficient hybrid flow shop scheduling with batch processing machines under time-of-use tariffs
+Jing Wang, ... Xixing Li
+April 2026 https://doi.org/10.1016/j.asoc.2026.114725
+Research article Abstract only A three-way decision method based on jensen-shannon divergence and behavior perception under the probabilistic linguistic term environment
+Yizhu Cairang, ... Yanping He
+April 2026 https://doi.org/10.1016/j.asoc.2026.114724
+Read latest issue
+More from Applied Soft Computing
+News
+Announcements
+12 June 2025 Guidelines for submitting proposals for journal Special Issues - Applied Soft Computing
+26 February 2018 Tips and advice when you review a scientific paper
+21 July 2017 Virtual Special Issue (VSI) Introduction
+View all news
+Calls for papers
+20th Anniversary Special Issue of Artificial Bee Colony (ABC) Algorithm: Background, Advances and Future Directions
+Guest editors: Mustafa Servet Kiran, Dervis Karaboga, Bahriye Akay
+Swarm intelligence algorithms simulate the collective abilities of a group of living creatures that collectively exhibit intelligent behavior through their interactions and experiences, and that have no central supervision and can self-organize.
+Submission deadline: 28 February 2026
+Interpretable Reinforcement Learning
+Guest editors: Leonardo Lucio Custode, Giovanni G. Iacca, Eric Medvet, Giorgia Nadizar and Erica Salvato
+Reinforcement Learning (RL) has achieved significant successes in a variety of domains, from game playing to autonomous driving, control systems, and decision-making problems. However, the interpretability of RL models remains a critical challenge. …
+Submission deadline: 31 December 2025
+View all calls for papers for special issues
+More opportunities to publish your research: Browse open Calls for Papers
+Special issues and article collections
+Quantum Computational Intelligence for Real-World Issues and Challenges
+Edited by Siddhartha Bhattacharyya , Mario Koeppen , Ivan Zelinka , Ugo Fiore , Hendrik Richter
+29 December 2025
+40 Years Rough Sets
+Edited by Professor Usman Qamar , Dr. Dominik SLEZAK , Dr. Yiyu Yao , Professor John Ahmet Erkoyuncu
+24 November 2025
+Unbalanced Classif
+Edited by Professor Mengjie Zhang , Dr. Yaqing Hou , Dr. Bing Xue , Dr. Wenbin Pei
+27 October 2025
+ASOC_ImageSCSP
+Edited by Dr. Mustafa Servet Kiran , Prof. Bahriye Akay , Dr. Shyam Lal
+27 October 2025
+View all special issues and article collections
+View all issues
+Partner journals
+Systems and Soft Computing
+Open access
+3.1 CiteScore
+3.6 Impact Factor
+Official Journal of the World Federation on Soft Computing (WFSC) Systems and Soft Computing (SASC), a companion title to Applied Soft Computing , is an open access journal, promoting original soft computing research. SASC will focus primarily on the methodology and application of soft computing in …
+View full aims & scope
+Print ISSN: 1568-4946
+Online ISSN: 1872-9681
+Copyright © 2026 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+For authors
+Resources for authors Track your accepted paper Journal Finder Researcher Academy Rights and permissions Journal Article Publishing Support Center
+For editors
+Resources for editors Publishing Ethics Resource Kit Guest editors
+For reviewers
+Resources for reviewers Reviewer recognition
+About ScienceDirect
+Remote access
+Contact and support
+Terms and conditions
+Privacy policy
+Cookie settings
+All content on this site: Copyright © 2026 Elsevier B.V., its licensors, and contributors. All rights are reserved, including those for text and data mining, AI training, and similar technologies. For all open access content, the relevant licensing terms apply.

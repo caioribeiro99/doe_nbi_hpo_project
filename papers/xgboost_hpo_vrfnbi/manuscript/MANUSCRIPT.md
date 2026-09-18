@@ -29,8 +29,8 @@ designated boundary dataset did not resolve: a larger point estimate than the sm
 significant effect, at roughly thirty times its dispersion.
 
 **Keywords:** multiobjective hyperparameter optimization; Normal Boundary
-Intersection; weighted scalarization; response surface methodology; design of
-experiments; XGBoost; replicated evaluation; Pareto indicators
+Intersection; weighted scalarization; response surface methodology; XGBoost;
+replicated evaluation; Pareto indicators
 
 
 ## 1. Introduction
