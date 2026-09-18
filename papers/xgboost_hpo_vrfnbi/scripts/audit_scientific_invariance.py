@@ -55,6 +55,13 @@ DECLARED: dict[str, str] = {
     "6.7": "cross-reference corrected: the grid baseline is reported in 6.8, not 6.7, "
            "after the section renumbering",
     "6.8": "cross-reference corrected: the grid baseline is reported in 6.8",
+    # Author-supplied funding figures. No campaign artifact can verify a grant number,
+    # so audit_manuscript_numbers cannot see these; the exact text is pinned instead by
+    # tests/methodology/test_declarations.py.
+    "140663": "CNPq process 140663/2026-6, author-supplied funding statement",
+    "312844": "CNPq process 312844/2023-9, author-supplied funding statement",
+    "2023": "year field of CNPq process 312844/2023-9",
+    "9": "check digit of CNPq process 312844/2023-9",
     "386": "'evaluation-matched' replaced by the explicit frozen comparator budget",
     "384": "the NSGA-II shortfall is now disclosed as '384 against 386'",
 }

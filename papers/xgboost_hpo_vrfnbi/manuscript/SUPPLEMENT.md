@@ -387,7 +387,7 @@ because independent verification refuted the author's version.
 | item | value |
 |---|---|
 | manuscript source commit | `1a2463c56d7dd3875783c80b0528b6ba8c4e2908` |
-| final package tag | `paper2-manuscript-v4` — NOT YET CREATED; the freeze is held pending the Funding statement and the author-confirmed CRediT roles |
+| final package tag | `paper2-manuscript-v4` |
 | relationship | the package commit adds only this provenance metadata and the compiled PDFs; no manuscript text, analysis artifact or number differs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |

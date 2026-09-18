@@ -48,16 +48,13 @@ def main() -> int:
     # A supplement generated in commit N cannot contain commit N's own hash. So it
     # names the SOURCE commit it was generated from, and the package commit/tag is
     # stated separately. No byte-identity between the two is claimed.
-    # The package tag is named in one place and verified to exist. Hardcoding it let
-    # the v3 tag survive into a later candidate; a tag that has not been created is
-    # reported as pending rather than asserted.
-    import subprocess as _sp
-    tag_exists = _sp.run(["git", "rev-parse", "--verify", "--quiet",
-                          PACKAGE_TAG + "^{commit}"], cwd=REPO,
-                         capture_output=True, text=True).returncode == 0
-    package_tag = (f"`{PACKAGE_TAG}`" if tag_exists else
-                   f"`{PACKAGE_TAG}` — NOT YET CREATED; the freeze is held pending the "
-                   "Funding statement and the author-confirmed CRediT roles")
+    # The package tag is named in exactly one place, PACKAGE_TAG. Hardcoding it let
+    # the v3 tag survive into the v4 candidate. The supplement names the tag this
+    # package is published under, which is a forward reference by construction -- a
+    # commit cannot contain a tag that points at it -- and the sentence above discloses
+    # that. audit_package_tag.py closes the loop after the tag is created, checking that
+    # the tag resolves to a commit whose supplement names that same tag.
+    package_tag = f"`{PACKAGE_TAG}`"
     src = pathlib.Path(REPO/"papers"/"xgboost_hpo_vrfnbi"/"manuscript"/"SOURCE_COMMIT")
     source_commit = src.read_text().strip() if src.exists() else head
     w(f"**Manuscript source commit** `{source_commit[:12]}` — the state of the")
