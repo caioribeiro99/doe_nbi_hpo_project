@@ -18,7 +18,10 @@ import subprocess
 import sys
 
 PAPER = pathlib.Path(__file__).resolve().parents[1]
-BASE = "paper2-manuscript-v2"
+# The chain is checked from the first frozen manuscript by default. A later base can be
+# given on the command line -- the v5 pass is a funding-provenance correction and must
+# also show a zero scientific diff against v4 specifically.
+BASE = sys.argv[1] if len(sys.argv) > 1 else "paper2-manuscript-v2"
 DOCS = ("MANUSCRIPT.md", "SUPPLEMENT.md")
 # The supplement carries tables and provenance and cites no works in prose.
 # Stating that here keeps the citation check from passing vacuously on it.
@@ -58,10 +61,6 @@ DECLARED: dict[str, str] = {
     # Author-supplied funding figures. No campaign artifact can verify a grant number,
     # so audit_manuscript_numbers cannot see these; the exact text is pinned instead by
     # tests/methodology/test_declarations.py.
-    "140663": "CNPq process 140663/2026-6, author-supplied funding statement",
-    "312844": "CNPq process 312844/2023-9, author-supplied funding statement",
-    "2023": "year field of CNPq process 312844/2023-9",
-    "9": "check digit of CNPq process 312844/2023-9",
     "386": "'evaluation-matched' replaced by the explicit frozen comparator budget",
     "384": "the NSGA-II shortfall is now disclosed as '384 against 386'",
 }
@@ -94,8 +93,22 @@ def at_tag(name: str) -> str:
         cwd=PAPER.parents[1], capture_output=True, text=True, check=True).stdout
 
 
+# The funding and acknowledgements paragraphs are excluded from the numeric surface and
+# checked instead by tests/methodology/test_declarations.py, which pins them by exact
+# equality and enforces a two-way funder check. Declaring their grant digits here was
+# worse than useless: "22" and "9" are common tokens, and whitelisting them blinded this
+# audit to every future movement of those values anywhere in the manuscript.
+FUNDING_BLOCK = re.compile(
+    r"\*\*Funding\.\*\*.*?(?=\*\*Author contributions)", re.S)
+
+
+def without_declarations(text: str) -> str:
+    return FUNDING_BLOCK.sub("", text)
+
+
 def numbers(text: str) -> collections.Counter:
-    return collections.Counter(m.group(0).replace(",", "") for m in NUM.finditer(text))
+    return collections.Counter(m.group(0).replace(",", "")
+                               for m in NUM.finditer(without_declarations(text)))
 
 
 def main() -> int:

@@ -33,10 +33,11 @@ deliberately unversioned.
 
 **Competing interests.** The authors declare no competing interests.
 
-**Funding.** Caio Tertuliano Ribeiro acknowledges doctoral scholarship support from the
-Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq), process
-140663/2026-6. Anderson Paulo de Paiva acknowledges research support from CNPq, process
-312844/2023-9.
+**Funding.** The master's research underlying this study received support from the
+Fundação de Amparo à Pesquisa do Estado de Minas Gerais (FAPEMIG), project BPD-01045-22,
+and from the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES).
+Anderson Paulo de Paiva acknowledges research support from the Conselho Nacional de
+Desenvolvimento Científico e Tecnológico (CNPq), process 312844/2023-9.
 
 **Acknowledgements.** The authors acknowledge the Universidade Federal de Itajubá
 (UNIFEI) for institutional support.

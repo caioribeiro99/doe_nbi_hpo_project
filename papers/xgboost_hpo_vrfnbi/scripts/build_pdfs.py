@@ -102,9 +102,9 @@ def render(md_path: pathlib.Path, out_pdf: pathlib.Path, title: str) -> None:
 
 
 def main() -> int:
-    render(MAN/"MANUSCRIPT.md", MAN/"Paper2_MANUSCRIPT_FINAL_v4.pdf",
+    render(MAN/"MANUSCRIPT.md", MAN/"Paper2_MANUSCRIPT_FINAL_v5.pdf",
            "Separating Scalarization Specification, Pareto Geometry, and Anchor Provenance")
-    render(MAN/"SUPPLEMENT.md", MAN/"Paper2_SUPPLEMENT_FINAL_v4.pdf",
+    render(MAN/"SUPPLEMENT.md", MAN/"Paper2_SUPPLEMENT_FINAL_v5.pdf",
            "Supplementary material")
     return 0
 

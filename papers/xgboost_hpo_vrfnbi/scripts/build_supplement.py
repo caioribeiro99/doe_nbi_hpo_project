@@ -11,7 +11,7 @@ import numpy as np, pandas as pd
 REPO = pathlib.Path(__file__).resolve().parents[3]
 
 # The tag this package is destined for. Verified against the repository below.
-PACKAGE_TAG = "paper2-manuscript-v4"
+PACKAGE_TAG = "paper2-manuscript-v5"
 sys.path.insert(0, str(REPO / "src"))
 PAPER = REPO / "papers" / "xgboost_hpo_vrfnbi"
 A = PAPER / "analysis"

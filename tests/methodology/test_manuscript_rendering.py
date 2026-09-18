@@ -94,7 +94,7 @@ def test_protect_is_lossless_on_the_constructs_that_broke() -> None:
 def test_rendered_pdf_carries_no_latex(name: str) -> None:
     """If the PDF has been built, its text must hold no LaTeX and no delimiters."""
     pdf = PAPER / "manuscript" / (
-        "Paper2_%s_FINAL_v4.pdf" % ("MANUSCRIPT" if "MANU" in name else "SUPPLEMENT"))
+        "Paper2_%s_FINAL_v5.pdf" % ("MANUSCRIPT" if "MANU" in name else "SUPPLEMENT"))
     if not pdf.exists():
         pytest.skip("PDF not built in this working tree")
     pymupdf = pytest.importorskip("pymupdf")
