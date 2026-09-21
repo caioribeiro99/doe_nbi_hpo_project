@@ -116,21 +116,50 @@ def test_no_orcid_outside_the_verified_set(title_page) -> None:
     assert found == set(ORCIDS.values()), f"unexpected ORCID-shaped strings: {found}"
 
 
-def test_only_the_email_remains_unresolved(title_page) -> None:
-    """Affiliations and the postal address are now verified; the email is not.
+CORRESPONDING_EMAIL = "caio.tertu@hotmail.com"
+SUPERSEDED_EMAIL = "caio.tertu99@gmail.com"
 
-    This asserts the exact remaining gap rather than a lower bound, so that resolving a
-    field and forgetting to remove its marker fails, and so does quietly marking a new
-    field as unresolved.
-    """
-    assert title_page.count("**AUTHOR INPUT REQUIRED**") == 1, \
-        "exactly one field should remain open: the corresponding author's email"
-    assert "Email: **AUTHOR INPUT REQUIRED**" in title_page
+
+def test_no_title_page_field_remains_unresolved(title_page) -> None:
+    """Every field is now supplied. Asserted exactly, not as a lower bound, so that
+    marking a new field unresolved without saying so also fails."""
+    assert title_page.count("**AUTHOR INPUT REQUIRED**") == 0
+    assert f"Email: `{CORRESPONDING_EMAIL}`" in title_page
+    assert "author-confirmed" in title_page
     assert "Av. BPS 1303" in title_page, "the verified postal address must be present"
     for name in ORCIDS:
         assert "Institute of Production Engineering and Management (IEPG)" in title_page
     assert "does **not** require an institutional address" in title_page, \
         "the package must not impose a requirement the journal does not"
+
+
+def test_no_institutional_address_was_substituted(title_page) -> None:
+    """The author chose a personal address; no @unifei.edu.br may be invented for them."""
+    import re as _re
+    for m in _re.finditer(r"[\w.+-]+@[\w.-]+", title_page):
+        addr = m.group(0).rstrip(".,;:)")   # trailing sentence punctuation
+        # de Paiva's SIGAA address may appear as affiliation evidence, never as the
+        # corresponding address
+        assert addr in (CORRESPONDING_EMAIL, "andersonppaiva@unifei.edu.br"), \
+            f"unexpected address on the title page: {addr}"
+    i = title_page.index("### Corresponding author")
+    assert "unifei.edu.br" not in title_page[i:], \
+        "no institutional address may stand as the corresponding address"
+
+
+def test_superseded_email_is_gone_from_every_deliverable() -> None:
+    for name in DELIVERABLES:
+        f = SUB / name
+        if f.exists():
+            assert SUPERSEDED_EMAIL not in f.read_text(), \
+                f"{name} still carries the superseded address"
+
+
+def test_cover_letter_carries_the_confirmed_contact() -> None:
+    f = SUB / "ASOC_COVER_LETTER.md"
+    if not f.exists():
+        pytest.skip("not built")
+    assert CORRESPONDING_EMAIL in f.read_text()
 
 
 @pytest.mark.parametrize("label", ["Funding.", "Acknowledgements.", "Competing interests."])

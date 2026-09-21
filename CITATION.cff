@@ -5,6 +5,7 @@ type: software
 authors:
   - family-names: "Tertuliano Ribeiro"
     given-names: "Caio"
+    email: "caio.tertu@hotmail.com"
     orcid: "https://orcid.org/0009-0006-7748-1449"
     affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
   - family-names: "Costa Pereira"

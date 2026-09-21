@@ -15,7 +15,7 @@ Every mutable journal rule carries its verification status. An archived rule is 
 | Highlights optional; 3-5 bullets, max 85 characters | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Done — 5 bullets, all within limit |
 | Single anonymized review; no blinded file | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Authors visible on the title page; no anonymized manuscript prepared |
 | Vitae: 100-word biography and passport photograph per author | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Biographies drafted; photographs are author-supplied |
-| Corresponding author contact details incl. phone numbers | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | submission checklist in the guide capture | Postal address supplied; email and phone are author-supplied |
+| Corresponding author contact details incl. phone numbers | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | submission checklist in the guide capture | Email `caio.tertu@hotmail.com` and postal address supplied; phone only if the live portal asks |
 | No institutional-email requirement | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture: the rule is only "the email address of each author" | Any valid address satisfies it |
 | Reference formatting flexible at submission | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Author-date, consistent — compliant |
 | Research data Option C: deposit, cite and link | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Statement drafted with a DOI placeholder; deposit pending |

@@ -31,9 +31,9 @@ ORCID: `0000-0002-8199-411X`
 
 **Caio Tertuliano Ribeiro**
 
-Email: **AUTHOR INPUT REQUIRED** — to be supplied by the author.
+Email: `caio.tertu@hotmail.com` — author-confirmed.
 
-The journal does **not** require an institutional address. Its only stated rule is to provide "the email address of each author" and to keep the corresponding author's "email address and contact details … up to date". A valid address of the author's choosing satisfies it; the one address on record is `caio.tertu99@gmail.com` (CITATION.cff, pyproject.toml).
+The journal does **not** require an institutional address. Its only stated rule is to provide "the email address of each author" and to keep the corresponding author's "email address and contact details … up to date", so this address satisfies it. No institutional address was guessed or substituted.
 
 Postal address: Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
 

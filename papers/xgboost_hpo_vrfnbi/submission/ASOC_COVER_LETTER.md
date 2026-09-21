@@ -36,3 +36,6 @@ previously. There is no prior conference version.
 Yours sincerely,
 
 Caio Tertuliano Ribeiro, on behalf of all authors
+Corresponding author — caio.tertu@hotmail.com
+Institute of Production Engineering and Management (IEPG), Federal University of
+Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil

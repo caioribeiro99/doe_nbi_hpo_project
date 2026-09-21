@@ -23,6 +23,11 @@ OUT = REPO / PAPER / "submission"
 MARK = "**AUTHOR INPUT REQUIRED**"
 CONFIRM = "**AUTHOR CONFIRMATION REQUIRED**"
 
+# Author-confirmed 2026-09-21. The journal requires only "the email address of each
+# author" -- it does not ask for an institutional address -- so this is the address the
+# author chose, not a fallback. No @unifei.edu.br address was guessed or substituted.
+CORRESPONDING_EMAIL = "caio.tertu@hotmail.com"
+
 # One institutional address, supplied and verified by the author from UNIFEI SIGAA.
 IEPG = ("Institute of Production Engineering and Management (IEPG), "
         "Federal University of Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, "
@@ -152,12 +157,12 @@ def main() -> int:
         t.append(f"^{order[a]}^ {a}\n")
     t += ["### Corresponding author\n",
           "**Caio Tertuliano Ribeiro**\n",
-          f"Email: {MARK} — to be supplied by the author.\n",
+          f"Email: `{CORRESPONDING_EMAIL}` — author-confirmed.\n",
           "The journal does **not** require an institutional address. Its only stated "
           "rule is to provide \"the email address of each author\" and to keep the "
-          "corresponding author's \"email address and contact details … up to date\". "
-          "A valid address of the author's choosing satisfies it; the one address on "
-          "record is `caio.tertu99@gmail.com` (CITATION.cff, pyproject.toml).\n",
+          "corresponding author's \"email address and contact details … up to date\", "
+          "so this address satisfies it. No institutional address was guessed or "
+          "substituted.\n",
           f"Postal address: {IEPG}\n",
           "Telephone: the 2024 submission checklist asks for \"full contact details "
           "(email address, full postal address and phone numbers)\". That rule is "
@@ -240,6 +245,9 @@ previously. There is no prior conference version.
 Yours sincerely,
 
 Caio Tertuliano Ribeiro, on behalf of all authors
+Corresponding author — {CORRESPONDING_EMAIL}
+Institute of Production Engineering and Management (IEPG), Federal University of
+Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
 """
     (OUT / "ASOC_COVER_LETTER.md").write_text(c)
 
@@ -273,7 +281,8 @@ Caio Tertuliano Ribeiro, on behalf of all authors
          "guide capture", "Biographies drafted; photographs are author-supplied"),
         ("Corresponding author contact details incl. phone numbers", ARCH,
          "submission checklist in the guide capture",
-         "Postal address supplied; email and phone are author-supplied"),
+         f"Email `{CORRESPONDING_EMAIL}` and postal address supplied; phone only if "
+         "the live portal asks"),
         ("No institutional-email requirement", ARCH, "guide capture: the rule is only "
          "\"the email address of each author\"", "Any valid address satisfies it"),
         ("Reference formatting flexible at submission", ARCH, "guide capture",
@@ -320,8 +329,9 @@ Caio Tertuliano Ribeiro, on behalf of all authors
     for f in sorted(OUT.glob("ASOC_*")):
         print(f"  {f.name}")
     print(f"  highlights over 85 characters: {over or 'none'}")
-    print(f"  AUTHOR INPUT REQUIRED markers on the title page: "
-          f"{(OUT / 'ASOC_TITLE_PAGE.md').read_text().count(MARK)}")
+    tp = (OUT / "ASOC_TITLE_PAGE.md").read_text()
+    print(f"  corresponding author: {CORRESPONDING_EMAIL}")
+    print(f"  AUTHOR INPUT REQUIRED markers on the title page: {tp.count(MARK)}")
     return 1 if over else 0
 
 
