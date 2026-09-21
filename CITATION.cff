@@ -5,8 +5,16 @@ type: software
 authors:
   - family-names: "Tertuliano Ribeiro"
     given-names: "Caio"
-    email: "caio.tertu99@gmail.com"
-    affiliation: "Federal University of Itajubá (UNIFEI)"
+    orcid: "https://orcid.org/0009-0006-7748-1449"
+    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
+  - family-names: "Costa Pereira"
+    given-names: "Matheus"
+    orcid: "https://orcid.org/0009-0007-2011-9235"
+    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
+  - family-names: "de Paiva"
+    given-names: "Anderson Paulo"
+    orcid: "https://orcid.org/0000-0002-8199-411X"
+    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
 repository-code: "https://github.com/caioribeiro99/doe_nbi_hpo_project"
 license: MIT
 version: "0.2.0.dev0"

@@ -56,7 +56,7 @@ below must be re-checked against the live page before submitting.**
 |---|---|
 | **Machine and Deep Learning** (listed technique) | The optimized learner is XGBoost, gradient-boosted decision trees. Hyperparameter optimization of a machine-learning model is the entire object of the study. |
 | **Multi-objective Optimization** (listed application area) | 21 occurrences of *multiobjective*; two frozen minimized objectives; Pareto-front construction is the mechanism under test; hypervolume, IGD⁺, generational distance and Schott spacing are the indicators. |
-| **Hybrid Methods** (listed technique) | The pipeline hybridizes design of experiments, response-surface surrogates, PCA/Varimax latent objectives and Normal Boundary Intersection. |
+| Hybrid Methods (listed technique) — **secondary context only** | The pipeline combines design of experiments, response-surface surrogates, PCA/Varimax latent objectives and Normal Boundary Intersection. This is noted as context, **not** claimed as a hybrid *soft-computing* method: those components are classical statistics and deterministic optimization, and calling them soft computing to improve venue fit would be an overclaim. The fit is anchored on the two rows above. |
 | **Data Mining / Decision Support** (listed areas) | Four public binary-classification tasks; the estimand is the returned Pareto front a practitioner would choose from. |
 | Evolutionary Computing (listed technique) | NSGA-II is implemented and evaluated — **as a comparator, not as the contribution.** |
 

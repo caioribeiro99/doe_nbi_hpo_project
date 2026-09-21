@@ -1,0 +1,40 @@
+{
+  "title": "Separating scalarization specification, Pareto geometry and anchor provenance in surrogate-assisted multiobjective XGBoost hyperparameter optimization — protocol, code and analysis artifacts",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Tertuliano Ribeiro, Caio",
+      "orcid": "0009-0006-7748-1449",
+      "affiliation": "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Itajubá, MG, Brazil"
+    },
+    {
+      "name": "Costa Pereira, Matheus",
+      "orcid": "0009-0007-2011-9235",
+      "affiliation": "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Itajubá, MG, Brazil"
+    },
+    {
+      "name": "de Paiva, Anderson Paulo",
+      "orcid": "0000-0002-8199-411X",
+      "affiliation": "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Itajubá, MG, Brazil"
+    }
+  ],
+  "keywords": [
+    "multiobjective hyperparameter optimization",
+    "Normal Boundary Intersection",
+    "weighted scalarization",
+    "response surface methodology",
+    "XGBoost",
+    "replicated evaluation",
+    "Pareto indicators"
+  ],
+  "description": "<p>Frozen protocol, campaign implementation, analysis code and aggregated result artifacts for a replicated study that separates three choices surrogate-assisted multiobjective hyperparameter optimization pipelines normally change together: the scalarization specification, the geometry by which a Pareto front is constructed, and the provenance of the anchors and payoff matrix that geometry uses.</p><p><strong>What this deposit contains:</strong> the protocol as frozen before the confirmatory campaign, the campaign and analysis source code, the 88-run face-centred central composite design, the frozen per-dataset factor models, aggregated per-unit indicator tables, the analysis artifacts every reported number is read from, environment and dependency information, and reproducibility instructions.</p><p><strong>What it deliberately does not contain:</strong> raw datasets and the per-unit evaluation caches. The four datasets are public and are retrieved by checksum-verified loaders; redistributing them here would add nothing and is avoided. The evaluation caches are large intermediate state, not evidence.</p>",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/caioribeiro99/doe_nbi_hpo_project",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

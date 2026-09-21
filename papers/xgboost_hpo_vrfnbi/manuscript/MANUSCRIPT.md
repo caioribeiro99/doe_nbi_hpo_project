@@ -1583,6 +1583,12 @@ be represented, and no author is credited with a contribution the work did not i
 
 ---
 
+## Declaration of generative AI and AI-assisted technologies in the manuscript preparation process
+
+During the preparation of this work, the authors used Anthropic Claude and OpenAI ChatGPT in order to assist with manuscript drafting, language refinement, consistency checking and editorial review. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
+
+This declaration concerns manuscript preparation only. The study's computational methods are described in the Methods section, and every reported result derives from the committed, version-controlled artifacts referenced there.
+
 ## References
 
 Every entry below was verified against an authoritative source — Crossref, the

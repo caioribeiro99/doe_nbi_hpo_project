@@ -21,24 +21,86 @@ TAG = "paper2-manuscript-v5"
 OUT = REPO / PAPER / "submission"
 
 MARK = "**AUTHOR INPUT REQUIRED**"
+CONFIRM = "**AUTHOR CONFIRMATION REQUIRED**"
 
-# (name, orcid, verification, affiliation, affiliation source)
+# One institutional address, supplied and verified by the author from UNIFEI SIGAA.
+IEPG = ("Institute of Production Engineering and Management (IEPG), "
+        "Federal University of Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, "
+        "Itajubá, MG 37500-903, Brazil")
+# Expansion taken from the predecessor publication's own affiliation string, not coined
+# here: Pereira et al. (2025), doi:10.1016/j.engappai.2025.112510.
+NOMATI = ("Nucleus of Manufacturing Optimization and Innovation Technology (NOMATI), "
+          "Itajubá, MG, Brazil")
+
+# (name, orcid, orcid evidence, [affiliations], affiliation evidence, vitae draft)
 AUTHORS = [
     ("Caio Tertuliano Ribeiro", "0009-0006-7748-1449",
      "ORCID public API: registered name 'Caio Tertuliano Ribeiro' — exact match",
-     "Universidade Federal de Itajubá, Itajubá, Brazil",
-     "ORCID employment record (department recorded there as 'NOMATI' — confirm whether "
-     "this is the unit to print)"),
+     [IEPG, NOMATI],
+     "IEPG is the author's stated primary academic affiliation; ORCID records "
+     "Universidade Federal de Itajubá with NOMATI as the unit. NOMATI is carried as a "
+     "second research-group affiliation because the predecessor publication "
+     "(doi:10.1016/j.engappai.2025.112510) lists exactly this pair for this author.",
+     "Caio Tertuliano Ribeiro holds a master's degree from the Institute of Production "
+     "Engineering and Management at the Federal University of Itajubá, where his "
+     "dissertation applied design of experiments and Normal Boundary Intersection to "
+     "hyperparameter optimization of gradient-boosted decision trees. He is a member of "
+     "the Nucleus of Manufacturing Optimization and Innovation Technology (NOMATI) and a "
+     "co-author of work on hybrid multivariate Normal Boundary Intersection published in "
+     "Engineering Applications of Artificial Intelligence. His research concerns "
+     "replicated, protocol-frozen evaluation of multiobjective optimization pipelines for "
+     "machine learning."),
     ("Matheus Costa Pereira", "0009-0007-2011-9235",
      "ORCID public API: 'Matheus Costa Pereira'; independently corroborated by Crossref "
      "on doi:10.1016/j.engappai.2025.112510",
-     "Federal University of Itajubá, Itajubá, Brazil",
-     "ORCID employment record: Industrial Engineering Institute"),
+     [IEPG, NOMATI],
+     "ORCID employment record gives the Industrial Engineering Institute at the Federal "
+     "University of Itajubá, the English rendering of IEPG; the predecessor publication "
+     "lists UNIFEI with NOMATI for this author. A 2026 publication also lists a second "
+     "affiliation at the University of Melbourne; it is NOT carried here, because "
+     "Elsevier asks for the affiliation where the work was performed and that has not "
+     "been established for this manuscript.",
+     "Matheus Costa Pereira is a researcher at the Institute of Production Engineering "
+     "and Management, Federal University of Itajubá, and a member of the Nucleus of "
+     "Manufacturing Optimization and Innovation Technology (NOMATI). He is the first "
+     "author of work on a hybrid multivariate Normal Boundary Intersection approach with "
+     "post-optimization assisted by mixture design of experiments, published in "
+     "Engineering Applications of Artificial Intelligence. His research interests include "
+     "multiobjective optimization, response surface methodology and multivariate "
+     "statistical methods for engineering and machine-learning problems."),
     ("Anderson Paulo de Paiva", "0000-0002-8199-411X",
-     "ORCID public API: 'Anderson Paulo de Paiva' (credit name 'Paiva, A. P.'); "
-     "independently corroborated by Crossref on doi:10.1016/j.engappai.2025.112510",
-     MARK, "no public employment record on ORCID; not recorded in this repository"),
+     "ORCID public API: 'Anderson Paulo de Paiva' (credit name 'Paiva, A. P.'; Scopus "
+     "and ResearcherID present); independently corroborated by Crossref on "
+     "doi:10.1016/j.engappai.2025.112510",
+     [IEPG, NOMATI],
+     "Verified by the author against UNIFEI SIGAA: Instituto de Engenharia de Produção e "
+     "Gestão, andersonppaiva@unifei.edu.br. The predecessor publication lists UNIFEI with "
+     "NOMATI for this author.",
+     "Anderson Paulo de Paiva is a professor at the Institute of Production Engineering "
+     "and Management, Federal University of Itajubá, and a member of the Nucleus of "
+     "Manufacturing Optimization and Innovation Technology (NOMATI). He is the senior "
+     "author of the Normal Boundary Intersection and variance-reduction-factor "
+     "methodological line, including work published in The International Journal of "
+     "Advanced Manufacturing Technology, the Journal of Cleaner Production and "
+     "Engineering Applications of Artificial Intelligence. His research concerns "
+     "multiobjective optimization, design of experiments and multivariate statistics "
+     "applied to manufacturing and process engineering."),
 ]
+
+# Elsevier generative-AI policy, page last updated June 2026, retrieved live 2026-09-21.
+# Section title and template are the publisher's current wording, not the 2024 capture,
+# which said "writing process". The policy explicitly does NOT cover AI used in research
+# methodology -- XGBoost, NSGA-II, Bayesian optimization and TPE belong in the Methods and
+# get no declaration.
+AI_DECLARATION = (
+    "During the preparation of this work, the authors used Anthropic Claude and OpenAI "
+    "ChatGPT in order to assist with manuscript drafting, language refinement, "
+    "consistency checking and editorial review. After using these tools, the authors "
+    "reviewed and edited the content as needed and take full responsibility for the "
+    "content of the published article.\n\n"
+    "This declaration concerns manuscript preparation only. The study's computational "
+    "methods are described in the Methods section, and every reported result derives "
+    "from the committed, version-controlled artifacts referenced there.")
 
 HIGHLIGHTS = [
     "Scalarization, front geometry and anchor provenance separated in one pipeline",
@@ -70,26 +132,65 @@ def main() -> int:
     OUT.mkdir(exist_ok=True)
 
     # ---- title page (ASOC is single anonymized: authors stay visible) -------------
-    t = ["# Title page\n", f"## Title\n\n{title}\n", "## Authors\n"]
-    for i, (name, orcid, ver, aff, affsrc) in enumerate(AUTHORS, 1):
-        t.append(f"**{i}. {name}**  \n"
-                 f"ORCID: `{orcid}` — {ver}  \n"
-                 f"Affiliation: {aff}  \n"
-                 f"*(affiliation source: {affsrc})*\n")
-    t += ["## Corresponding author\n",
-          "Caio Tertuliano Ribeiro.\n",
-          f"Email: {MARK} — the institutional address has not been verified. The only "
-          "address in the project record is `caio.tertu99@gmail.com` (CITATION.cff, "
-          "pyproject.toml), which is personal.\n",
-          f"Full postal address and telephone: {MARK} — the submission checklist "
-          "requires \"full contact details (email address, full postal address and "
-          "phone numbers)\"; none is recorded in this repository.\n",
+    affs, order = [], {}
+    for _, _, _, alist, _, _ in AUTHORS:
+        for a in alist:
+            if a not in order:
+                order[a] = len(order) + 1
+                affs.append(a)
+    t = ["# Title page — Applied Soft Computing\n", f"## Title\n\n{title}\n",
+         "## Authors\n"]
+    for i, (name, orcid, ver, alist, affsrc, _) in enumerate(AUTHORS, 1):
+        marks = ",".join(str(order[a]) for a in alist)
+        star = " *(corresponding author)*" if i == 1 else ""
+        t.append(f"**{name}**^{marks}^{star}  \n"
+                 f"ORCID: `{orcid}`  \n"
+                 f"*ORCID evidence: {ver}*  \n"
+                 f"*Affiliation evidence: {affsrc}*\n")
+    t.append("### Affiliations\n")
+    for a in affs:
+        t.append(f"^{order[a]}^ {a}\n")
+    t += ["### Corresponding author\n",
+          "**Caio Tertuliano Ribeiro**\n",
+          f"Email: {MARK} — to be supplied by the author.\n",
+          "The journal does **not** require an institutional address. Its only stated "
+          "rule is to provide \"the email address of each author\" and to keep the "
+          "corresponding author's \"email address and contact details … up to date\". "
+          "A valid address of the author's choosing satisfies it; the one address on "
+          "record is `caio.tertu99@gmail.com` (CITATION.cff, pyproject.toml).\n",
+          f"Postal address: {IEPG}\n",
+          "Telephone: the 2024 submission checklist asks for \"full contact details "
+          "(email address, full postal address and phone numbers)\". That rule is "
+          "**ARCHIVE-ONLY** — the live Editorial Manager site for this journal states "
+          "\"Site under development. Do not use for live manuscript submission\", so no "
+          "live form could be inspected. Supply a number only if the live portal asks; "
+          "the package is not blocked on it.\n",
           f"## Keywords\n\n{keywords}\n",
           block(man, "Competing interests.") + "\n",
           block(man, "Funding.") + "\n",
           block(man, "Acknowledgements.") + "\n",
-          credit + "\n"]
+          credit + "\n",
+          "## Declaration of generative AI and AI-assisted technologies in the "
+          "manuscript preparation process\n",
+          AI_DECLARATION + "\n"]
     (OUT / "ASOC_TITLE_PAGE.md").write_text("\n".join(t))
+
+    # ---- vitae -------------------------------------------------------------------
+    v = ["# Vitae\n",
+         "Applied Soft Computing asks for \"a short (maximum 100 words) biography of "
+         "each author\" and \"a passport-type photograph as a separate figure\", "
+         "provided in an editable format. **ARCHIVE-ONLY (2024-06-30) — recheck at "
+         "submission.**\n",
+         f"Every biography below is drafted from verified academic record only and is "
+         f"marked {CONFIRM} until its author approves the wording.\n"]
+    for name, orcid, _, alist, _, bio in AUTHORS:
+        v.append(f"## {name}  \nORCID `{orcid}` — {CONFIRM}\n")
+        v.append(f"{bio}\n")
+        v.append(f"*({len(bio.split())} words; limit 100)*\n")
+        v.append(f"**Photograph:** `PHOTO_PLACEHOLDER_{name.split()[0].lower()}.jpg` — "
+                 "passport-type photograph to be supplied by the author. None has been "
+                 "sourced or generated.\n")
+    (OUT / "ASOC_VITAE.md").write_text("\n".join(v))
 
     # ---- highlights ---------------------------------------------------------------
     over = [h for h in HIGHLIGHTS if len(h) > 85]
@@ -141,6 +242,79 @@ Yours sincerely,
 Caio Tertuliano Ribeiro, on behalf of all authors
 """
     (OUT / "ASOC_COVER_LETTER.md").write_text(c)
+
+    # ---- checklist, with live-vs-archive status on every mutable rule -------------
+    LIVE = "**VERIFIED LIVE 2026-09-21**"
+    ARCH = "**ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION**"
+    rows = [
+        ("Generative-AI declaration: section title, template, placement",
+         LIVE, "Elsevier policy page, last updated June 2026, fetched directly",
+         "Done — in the manuscript before the references, and on the title page"),
+        ("Generative AI not an author; not used for graphical-abstract artwork",
+         LIVE, "same page", "Complies — abstract figure is matplotlib from committed data"),
+        ("AI in research methodology needs no declaration",
+         LIVE, "same page", "XGBoost, NSGA-II, BO, TPE described in Methods only"),
+        ("Journal identity, ISSN, hybrid-subscription, submission route",
+         LIVE, "core.submit.elsevier.com/core/v1/journals/ASOC returned 200 live",
+         "ASOC, 1568-4946, HYBRID_SUBSCRIPTION, redirectToEm=false"),
+        ("Editorial Manager is NOT the live submission route",
+         LIVE, "editorialmanager.com/asoc: \"Site under development. Do not use for "
+         "live manuscript submission\"", "No live form could be inspected"),
+        ("Aims and scope", "**ARCHIVE 2026-02-03**", "journal home capture",
+         "Scope gate accepted: DEFENSIBLE FIT WITH EDITORIAL RISK"),
+        ("Keywords 1 to 7", ARCH, "guide capture", "Done — reduced 8 to 7"),
+        ("Graphical abstract required; min 531 x 1328 px", ARCH, "guide capture",
+         "Done — 1527 x 610 px, proportional"),
+        ("Highlights optional; 3-5 bullets, max 85 characters", ARCH, "guide capture",
+         "Done — 5 bullets, all within limit"),
+        ("Single anonymized review; no blinded file", ARCH, "guide capture",
+         "Authors visible on the title page; no anonymized manuscript prepared"),
+        ("Vitae: 100-word biography and passport photograph per author", ARCH,
+         "guide capture", "Biographies drafted; photographs are author-supplied"),
+        ("Corresponding author contact details incl. phone numbers", ARCH,
+         "submission checklist in the guide capture",
+         "Postal address supplied; email and phone are author-supplied"),
+        ("No institutional-email requirement", ARCH, "guide capture: the rule is only "
+         "\"the email address of each author\"", "Any valid address satisfies it"),
+        ("Reference formatting flexible at submission", ARCH, "guide capture",
+         "Author-date, consistent — compliant"),
+        ("Research data Option C: deposit, cite and link", ARCH, "guide capture",
+         "Statement drafted with a DOI placeholder; deposit pending"),
+        ("No page limit, no file-size limit, no abstract word limit, no acronym ban",
+         ARCH, "guide capture — searched exhaustively, none stated",
+         "32 pp, 1.4 MB, 257-word abstract all unconstrained"),
+    ]
+    c = ["# Applied Soft Computing — submission checklist\n",
+         "Every mutable journal rule carries its verification status. An archived rule is "
+         "never silently promoted to a live one.\n",
+         "| Requirement | Status | Evidence | This package |", "|---|---|---|---|"]
+    for r in rows:
+        c.append("| %s | %s | %s | %s |" % r)
+    c.append("\n## Why some rules could not be verified live\n")
+    c.append("ScienceDirect and elsevier.com return HTTP 403 to every automated route, "
+             "this session's web-search budget is exhausted, and the Internet Archive "
+             "holds no capture of this journal's Guide for Authors newer than "
+             "2024-06-30 — re-checked on 2026-09-21 and still none. The live Editorial "
+             "Manager site states it is not to be used for submission, so no live form "
+             "exists to read. Elsevier's own policy pages ARE reachable, which is why "
+             "the generative-AI rules could be verified live and the journal-specific "
+             "formatting rules could not.\n")
+    (OUT / "ASOC_SUBMISSION_CHECKLIST.md").write_text("\n".join(c))
+
+    # ---- manifest ------------------------------------------------------------------
+    import hashlib
+    man_dir = REPO / PAPER / "manuscript"
+    files = sorted(list(OUT.glob("ASOC_*")) +
+                   list(man_dir.glob("Paper2_*_FINAL_v5.pdf")))
+    mf = ["# Package manifest\n",
+          "| file | bytes | sha256 |", "|---|---|---|"]
+    for f in files:
+        mf.append("| `%s` | %s | `%s` |" % (f.name, format(f.stat().st_size, ","),
+                                            hashlib.sha256(f.read_bytes()).hexdigest()[:32]))
+    mf.append("\nUpload roles: manuscript PDF as the main document; supplement as "
+              "supplementary material; graphical abstract, highlights, title page, vitae "
+              "and cover letter as separate files.")
+    (OUT / "ASOC_PACKAGE_MANIFEST.md").write_text("\n".join(mf))
 
     print("wrote:")
     for f in sorted(OUT.glob("ASOC_*")):

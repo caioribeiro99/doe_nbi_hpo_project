@@ -63,16 +63,74 @@ def test_title_page_carries_the_verified_orcid(name: str, orcid: str, title_page
     assert orcid in title_page
 
 
+def test_generative_ai_declaration_uses_the_current_section_title() -> None:
+    """The 2024 capture said "writing process"; Elsevier's current title differs."""
+    man = (ROOT / PAPER / "manuscript" / "MANUSCRIPT.md").read_text()
+    current = ("## Declaration of generative AI and AI-assisted technologies in the "
+               "manuscript preparation process")
+    assert current in man, "the declaration must use the current Elsevier section title"
+    assert "in the writing process" not in man, "stale 2024 section title"
+    i = man.index(current)
+    assert man.index("## References") > i, "the declaration must precede the references"
+    assert "Anthropic Claude" in man and "OpenAI ChatGPT" in man
+    for research_ai in ("XGBoost", "NSGA-II"):
+        seg = man[i:man.index("## References")]
+        assert research_ai not in seg, \
+            f"{research_ai} is research methodology and must not appear in the AI declaration"
+
+
+def test_vitae_respect_the_word_limit_and_are_unconfirmed() -> None:
+    p = SUB / "ASOC_VITAE.md"
+    if not p.exists():
+        pytest.skip("not built")
+    text = p.read_text()
+    counts = [int(m) for m in re.findall(r"\((\d+) words; limit 100\)", text)]
+    assert len(counts) == 3, f"expected three biographies, found {len(counts)}"
+    assert all(c <= 100 for c in counts), counts
+    assert text.count("**AUTHOR CONFIRMATION REQUIRED**") >= 3
+    assert text.count("PHOTO_PLACEHOLDER") == 3, "one photo placeholder per author"
+
+
+def test_doi_is_a_placeholder_not_an_invented_identifier() -> None:
+    p = SUB / "ASOC_DATA_CODE_AVAILABILITY.md"
+    if not p.exists():
+        pytest.skip("not built")
+    text = p.read_text()
+    assert "[ZENODO_DOI_PLACEHOLDER]" in text
+    assert not re.search(r"10\.5281/zenodo\.\d+", text), "an invented Zenodo DOI is present"
+
+
+def test_every_mutable_rule_carries_a_verification_status() -> None:
+    p = SUB / "ASOC_SUBMISSION_CHECKLIST.md"
+    if not p.exists():
+        pytest.skip("not built")
+    rows = [l for l in p.read_text().splitlines()
+            if l.startswith("| ") and "---" not in l and "Requirement" not in l]
+    assert rows, "checklist has no rows"
+    for r in rows:
+        assert "VERIFIED LIVE" in r or "ARCHIVE" in r, f"row without a status: {r[:70]}"
+
+
 def test_no_orcid_outside_the_verified_set(title_page) -> None:
     found = set(re.findall(r"\b\d{4}-\d{4}-\d{4}-\d{3}[\dX]\b", title_page))
     assert found == set(ORCIDS.values()), f"unexpected ORCID-shaped strings: {found}"
 
 
-def test_unverified_metadata_is_marked_not_guessed(title_page) -> None:
-    """de Paiva's affiliation, the institutional email and the postal address."""
-    assert title_page.count("**AUTHOR INPUT REQUIRED**") >= 3
-    assert "caio.tertu99@gmail.com" in title_page, \
-        "the one address on record should be shown, labelled as personal"
+def test_only_the_email_remains_unresolved(title_page) -> None:
+    """Affiliations and the postal address are now verified; the email is not.
+
+    This asserts the exact remaining gap rather than a lower bound, so that resolving a
+    field and forgetting to remove its marker fails, and so does quietly marking a new
+    field as unresolved.
+    """
+    assert title_page.count("**AUTHOR INPUT REQUIRED**") == 1, \
+        "exactly one field should remain open: the corresponding author's email"
+    assert "Email: **AUTHOR INPUT REQUIRED**" in title_page
+    assert "Av. BPS 1303" in title_page, "the verified postal address must be present"
+    for name in ORCIDS:
+        assert "Institute of Production Engineering and Management (IEPG)" in title_page
+    assert "does **not** require an institutional address" in title_page, \
+        "the package must not impose a requirement the journal does not"
 
 
 @pytest.mark.parametrize("label", ["Funding.", "Acknowledgements.", "Competing interests."])
@@ -140,19 +198,50 @@ def test_graphical_abstract_states_only_v5_numbers() -> None:
 # The files the publisher actually receives. The two audit records are internal
 # venue-assessment notes whose whole purpose is to compare the two journals, so naming
 # EAAI in them is correct; naming it in a deliverable would not be.
-DELIVERABLES = ("ASOC_TITLE_PAGE.md", "ASOC_HIGHLIGHTS.md", "ASOC_COVER_LETTER.md")
-AUDIT_RECORDS = ("ASOC_SCOPE_AUDIT.md", "ASOC_REQUIREMENTS.md")
+DELIVERABLES = ("ASOC_TITLE_PAGE.md", "ASOC_HIGHLIGHTS.md", "ASOC_COVER_LETTER.md",
+                "ASOC_VITAE.md", "ASOC_DATA_CODE_AVAILABILITY.md")
+AUDIT_RECORDS = ("ASOC_SCOPE_AUDIT.md", "ASOC_REQUIREMENTS.md",
+                 "ASOC_SUBMISSION_CHECKLIST.md", "ASOC_PACKAGE_MANIFEST.md")
 
 
-def test_no_eaai_language_leaked_into_a_deliverable() -> None:
+# A biography may state where an author has PUBLISHED — that is publication record, not
+# venue framing. What must never appear is EAAI's own scope language or any phrasing that
+# addresses EAAI as the target. The two are separated rather than exempting a whole file.
+EAAI_FRAMING = ("application in engineering", "real-world engineering application",
+                "EAAI", "we submit", "Engineering Applications of Artificial "
+                "Intelligence for consideration")
+VENUE_CONTEXT = ("published in", "author of", "co-author of", "appeared in")
+
+
+def test_no_eaai_framing_leaked_into_a_deliverable() -> None:
     for name in DELIVERABLES:
         f = SUB / name
         if not f.exists():
-            pytest.skip(f"{name} not built")
-        text = f.read_text()
-        for bad in ("Engineering Applications of Artificial Intelligence", "EAAI",
-                    "application in engineering"):
-            assert bad not in text, f"{name} mentions {bad}"
+            continue
+        text = " ".join(f.read_text().split())
+        for bad in EAAI_FRAMING:
+            assert bad not in text, f"{name} carries EAAI framing: {bad!r}"
+
+
+def test_eaai_is_named_only_as_a_publication_venue() -> None:
+    """Where the journal name appears at all, it must be a past publication."""
+    name = "Engineering Applications of Artificial Intelligence"
+    for f in (SUB / d for d in DELIVERABLES):
+        if not f.exists():
+            continue
+        text = " ".join(f.read_text().split())
+        for i in range(len(text)):
+            i = text.find(name, i)
+            if i < 0:
+                break
+            # look back to the start of the sentence: a list of venues can put
+            # "published in" well before the name it governs
+            start = max((text.rfind(p, 0, i) for p in (". ", "! ", "? ")), default=-1)
+            sentence = text[start + 1:i]
+            assert any(v in sentence for v in VENUE_CONTEXT), (
+                f"{f.name} names the journal outside a publication context: "
+                f"...{sentence[-60:]}[{name}]")
+            i += len(name)
 
 
 def test_every_asoc_file_is_either_a_deliverable_or_a_declared_audit_record() -> None:
