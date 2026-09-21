@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "DOE + RSM + Varimax + NBI for Multi-objective Hyperparameter Optimization"
+title: "Separating scalarization specification, Pareto geometry and anchor provenance in surrogate-assisted multiobjective XGBoost hyperparameter optimization — protocol, code and analysis artifacts"
 message: "If you use this software, please cite the dissertation and (when applicable) the EAAI 2025 article that inspired the article-track methodology."
 type: software
 authors:
@@ -7,16 +7,24 @@ authors:
     given-names: "Caio"
     email: "caio.tertu@hotmail.com"
     orcid: "https://orcid.org/0009-0006-7748-1449"
-    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
+    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Itajubá, MG, Brazil; Nucleus of Manufacturing Optimization and Innovation Technology (NOMATI), Itajubá, MG, Brazil"
   - family-names: "Costa Pereira"
     given-names: "Matheus"
     orcid: "https://orcid.org/0009-0007-2011-9235"
-    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
+    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Itajubá, MG, Brazil; Nucleus of Manufacturing Optimization and Innovation Technology (NOMATI), Itajubá, MG, Brazil"
   - family-names: "de Paiva"
     given-names: "Anderson Paulo"
     orcid: "https://orcid.org/0000-0002-8199-411X"
-    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI)"
+    affiliation: "Institute of Production Engineering and Management (IEPG), Federal University of Itajubá (UNIFEI), Itajubá, MG, Brazil; Nucleus of Manufacturing Optimization and Innovation Technology (NOMATI), Itajubá, MG, Brazil"
 repository-code: "https://github.com/caioribeiro99/doe_nbi_hpo_project"
+keywords:
+  - "multiobjective hyperparameter optimization"
+  - "Normal Boundary Intersection"
+  - "weighted scalarization"
+  - "response surface methodology"
+  - "XGBoost"
+  - "replicated evaluation"
+  - "Pareto indicators"
 license: MIT
 version: "0.2.0.dev0"
 date-released: "2026-05-02"

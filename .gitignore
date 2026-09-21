@@ -104,3 +104,8 @@ venv-*/
 /.frozen/
 uv.lock
 papers/xgboost_hpo_vrfnbi/manuscript/*.html
+
+# Scratch pages fetched during submission research: third-party page source
+# must never be committed (em_asoc.html was swept in by a git add -A and removed).
+/em_*.html
+/*.scratch.html
