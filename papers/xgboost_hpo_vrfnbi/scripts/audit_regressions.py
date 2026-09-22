@@ -28,7 +28,12 @@ PATTERNS = ["leads every surrogate-assisted arm", "every surrogate-assisted arm 
             "favoured the coarse grid on all four datasets in median paired difference, and exceeded every",
             "Section 6.7 reports this baseline",
             "geometry result in Section 6.2",
-            "a coarse grid favoured the coarse grid"]
+            "a coarse grid favoured the coarse grid",
+            # v5 micro-patch: the solver-health universal, withdrawn from the supplement
+            # and then from 6.4.1. The claims map says it "must not be stated as a
+            # universal"; both phrasings are pinned so neither can return.
+            "Solver health is identical",
+            "Identical on every dataset"]
 # A forbidden phrase is acceptable only inside a denial, a prohibition, or a record of
 # something withdrawn.
 OK = re.compile(r"\b(?:not|never|no |wrong|must not|do not|does not|prohibited|forbidden|"

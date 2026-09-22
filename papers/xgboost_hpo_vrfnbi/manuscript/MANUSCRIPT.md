@@ -971,7 +971,7 @@ MAGIC and +0.0000 on the other three datasets, against full NBI-S → NBI-R gaps
 −0.0741, −0.0192, −0.4093 and −0.6932. The deficit is therefore associated with the
 geometric consequences of the relocated payoff matrix rather than with anchor
 point-set composition, though the control does not establish that the negative is
-entirely geometric. Solver health is identical between the two arms — certified
+entirely geometric. Solver behaviour is comparable between the two arms — certified
 fraction has median 1.000 over the 240 arm-units, with two exceptions at 0.900 and
 0.950; the per-unit maximum equality residual has median $6.6\times10^{-10}$, with a
 campaign maximum of $6.9\times10^{-1}$ on a single MAGIC NBI-S unit; and both arms
