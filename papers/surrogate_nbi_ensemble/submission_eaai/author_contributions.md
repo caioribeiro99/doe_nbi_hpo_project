@@ -8,7 +8,7 @@
 | 2 | Matheus Costa Pereira | [0009-0007-2011-9235](https://orcid.org/0009-0007-2011-9235) | IEPG, Universidade Federal de Itajubá |
 | 3 | Anderson Paulo de Paiva | [0000-0002-8199-411X](https://orcid.org/0000-0002-8199-411X) | IEPG, Universidade Federal de Itajubá |
 
-Corresponding author e-mail: caio.tertu99@gmail.com
+Corresponding author e-mail: caio.tertu@hotmail.com
 
 **Affiliation strings used in the manuscript**
 
