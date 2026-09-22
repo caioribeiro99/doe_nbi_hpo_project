@@ -307,8 +307,13 @@ ratio and the hypervolume gap: MAGIC -0.11, Spambase +0.32, Adult +0.68, Bank Ma
 | Adult | 1.000 / 1.000 | 4.4e-10 / 5.6e-10 | 20 / 20 |
 | Bank Marketing | 1.000 / 1.000 | 6.1e-10 / 6.8e-10 | 20 / 20 |
 
-Identical on every dataset, so the deficit is not solver failure, rounding or
-candidate collapse.
+Solver behaviour was comparable between `NBI-S` and `NBI-R` and does not explain
+the deficit. Across the 240 arm-units the certified fraction had median 1.000,
+with two exceptions at 0.900 and 0.950; the per-unit maximum equality residual had
+median 6.6e-10, against a campaign maximum of 6.9e-1 on a single MAGIC `NBI-S`
+unit; and both arms returned 20 distinct realized configurations in every unit.
+Solver behaviour is therefore comparable, but not identical, and the deficit is
+not solver failure, rounding or candidate collapse.
 
 ### S12.3 Historical reconstruction
 

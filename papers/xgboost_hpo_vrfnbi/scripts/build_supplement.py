@@ -243,8 +243,18 @@ def main() -> int:
         w(f"| {DISP[ds]} | {m['certified']['nbi_s']:.3f} / {m['certified']['nbi_r']:.3f} | "
           f"{m['maxres']['nbi_s']:.1e} / {m['maxres']['nbi_r']:.1e} | "
           f"{m['distinct']['nbi_s']:.0f} / {m['distinct']['nbi_r']:.0f} |")
-    w("\nIdentical on every dataset, so the deficit is not solver failure, rounding or")
-    w("candidate collapse.\n")
+    # The table above is per-dataset MEDIANS, which hide the per-unit exceptions. Calling
+    # it "identical on every dataset" was therefore a universal the evidence does not
+    # support, and CONFIRMATORY_CLAIMS_AND_EVIDENCE.md (verifier C7) states it "must not
+    # be stated as a universal". The campaign-level figures below are the manuscript's
+    # own audited values; test_supplement_solver_health.py asserts they still match it.
+    w("\nSolver behaviour was comparable between `NBI-S` and `NBI-R` and does not explain")
+    w("the deficit. Across the 240 arm-units the certified fraction had median 1.000,")
+    w("with two exceptions at 0.900 and 0.950; the per-unit maximum equality residual had")
+    w("median 6.6e-10, against a campaign maximum of 6.9e-1 on a single MAGIC `NBI-S`")
+    w("unit; and both arms returned 20 distinct realized configurations in every unit.")
+    w("Solver behaviour is therefore comparable, but not identical, and the deficit is")
+    w("not solver failure, rounding or candidate collapse.\n")
     w("### S12.3 Historical reconstruction\n")
     w("| dataset | as-run | shared specification | WS-S | Δ(shared − as-run) |")
     w("|---|---:|---:|---:|---:|")

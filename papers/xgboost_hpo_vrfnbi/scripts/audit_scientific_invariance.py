@@ -98,9 +98,18 @@ FUNDING_BLOCK = re.compile(
 # goes stale the moment the hash does. audit_package_tag.py owns provenance correctness.
 COMMIT_HASH = re.compile(r"`[0-9a-f]{7,40}`")
 
+# S12.2's concluding paragraph restates the manuscript's own audited solver-health
+# figures, which the supplement had previously replaced with a universal the claims map
+# forbids ("must not be stated as a universal"). Its numbers are owned by
+# tests/methodology/test_supplement_solver_health.py, which checks each one against the
+# manuscript passage it comes from. Whitelisting them here instead would have meant
+# declaring bare "20" and "1.000" and blinding this audit to those tokens everywhere.
+SOLVER_HEALTH = re.compile(
+    r"Solver behaviour was comparable.*?candidate collapse\.", re.S)
+
 
 def without_declarations(text: str) -> str:
-    return COMMIT_HASH.sub("``", FUNDING_BLOCK.sub("", text))
+    return COMMIT_HASH.sub("``", SOLVER_HEALTH.sub("", FUNDING_BLOCK.sub("", text)))
 
 
 def numbers(text: str) -> collections.Counter:
