@@ -78,13 +78,18 @@ Two further rules:
 
 **The distinction that matters for this paper.** XGBoost, the surrogates, NSGA-II,
 Bayesian optimization and TPE are the *research methodology*. They are described in the
-Methods and are **not** what this declaration covers — the policy is explicitly about
-"scientific writing". The declaration is owed only if generative AI assisted in *writing
-the manuscript*.
+Methods and are **not** what this declaration covers. Generative-AI assistance is a
+different matter, and the project record shows more of it than manuscript drafting: most
+commits that touch the analysis code (`scripts/`, `src/doe_xgb`) up to `d40eb0b` carry a
+`Co-Authored-By: Claude` trailer. Whether the adversarial pre-campaign reviews and the
+verification passes were also AI-run is for the authors to state.
 
-**This is a factual question only the authors can answer, and it is not established by
-the project record.** It is therefore listed as an author decision, not filled in. Note
-the policy's own escape: if there is nothing to disclose, no statement is added.
+**Status.** The authors supplied a declaration naming Anthropic Claude and OpenAI ChatGPT
+(2026-09-21); it is carried in the manuscript and, extracted from it, on the title page. Its
+scope is an author attestation (decision Q3): the words "manuscript preparation only" can stand
+only if the authors confirm that no AI-assisted analysis code, review or verification needs
+disclosure; otherwise the declaration, and the Reproducibility statement for the code, name
+those uses. Paper 1's declaration is to be worded consistently.
 
 On the artwork rule: the graphical abstract built here is a `matplotlib` rendering
 produced deterministically from the study's committed artifacts by a script in this

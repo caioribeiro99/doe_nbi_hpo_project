@@ -51,7 +51,7 @@ NUM = re.compile(r"(?<![\w.])[-+−]?\d+(?:[.,]\d+)*(?:[eE][-+]?\d+)?(?![\w])")
 
 
 CITE_YEAR = re.compile(r"(19|20)\d{2}$")
-SECTION_REF = re.compile(r"(?:§|[Ss]ection|[Ss]ec\.)\s*$")
+SECTION_REF = re.compile(r"(?:§|[Ss]ections?|[Ss]ec\.)\s*(?:\d+(?:\.\d+)*\s*(?:–|-|to|and)\s*)?$")
 
 
 def _is_reference(raw: str, line: str, pos: int) -> bool:
@@ -128,7 +128,7 @@ def artifact_numbers() -> set[str]:
     for rel in ("PROTOCOL_AMENDMENTS.md", "protocol/OBJECTIVE_DEFINITIONS.md",
                 "protocol/EXPERIMENT_PROTOCOL.md", "protocol/dataset_selection.md",
                 "protocol/budget_accounting.md", "protocol/method_arms.md",
-                "audits/final_panel_screening.json",
+                "audits/final_panel_screening.json", "audits/pilot_stage_a/stage_a_report.json",
                 "audits/PILOT_STAGE_A_FINDINGS.md", "STAGE_B_STATISTICAL_SENSITIVITY.md"):
         q = PAPER / rel
         if q.exists():

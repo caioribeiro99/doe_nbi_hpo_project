@@ -1,17 +1,15 @@
 ## Declarations
 
 **Prior dissemination and relationship to a dissertation.** This study extends work
-first developed in the first author's master's dissertation (Ribeiro, 2026, UNIFEI,
-unpublished), which applied a PCA/Varimax latent-objective construction to XGBoost
-hyperparameter optimization. The present work reconstructs that pipeline from its
-archived implementation, separates three mechanisms it changed together, and evaluates
-them under a protocol frozen before any comparative result existed. The archived
-implementation is reproduced by calling its frozen code unmodified rather than by
-reimplementation, and is reported neutrally: a code-level reconstruction established
-that it performs normalized weighted scalarization for front construction although the
-historical text used NBI terminology. No claim is made about the correctness of the
-dissertation's reported results, whose objective space differs from this study's
-(§3.5).
+first developed in the first author's master's dissertation (Ribeiro 2026; available open access from the UNIFEI institutional repository), which applied a
+PCA/Varimax latent-objective construction to XGBoost hyperparameter optimization. The present
+work starts from that pipeline's archived implementation, separates three mechanisms it changed
+together, and evaluates them under a protocol frozen before the confirmatory campaign. The
+archived solver is reproduced by calling its frozen code unmodified rather than by
+reimplementation, and is reported neutrally: a code-level examination established that it
+performs normalized weighted scalarization for front construction although the dissertation
+text uses NBI terminology. No claim is made about the correctness of the dissertation's reported
+results, whose objective space differs from this study's (Section 3.5).
 
 **Relationship to companion work by the same authors.** Three instruments used here
 were developed in a companion manuscript by the present authors (Ribeiro, Pereira and
@@ -22,9 +20,15 @@ anchor-injection control. They are applied here, not introduced. The methodologi
 lineage of the latent-objective construction is set out in §2.7 and includes Pereira
 et al. (2025) and de Azevedo et al. (2026), with which this work shares co-authors.
 
-**Overlap statement.** The datasets, the frozen protocol, the confirmatory campaign and
-every result reported here are specific to this study. No figure, table or result is
-reproduced from the dissertation or from the companion manuscript.
+**Overlap statement.** Besides the archived implementation and the latent-objective
+construction described above, the study takes three elements of its experimental set-up from
+the dissertation, each identified where it is used: the MAGIC Gamma Telescope dataset
+(Section 5.1), the seven hyperparameters and their bounds (Section 5.2, Table 1), and the
+88-run face-centred central composite design (Section 5.3). The other three datasets were
+selected for this study (Section 5.1); the frozen protocol, the confirmatory campaign and every
+result reported here are specific to this study, and no dataset is shared with the companion
+manuscript. Apart from the bounds restated in Table 1, no figure, table or result is reproduced
+from the dissertation or from the companion manuscript.
 
 **Data and code availability.** The protocol, the frozen factor models, every analysis
 artifact and every script are version-controlled and tagged; see §9. Raw datasets are
@@ -60,16 +64,13 @@ be represented, and no author is credited with a contribution the work did not i
 
 ## Declaration of generative AI and AI-assisted technologies in the manuscript preparation process
 
-During the preparation of this work, the authors used Anthropic Claude and OpenAI ChatGPT in order to assist with manuscript drafting, language refinement, consistency checking and editorial review. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
+During the preparation of this work, the authors used Anthropic's Claude (Claude Opus 4.7 and Claude Opus 5, through Claude Code) and OpenAI's ChatGPT in order to assist with manuscript drafting, restructuring, language refinement, consistency checking and editorial review; the collation and checking of references; writing and revising the research and analysis code; and the pre-campaign adversarial reviews of the protocol and the post-campaign verification of the results. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
 
-This declaration concerns manuscript preparation only. The study's computational methods are described in the Methods section, and every reported result derives from the committed, version-controlled artifacts referenced there.
+The study's computational methods are described in Section 5, and every reported result derives from the committed, version-controlled artifacts listed in Section 9.
 
 ## References
 
-Every entry below was verified against an authoritative source — Crossref, the
-publisher's proceedings page, arXiv, or JMLR — at the DOI or identifier shown.
-Machine-readable records are in `manuscript/references.bib`. Fields a source did not
-state are omitted rather than inferred; two such omissions are noted explicitly.
+DOIs and identifiers are given where they exist, and machine-readable records are in `manuscript/references.bib`. Fields a source did not state are omitted rather than inferred; two such omissions are noted explicitly.
 
 Bergstra, J. and Bengio, Y. (2012). Random search for hyper-parameter optimization.
 *Journal of Machine Learning Research*, 13, 281–305.
@@ -145,13 +146,15 @@ optimization. In *Proceedings of the First International Conference on Automated
 Machine Learning*, PMLR 188, 3/1–39.
 https://proceedings.mlr.press/v188/pfisterer22a.html
 
-Ribeiro, C. T. (2026). *Multiobjective optimization of XGBoost hyperparameters using
-design of experiments and latent objective construction*. MSc dissertation,
-Universidade Federal de Itajubá (UNIFEI). Unpublished.
+Ribeiro, C. T. (2026). *Meta-otimização dos hiperparâmetros do algoritmo XGBoost para
+classificação binária: uma integração entre planejamento de experimentos e o método da
+interseção normal à fronteira* (in Portuguese). MSc dissertation, Universidade Federal de
+Itajubá (UNIFEI). https://repositorio.unifei.edu.br/jspui/handle/123456789/4372
 
-Ribeiro, C. T., Pereira, M. C. and de Paiva, A. P. (2026). *Surrogate reliability and
-evaluation-matched comparison in multivariate response-surface optimization*.
-Unpublished manuscript, frozen and not submitted.
+Ribeiro, C. T., Pereira, M. C. and de Paiva, A. P. (2026). *When is surrogate-assisted
+multiobjective ensemble weighting trustworthy? A replicated study of mixture designs, Scheffé
+surfaces and normal boundary intersection on the classifier-weight simplex*. Unpublished
+manuscript, frozen and not submitted.
 
 Streitenberger, S. C., Romão, E. L., Paiva, A. P., Balestrassi, P. P., Freitas,
 J. H. G. and Paes, V. C. (2022). Normal Boundary Intersection with factor analysis

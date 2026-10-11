@@ -1,11 +1,14 @@
-### 6.6 The prospectively retained boundary dataset did not resolve
+### 6.6 The boundary dataset did not resolve
 
-Spambase was separated from the primary inferential family before any result existed.
-Screening placed its non-dominated design-row set at two points with undefined
-curvature — insufficient interior geometry for a front-construction contrast to act on —
-and the protocol recorded in advance that a null result there would be neither evidence
-for nor against the geometry mechanism. The replacement rule was considered and
-deliberately not exercised: Spambase was executed in full, with the same arms, budgets,
+Spambase was separated from the primary inferential family before the confirmatory campaign.
+Screening on one pre-campaign pilot partition placed its non-dominated design-row set at two
+points with undefined curvature, insufficient interior geometry for a front-construction
+contrast to act on, and the protocol recorded before the campaign that a null result there
+would be neither evidence for nor against the geometry mechanism. Spambase was retained as a
+boundary geometry control by a pre-campaign amendment adopted after this failure was known
+(amendment 22): the replacement rule frozen at protocol v1, before the pilot, required a
+dataset failing criterion 1 or 2 to be replaced from the registry, and retaining Spambase
+departs from that rule (Section 5.1). It was executed in full, with the same arms, budgets,
 seeds, evaluation machinery and $R = 30$ replicated outer partitions, and excluded only
 from the primary family.
 
@@ -90,39 +93,43 @@ two do not have to agree (Table 5, Figure 6). Against NBI-S:
 
 **Table 5.** Median CORE-relative hypervolume ratio by method. Direct-search comparators operate under the frozen comparator budget of 386 evaluations; WS-S and NBI-S cost 186 standalone.
 
-The gap is significant on MAGIC and Adult and not on Bank Marketing or Spambase. This
+The raw $p$ is below 0.05 on MAGIC and Adult and not on Bank Marketing or Spambase. This
 contrast is not in the frozen primary family, carries no Holm correction, and is
 reported descriptively.
 
-**The budget asymmetry belongs in the same breath.** The frozen fairness rule matched
-comparators to the *most expensive arm*, not to each arm: the comparator budget is 386
-real evaluations, NBI-R's cost, while WS-S and NBI-S cost 186 standalone, so the
-comparators received roughly twice the real evaluations those two arms require. The rule
-was fixed before any result existed and is not revised now. The grid result therefore
-cannot be stated as an efficiency claim, the budgets not being equal — and equally
-cannot be explained away on that basis: at the budget the protocol froze, direct search
-led. Any account of the geometry result in Section 6.3 must carry this alongside it.
+The budgets were not equal. The frozen comparator rule matched comparators to the *most
+expensive arm*, not to each arm: the comparator budget is 386 real evaluations, NBI-R's
+cost, while WS-S and NBI-S cost 186 standalone, so the comparators received roughly twice
+the real evaluations those two arms require (Supplement S7.1). The rule dates from protocol
+v1 (2026-09-13) and its value of 386 from protocol v2, adopted the same day after the Stage A
+pilot revised two protocol parameters; neither is revised now. The grid result therefore
+cannot be stated as an efficiency claim, nor can the asymmetry be used to dismiss it.
 
-The other direct-search comparators, under the same frozen budget, sit below the grid: median CORE-relative
-hypervolume ratios of 0.8907 (random) and 0.9580 (NSGA-II) on MAGIC, 0.4369 and 0.8650
-on Adult, 0.3190 and 0.9674 on Bank Marketing, and 0.0000 and 0.4164 on Spambase.
-Matched NSGA-II ran at $32 \times 12 = 384$ evaluations, two short of the comparator
-budget, a shortfall stated rather than absorbed. The **unmatched** NSGA-II run — ten
-times the matched budget, one replication per dataset — is reported as **context only**:
-no fairness claim attaches to it, it enters no budget-matched comparison, and it
-contributes to neither reference set. The frozen protocol excludes the single-objective
-Bayesian-optimization and TPE endpoints from the front-indicator table, a
-single-objective optimizer not returning a front.
+The other direct-search comparators, under the same frozen budget, sit below the grid: median
+CORE-relative hypervolume ratios of 0.8907 (random) and 0.9580 (NSGA-II) on MAGIC, 0.4369 and
+0.8650 on Adult, 0.3190 and 0.9674 on Bank Marketing, and 0.0000 and 0.4164 on Spambase.
+Both also sit below NBI-S's marginal median on every dataset except NSGA-II on MAGIC
+(Table 5). On the paired statistic only the grid had the higher median against NBI-S on all
+four datasets, so that lead belongs to the grid, not to direct search as a class; against
+random search NBI-S had the higher paired median on all four datasets, every bootstrap
+interval excluding zero. Matched NSGA-II ran at $32 \times 12 = 384$ evaluations, two short
+of the comparator budget, a shortfall stated rather than absorbed. The unmatched NSGA-II run,
+ten times the matched budget on one replication per dataset, is reported as context only
+(Supplement S13.2): no fairness claim attaches to it, it enters no budget-matched
+comparison, and it contributes to neither reference set. The frozen protocol excludes the
+single-objective Bayesian-optimization and TPE runs from the front-indicator table, because
+each optimizes one objective rather than the trade-off; their single-objective endpoints are
+reported in Supplement S13.1.
 
-Two properties of the comparator qualify this. The budget rule matches comparators to
-the most expensive arm rather than to each arm, so the grid received 386 real
-evaluations against the 186 WS-S and NBI-S require standalone. And the grid's 128-point
-mesh contains the design's 64 factorial corners, so 64 of its evaluations re-measure
-points inside the CORE reference it is scored against — an advantage on a CORE-relative
-indicator that the surrogate-assisted arms, which propose interior points, do not have.
-Neither fact was chosen after seeing the result, and neither is offered as a reason to
-set the comparison aside: at the budget and construction this protocol froze, direct
-search led on the paired statistic across all four datasets.
+The grid's lead is also qualified by its construction: its 128-point mesh contains the
+design's 64 factorial corners, so 64 of its evaluations re-measure points inside the
+CORE reference it is scored against, an advantage on a CORE-relative indicator that the
+surrogate-assisted arms do not have by construction, since their candidates come from
+surrogate subproblems and coincide with a design corner, if at all, only in some units.
+Like the budget rule, this construction was fixed before the confirmatory campaign, and
+neither is offered as a reason to set the comparison aside: at the budget and construction
+this protocol froze, the coarse grid had the higher paired median against NBI-S on all four
+datasets.
 
 ### 6.9 Holdout confirmation
 

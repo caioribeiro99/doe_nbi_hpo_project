@@ -3,10 +3,10 @@
 Surrogate-assisted multiobjective hyperparameter optimization pipelines change several
 things at once. When such a pipeline is revised, the revision typically alters the
 scalarization specification, the geometry by which a front is constructed, and the
-information from which anchors and the payoff matrix are built — and a difference in
-the returned front cannot then be attributed to any of them. This study separated the
-three under a protocol frozen before any comparative result existed, and revalidated
-every returned candidate on the real learner.
+information from which anchors and the payoff matrix are built. A difference in the
+returned front cannot then be attributed to any of them. This study separated the three
+under a protocol frozen after documented measurement-validation pilots and before the
+confirmatory campaign, and revalidated every returned candidate on the real learner.
 
 Two of the three mechanisms produced clear answers, in opposite directions. Correcting
 the archived scalarization specification and its observed-extrema normalization changed

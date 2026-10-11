@@ -2,12 +2,10 @@
 
 ### 3.1 What the archived implementation computes
 
-The historical pipeline was reconstructed by reading and executing the code frozen at tag
-`v0.1.0-dissertation`, not by reading the dissertation text. Where text and code disagree, this
-study reports the code, because the code produced the archived numbers. No historical artifact was
-edited; the tag was extracted to a scratch directory and read there.
-
-The frozen solver exposes a single routine. For each weight pair $(\beta_1,\beta_2)$ on a fixed
+The historical pipeline (Ribeiro 2026) follows the sequence set out at the start of the
+Introduction, with Varimax-rotated factor objectives as the reduced objectives. Its solver, frozen
+at tag `v0.1.0-dissertation` (Section 9.1), exposes a single routine. For each weight pair
+$(\beta_1,\beta_2)$ on a fixed
 grid it maximizes $\sum_j \beta_j \bar f_j(x)$ by SLSQP from ten multistarts, where
 $\bar f_j = (f_j - \text{nadir}_j)/(\text{utopia}_j - \text{nadir}_j)$. That is normalized weighted
 scalarization. None of the structural elements of Normal Boundary Intersection is present: there are
@@ -18,12 +16,11 @@ In this code $\beta$ indexes a weight grid rather than a CHIM coordinate. An opt
 keeps both predictions inside the observed $[\text{nadir},\text{utopia}]$ box; that is a feasibility
 restriction on the prediction range, not a scalarization structure.
 
-The historical text uses NBI terminology for this procedure. The divergence between the text and
-the implementation is stated here once, as provenance, and is not the subject of this paper. It was
-recorded in the original project's own methodology log before the present reconstruction began, and
-divergences of this kind between a write-up and research code are ordinary. Nothing in this study
-depends on which section of the historical text states the NBI subproblem, and no claim is made
-about any other implementation of NBI in the surrounding literature.
+The dissertation describes this procedure in NBI terms. Where its text and the frozen code
+disagree, this study follows the code, which is what can be re-executed and checked. The
+divergence is reported as provenance, not as a finding: it was recorded in the project's own
+methodology log (`docs/METHODOLOGY_DECISIONS.md`, entry D1) before this study examined the code,
+and no claim is made about any other implementation of NBI.
 
 ### 3.2 Four properties carried forward verbatim
 
@@ -59,16 +56,20 @@ implementation used by the other arms canonicalizes to minimization before build
 The response surfaces are fitted in uncoded natural units across factor ranges spanning $0.29$ to
 $650$.
 
-### 3.3 Reproduction, not reimplementation
+### 3.3 Calling the archived solver rather than reimplementing it
 
-The study does not reimplement the historical method. `HISTORICAL-WS-asrun` calls the frozen
-`v0.1.0-dissertation` solver unmodified and retains every property in the table above, including the
-asymmetric grid, the maximization orientation, the uncoded surfaces, the observed-extrema
-normalization and the absence of a surrogate gate. It is charged no surrogate-validation budget,
-because the historical pipeline has no gate; that is a property of the method and is reported as one.
-Its standalone budget is 108 real evaluations against 186 for the shared-specification arms. A
-reimplementation would silently substitute the reconstructor's reading of the method for the method,
-which is exactly the conflation this study is built to avoid.
+HISTORICAL-WS-asrun calls the frozen `v0.1.0-dissertation` solver unmodified and keeps every
+property in Table 2. The solver is the only archived routine the arm calls: the uncoded
+surfaces and the observed-extrema box it receives follow the archived specification but are
+computed by this study's code, on this study's objectives (Section 3.5). The solver is called at its default grid
+step of 0.05, which gives the 20-point grid of Table 2; the archived replication runner defaults
+instead to a step of 0.02 (50 pairs), and which of the two steps produced the dissertation's
+reported numbers could not be established from the archived code. Because the historical
+pipeline has no surrogate gate, the arm is charged no surrogate-validation budget, a property of
+the method that is reported as one: its standalone cost is 108 real evaluations, 88 design rows
+plus 20 revalidations, against 186 for the shared-specification arms. Reimplementing the solver
+would silently substitute this study's reading of the method for the method itself, which is
+exactly the conflation this study is built to avoid.
 
 ### 3.4 The specification-matched control
 

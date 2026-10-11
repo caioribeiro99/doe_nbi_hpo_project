@@ -12,6 +12,7 @@ the audit rather than hiding among them.
 from __future__ import annotations
 
 import collections
+import json
 import pathlib
 import re
 import subprocess
@@ -21,7 +22,26 @@ PAPER = pathlib.Path(__file__).resolve().parents[1]
 # The chain is checked from the first frozen manuscript by default. A later base can be
 # given on the command line -- the v5 pass is a funding-provenance correction and must
 # also show a zero scientific diff against v4 specifically.
-BASE = sys.argv[1] if len(sys.argv) > 1 else "paper2-manuscript-v2"
+#
+# The v6 revision (the coauthor-review package) changes scientific content on purpose, so a
+# zero diff is the wrong test for it, and DECLARED is the wrong place for its movements: an
+# entry there accepts any movement of a token for ever, which would blind this audit to
+# tokens such as "30" or "0.05". REVISION_FILE records instead, per document, the exact
+# count before and after of every moved number, every added or dropped citation key and
+# every changed dataset-role statement, each with the patch that caused it. It applies only
+# against the base it names, which is then the default base; a movement it does not list,
+# or a count it does not match, still fails. Run with --emit to print the observed
+# movements in this format, then write every reason by hand:
+#   {"base": "<commit the revision was applied to>",
+#    "MANUSCRIPT.md": {"numbers": {"<token>": {"before": 1, "after": 0, "reason": "..."}},
+#                      "citations": {"added": {"<Author>|<year>": "..."}, "dropped": {}},
+#                      "roles": {"<dataset>|<role>": {"before": 2, "after": 3, "reason": "..."}}},
+#    "SUPPLEMENT.md": {}}
+REVISION_FILE = PAPER / "audits" / "scientific_revision_v6.json"
+REVISION: dict = json.loads(REVISION_FILE.read_text()) if REVISION_FILE.exists() else {}
+_ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
+EMIT = "--emit" in sys.argv[1:]
+BASE = _ARGS[0] if _ARGS else REVISION.get("base", "paper2-manuscript-v2")
 DOCS = ("MANUSCRIPT.md", "SUPPLEMENT.md")
 # The supplement carries tables and provenance and cites no works in prose.
 # Stating that here keeps the citation check from passing vacuously on it.
@@ -117,24 +137,41 @@ def numbers(text: str) -> collections.Counter:
                                for m in NUM.finditer(without_declarations(text)))
 
 
+def _accepts(entry: object, before: int, after: int) -> bool:
+    """A revision entry accepts one movement only: these exact counts, with a reason."""
+    return (isinstance(entry, dict) and entry.get("before") == before
+            and entry.get("after") == after and bool(str(entry.get("reason", "")).strip()))
+
+
 def main() -> int:
     failures: list[str] = []
+    rev = REVISION if REVISION.get("base") == BASE else {}
+    observed: dict = {"base": BASE}
     for name in DOCS:
         old, new = at_tag(name), (PAPER / "manuscript" / name).read_text()
+        declared = rev.get(name, {})
+        seen: dict = {}
+        observed[name] = seen
 
         # 1. numeric surface
         o, n = numbers(old), numbers(new)
         moved = {k: (o.get(k, 0), n.get(k, 0)) for k in set(o) | set(n)
                  if o.get(k, 0) != n.get(k, 0)}
-        undeclared = {k: v for k, v in moved.items()
-                      if k not in DECLARED and k.replace(".", "") not in DECLARED}
+
+        def why(k: str, a: int, b: int) -> str:
+            if rev:
+                e = declared.get("numbers", {}).get(k)
+                return str(e["reason"]) if _accepts(e, a, b) else ""
+            return DECLARED.get(k) or DECLARED.get(k.replace(".", "")) or ""
+        undeclared = {k: v for k, v in moved.items() if not why(k, *v)}
         print(f"{name}: {sum(n.values())} numeric tokens, "
               f"{len(moved)} moved ({len(moved) - len(undeclared)} declared)")
         for k, (a, b) in sorted(moved.items()):
-            tag = DECLARED.get(k) or DECLARED.get(k.replace(".", ""))
-            print(f"    {k:>12}  {a} -> {b}   {tag or '** UNDECLARED **'}")
+            print(f"    {k:>12}  {a} -> {b}   {why(k, a, b) or '** UNDECLARED **'}")
         if undeclared:
             failures.append(f"{name}: undeclared numeric movement {sorted(undeclared)}")
+        seen["numbers"] = {k: {"before": a, "after": b, "reason": ""}
+                           for k, (a, b) in sorted(moved.items())}
 
         # 2. citation keys
         def keys(t):
@@ -145,30 +182,48 @@ def main() -> int:
                 f"{name}: expected {'some' if CITES_WORKS[name] else 'no'} prose "
                 f"citations at {BASE}, found {len(ko)} -- the pattern or the "
                 "expectation is wrong, and the check would not be meaningful")
-        if ko != kn:
-            added, dropped = sorted(kn - ko), sorted(ko - kn)
+        allowed = declared.get("citations", {})
+        added = sorted("|".join(c) for c in kn - ko)
+        dropped = sorted("|".join(c) for c in ko - kn)
+        bad_added = [c for c in added if not str(allowed.get("added", {}).get(c, "")).strip()]
+        bad_dropped = [c for c in dropped if not str(allowed.get("dropped", {}).get(c, "")).strip()]
+        if bad_added or bad_dropped:
             failures.append(f"{name}: works cited changed -- "
-                            f"added {added}, dropped {dropped}")
-        print(f"    works cited: {len(kn)} distinct, unchanged: {ko == kn}")
+                            f"added {bad_added}, dropped {bad_dropped}")
+        print(f"    works cited: {len(kn)} distinct, unchanged: {ko == kn}"
+              + (", every change declared" if ko != kn and not (bad_added or bad_dropped) else ""))
+        seen["citations"] = {"added": {c: "" for c in added},
+                             "dropped": {c: "" for c in dropped}}
 
         # 3. dataset role assignments
         ro = collections.Counter((a.lower(), b.lower()) for a, b in ROLE.findall(old))
         rn = collections.Counter((a.lower(), b.lower()) for a, b in ROLE.findall(new))
-        if ro != rn:
-            failures.append(f"{name}: dataset role statements changed: "
-                            f"{sorted((collections.Counter(ro) - rn).items())} -> "
-                            f"{sorted((collections.Counter(rn) - ro).items())}")
-        print(f"    dataset-role statements: {sum(rn.values())}, "
-              f"unchanged: {ro == rn}")
+        changed = {f"{d}|{r}": (ro.get((d, r), 0), rn.get((d, r), 0))
+                   for d, r in set(ro) | set(rn) if ro.get((d, r), 0) != rn.get((d, r), 0)}
+        bad_roles = sorted(k for k, v in changed.items()
+                           if not _accepts(declared.get("roles", {}).get(k), *v))
+        if bad_roles:
+            failures.append(f"{name}: dataset role statements changed: " + ", ".join(
+                f"{k} {changed[k][0]} -> {changed[k][1]}" for k in bad_roles))
+        print(f"    dataset-role statements: {sum(rn.values())}, unchanged: {ro == rn}"
+              + (", every change declared" if ro != rn and not bad_roles else ""))
+        seen["roles"] = {k: {"before": a, "after": b, "reason": ""}
+                         for k, (a, b) in sorted(changed.items())}
 
+    if EMIT:
+        print(f"\nObserved movements against {BASE}, in the format of {REVISION_FILE.name} "
+              "(write every reason by hand before saving):")
+        print(json.dumps(observed, indent=1, ensure_ascii=False))
     print()
     if failures:
-        print("FAIL: the editorial pass moved scientific content")
+        print("FAIL: " + ("the revision moved scientific content it does not declare" if rev
+                         else "the editorial pass moved scientific content"))
         for f in failures:
             print("  -", f)
         return 1
     print("PASS: scientific surface identical to " + BASE +
-          " (numbers, citations, dataset roles)")
+          " (numbers, citations, dataset roles)" +
+          (" apart from the movements declared in " + REVISION_FILE.name if rev else ""))
     return 0
 
 

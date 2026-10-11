@@ -8,16 +8,23 @@ pipeline used; Adult / Census Income contributes scale and mixed types; Bank Mar
 contributes class imbalance with independently constructed categorical features; Spambase is
 small and entirely numeric.
 
-Roles were assigned by a screening rule frozen before the campaign, measured on the 88 design
-rows of each dataset on one partition, before any arm ran. Two of its four criteria are
-structural: a raw-response conflict between the six quality responses and the raw leaf-count
-response, and a non-dominated set of design rows with detectable curvature. MAGIC, Adult and
-Bank Marketing met all four and form the **primary geometry panel**. Spambase failed criterion 2
-with a two-point non-dominated set, which was treated by the screening rule as leaving no interior geometry for the front-construction contrast to act on. Whether that premise held in execution is a result, reported in §6.6, not an assumption carried forward here. It was therefore **retained prospectively as a boundary geometry
-control**: the replacement rule was considered and deliberately not exercised, no replacement
-dataset was selected, and Spambase runs every arm, budget, seed and all $R = 30$ replications,
-excluded only from the primary inferential family. These are pre-campaign screening
-measurements, not study results (Supplement S5). The dataset is the unit of
+Roles were assigned by a screening rule frozen before the campaign, applied to the 88 design rows
+of each dataset on one partition, which were evaluated before any arm ran; that partition came from a pre-campaign pilot,
+is not one of the 30 confirmatory partitions, and its 88 evaluations are also the fitting sample of
+the frozen factor model (Section 5.5). Two of its four criteria are structural: a raw-response
+conflict between the six quality responses and the raw leaf-count response (criterion 1), and a
+non-dominated set of design rows with detectable curvature (criterion 2, the front-geometry screen).
+MAGIC, Adult and Bank Marketing met all four and form the *primary geometry panel*. Spambase failed
+criterion 2 with a two-point non-dominated set, which the screening rule treated as leaving no
+interior geometry for the front-construction contrast to act on. Whether that premise held in
+execution is a result, reported in Section 6.6 together with the other three datasets' design-row
+fronts on the 30 confirmatory partitions, not an assumption carried forward here. Spambase was
+retained as a boundary geometry control by a pre-campaign amendment adopted after this failure was
+known (amendment 22): the replacement rule frozen at protocol v1, before the pilot, required a
+dataset failing criterion 1 or 2 to be replaced from the registry, and retaining Spambase departs
+from that rule. No replacement dataset was selected, and Spambase runs every arm, budget, seed and
+all $R = 30$ replications, excluded only from the primary inferential family. These are pre-campaign
+screening measurements, not study results (Supplement S5). The dataset is the unit of
 generalization; nothing is pooled.
 
 ### 5.2 Decision space
@@ -47,10 +54,16 @@ each subproblem reporting the objective displacement induced by rounding beside 
 
 ### 5.3 The 88-run face-centred central composite design
 
-The design is a version-controlled face-centred central composite in the seven factors, 88 runs,
-reused byte-identically across datasets and replications and checksummed. It comprises 64
-factorial points (a half fraction of $2^7$), 14 axial points and 10 centre points; face-centred
-means an axial distance of $\alpha = 1$, so no run leaves the coded box.
+The design is the historical pipeline's face-centred central composite in the seven factors, 88
+runs, version-controlled, reused byte-identically across datasets and replications and checksummed.
+It comprises 64 factorial points, 14 axial points and 10 centre points; face-centred means an axial
+distance of $\alpha = 1$, so no run leaves the coded box. The factorial points are the resolution
+VII half fraction of $2^7$ with generator $G = ABCDEF$ and defining relation $I = +ABCDEFG$, where
+$A$ to $G$ are the factors in the order of Table 1 (so $G$ is `n_estimators`): the 64 corners whose
+seven coded levels multiply to $+1$. In this fraction each main effect is aliased only with a
+six-factor interaction and each two-factor interaction only with a five-factor interaction, so no
+two linear or interaction terms of the full quadratic of Section 5.6 are aliased with each other,
+and the axial runs make its squared terms separately estimable.
 
 One **real evaluation** is one stratified, shuffled, seeded 5-fold cross-validation of one
 configuration on one outer partition — five XGBoost fits. Outer partitions are resampled $R = 30$
@@ -89,25 +102,34 @@ standard deviation ($\text{ddof} = 1$) computed **on the design side only**, wit
 matrix scaled by the square roots of the eigenvalues, $\Lambda = V
 \operatorname{diag}(\sqrt{\lambda_1}, \sqrt{\lambda_2}, \sqrt{\lambda_3})$; this is the matrix
 that is rotated and reported, and Varimax gives $\Lambda_R = \Lambda R$. Scores are formed from
-**standardized** component scores,
+*standardized* component scores,
 
-$$S = Z\,V\,\operatorname{diag}(1/\sqrt{\lambda})\,R,$$
+$$S = Z\,V\,\operatorname{diag}(1/\sqrt{\lambda})\,R, \tag{1}$$
 
 then standardized column-wise to $S_z$. The $\operatorname{diag}(1/\sqrt{\lambda})$ term is
 load-bearing: raw component scores have variances equal to the eigenvalues, so rotating them
-orthogonally mixes axes of unequal scale and yields correlated factors. On this panel the
-maximum off-diagonal correlation of the nominally orthogonal factors ranged from 0.379 to
-0.698 across the panel, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$ the loading
-matrix of the scores actually in use, so the role and sign rules below are read off a matrix
-that describes what is being oriented (Figure 1).
+orthogonally mixes axes of unequal scale and yields correlated factors. On this panel the maximum
+off-diagonal correlation of the nominally orthogonal factors ranged from 0.379 to 0.698 when raw
+scores were rotated, and is below $10^{-15}$ under the algebra above, which also makes $\Lambda_R$
+the loading matrix of the scores actually in use, so the role and sign rules below are read off a
+matrix that describes what is being oriented (Supplement S4.2).
 
-**Role assignment and sign, both deterministic.** The **cost factor** is the component with the
-largest absolute rotated loading on `Leaves_Mean`; the other two are **quality factors**. The cost
+**Role assignment and sign, both deterministic.** The *cost factor* is the component with the
+largest absolute rotated loading on `Leaves_Mean`; the other two are *quality factors*. The cost
 factor is oriented so that the rotated loading of `Leaves_Mean` on it is positive, each quality
-factor so that the **mean rotated loading over the six quality responses** is positive — the
-role-block mean rather than the single largest loading, because specificity anti-correlates with
-accuracy, recall and AUC and dominates the leading quality factor on three of four datasets.
-After orientation, a larger score is a worse configuration on every factor.
+factor so that the mean rotated loading over the six quality responses is positive: the role-block
+mean rather than the single largest loading, because specificity anti-correlates with accuracy,
+recall and AUC and dominates the leading quality factor on three of four datasets. After
+orientation, a larger score is worse on average over the factor's role block (the six quality
+responses, or `Leaves_Mean` for the cost factor), not on every response. Every oriented loading is
+reported in Supplement S4.2; each is a correlation on the 88 pilot design rows on which the model is
+fitted, where a positive loading marks a response that improves as the score decreases. On those
+rows the leading quality factor of Spambase, Adult and Bank Marketing sets canonicalized specificity
+($-0.92$, $-0.93$, $-0.89$) against canonicalized recall ($+0.92$, $+0.86$, $+0.87$), and the second
+quality factor of MAGIC sets precision and specificity against recall and accuracy. On the same
+rows, a lower value of the quality composite defined next goes with higher recall and lower
+specificity on Spambase, Adult and Bank Marketing, and with better values of all six quality
+responses on MAGIC.
 
 **Objective 1, composite quality.** $f_{\text{quality}}(x) = \sum_{j \in Q} w_j S_z[:, j]$
 with $w_j = h_j / \sum_{i \in Q} h_i$ and $h_j = \sum_i \Lambda_R[i, j]^2$ — the **rotated**
@@ -158,9 +180,9 @@ rule and never revised after the fact. One consequence is carried rather than sm
 backward-eliminated quadratic is often minimized on a box corner, so two objectives' surrogate
 anchors can coincide and leave the payoff matrix rank-deficient.
 
-The archived historical implementation fits its surfaces in uncoded natural units and constructs
-its front by normalized weighted scalarization, although the historical text uses NBI
-terminology; it is reproduced unmodified in the as-run historical arm rather than repaired.
+One arm is the exception to this shared procedure: HISTORICAL-WS-asrun (Section 5.7), whose surfaces
+this study's code fits in the archived uncoded natural-unit parameterization (Table 2), on this
+study's objectives.
 
 Everything specified here is scoped to these four datasets, this surrogate architecture, two
 objectives and this budget.

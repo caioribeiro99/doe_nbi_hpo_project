@@ -94,18 +94,14 @@ AUTHORS = [
 
 # Elsevier generative-AI policy, page last updated June 2026, retrieved live 2026-09-21.
 # Section title and template are the publisher's current wording, not the 2024 capture,
-# which said "writing process". The policy explicitly does NOT cover AI used in research
-# methodology -- XGBoost, NSGA-II, Bayesian optimization and TPE belong in the Methods and
-# get no declaration.
-AI_DECLARATION = (
-    "During the preparation of this work, the authors used Anthropic Claude and OpenAI "
-    "ChatGPT in order to assist with manuscript drafting, language refinement, "
-    "consistency checking and editorial review. After using these tools, the authors "
-    "reviewed and edited the content as needed and take full responsibility for the "
-    "content of the published article.\n\n"
-    "This declaration concerns manuscript preparation only. The study's computational "
-    "methods are described in the Methods section, and every reported result derives "
-    "from the committed, version-controlled artifacts referenced there.")
+# which said "writing process". Machine-learning methods used as research methodology
+# (XGBoost, NSGA-II, Bayesian optimization, TPE) belong in the Methods and get no
+# declaration. The declaration TEXT is not retyped here: it is extracted from the manuscript
+# at TAG, like the other declarations, so the title page cannot state a different scope from
+# the manuscript. Its scope is the authors' attestation (decision Q3), set only in
+# manuscript/sections/11_references_declarations.md.
+AI_TITLE = ("## Declaration of generative AI and AI-assisted technologies in the "
+            "manuscript preparation process")
 
 HIGHLIGHTS = [
     "Scalarization, front geometry and anchor provenance separated in one pipeline",
@@ -175,9 +171,9 @@ def main() -> int:
           block(man, "Funding.") + "\n",
           block(man, "Acknowledgements.") + "\n",
           credit + "\n",
-          "## Declaration of generative AI and AI-assisted technologies in the "
-          "manuscript preparation process\n",
-          AI_DECLARATION + "\n"]
+          AI_TITLE + "\n",
+          man[man.index(AI_TITLE) + len(AI_TITLE):man.index("\n## References")].strip()
+          + "\n"]
     (OUT / "ASOC_TITLE_PAGE.md").write_text("\n".join(t))
 
     # ---- vitae -------------------------------------------------------------------
@@ -218,10 +214,10 @@ optimization pipelines normally change together: the scalarization specification
 geometry by which a Pareto front is constructed, and the provenance of the anchors and
 payoff matrix that geometry uses. Because a pipeline revision typically moves all three
 at once, a reported gain cannot be attributed to any one of them. We hold the surrogate
-model, scaling, decision space, candidate realization and budget fixed and vary one
-mechanism at a time, under a protocol frozen before any comparative result existed, with
-30 replicated outer partitions per dataset and every returned candidate re-evaluated on
-the real learner.
+model, scaling, decision space and candidate realization fixed and vary one mechanism at a
+time (changing anchor provenance also adds the 200 real evaluations its empirical anchors
+cost), under a protocol frozen before the confirmatory campaign, with 30 replicated outer
+partitions per dataset and every returned candidate re-evaluated on the real learner.
 
 Relevance to Applied Soft Computing: the work sits in two areas the journal names
 explicitly — Machine and Deep Learning, since the optimized learner is a gradient-boosted

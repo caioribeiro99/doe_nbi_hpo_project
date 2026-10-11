@@ -20,21 +20,20 @@ anchors are free once the surfaces exist, while empirical anchors are bought wit
 evaluations. In a pipeline where all three are set together, a reported gain is consistent
 with any of them.
 
-This paper does not propose a new optimizer. It reports a prospectively frozen reconstruction
+This paper does not propose a new optimizer. It reports a prospectively frozen decomposition
 of one such pipeline in which the three mechanisms are separated into single-factor contrasts,
-executed at a fixed budget, and reported whether or not the result favours the method under
-study. The reconstruction target is an archived dissertation implementation of
-surrogate-assisted multiobjective XGBoost tuning over Varimax-rotated factor objectives. A
-code-level identity audit of that archived implementation established that its front
-construction used normalized weighted scalarization, although the historical text used NBI
-terminology. That fact is stated here once because it is the reason the arm set has the shape
-it does; it is not itself a contribution and it is not treated as anything other than a
-specification detail to be carried forward correctly.
+executed under a budget ledger fixed in advance, and reported whether or not the result
+favours the method under study. The pipeline is the one implemented in the first author's
+master's dissertation (Ribeiro 2026) for surrogate-assisted multiobjective XGBoost tuning over
+Varimax-rotated factor objectives. Its archived code normalizes the objectives by an
+observed-extrema box and constructs the front by weighted scalarization, so the historical
+method enters the arm set as a weighted sum (Section 3).
 
 ### 1.1 Research questions
 
-Holding the decision space, design, surrogate family, weight grid, candidate realization,
-evaluation protocol and budget fixed, and changing exactly one mechanism per contrast:
+Holding the decision space, design, surrogate family, weight grid, candidate realization and
+evaluation protocol fixed, and changing exactly one mechanism per contrast (the budget is also
+fixed in RQ1 and RQ2; in RQ3 the 200 real anchor evaluations are part of the change):
 
 - **RQ1 — specification and normalization.** Does replacing the historical observed-extrema
   normalization box with a payoff-matrix reference change the returned front?
@@ -45,10 +44,12 @@ evaluation protocol and budget fixed, and changing exactly one mechanism per con
   from the fitted surrogates?
 
 The study answers these on four binary-classification datasets, seven XGBoost hyperparameters,
-an 88-run face-centred central composite design, two minimized objectives — a Varimax-rotated
-composite quality factor over six canonicalized quality responses and a leaf-count
-model-complexity factor — and $R = 30$ replicated outer partitions per dataset, with every
-returned candidate re-evaluated on the real learner. The campaign is 396,120 logical
+an 88-run face-centred central composite design, two minimized latent objectives and $R = 30$
+replicated outer partitions per dataset, with every returned candidate re-evaluated on the real
+learner. The first objective is a Varimax-rotated composite quality factor, oriented on six
+canonicalized quality responses; the second is a leaf-count model-complexity factor. Both are
+fixed linear scores of all seven responses, fitted once per dataset on the 88 design rows of a
+pre-campaign pilot partition (Section 5.5). The campaign is 396,120 logical
 evaluations. The primary endpoint is the CORE-relative hypervolume ratio: hypervolume measured
 against a finite, method-independent empirical reference of 288 points that no compared method
 contributes to. CORE is not the true Pareto front, and a ratio above 1 simply means a candidate
@@ -94,13 +95,14 @@ $R = 30$ rather than as an absence of effect.
    provenance, with run-time enforcement that each contrast varies only its declared mechanism.
 2. A protocol frozen before any confirmatory comparative result was inspected, with its
    dataset roles, endpoints, reference, statistical family and budget ledger fixed in advance,
-   and every subsequent change recorded as a numbered amendment.
+   every pre-campaign change recorded as a numbered amendment, and the departures identified
+   after the campaign listed as deviations (Section 8.7).
 3. A confirmatory campaign of 396,120 logical evaluations over four datasets and $R = 30$
    paired replications, with every candidate revalidated on the real learner and every headline
    number traceable to a committed artifact.
-4. Results reported against interest: the negative anchor-provenance contrast, the grid
-   baseline that leads at the frozen budget, and the indicator specificity of the geometry
-   effect, each given the same standing as the positive result.
-5. A mechanistic reading of the negative contrast — an anchor-injection control together with
-   a measured contraction of the CHIM segment — reported as an association within datasets, not
-   as a demonstrated cause (Figure 4).
+4. Negative and scope-limiting results: the negative anchor-provenance contrast, the grid
+   baseline that led NBI-S at the frozen comparator budget, and the indicator specificity of
+   the geometry effect.
+5. A mechanistic reading of the negative contrast (a prospectively frozen anchor-injection
+   control together with a post hoc measurement of the contraction of the CHIM segment),
+   reported as an association within datasets, not as a demonstrated cause (Figure 4).

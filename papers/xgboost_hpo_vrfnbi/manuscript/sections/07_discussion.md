@@ -93,22 +93,24 @@ driver.
 
 ### 7.7 The grid baseline, and what it costs the argument
 
-At the frozen comparator budget, the frozen-budget direct grid baseline attained higher median
-CORE-relative hypervolume than every surrogate-assisted arm on three of the four datasets
-— NBI-S against GRID, 0.9430/1.0068 on MAGIC, 0.9951/1.0476 on Adult, 0.9979/1.0625 on
-Bank Marketing and 1.0812/1.0192 on Spambase, NBI-S winning 0/30, 5/30, 10/30 and 12/30
-replications (Supplement S13). The budget asymmetry belongs in the same breath: the
-comparator budget is the maximum over arms, 386 real evaluations set by NBI-R, while WS-S
-and NBI-S cost 186 standalone, so comparators received roughly twice the real evaluations
-those arms require. The contrast is outside the frozen primary family, uncorrected, and
-significant on raw $p$ for MAGIC and Adult only.
+The coarse grid, given 386 real evaluations against NBI-S's 186 under the frozen maximum-arm
+comparator rule, had the higher paired median on all four datasets; its lead met the frozen
+21-of-30 direction rule on MAGIC and Adult only, its bootstrap interval also excluded zero on
+Bank Marketing (20/30), and it was unresolved on Spambase (18/30; Section 6.8). Its marginal
+median CORE-relative hypervolume ratio was higher than that of every surrogate-assisted arm on
+three of the four datasets: NBI-S against GRID, 0.9430/1.0068 on MAGIC, 0.9951/1.0476 on
+Adult, 0.9979/1.0625 on Bank Marketing and 1.0812/1.0192 on Spambase, NBI-S winning 0/30,
+5/30, 10/30 and 12/30 replications (Supplement S13). The comparator budget is the maximum over
+arms, set by NBI-R, so the comparators received roughly twice the real evaluations WS-S and
+NBI-S require. The contrast is outside the frozen primary family and uncorrected, and its raw
+$p$ is below 0.05 on MAGIC and Adult only.
 
-This is stated plainly rather than deflected: at the budget this protocol froze before any
-result existed, on this panel, surrogate assistance did not pay for itself against direct
-search. The matched-to-the-most-expensive-arm rule bears on how large the deficit is; it
-is not grounds for setting it aside, and is not revised now the result is known. The
-geometry finding says which construction to use *given* that a front is built on a
-surrogate — not that this family was the right instrument here.
+This is stated plainly rather than deflected: at the budget this protocol froze before the
+confirmatory campaign, on this panel, the coarse grid had the higher paired median against
+NBI-S on all four datasets. The matched-to-the-most-expensive-arm rule bears on how large the
+deficit is; it is not grounds for setting it aside, and is not revised now the result is
+known. The geometry finding says which construction to use *given* that a front is built on a
+surrogate, not that this family was the right instrument here.
 
 ### 7.8 The surrogate-gate regime
 

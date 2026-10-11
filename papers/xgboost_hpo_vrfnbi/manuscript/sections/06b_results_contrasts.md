@@ -51,22 +51,23 @@ not a demonstration that the surrogate-assisted family is preferable to direct s
 Section 6.8 reports this baseline in full.
 
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
-|---|---|---|---|---|---|---|
-| HISTORICAL-WS → WS-S | MAGIC | +0.0000 | [−0.0022, +0.0056] | 14/3/13 | — | 0.5165 |
-| HISTORICAL-WS → WS-S | Adult | −0.0006 | [−0.0033, +0.0000] | 9/4/17 | — | 0.2087 |
-| HISTORICAL-WS → WS-S | Bank Marketing | +0.0000 | [−0.0088, +0.0000] | 8/8/14 | — | 0.3896 |
+|---|---|---:|---:|---:|---:|---:|
+| HISTORICAL-WS → WS-S | MAGIC | +0.0000 | [−0.0022, +0.0056] | 14/3/13 | +0.14 | 0.5165 |
+| | Adult | −0.0006 | [−0.0033, +0.0000] | 9/4/17 | −0.28 | 0.2087 |
+| | Bank Marketing | +0.0000 | [−0.0088, +0.0000] | 8/8/14 | −0.21 | 0.3896 |
 | WS-S → NBI-S | MAGIC | **+0.0374** | [+0.0144, +0.0687] | 26/0/4 | +0.92 | 9.42e−07 |
-| WS-S → NBI-S | Adult | **+0.2549** | [+0.1740, +0.5614] | 30/0/0 | +1.00 | 5.59e−09 |
-| WS-S → NBI-S | Bank Marketing | **+0.2281** | [+0.1670, +0.4741] | 24/0/6 | +0.88 | 9.72e−06 |
-| WS-S → NBI-S | Spambase (boundary) | +0.0500 | [−0.0043, +0.4369] | 18/2/10 | — | 0.1175 |
-| NBI-S → NBI-R | MAGIC | **−0.0741** | [−0.0957, −0.0482] | 2/0/28 | — | 0.0000 |
-| NBI-S → NBI-R | Adult | −0.0192 | [−0.1610, +0.0299] | 11/0/19 | — | 0.1607 |
-| NBI-S → NBI-R | Bank Marketing | **−0.4093** | [−0.5821, −0.2059] | 7/0/23 | — | 0.0000 |
+| | Adult | **+0.2549** | [+0.1740, +0.5614] | 30/0/0 | +1.00 | 5.59e−09 |
+| | Bank Marketing | **+0.2281** | [+0.1670, +0.4741] | 24/0/6 | +0.88 | 9.72e−06 |
+| | Spambase (boundary) | +0.0500 | [−0.0043, +0.4369] | 18/2/10 | +0.41 | 0.1175 |
+| NBI-S → NBI-R | MAGIC | **−0.0741** | [−0.0957, −0.0482] | 2/0/28 | −0.99 | 2.79e−08 |
+| | Adult | −0.0192 | [−0.1610, +0.0299] | 11/0/19 | −0.37 | 0.1607 |
+| | Bank Marketing | **−0.4093** | [−0.5821, −0.2059] | 7/0/23 | −0.82 | 4.73e−05 |
 
-**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, differences formed as (second − first), Holm-corrected within dataset, $R=30$.
+**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, differences formed as (second − first), $R=30$; positive values favour the second arm. Bootstrap interval: 95% percentile bootstrap interval of the median difference; medians in bold are those whose interval excludes zero. Win/tie/loss: replications won, tied and lost by the second arm. Rank-biserial: matched-pairs rank-biserial correlation. Holm $p$: $p$-value of the secondary two-sided Wilcoxon signed-rank test, Holm-corrected within dataset over the three contrasts; the descriptive statistics are primary (Section 5.15). Rank-biserial and the test exclude zero differences.
 
-Spambase is shown for completeness and is excluded from the primary inferential family
-by prospective designation; it is treated in Section 6.6.
+Spambase is shown for completeness and is excluded from the primary inferential family,
+having failed the screen and been retained as a boundary control (Section 5.1); it is treated in
+Section 6.6.
 
 #### 6.3.1 The geometry effect is indicator-specific
 
@@ -76,10 +77,10 @@ geometry the direction matches hypervolume: median IGD⁺ is 0.0511 for NBI-S ag
 0.0930 for WS-S on MAGIC, 0.0579 against 0.1688 on Adult, and 0.0915 against 0.1948 on
 Bank Marketing, lower being better. On the joint non-dominated fraction it does not:
 the median differences are +0.0208 on MAGIC, +0.0714 on Adult and +0.0000 on Bank
-Marketing, and the comparison is non-significant on all four datasets, including
-Spambase (raw $p$ = 0.160, 0.093, 0.627 and 0.586). Secondary indicators are reported
-descriptively, with intervals and without multiplicity-adjusted tests, and none of them
-is described as significant. The defensible statement is therefore narrow: under the
+Marketing. The protocol declared secondary indicators descriptive and untested; a post hoc,
+unadjusted signed-rank check against the CORE reference gives no $p$ below 0.05 on any of the four
+datasets (raw $p$ = 0.160, 0.093, 0.627 and 0.586 on MAGIC, Adult, Bank Marketing and Spambase).
+The defensible statement is therefore narrow: under the
 frozen study conditions the advantage is specifically an improvement in convergence and
 coverage geometry as measured by hypervolume and IGD⁺. The data do not support a
 general better-coverage claim, and in particular do not support a claim that NBI
@@ -116,12 +117,12 @@ intervention, not a confound.
 
 Replacing surrogate-derived payoff information with the frozen empirical-real anchor
 procedure did not improve the confirmatory NBI fronts, and degraded CORE-relative
-hypervolume on two of the three primary datasets. The medians are **−0.0741** on MAGIC
-(2/0/28, $[-0.0957, -0.0482]$, Holm $p$ = 0.0000), **−0.4093** on Bank Marketing
-(7/0/23, $[-0.5821, -0.2059]$, Holm $p$ = 0.0000) and **−0.0192** on Adult (11/0/19,
-$[-0.1610, +0.0299]$, Holm $p$ = 0.1607), the last a non-detection under CORE with an
-interval spanning zero. This negative result carries the same evidentiary weight as the
-geometry result of Section 6.3 and is reported at the same prominence: spending real
+hypervolume on two of the three primary datasets. The medians are −0.0741 on MAGIC
+(2/0/28, $[-0.0957, -0.0482]$, rank-biserial $-0.99$, Holm $p = 2.79\times10^{-8}$), −0.4093 on
+Bank Marketing (7/0/23, $[-0.5821, -0.2059]$, rank-biserial $-0.82$, Holm $p = 4.73\times10^{-5}$)
+and −0.0192 on Adult (11/0/19, $[-0.1610, +0.0299]$, rank-biserial $-0.37$, Holm $p$ = 0.1607), the
+last a non-detection under CORE with an interval spanning zero. This negative result carries the
+same evidentiary weight as the geometry result of Section 6.3: spending real
 evaluations to relocate the payoff matrix onto empirically obtained anchors did not buy
 better fronts under these conditions, and no alternative formulation under which it
 does is offered here.
@@ -144,15 +145,19 @@ return 20 distinct realized configurations in every unit. Solver behaviour is
 therefore comparable between the arms and does not account for the deficit, but it
 is not identical and we do not state it as a universal.
 
-The second diagnostic is the CHIM extent $\|\Phi_{:,0} - \Phi_{:,1}\|$, which at $q = 2$
-is the segment along which the subproblems distribute their targets. Under empirical
-anchors it contracts to 20–81% of its surrogate-derived extent: ratio 0.811 on MAGIC,
-0.204 on Adult, 0.272 on Bank Marketing and 0.370 on Spambase. Within-dataset Spearman
-correlations between the per-replication extent ratio and the per-replication
-hypervolume gap are +0.683 on Adult, +0.678 on Bank Marketing, +0.320 on Spambase and
-**−0.111 on MAGIC**. This is an association measured across 30 replications within a
-dataset, present on three datasets and absent on the fourth; it is not a demonstrated
-cause of the deficit, and it is not presented as one (Figure 4).
+The second diagnostic is post hoc: it was defined after the confirmatory results were known and
+is computed from the matrix $\Phi$ recorded per replication. It is the CHIM extent
+$\lVert\Phi_{:,1} - \Phi_{:,2}\rVert$, which at $q = 2$ is the segment along which the subproblems
+distribute their targets; NBI-R's is built from real measurements and NBI-S's from surrogate
+predictions (Section 5.11). Under empirical anchors it contracts to a median 20–81% of its
+surrogate-derived extent: median ratio 0.811 on MAGIC, 0.204 on Adult, 0.272 on Bank Marketing and
+0.370 on Spambase, with per-replication ratios from 0.022 to 1.297, so the extent grew in some
+replications on MAGIC and Spambase. Within-dataset Spearman correlations between the
+per-replication extent ratio and the per-replication hypervolume gap are +0.683 on Adult, +0.678 on
+Bank Marketing, +0.320 on Spambase and −0.111 on MAGIC. This is a post hoc association measured
+across 30 replications within a dataset, clear on Adult and Bank Marketing, weak on Spambase and
+absent on MAGIC; it is not a demonstrated cause of the deficit, and it is not presented as one
+(Figure 4).
 
 ### 6.5 Reference sensitivity
 
@@ -167,8 +172,8 @@ direction. Under AUGMENTED that cell is significant only on the secondary test: 
 primary descriptive triple remains equivocal, with the bootstrap interval on the median
 spanning zero.
 
-CORE remains primary because it was prospectively frozen as method-independent before
-any result existed; AUGMENTED remains a mandatory sensitivity, not an alternative from
+CORE remains primary because it was prospectively frozen as the method-independent primary
+reference before the confirmatory campaign (amendment 21); AUGMENTED remains a mandatory sensitivity, not an alternative from
 which a reference may be selected after the fact. The reported Adult conclusion is
 accordingly the CORE non-detection, with the AUGMENTED result stated alongside it here
 and in Supplement S9.

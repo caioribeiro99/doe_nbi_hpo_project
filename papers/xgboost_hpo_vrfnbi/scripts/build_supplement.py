@@ -70,7 +70,7 @@ def main() -> int:
     meaning = {"v0.1.0-dissertation":"the historical implementation this study reconstructs",
       "xgboost-hpo-protocol-v1":"the specification frozen before the pilot",
       "xgboost-hpo-protocol-v2":"the confirmatory protocol after pilot Stage A",
-      "xgboost-hpo-protocol-v3":"the final frozen protocol, before any comparative result",
+      "xgboost-hpo-protocol-v3":"the final frozen protocol, before the confirmatory campaign",
       "xgboost-hpo-confirmatory-results-v1":"the first adversarially verified analysis"}
     for t in ("v0.1.0-dissertation","xgboost-hpo-protocol-v1","xgboost-hpo-protocol-v2",
               "xgboost-hpo-protocol-v3","xgboost-hpo-confirmatory-results-v1"):
@@ -81,18 +81,22 @@ def main() -> int:
             c = subprocess.run(["git","rev-parse","--short",f"{t}^{{commit}}"],cwd=REPO,
                                capture_output=True,text=True).stdout.strip()
             w(f"| `{t}` | `{c}` | {meaning[t]} |")
-    w("\nThe protocol tag records what was specified **before** any comparative result")
-    w("existed; the results tag records the first verified analysis. Neither was moved.\n")
+    w("\nThe protocol tag records what was specified before the confirmatory campaign began;")
+    w("the results tag records the first verified analysis. Neither was moved.\n")
 
     w("## S2. Amendment chronology\n")
     am = (PAPER/"PROTOCOL_AMENDMENTS.md").read_text()
     n_am = am.count("\n## Amendment ")
-    w(f"The protocol carries **{n_am} numbered amendments**, each recording what caused it")
-    w("and whether any arm result had been observed when it was made. None had. The ledger")
-    w("also records two process failures found by review rather than by the author, four")
-    w("engineering defects caught by a pre-freeze smoke run, and the corrections made to")
-    w("two claims after independent verification refuted the author's version. It is")
-    w("reproduced in full in `PROTOCOL_AMENDMENTS.md`.\n")
+    w(f"The protocol carries {n_am} numbered amendments, each recording what caused it")
+    w("and whether any arm result had been observed when it was made; the ledger records")
+    w("that none had. It also records two process failures found by review rather than by the")
+    w("author, and four engineering defects caught by pre-freeze smoke runs. The last of these")
+    w("runs, on 2026-09-14, completed one full Spambase unit, every arm and the metrics stage,")
+    w("before amendments 21 (primary reference) and 22 (Spambase's role) and before the v3 tag;")
+    w("the ledger records that only its execution and accounting were inspected, and its")
+    w("outputs are not archived. The ledger is reproduced in full in `PROTOCOL_AMENDMENTS.md`.")
+    w("The corrections made after the campaign to two claims from the analysis are recorded in")
+    w("`analysis/verified_claims.json`, not in the ledger.\n")
 
     w("## S3. Hyperparameter space\n")
     w("| hyperparameter | lower | upper | type |"); w("|---|---:|---:|---|")
@@ -130,7 +134,26 @@ def main() -> int:
           f"{r['criterion_2_front_size']} / {cv} | {r['criterion_3_value']:.4f} | "
           f"{r['criterion_4_value']:.1f}× | `{r['final_role']}` |")
     w("\nRoles were assigned from these pre-campaign measurements and never revised from")
-    w("an optimizer outcome.\n")
+    pilot_seed = json.loads((PAPER/"audits"/"pilot_stage_a"/"stage_a_report.json").read_text())["seed"]
+    w("an optimizer outcome. They were measured on one partition per dataset, the pilot")
+    w(f"Stage A partition (seed {pilot_seed}), whose design-row evaluations are also the fitting")
+    w(f"sample of the frozen factor models (S4.1); it is not one of the {N_REPLICATIONS} confirmatory")
+    w("partitions. Spambase was retained as a boundary geometry control by a pre-campaign")
+    w("amendment adopted after its criterion-2 failure was known (amendment 22): the replacement")
+    w("rule frozen at protocol v1, before the pilot, required a dataset failing criterion 1 or 2")
+    w("to be replaced from the registry, and retaining Spambase departs from that rule.\n")
+    w("Every confirmatory replication evaluates the same 88 design rows on its own partition. The")
+    w("number of those rows that are non-dominated under the frozen objectives is summarized below")
+    w("as a post-campaign description; it changes no role.\n")
+    w("| dataset | non-dominated design rows, screening partition | confirmatory partitions: median "
+      "| minimum | partitions with exactly two |")
+    w("|---|---:|---:|---:|---:|")
+    dsp = ver["CORRECTION_2_boundary_control"]["dispersion"]
+    for ds in DATASETS:
+        dd = dsp[ds]
+        w(f"| {DISP[ds]} | {dd['design_front_screening']} | {dd['design_front_campaign_median']} | "
+          f"{dd['design_front_campaign_range'][0]} | {dd['design_front_equals_two_in']} of {N_REPLICATIONS} |")
+    w()
 
     w("## S6. Method and control registry\n")
     reg = subprocess.run([sys.executable, str(PAPER/"scripts"/"method_registry.py"),"--markdown"],
@@ -154,17 +177,20 @@ def main() -> int:
     w(f"| unmatched NSGA-II, outside the unit | {cb['unmatched_nsga2_logical']:,} |")
     w(f"| **campaign total** | **{cb['campaign_total_logical']:,}** |")
     w(f"| of which audit-only | {cb['campaign_audit_only_logical']:,} |")
-    w(f"| unique physical fits | 377,316 |")
+    w(f"| unique physical evaluations | 377,316 |")
     w("\n**The campaign total already contains the unmatched NSGA-II charge**, inside the")
     w("four replication-0 ledgers. Adding it again gives 411,480 and is wrong.\n")
     w("### S7.1 Standalone cost per arm\n")
     w("| arm | standalone logical |"); w("|---|---:|")
     for k, v in logical_budget_plan(2)["B_total_solution_per_arm"].items():
         w(f"| {k} | {v} |")
-    w(f"| each direct-search comparator | {logical_budget_plan(2)['comparator_budget']} |")
-    w("\nThe comparator budget is the **maximum over arms** (NBI-R). A direct-search")
-    w("comparator therefore receives about twice the real evaluations WS-S and NBI-S")
-    w("require standalone, and any comparison against them must say so.\n")
+    nb = logical_budget_plan(2)["nsga2"]
+    w(f"| each direct-search comparator except NSGA-II | {logical_budget_plan(2)['comparator_budget']} |")
+    w(f"| NSGA-II, matched (population {nb['population']}, {nb['generations']} generations) | {nb['evaluations']} |")
+    w("\nThe comparator budget is the maximum over arms (NBI-R). NSGA-II's frozen population and")
+    w(f"generation count give {nb['evaluations']} real evaluations, {nb['shortfall_against_comparator_budget']} fewer than that budget. A")
+    w("direct-search comparator therefore receives about twice the real evaluations WS-S and")
+    w("NBI-S require standalone, and any comparison against them must say so.\n")
 
     w("## S8. Randomness\n")
     w(f"Seeds derive from BLAKE2b over the namespace `{SEED_NAMESPACE}` and the tuple")
@@ -190,9 +216,31 @@ def main() -> int:
                       f"{r['wins_for_second']}/{r['ties']}/{r['losses']} | "
                       f"{r['rank_biserial']:+.2f} | {r['holm_p']:.4g} "
                       f"| {r['nadeau_bengio']['p']:.4f} |")
-        w("\nThe Nadeau–Bengio column is the pre-declared corrected resampled $t$, at an")
-        w("inflation of $\\sqrt{8.5} = 2.9155$. It is a sensitivity, not the primary test,")
-        w("and is reported in full including where it is adverse to the finding.")
+        w("\nThe Holm $p$ column is the secondary test: a two-sided Wilcoxon signed-rank test,")
+        w("Holm-adjusted within each dataset family (Spambase forms its own family). The")
+        w("descriptive triple on the CORE reference (median $\\Delta$ with its 95% percentile")
+        w("bootstrap interval, W/T/L and rank-biserial) is the primary evidence; the AUGMENTED")
+        w("reference is a pre-declared sensitivity. The Nadeau–Bengio column is the pre-declared")
+        w("corrected resampled $t$, at an inflation of $\\sqrt{8.5} = 2.9155$, not adjusted for")
+        w("multiplicity. It is a sensitivity, not the study's significance test, and is reported in")
+        w("full including where it is adverse to the finding.")
+        if ref == "augmented":
+            sgi = pd.read_csv(A/"indicators_long.csv")
+            sg = sgi.groupby(["dataset", "entity"])["self_grading_share"].median()
+            ents = ("HISTORICAL-WS-asrun", "HISTORICAL-WS", "WS-S", "NBI-S", "NBI-R",
+                    "GRID", "RANDOM", "NSGA2-MATCHED")
+            w("\nSelf-grading share of the AUGMENTED front, which the frozen protocol requires beside")
+            w("every AUGMENTED contrast; each contrast above compares two of the methods tabulated here.")
+            w("The share is the fraction of the AUGMENTED reference's non-dominated points contributed")
+            w("by the points a method is scored on (an arm's revalidated candidates, a comparator's")
+            w("evaluations), median over the 30 replications, from")
+            w("`analysis/indicators_long.csv`. A front point contributed by more than one method counts")
+            w("once for each of them. The anchor-injection control contributes no candidates of its own")
+            w("to the reference.\n")
+            w("| dataset | " + " | ".join(ents) + " |")
+            w("|---|" + "---:|" * len(ents))
+            for ds in DATASETS:
+                w(f"| {DISP[ds]} | " + " | ".join(f"{sg[(ds, e)]:.3f}" for e in ents) + " |")
 
     w("\n## S10. Secondary indicators\n")
     w("| dataset | entity | HV ratio | IGD⁺ | GD | spacing | joint-ND | front size |")
@@ -221,27 +269,57 @@ def main() -> int:
           f"{g['cost_pass_rate']:.0%} | {g['both_pass_rate']:.0%} | `{g['role']}` |")
     w("\nThe gate is diagnostic, never adaptive: every arm ran at every replication")
     w("whatever the gate said.\n")
+    ind = pd.read_csv(A/"indicators_long.csv")
+    w("Every primary contrast by composite-quality gate status, from")
+    w("`analysis/indicators_long.csv`: median paired difference (second minus first) in")
+    w("the CORE-relative hypervolume ratio, with W/T/L, descriptive and untested. The cost")
+    w("gate passed in every MAGIC and Spambase replication, so these are also the strata of")
+    w("the joint gate. No Adult or Bank Marketing replication passed, so for those datasets")
+    w("the failing stratum is the whole sample of S9.1; n/a marks an empty stratum.\n")
+    w("| dataset | contrast | gate passed: n, median difference, W/T/L "
+      "| gate failed: n, median difference, W/T/L |")
+    w("|---|---|---|---|")
+    for ds in DATASETS:
+        sub = ind[ind["dataset"] == ds]
+        hv = sub.pivot(index="replication", columns="entity", values="core__hv_ratio")
+        gq = (sub[sub["entity"] == "NBI-S"].set_index("replication")["gate_quality"]
+              .astype(str).eq("True").reindex(hv.index))
+        name = DISP[ds] + ("" if DATASET_ROLES[ds] == "primary_geometry_confirmatory" else " (boundary)")
+        for a, b in (("HISTORICAL-WS", "WS-S"), ("WS-S", "NBI-S"), ("NBI-S", "NBI-R")):
+            d = hv[b] - hv[a]
+            cells = []
+            for msk in (gq, ~gq):
+                dd = d[msk.to_numpy()]
+                cells.append(f"{len(dd)}, {dd.median():+.4f}, {int((dd > 0).sum())}/"
+                             f"{int((dd == 0).sum())}/{int((dd < 0).sum())}" if len(dd) else "0, n/a, n/a")
+            w(f"| {name} | {a} -> {b} | {cells[0]} | {cells[1]} |")
+    w("")
 
     w("## S12. Controls\n")
     w("### S12.1 Anchor-injection control\n")
-    w("| dataset | injection effect | full NBI-S→NBI-R gap | CHIM extent ratio |")
+    w("| dataset | injection effect | full NBI-S→NBI-R gap | CHIM extent ratio (post hoc) |")
     w("|---|---:|---:|---:|")
     for ds in DATASETS:
         c = sec["controls"][ds]["anchor_injection"]
         w(f"| {DISP[ds]} | {c['injection_effect_median']:+.4f} | "
           f"{c['full_anchor_gap_median']:+.4f} | {chim[ds]['extent_ratio_median']:.3f} |")
     w("\nThe control set is a superset of NBI-S's, so its effect is non-negative by")
-    w("construction. Within-dataset Spearman between the per-replication CHIM extent")
-    w("ratio and the hypervolume gap: " + ", ".join(
+    w("construction. The CHIM extent ratio is post hoc: it was first computed after the")
+    w("confirmatory results, from the recorded payoff matrices, and is not part of the frozen")
+    w("protocol. Within-dataset Spearman between the per-replication CHIM extent ratio and the")
+    w("hypervolume gap: " + ", ".join(
         f"{DISP[d]} {chim[d]['spearman_extent_ratio_vs_hv_gap']:+.2f}" for d in DATASETS)
-      + ". Association, not cause, and absent on MAGIC.\n")
+      + ". A post hoc association, not a cause: clear on Adult and Bank Marketing, weak on")
+    w("Spambase and absent on MAGIC.\n")
     w("### S12.2 Solver health, NBI-S against NBI-R\n")
-    w("| dataset | certified (S/R) | max equality residual (S/R) | distinct configs (S/R) |")
-    w("|---|---|---|---|")
+    w("| dataset | certified (S/R) | max equality residual (S/R) | max rounding displacement (S/R) "
+      "| distinct configs (S/R) |")
+    w("|---|---|---|---|---|")
     for ds in DATASETS:
         m = mech[ds]
         w(f"| {DISP[ds]} | {m['certified']['nbi_s']:.3f} / {m['certified']['nbi_r']:.3f} | "
           f"{m['maxres']['nbi_s']:.1e} / {m['maxres']['nbi_r']:.1e} | "
+          f"{m['maxdisp']['nbi_s']:.1e} / {m['maxdisp']['nbi_r']:.1e} | "
           f"{m['distinct']['nbi_s']:.0f} / {m['distinct']['nbi_r']:.0f} |")
     # The table above is per-dataset MEDIANS, which hide the per-unit exceptions. Calling
     # it "identical on every dataset" was therefore a universal the evidence does not
@@ -303,7 +381,8 @@ def main() -> int:
     w("The manuscript's headline numerical claims, each with its estimand, source")
     w("artifact, verification status, allowed wording and prohibited stronger wording,")
     w("are in `CONFIRMATORY_CLAIMS_AND_EVIDENCE.md`. Two are recorded in corrected form")
-    w("because independent verification refuted the author's version.\n")
+    w("because a post-campaign recomputation from the raw unit artifacts refuted the")
+    w("author's version.\n")
 
     w("## S17. Reproducibility manifest\n")
     w("| item | value |"); w("|---|---|")

@@ -55,8 +55,9 @@ check("Spambase not a demonstrated null",
       "did not resolve" in M and "no geometry effect on Spambase" not in M)
 check("consistent-with / does-not-confirm preserved",
       "consistent with" in M.lower() and "does not confirm" in M.lower())
-check("joint-ND non-significance disclosed",
-      "joint non-dominated fraction" in M and "non-significant" in M)
+check("joint-ND non-detection disclosed",
+      "joint non-dominated fraction" in M
+      and ("non-significant" in M or "no detectable difference" in M))
 check("CORE never called a true Pareto front",
       not re.search(r"CORE[^.]{0,40}is the true Pareto front", M, re.I))
 check("hv ratio unboundedness stated", "27.8" in M or "above 1" in M)

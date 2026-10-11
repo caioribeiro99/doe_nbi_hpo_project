@@ -26,10 +26,12 @@ from doe_xgb.campaign.runner import (DATASETS, N_REPLICATIONS, NSGA2_GEN, NSGA2_
 # design at all.
 ROLE = {
     "HISTORICAL-WS-asrun": ("arm", "historical_ws_asrun",
-        "the dissertation's pipeline reproduced bit-faithfully by calling the frozen "
-        "v0.1.0-dissertation solver: maximization orientation, uncoded natural-unit "
-        "surfaces, observed-extrema normalization, asymmetric 20-point grid with no "
-        "pure-quality vertex, and no gate. Reproduced, not repaired."),
+        "the frozen v0.1.0-dissertation solver, called unmodified, with the archived "
+        "maximization orientation, observed-extrema normalization and asymmetric grid "
+        "with no pure-quality vertex (20 points at the solver's default step), and no "
+        "gate; its uncoded natural-unit surfaces follow the archived specification but "
+        "are fitted by this study's code to this study's objectives. Reproduced, not "
+        "repaired."),
     "HISTORICAL-WS": ("arm", "historical_ws",
         "the same weighted sum, solver, symmetric grid and surrogates as WS-S, "
         "differing ONLY in the normalization reference. WS-S to HISTORICAL-WS is "

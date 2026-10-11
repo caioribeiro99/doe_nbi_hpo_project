@@ -45,8 +45,8 @@ def fig_arm_lattice():
         ax.annotate("", xy=(x+0.075, 0.56), xytext=(x-0.075, 0.56),
                     arrowprops=dict(arrowstyle="->", lw=1.2, color="#3b4a5a"))
         ax.text(x, 0.30, txt, ha="center", va="center", fontsize=7.5, style="italic")
-    ax.text(0.615, 0.13, "primary contrasts", ha="center", fontsize=7.5, color="#8a1c1c")
-    ax.plot([0.44, 0.99], [0.20, 0.20], color="#8a1c1c", lw=1.0)
+    ax.text(0.61, 0.13, "primary contrasts", ha="center", fontsize=7.5, color="#8a1c1c")
+    ax.plot([0.31, 0.91], [0.20, 0.20], color="#8a1c1c", lw=1.0)
     ax.set_xlim(0, 1); ax.set_ylim(0.05, 0.75)
     fig.savefig(FIG/"fig1_arm_lattice.png"); plt.close(fig)
 

@@ -6,8 +6,8 @@ Five tags separate what was specified from what was measured (Supplement S1). `v
 (`67d9fe5`) is the historical implementation this study reconstructs; it is read and executed as
 archived, never edited. `xgboost-hpo-protocol-v1` froze the specification before the
 measurement-validation pilot, `-v2` incorporated the pilot, and `-v3` (`9b15ba7`) is the
-confirmatory protocol under which every unit ran. These tags record what was specified before any
-result existed; the 23 numbered amendments between them carry the cause of each change beside it.
+confirmatory protocol under which every unit ran. These tags record what was specified before the
+confirmatory campaign; the 23 numbered amendments between them carry the cause of each change beside it.
 `xgboost-hpo-confirmatory-results-v1` (`a4f20ed`) is the first verified analysis: the per-unit
 indicator table (1,080 rows, one per method-unit), the primary and secondary analysis artifacts,
 and the verified-claims file.
@@ -32,12 +32,13 @@ resumed run never recomputes a completed one. Request rows carry an attempt epoc
 latest attempt per `(method, stage)` is counted, which makes a resumed campaign equivalent to an
 uninterrupted one in the accounting as well as in the science.
 
-Two ledgers are kept separately and both reported. The **logical** ledger charges every evaluation a
+Two ledgers are kept separately and both reported. The logical ledger charges every evaluation a
 method requests, hit or miss; it is the scientific budget and the only quantity entering a fairness
-comparison. The campaign consumed **396,120 logical evaluations**, exactly the declared registry total, every
-one of the 120 units reconciling individually. The **physical** ledger counts misses only:
-**377,316 unique physical fits**, a **4.75% cache hit rate** — an engineering quantity that enters
-no comparison between methods.
+comparison. The campaign consumed 396,120 logical evaluations, exactly the declared registry total,
+every one of the 120 units reconciling individually. The physical ledger counts misses only:
+377,316 unique physical evaluations, a 4.75% cache hit rate. That is an engineering quantity that
+enters no comparison between methods. The code's per-unit accounting stores this count under the
+key `unique_physical_fits`.
 
 Memoization sits beneath method isolation. The cache key pins dataset identity, outer split
 identity, inner fold definition, the configuration after canonical type normalization (integers
@@ -61,11 +62,16 @@ The campaign is driven by `scripts/xgb_hpo_campaign.py` (`plan`, `dry-run`, `run
 `aggregate_campaign.py`, `primary_analysis.py` and `secondary_analysis.py`, and the claims map by
 `build_claims_map.py`, which reads every headline figure from a committed artifact at generation
 time. Audit artifacts rebuild under `--check`, comparing against the committed versions without
-writing.
+writing. Parts of the campaign, analysis and audit code were written with AI coding assistance,
+recorded as co-authorship in the commit history (Anthropic's Claude: Claude Opus 4.7 and
+Claude Opus 5, used through Claude Code, named as co-author on all 66 commits made for this
+study to its code, analysis scripts and tests).
 
 Raw datasets and heavy evaluation caches are deliberately unversioned. The four panel datasets are
 UCI or OpenML mirrors, obtainable independently and checksum-verified on acquisition; the 88-run
 face-centred central composite design is versioned with its SHA-256. The per-unit experiment tree,
 including one SQLite evaluation cache per unit, is not committed. Committed instead are the frozen
-code, the protocol, the amendment ledger, the per-unit indicator table and the analysis artifacts —
-enough to recompute every reported quantity without re-running the campaign.
+code, the protocol, the amendment ledger, the per-unit indicator and NBI mechanism tables and the
+analysis artifacts, so every reported quantity traces to a committed artifact without re-running the
+campaign. Regenerating the per-unit tables, and the post-campaign computations listed in
+Section 8.7, needs the uncommitted per-unit tree.

@@ -3,7 +3,7 @@
 **Figure 1. The arm lattice.** Each arrow is a single-factor contrast and the label
 names the one thing it varies; everything else is held fixed by a run-time fingerprint
 over the solver configuration, realizer, weight grid, surrogate identities and
-reference. The two primary contrasts are marked.
+reference. The three primary contrasts are marked.
 
 **Figure 2. The geometry contrast, per replication.** Paired differences in
 CORE-relative hypervolume ratio, NBI-S minus WS-S, sorted within each dataset, $R = 30$,
@@ -16,10 +16,10 @@ which is why its contrast does not resolve at $R = 30$ despite a larger point es
 
 **Figure 4. Anchor provenance and the associated geometry.** Left: the full
 NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which inserts
-NBI-R's empirical anchors into NBI-S's set and changes nothing else. Right: the CHIM
-extent under empirical anchors relative to surrogate-derived anchors, as a per-dataset
-median. The juxtaposition is an association, not a demonstrated cause, and it does not
-hold on MAGIC.
+NBI-R's empirical anchors into NBI-S's set and changes nothing else. Right (post hoc): the
+CHIM extent under empirical anchors relative to surrogate-derived anchors, as a per-dataset
+median. The juxtaposition is a post hoc association, not a demonstrated cause: clear on Adult
+and Bank Marketing, weak on Spambase and absent on MAGIC.
 
 **Figure 5. Reference sensitivity.** Median paired difference under the CORE reference
 (primary, horizontal) against the AUGMENTED reference (mandatory sensitivity,

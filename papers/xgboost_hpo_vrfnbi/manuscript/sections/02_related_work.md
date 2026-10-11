@@ -75,17 +75,17 @@ computed on a returned front is not the generalization error it was derived for.
 
 ### 2.7 Methodological lineage
 
-This work follows the first author's master's dissertation, which applied the DoE–response-surface–
-NBI-VRF construction to XGBoost hyperparameter optimization on the datasets reused here, and the
-group's published formulation in Pereira et al. (2025), which formulates the method using canonical
-NBI. A code-level reconstruction of the archived dissertation implementation established that front
-construction there used normalized weighted scalarization, although the historical text
-used NBI terminology; that is stated once as a fact about the archived code, it is why the arm set
-contains both a historical weighted-sum arm and a specification-matched one, and no claim is made
-about any implementation not reconstructed here, including that of Pereira et al. (2025). A bounded
-search located no work applying NBI or NBI-VRF to hyperparameter optimization; non-location is weaker
-than absence, and the transfer is not offered as the contribution. NBI, Varimax-rotated factor
-objectives, and design of experiments for hyperparameter tuning are all prior art, and none of them
-is claimed here — §2.7 records each element with its owner. What this paper contributes is
-the prospectively frozen decomposition of that inherited construction into the three mechanisms it
-bundles, described in §3.
+This work follows the first author's master's dissertation (Ribeiro 2026), which applied the
+DoE–response-surface–NBI-VRF construction to XGBoost hyperparameter optimization, including on the
+MAGIC Gamma Telescope dataset reused here (Section 5.1), and the group's published formulation in
+Pereira et al. (2025), which formulates the method using canonical NBI. The archived dissertation
+implementation builds its front by normalized weighted scalarization (Section 3.1), which is why
+the arm set contains both a historical weighted-sum arm and a specification-matched one; no claim
+is made about any implementation not examined here, including that of Pereira et al. (2025). A
+bounded search located no work applying NBI or NBI-VRF to hyperparameter optimization;
+non-location is weaker than absence, and the transfer is not offered as the contribution. NBI
+(Section 2.1), Varimax-rotated factor objectives (Section 2.5), and design of experiments for
+hyperparameter tuning (Section 2.3) are all prior art, and none of them is claimed here. What this
+paper contributes is the prospectively frozen decomposition of that inherited construction into
+the three mechanisms it bundles. Section 3 describes the historical pipeline and how it differs
+from canonical NBI, and Section 4 states the three single-factor contrasts.
