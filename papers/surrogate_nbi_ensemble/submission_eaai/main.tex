@@ -34,6 +34,11 @@
 \def\ps@pprintTitle{\let\@oddhead\@empty\let\@evenhead\@empty
   \def\@oddfoot{\footnotesize\itshape Preprint submitted to \@journal\hfill}\let\@evenfoot\@oddfoot}
 \makeatother
+% run-in paragraph headings as in the article class: the sources end each heading with its own full stop,
+% and elsarticle's default \paragraph would add a second one
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}{3.25ex \@plus1ex \@minus.2ex}{-1em}{\normalfont\normalsize\itshape}}
+\makeatother
 
 \newcommand{\wvec}{\mathbf{w}}
 \newcommand{\simplex}{\Delta^{M-1}}
