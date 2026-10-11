@@ -57,7 +57,7 @@ construction, so the \emph{less} flexible model is accidentally protected while 
 interior maximum the data do not support.
 
 Hence a division of labour: the gate is worth its 100 extra evaluations for separating unusable surfaces from
-excellent ones, but only the cheaper anchor check that distinguishes NBI-B from NBI-A removes the failure instead of
+excellent ones, but only the anchor check that distinguishes NBI-B from NBI-A removes the failure instead of
 diagnosing it.
 
 \subsection{Smooth surrogates against a rank statistic}
@@ -78,9 +78,9 @@ machinery can work as advertised: Santander's log-loss surface passes the gate i
 Non-smoothness is a contributing factor, not the explanation. Were it the explanation, the smooth convex objective
 would be the reliable one everywhere, and it is not: log-loss surfaces pass the gate in $30/30$ partitions on
 Santander and UCI credit but in only $3/30$ on BNP Paribas and $12/30$ on Porto Seguro. On BNP Paribas the smooth
-objective does \emph{worse} than the rank statistic ($3/30$ against $5/30$; median external $\rext$ of $-0.180$
-against $+0.118$), and its external RMSE of $0.121$ nats is $17.7\%$ of the response range, the worst relative
-external fit anywhere in this study; on Porto Seguro the two are effectively tied ($12$ against $16$). Only Santander
+objective does no better than the rank statistic ($3/30$ against $5/30$ at the pre-specified gate thresholds and the
+component clip of \cref{sec:protocol:models}; median $\rext$ of $-0.180$ against $+0.118$); on Porto Seguro the two
+are effectively tied ($12$ against $16$). Only Santander
 shows the sharp separation the smoothness account predicts ($\rext$ $0.971$ for log-loss against $-0.333$ for
 ROC-AUC), and one dataset is an illustration rather than a mechanism. What these data establish is that adequacy
 varies by dataset \emph{and} by metric and has to be measured on unseen compositions; they do not identify what,
@@ -103,11 +103,11 @@ Section~S7).
 \subsection{Compute against fidelity}
 \label{sec:disc:compute}
 
-Metamodel-free NBI is best or tied-best on the primary endpoints, so it is a defensible default, but it spends about
-$4.2\times10^{5}$ real evaluations per replication against none for the surrogate arms, at 2.3 to 6.2 times the
-wall-clock cost. That spend is strongly conditional: on UCI credit the threefold premium buys the largest gain, while
-on Santander a seventy-three-fold premium buys $+0.008$ hypervolume on a dataset whose log-loss surface is already
-exact.
+Among the surrogate-derived methods, metamodel-free NBI is best or tied-best on the primary endpoints, although an
+external evolutionary optimizer on the same real objectives, given about twice NBI-C's weight-vector evaluations,
+does better still (\cref{sec:results:nsga2}). Evaluating the real objectives throughout its solve, NBI-C costs 2.3 to
+6.2 times the standalone wall clock of NBI-B (\cref{tab:compute}), and what that premium buys is strongly conditional:
+on UCI credit the smallest premium buys the largest gain, while on Santander the largest buys $+0.008$ hypervolume.
 
 Its affordability is specific to this problem: one evaluation is a matrix--vector product plus a sort, $0.37$ to
 $2.13$~ms here. Where each evaluation needs a model refit the ordering reverses and the surrogate is the only viable
@@ -142,9 +142,10 @@ interior and miss the cheap low-support solutions --- pure vertices and two-mode
 
 Whether a relaxation and the support it induces agree has been examined in one related setting, and the answer went
 the other way: for budgeted learning with feature re-use, a support-cost programme is solved exactly by its linear
-relaxation \citep{nan2015budgeted} --- a guarantee our setting does not inherit. Report which cost model is used; zero
+relaxation \citep{nan2016pruning}, a guarantee our setting does not inherit. Report which cost model is used; zero
 weights below the activity threshold and re-evaluate, since an inert weight just above $\varepsilon$ produced a
-spurious $250$~ms difference in our own analysis; and optimize over supports explicitly where deployment cost is the
+spurious difference of about $250$~ms per 1{,}000 rows in our own analysis; and optimize over supports explicitly
+where deployment cost is the
 real objective.
 
 \subsection{What the framework's transfer teaches}
@@ -169,9 +170,9 @@ One connection this study does not establish is between front quality and the de
 \emph{Within} a candidate set, out-of-fold selection transfers to the holdout in level, and the out-of-fold-best of
 the four knee picks is also holdout-best in $30/30$, $15/30$, $23/30$ and $30/30$ partitions
 (\cref{sec:results:holdout}); across methods it is much weaker. Paired by partition under the weighted cost, the two
-contrasts that carry our only Holm-significant primary results have \emph{worse} single-objective holdout accuracy at
-the knee-selected point, on ROC-AUC and on log-loss alike, and cheaper selected points (supplementary Section~S10)
---- different points of the same trade-off rather than a contradiction of indicator results computed over whole
+NBI contrasts that are Holm-significant on both primary endpoints have \emph{worse} single-objective holdout accuracy at
+the knee-selected point, on ROC-AUC and on log-loss alike, and cheaper selected points (supplementary Section~S10).
+These are different points of the same trade-off rather than a contradiction of indicator results computed over whole
 fronts. They do not support the converse either: on these four datasets a better approximation of the front does not
 reliably buy a better selected solution, and the two contrasts where the pick does improve are the ones with the
 smaller indicator effects. Any statement that out-of-fold selection transfers must therefore be read as within-method

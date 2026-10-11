@@ -453,9 +453,10 @@ def tab02_gate():
 \centering
 \caption{Surrogate reliability over 30 partitions, all quantities measured on the \emph{same} 100 unseen
 compositions: the parsimony rule selects the Scheff\'e order on them (lowest order within 10\% of the best external
-RMSE) and the reliability gate ($\rext \ge 0.5$ and Spearman $\rho \ge 0.9$) is then scored on them, so the gate is
-not independent of order selection. Orders are abbreviated lin./quad./sp.\,cubic. Pass counts carry Wilson 95\%
-intervals and the median external $R^2$ its bootstrap interval. The last two columns give the median external RMSE of
+RMSE) and the pre-specified reliability gate ($\rext \ge 0.5$ and Spearman $\rho_{\mathrm{ext}} \ge 0.9$) is then
+scored on them, so the gate is not independent of order selection. Orders are abbreviated lin./quad./sp.\,cubic. Pass
+counts carry Wilson 95\% intervals, and the median external $R^2$ is shown with the bootstrap interval of the mean
+external $R^2$. The last two columns give the median external RMSE of
 the selected surface in the response's own units and the median observed range of that response over the same 100
 points: on a flat surface $\rext$ is ill-posed, so the RMSE read against the range is the more informative adequacy
 measure. Sources: \texttt{statistics/reliability\_gate\_r30.csv}, \texttt{tables/scheffe\_orders.csv}.}
@@ -621,8 +622,10 @@ def tab05_compute():
     body = "\n".join(rows[:-1])
     tex = r"""\begin{table*}[t]
 \centering
-\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 8 worker threads)
-and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own.
+\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 14 cores)
+and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own
+(design, gate and ROC-AUC-search entries count evaluated compositions; NBI-C's solve counts each ROC-AUC and each
+log-loss computation, two per weight-vector evaluation).
 NBI-A is charged the 66-run design, the 100 gate compositions and the Scheff\'e fit (``design\,+\,fit''), since its
 anchors are the optima of the fitted surfaces; NBI-B is charged the same \emph{plus} the single-objective reference
 stage, which is where its real anchors come from and which is dominated by the direct ROC-AUC search over
@@ -881,13 +884,17 @@ def tab08_nsga2():
     body = "\n".join(rows)
     tex = r"""\begin{table*}[t]
 \centering
-\caption{Evaluation-matched NSGA-II against metamodel-free NBI (NBI-C), weighted cost, scored against the common
-augmented reference. Both optimize the same three real out-of-fold objectives and consume a matched number of real
-objective evaluations per replication (realized ratio 0.999996 overall, 0.99992--1.00010 per run). $\Delta$ is the
+\caption{NSGA-II against metamodel-free NBI (NBI-C), weighted cost, scored against the common augmented reference.
+Both optimize the same three real out-of-fold objectives. NSGA-II's budget was set per replication to NBI-C's count of
+real objective evaluations (realized ratio 0.999996 overall, 0.99992--1.00010 per run), but that count records ROC-AUC
+and log-loss separately, so NSGA-II performed twice as many weight-vector evaluations. $\Delta$ is the
 paired difference signed so that $\Delta > 0$ favours NSGA-II, with its percentile-bootstrap 95\% interval, the
 win/tie/loss count over 30 partitions and the Holm-corrected Nadeau--Bengio $p$. The last column is the wall-clock
-ratio, which is \emph{not} matched. The direction is the same under the sample-core reference
-(supplementary Table~S2). Source: \texttt{reports/pco213\_postwork\_benchmark/nsga2/}.}
+ratio, which is not matched either. The direction is the same under the sample-core reference, which contains no
+output of the five compared methods: median $\Delta \mathrm{IGD}^+$ $+0.0047$, $+0.0075$, $+0.0065$ and $+0.0034$
+(W/T/L $29/0/1$, $30/0/0$, $28/0/2$, $24/0/6$) and median $\Delta$ HV ratio $+0.0060$, $+0.0098$, $+0.0113$ and
+$+0.0114$ ($30/0/0$, $30/0/0$, $26/0/4$, $30/0/0$), in row order, with the same cells reaching corrected significance.
+Source: \texttt{reports/pco213\_postwork\_benchmark/nsga2/}.}
 \label{tab:nsga2}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -980,13 +987,14 @@ def tab03_main_compact():
     tex = r"""\begin{table*}[t]
 \centering
 \caption{Primary paired comparisons under the weighted cost, 30 partitions per dataset. $\Delta > 0$ favours the
-second-named set ($\Delta\mathrm{IGD}^+ = \mathrm{IGD}^+_{\mathrm{ref}} - \mathrm{IGD}^+_{\mathrm{new}}$,
+first-named (new) set ($\Delta\mathrm{IGD}^+ = \mathrm{IGD}^+_{\mathrm{ref}} - \mathrm{IGD}^+_{\mathrm{new}}$,
 $\Delta\mathrm{HV} = \mathrm{HV}_{\mathrm{new}} - \mathrm{HV}_{\mathrm{ref}}$). Median with its percentile-bootstrap
-95\% interval, wins/ties/losses, and the Holm-corrected Nadeau--Bengio significance band ($\rho = 0.25$, family of
-eight tests per dataset; \emph{n.s.} means the corrected test does not reach 0.05, which for a bimodal or heavy-tailed
-difference is expected and is why the median and the win count are reported). Means, rank-biserial effect sizes,
-exact $p$-values, the two floor-check comparisons against random scalarization and random Dirichlet search, and the
-full support-cost repetition are in supplementary Tables~S1 and~S5. Source:
+95\% interval (not corrected for partition overlap), wins/ties/losses, and the Holm-corrected Nadeau--Bengio
+significance band ($\rho = 0.25$, family of eight tests per dataset; \emph{n.s.} means the corrected test does not
+reach 0.05, which for a bimodal or heavy-tailed difference is expected and is why the median and the win count are
+reported). Each dataset's eight-test family also contains NBI-C versus random scalarization (confounded with the
+objective source) and NBI-C versus the random Dirichlet sample (a floor check); those comparisons, the means,
+rank-biserial effect sizes, exact $p$-values and the full support-cost repetition are in supplementary Section~S5. Source:
 \texttt{statistics/paired\_primary\_effects.csv}, \texttt{paired\_primary\_tests.csv}.}
 \label{tab:paired}
 \small

@@ -30,8 +30,8 @@ builds on.
 - One of the three configurations studied here, **NBI-A — surrogate objectives with anchors taken from the
   surrogate's own optima — is the construction of the 2025 paper, and we report it failing on two of our four
   datasets.** The manuscript's central corrective finding is directed at our own prior method.
-- We additionally report an external optimizer (NSGA-II, at a matched real-objective evaluation budget)
-  outperforming the pipeline's strongest arm on all four datasets.
+- We additionally report an external optimizer (NSGA-II, given about twice the weight-vector evaluations of the
+  pipeline's strongest arm) outperforming that arm on all four datasets.
 - No prose, figure or table is reused from any prior publication.
 
 A dimension-by-dimension self-overlap analysis across thirteen dimensions accompanies the submission as a

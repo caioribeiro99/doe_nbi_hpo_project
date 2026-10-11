@@ -1,8 +1,7 @@
 \section{Related work}
 \label{sec:related}
 
-Per-paper narration of the works cited here is in the supplementary literature review; this section keeps what bears
-on a novelty claim.
+This section keeps only what bears on a novelty claim.
 
 \subsection{Classifier ensemble weighting}
 \label{sec:rel:weighting}
@@ -105,17 +104,18 @@ is anticipated rather than surprising, and our real-anchor arm is best understoo
 one model-management step applied to the anchors alone --- rather than as adaptive infill.
 
 Extreme-point reliability has been studied, but on the other side of the surrogate divide.
-\citet{isermann1988payoff} showed computationally that payoff-table minima built from individual optima can differ
-substantially from the true minimum criterion values over the efficient set; nadir and front-range mis-estimation
+\citet{isermann1988payoff} showed computationally that the worst criterion values in a payoff table built from
+individual optima can differ substantially from the true worst values over the efficient set; nadir and front-range
+mis-estimation
 degrades performance across MOEAs \citep{deb2010nadir,he2021normalization}; and \citet{herrmann2026nonextreme} treat
 the \emph{choice} of individual minima as a design decision, replacing extreme with non-extreme minima to refine the
 utopia--nadir hyperbox.
 That misplaced anchors damage a scalarization is therefore established, and we claim neither
-the mechanism nor its direction as a discovery. In all of that work the error arises from degeneracy or search
-difficulty on the \emph{true} objectives; a metamodel is never the culprit. The normalized normal constraint
-\citep{messac2003normalized}, introduced partly to make anchor-based normalization better behaved, is the
-textbook remedy for the pathology we report; our protocol was frozen with NBI as the front generator, so we do not
-evaluate it here and record it as the most direct methodological follow-up.
+the mechanism nor its direction as a discovery. In all of that work the extreme points are computed or estimated on the
+\emph{true} objectives; none of it concerns anchor error introduced by a metamodel. The normalized normal constraint
+method \citep{messac2003normalized} derives its normalization and its constraints from the individual minima, as NBI
+does, so on fitted surfaces it too would take its anchors from the surrogate; our protocol was frozen with NBI as the
+front generator, so we do not evaluate whether the effect we report carries over to it.
 
 What we did not find is a study computing a CHIM method's anchors both ways on one problem and comparing the
 resulting fronts --- the surrogate \emph{provenance} of the anchor error, and the controlled contrast, rather than the
@@ -151,8 +151,8 @@ between ensemble and cascade \emph{architectures}, not between two cost function
 vector. Narrowed to that resolution, to the best of our literature search no prior work contrasts the step cost a
 deployed support pays with the continuous relaxation the optimizers minimize \emph{for one weight vector of one
 weighted soft-voting ensemble}, and reports that the two disagree about which method wins. Where a related question
-has been settled it went the other way: for budgeted learning with feature re-use, the support-cost programme is
-provably solved by its linear relaxation \citep{nan2015budgeted}. Our setting does not
+has been settled it went the other way: for budgeted learning with feature re-use, a support-cost programme is
+provably solved by its linear relaxation \citep{nan2016pruning}. Our setting does not
 inherit that guarantee, and \cref{sec:results:cost} shows the two definitions disagreeing.
 
 \subsection{The gap}
@@ -169,7 +169,7 @@ literature search, is an evaluation of whether this pipeline can be trusted once
 to classifiers: no external validation of the mixture surrogate on unseen compositions, no computation of the anchors
 both ways on one problem so that surrogate-derived and real anchors can be contrasted, no metamodel-free arm run
 alongside the surrogate arms as a control, no revalidation of candidates on the true objectives against an
-empirical reference with a method-independent core, no replicated partition study of the whole pipeline, and no
+empirical reference whose sampled core contains no output of the compared methods, no replicated partition study of the whole pipeline, and no
 contrast, for one and the same weight vector, between the cost that is optimized and the cost that is paid.
 
 The gap is therefore not a missing method. It is the absence of the controls that would tell a practitioner when the

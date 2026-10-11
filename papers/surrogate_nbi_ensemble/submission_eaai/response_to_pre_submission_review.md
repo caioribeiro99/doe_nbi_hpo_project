@@ -1,9 +1,10 @@
 # Response to the internal pre-submission review
 
-Before submission the manuscript was put through a three-reviewer adversarial simulation: a multiobjective-
-optimization specialist, a machine-learning evaluation specialist and an associate editor assessing novelty and
-scope. Each was instructed to check claims against the underlying CSVs rather than the prose, and to recommend
-rejection if warranted. A fourth agent verified every criticism against the artifacts before triage. The full record,
+Before submission the manuscript was put through a three-reviewer adversarial simulation run with AI agents
+(Anthropic's Claude, used through Claude Code): a multiobjective-optimization
+specialist, a machine-learning evaluation specialist and an associate editor assessing novelty and scope. Each was
+instructed to check claims against the underlying CSVs rather than the prose, and to recommend rejection if
+warranted. A fourth AI agent verified every criticism against the artifacts before triage. The full record,
 including all three reviews and the verification verdicts, is in `REVIEWER_SIMULATION.md`.
 
 **Outcome: MAJOR from all three. 21 major comments — 17 valid, 4 partially valid, none invalid. All 20 must-fix items
@@ -26,7 +27,7 @@ Three previously inconsistent statements now agree.
 
 ## Corrections of fact and attribution
 
-- Five verified references were in the bibliography but cited nowhere. Each is now cited and the surrounding claim
+- Five references were in the bibliography but cited nowhere. Each is now cited and the surrounding claim
   narrowed: metamodel-free NBI on measured objectives is published (Gellerich et al. 2023); that misplaced anchors
   damage a scalarization is established (Isermann 1988; Deb et al. 2010; Herrmann et al. 2026) — what is new is the
   *surrogate* provenance and the controlled contrast; that a change of cost accounting reorders comparisons is known
@@ -35,7 +36,9 @@ Three previously inconsistent statements now agree.
 - The conclusions are now explicitly scoped to **one-shot, no-infill** surrogate pipelines, since the
   surrogate-assisted literature we cite refits during search.
 - A real table-generation bug was found: medians were paired with *mean* bootstrap intervals, printing point
-  estimates outside their own intervals. Fixed, and the numerical audit now asserts interval consistency structurally.
+  estimates outside their own intervals. Fixed for the paired comparisons, whose interval consistency the numerical
+  audit now asserts structurally; the reliability-gate tables still print the median external R-squared beside the
+  interval of the mean, and their captions now say so.
 - The sample-core reference is described precisely: it contains no output of the five compared methods, but it does
   carry ε-constraint points and the single-objective references.
 - The reliability gate's non-independence from order selection is now disclosed — both use the same 100 unseen
@@ -53,6 +56,7 @@ Three previously inconsistent statements now agree.
 ## Deliberately not done
 
 Three reviewer requests would require reopening the frozen protocol and are recorded as reviewer-response material
-rather than acted on: a fifth dataset, a larger replication count, and a second evolutionary optimizer (MOEA/D or
-NSGA-III). We judged that adding a second evolutionary algorithm would not change any claim, since the first already
-outperforms the pipeline's best arm and the paper's contribution is diagnostic.
+rather than acted on: a fifth dataset, a replication count beyond the 30 already reached by extending the
+ten-replication study (Section 4), and a second evolutionary optimizer (MOEA/D or NSGA-III). We judged that adding a
+second evolutionary algorithm would not change any claim, since the first already outperforms the pipeline's best arm
+and the paper's contribution is diagnostic.

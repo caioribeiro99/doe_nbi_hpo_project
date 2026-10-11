@@ -26,30 +26,44 @@ The ensemble contains $M = 5$ deliberately heterogeneous learners with fixed hyp
 search: $\ell_2$-regularized logistic regression; Gaussian naive Bayes; $k$-nearest neighbours with $k = 100$; a
 random forest with 200 trees and a minimum of 20 samples per leaf; and gradient-boosted trees (XGBoost, 400 rounds,
 depth 6, learning rate 0.1, subsample and column subsample 0.8) \citep{chen2016xgboost}. The first four are the
-\texttt{scikit-learn} implementations \citep{pedregosa2011scikit}. The zoo spans the accuracy--cost--calibration space
-rather than forming a competitive stack: it deliberately includes a member strong in ranking but poorly calibrated
-(Gaussian naive Bayes) and one accurate but two orders of magnitude more expensive at inference time ($k$-nearest
-neighbours). Preprocessing --- imputation, standardization and encoding, detailed per model in the supplement --- is
-fitted inside each training fold and never on validation data.
+\texttt{scikit-learn} implementations \citep{pedregosa2011scikit}. These values were committed to the project code on
+2026-07-06, before the replicated study, and were not changed afterwards; Gaussian naive Bayes uses the library
+defaults, as do the inverse regularization strength of logistic regression ($C = 1$) and the XGBoost depth. The zoo
+spans the accuracy--cost--calibration space rather than forming a competitive stack: Gaussian naive Bayes is the best
+member out of fold on Santander but has the worst log-loss on the other three datasets, and $k$-nearest neighbours,
+the weakest member by ROC-AUC on Santander and Porto Seguro, costs more at inference time than the other four
+combined (supplementary Section~S2; implications in \cref{sec:limitations}). Preprocessing (imputation,
+standardization and encoding, detailed per model in supplementary Section~S1) is fitted inside each training fold and
+never on validation data.
 
 Each replication splits the dataset by a stratified 80/20 partition into a training part and an untouched holdout.
 Within the training part, stratified 5-fold cross-validation produces out-of-fold probability estimates $\mathbf{P}$
 for all five models; these are the only quantities the design, the surfaces, the optimizers and the selection rules
 ever see. Each model is then refitted once on the whole training part to produce holdout probabilities $\mathbf{Q}$,
-used exclusively for the confirmation analysis of \cref{sec:results:holdout}. Because \cref{eq:ensemble} is linear in
+used exclusively for the confirmation analysis of \cref{sec:results:holdout}. Every entry of $\mathbf{P}$ and
+$\mathbf{Q}$ is clipped to $[10^{-3}, 1-10^{-3}]$, a constant fixed before the study and never changed: $k$-nearest
+neighbours with $k = 100$ outputs exact zeros and ones, which can make the log-loss infinite at its vertex, and
+clipping the components rather than the blend keeps \cref{eq:ensemble} linear in $\wvec$. Because \cref{eq:ensemble} is linear in
 $\wvec$, evaluating any weight vector costs one matrix--vector product, which is what makes an empirical reference of
 $10^{5}$ points and a metamodel-free NBI arm affordable.
 
-Inference cost $c_i$ is measured, not assumed: per model and replication, the median of five timed
-\texttt{predict\_proba} calls on a fixed 10{,}000-row batch, including preprocessing, in milliseconds per 1{,}000 rows.
+Inference cost $c_i$ is measured, not assumed: per model and replication, the median wall-clock time of five
+consecutive \texttt{predict\_proba} calls of the refitted model, including preprocessing, in milliseconds per
+1{,}000 rows. One batch of holdout rows, drawn with the replication seed, is shared by the five models (10{,}000 rows;
+the whole 6{,}000-row holdout on UCI credit). The models are timed one after another in a fixed, non-randomized order
+(logistic regression, Gaussian naive Bayes, $k$-nearest neighbours, random forest, XGBoost), each right after its own
+refit, an untimed holdout prediction and an untimed warm-up call on the batch. Three of them ($k$-nearest neighbours,
+the random forest and XGBoost) are set to use all 14 cores (\texttt{n\_jobs}~$=-1$); the code and the launch script
+set no other parallel option or thread limit for the timed calls.
 
 \subsection{Replication, seeds and the statistical unit}
 \label{sec:protocol:replication}
 
 The entire pipeline, from the outer partition through scoring, is executed $R = 30$ times per dataset, giving 120
 replications, with the outer partition, the inner folds and every stochastic component seeded by
-$\text{20260904} + r$ for replication $r$. All seeds are persisted in the manifest, and the checkpointed runner of
-\cref{sec:repro} recomputes any stage exactly.
+$\text{20260904} + r$ for replication $r$. All seeds are persisted in the manifest, and the checkpointed runner
+described in the Reproducibility statement recomputes any stage exactly, except that re-running the out-of-fold stage
+re-measures the wall-clock costs $c_i$ and therefore changes every result that depends on them.
 
 The statistical unit is \textbf{one outer partition of one dataset}. Because all methods are evaluated on the same
 partition, every comparison is \emph{paired}. Two consequences constrain the analysis throughout.
@@ -66,12 +80,19 @@ experiments'' is made anywhere in this paper.
 \subsection{Statistical analysis}
 \label{sec:protocol:stats}
 
-The primary comparisons were fixed before the replicated benchmark and committed to version control: NBI-B versus
-NBI-A, NBI-C versus NBI-B, NBI-C versus random scalarization, and NBI-C versus the random Dirichlet sample. The
+The statistical analysis plan (supplementary Section~S1) designates four primary comparisons. NBI-B versus NBI-A and
+NBI-C versus NBI-B address RQ4 and RQ5. NBI-C versus random scalarization and NBI-C versus the random Dirichlet sample
+compare NBI-C, as specified and not at equal budget, with the two cheap alternatives of \cref{sec:method:refs}: the
+first comparison is confounded with the objective source and the second is a floor check. The plan was committed to
+version control after the first ten replications had been run and analysed, minutes after the extension to 30
+replications was launched and before any of its partitions had been completed, so it is prospective only for
+partitions 10--29. The paired contrasts coded before the benchmark produced its first output were descriptive and
+compared both cheap alternatives with NBI-B rather than NBI-C; \cref{sec:results:metamodelfree} reports both
+pairings. The
 primary endpoints are $\igdp$ and the hypervolume ratio, computed on the revalidated \emph{out-of-fold objectives of
 the 80\% training part} --- the only quantities the design, the surfaces, the optimizers and the selection rules ever
 see (\cref{sec:protocol:models}) --- against the empirical reference of the same replication, under the weighted cost
-that the optimizers actually minimized; the support-cost repetition is a pre-specified sensitivity analysis. The
+that the optimizers actually minimized; the support-cost repetition is a sensitivity analysis. The
 untouched 20\% holdout enters no primary endpoint: it is used only for the confirmation analysis of
 \cref{sec:results:holdout}. All other indicators are descriptive.
 

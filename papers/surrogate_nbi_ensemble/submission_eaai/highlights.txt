@@ -1,9 +1,5 @@
-Highlights (Elsevier format: 3 to 5 bullets, each at most 85 characters including spaces)
-
 - Mixture-design response surfaces over classifier-ensemble weights are reproducible
-- Anchor misplacement, not surface error, dominates surrogate-assisted NBI failure
+- Anchor misplacement was the largest surrogate-NBI failure on two of four datasets
 - An external reliability gate detects bad surfaces but not misplaced anchors
-- A large Scheffe interaction can satisfy the synergism criterion yet not hold up
-- NSGA-II at a matched evaluation budget beats the metamodel-free NBI arm
-
-Character counts: 82, 80, 75, 79, 71.
+- A large Scheffé interaction can satisfy the synergism criterion yet not hold up
+- NSGA-II with about twice the weight-vector evaluations beats metamodel-free NBI

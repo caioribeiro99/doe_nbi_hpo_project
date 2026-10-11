@@ -1,7 +1,9 @@
 \begin{table*}[t]
 \centering
-\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 8 worker threads)
-and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own.
+\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 14 cores)
+and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own
+(design, gate and ROC-AUC-search entries count evaluated compositions; NBI-C's solve counts each ROC-AUC and each
+log-loss computation, two per weight-vector evaluation).
 NBI-A is charged the 66-run design, the 100 gate compositions and the Scheff\'e fit (``design\,+\,fit''), since its
 anchors are the optima of the fitted surfaces; NBI-B is charged the same \emph{plus} the single-objective reference
 stage, which is where its real anchors come from and which is dominated by the direct ROC-AUC search over

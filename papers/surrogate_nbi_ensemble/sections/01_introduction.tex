@@ -37,8 +37,8 @@ above, NBI's anchors are optima of the surrogate in another space; when it holds
 the anchors are feasible-region points --- often vertices --- so an anchor error displaces the geometry in which every
 subproblem is posed. NBI derives its whole search geometry from the payoff matrix of individual optima
 \citep{das1998nbi}, so errors there propagate globally. That misplaced anchors damage the construction is established:
-payoff-table minima can differ substantially from the true minimum criterion values over the efficient set
-\citep{isermann1988payoff}, the nadir point is hard to estimate \citep{deb2010nadir}, and the choice of the individual
+the worst criterion values read off a payoff table can differ substantially from the true worst values over the
+efficient set \citep{isermann1988payoff}, the nadir point is hard to estimate \citep{deb2010nadir}, and the choice of the individual
 minima has itself been treated as a design lever \citep{herrmann2026nonextreme}. What that literature, and the
 normalization remedies built on it \citep{messac2003normalized}, asks about is estimating the \emph{true} objectives;
 none of it is about a surrogate standing in for them.
@@ -75,12 +75,12 @@ MOEA/D-EGO or SMS-EGO \citep{knowles2006parego,zhang2010moeadego,ponweiser2008sm
 the true objectives inside the search loop and exist precisely to repair the kind of surrogate error diagnosed here.
 Every conclusion in this paper is scoped to the one-shot, no-infill case (\cref{sec:rel:surrogate}).
 
-We also run NSGA-II on the same objectives at a matched real-objective evaluation budget. Four controls the lineage
-does not contain surround the decomposition: external validation of every surface on 100 unseen compositions, with a
-reliability gate fixed before the replicated benchmark; revalidation of every candidate on the true objectives before
-any indicator; an empirical Pareto reference whose sampled core of at least $10^{5}$ points per replication is built
-independently of the surrogate and checked for convergence, then augmented with every candidate set for scoring; and
-an untouched holdout never used for fitting, weighting, thresholding or selection.
+We also run NSGA-II on the same objectives, with about twice as many weight-vector evaluations as NBI-C. Four controls
+the lineage does not contain surround the decomposition: external validation of every surface on 100 unseen
+compositions, with a reliability gate fixed before the replicated benchmark; revalidation of every candidate on the
+true objectives before any indicator; an empirical Pareto reference whose sampled core of at least $10^{5}$ points per
+replication contains no output of the compared methods and is checked for convergence, then augmented with every
+candidate set for scoring; and an untouched holdout never used for fitting, weighting, thresholding or selection.
 
 Four public binary tabular datasets --- customer-transaction prediction (Santander), insurance-claim processing (BNP
 Paribas Cardif), auto-insurance claim prediction (Porto Seguro) and consumer-credit default (UCI credit) --- are
@@ -102,7 +102,7 @@ reading of the interaction coefficients survive confrontation with the real obje
 \item[\textbf{RQ4}] Does replacing surrogate anchors with real ones repair the front, and does the reliability gate
 predict when this is necessary?
 \item[\textbf{RQ5}] How does surrogate-assisted NBI compare with metamodel-free NBI, what does the difference cost,
-and how do both compare with a canonical evolutionary optimizer at a matched evaluation budget?
+and how do both compare with a canonical evolutionary optimizer on the same objectives?
 \item[\textbf{RQ6}] How large is the actual conflict between discrimination and calibration?
 \item[\textbf{RQ7}] Does the definition of deployment cost change which method wins?
 \item[\textbf{RQ8}] Do solutions selected on out-of-fold data transfer to an untouched holdout?
@@ -135,10 +135,11 @@ On one dataset the two properties diverge: the partitions where surrogate-anchor
 where the parsimony rule selects a surface that fits held-out compositions \emph{better} and passes the gate more
 often. Surface quality and argmax quality are different properties, and only the second governs NBI.
 
-\item \textbf{A replicated evaluation architecture for ensemble-weight optimization} --- external surrogate
-validation, real-objective revalidation, a reference with a method-independent sampled core and holdout confirmation,
-over 4 datasets $\times$ 30 partitions with overlap-corrected paired inference. Three findings it overturned --- two
-of them artifacts that survived an earlier ten-partition analysis --- are reported explicitly.
+\item \textbf{A replicated evaluation architecture for ensemble-weight optimization}: external surrogate validation,
+real-objective revalidation, a reference whose sampled core contains no output of the compared methods, and holdout
+confirmation, over 4 datasets $\times$ 30 partitions with paired inference and Nadeau--Bengio-corrected primary tests.
+Three findings it overturned, one of them an artifact noted but not resolved in the ten-partition analysis, are
+reported explicitly.
 
 \item \textbf{Two findings about how these surfaces should be read.} The classical synergism criterion $\beta_{ij} >
 |\beta_i - \beta_j|$ holds for the leading pair's fitted surfaces on all four datasets in every partition, yet the
@@ -149,8 +150,9 @@ a comparison is known across ensemble and cascade architectures \citep{wang2022c
 the disagreement between two accountings applied to one and the same weight vector.
 \end{enumerate}
 
-We claim neither that NBI outperforms other multiobjective optimizers --- at a matched evaluation budget NSGA-II
-outperforms its metamodel-free arm on all four datasets --- nor that it produces more uniformly spaced fronts, nor
-that any method here is a general-purpose recommendation. The contribution is the set of conditions under which an
-established framework can and cannot be trusted in a new problem class, and the controls needed to tell the
-difference --- stated for the one-shot, no-infill form of that framework, since no arm here performs iterative infill.
+We claim neither that NBI outperforms other multiobjective optimizers (NSGA-II, given about twice the weight-vector
+evaluations of NBI's metamodel-free arm, outperforms that arm on all four datasets), nor that it produces more
+uniformly spaced fronts, nor that any method here is a general-purpose recommendation. The contribution is the set of
+conditions under which an established framework can and cannot be trusted in a new problem class, and the controls
+needed to tell the difference. Both are stated for the one-shot, no-infill form of that framework, since no arm here
+performs iterative infill.

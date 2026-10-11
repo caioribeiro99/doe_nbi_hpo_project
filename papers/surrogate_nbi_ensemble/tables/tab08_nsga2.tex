@@ -1,12 +1,16 @@
 \begin{table*}[t]
 \centering
-\caption{Evaluation-matched NSGA-II against metamodel-free NBI (NBI-C), weighted cost, scored against the common
-augmented reference. Both optimize the same three real out-of-fold objectives and consume a matched number of real
-objective evaluations per replication (realized ratio 0.999996 overall, 0.99992--1.00010 per run). $\Delta$ is the
+\caption{NSGA-II against metamodel-free NBI (NBI-C), weighted cost, scored against the common augmented reference.
+Both optimize the same three real out-of-fold objectives. NSGA-II's budget was set per replication to NBI-C's count of
+real objective evaluations (realized ratio 0.999996 overall, 0.99992--1.00010 per run), but that count records ROC-AUC
+and log-loss separately, so NSGA-II performed twice as many weight-vector evaluations. $\Delta$ is the
 paired difference signed so that $\Delta > 0$ favours NSGA-II, with its percentile-bootstrap 95\% interval, the
 win/tie/loss count over 30 partitions and the Holm-corrected Nadeau--Bengio $p$. The last column is the wall-clock
-ratio, which is \emph{not} matched. The direction is the same under the sample-core reference
-(supplementary Table~S2). Source: \texttt{reports/pco213\_postwork\_benchmark/nsga2/}.}
+ratio, which is not matched either. The direction is the same under the sample-core reference, which contains no
+output of the five compared methods: median $\Delta \mathrm{IGD}^+$ $+0.0047$, $+0.0075$, $+0.0065$ and $+0.0034$
+(W/T/L $29/0/1$, $30/0/0$, $28/0/2$, $24/0/6$) and median $\Delta$ HV ratio $+0.0060$, $+0.0098$, $+0.0113$ and
+$+0.0114$ ($30/0/0$, $30/0/0$, $26/0/4$, $30/0/0$), in row order, with the same cells reaching corrected significance.
+Source: \texttt{reports/pco213\_postwork\_benchmark/nsga2/}.}
 \label{tab:nsga2}
 \small
 \setlength{\tabcolsep}{4pt}

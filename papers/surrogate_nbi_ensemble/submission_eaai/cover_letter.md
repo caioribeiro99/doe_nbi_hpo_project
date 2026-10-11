@@ -45,12 +45,12 @@ Four findings seem to us worth the journal's space:
    in up to 24 of 30 partitions.
 
 **We include a result that does not flatter the framework.** Anticipating the obvious question of whether a
-conventional optimizer would behave differently on the same objectives, we added NSGA-II at a real-objective
-evaluation budget matched per replication to what the metamodel-free arm consumed (realized ratio 0.999996 over 120
-runs). It produced a better approximation on both primary endpoints, on all four datasets, under both reference
-definitions, and markedly more evenly spaced revalidated fronts. We report this plainly. It bounds what the pipeline
-is worth relative to the standard toolbox without disturbing the diagnosis of the pipeline itself, and we think a
-reader is better served by knowing it.
+conventional optimizer would behave differently on the same objectives, we added NSGA-II, with its budget set per
+replication to the metamodel-free arm's count of ROC-AUC and log-loss computations, which gave it about twice that
+arm's weight-vector evaluations. It produced a better approximation on both primary endpoints, on all four datasets,
+under both reference definitions, and markedly more evenly spaced revalidated fronts. We report this plainly. It
+bounds what the pipeline is worth relative to one standard optimizer without disturbing the diagnosis of the pipeline
+itself, and we think a reader is better served by knowing it.
 
 The study is fully reproducible: four annotated Git tags freeze the exact states, every stochastic component is
 seeded, datasets carry checksums and acquisition commands, the runners are checkpointed and resumable, the library

@@ -144,11 +144,14 @@ NBI-C & real out-of-fold objectives & real out-of-fold optima & $\approx 4.6\tim
 
 NBI-A is the lineage construction: everything, including the payoff matrix, comes from the metamodel. NBI-B changes
 only the anchors, which become the real optima of \cref{sec:method:refs}; NBI-C removes the metamodel entirely.
+Here and below, a \emph{real} anchor or optimum is one computed directly on the out-of-fold objectives of the training
+part (\cref{sec:protocol:models}) rather than read off a Scheff\'e surface.
 The last column charges every variant for the real evaluations it needs \emph{standalone}, each arm carrying the
-stages it depends on rather than its solver stage alone (itemized in \cref{tab:compute}). Real anchors are not free:
-NBI-B consumes about $4\times10^{4}$ real evaluations that NBI-A does not --- the direct ROC-AUC search of
-\cref{sec:method:refs}, roughly a tenth of NBI-C's entire budget --- and its standalone wall clock is $1.2$--$12.7$
-times NBI-A's.
+stages it depends on rather than its solver stage alone (itemized in \cref{tab:compute}); design, gate and
+ROC-AUC-search entries count evaluated compositions, whereas NBI-C's solve counts each ROC-AUC and each log-loss
+computation separately, two per weight-vector evaluation. Real anchors are not free: NBI-B consumes about
+$4\times10^{4}$ real evaluations that NBI-A does not (the direct ROC-AUC search of \cref{sec:method:refs}), and
+its standalone wall clock is $1.2$--$12.7$ times NBI-A's.
 Because $f_1$ is piecewise constant, NBI-C uses finite-difference steps of $10^{-3}$, multistart on the simplex, and
 accepts an iterate whose equality residual is below $10^{-3}$ even without certified optimality,
 whereas NBI-A and NBI-B optimize smooth polynomials and require full certification by sequential least-squares
@@ -226,17 +229,27 @@ candidate set --- under one of the two cost definitions. The box is the componen
 Three consequences follow, and each constrains how the numbers in \cref{sec:results} may be read.
 
 \emph{(i) Within a replication the box is common to every arm.} All candidate sets of a replication are scored under
-the same $\ell$ and $u$, so the paired contrast between two arms is a difference of commensurable quantities and is
-unaffected by the choice of box.
+the same $\ell$ and $u$, so the paired contrast between two arms is a difference of commensurable quantities and no
+arm is scored on a box of its own. The contrast is not, however, invariant to the box: the hypervolume ratio depends
+on the box only through the raw reference point $u + 0.1\,(u-\ell)$, and $\igdp$ is computed on axes rescaled by
+$1/(u_k-\ell_k)$, so a different box can change a contrast's magnitude and, between sets that do not dominate one
+another, its sign. Nor is the box independent of the arms, whose candidates can dominate the core points that set a
+bound (\cref{sec:results:cost}).
 
-\emph{(ii) The box changes when a method is added to the reference,} because a new candidate set can extend
-$\mathcal{F}$. Adding the NSGA-II arm moves every indicator level slightly: on identical candidate sets NBI-C's median
-hypervolume ratio is $0.989$, $0.983$, $0.982$ and $0.976$ without NSGA-II in the reference
-(\cref{sec:results:metamodelfree}) and $0.990$, $0.981$, $0.981$ and $0.977$ with it (\cref{tab:nsga2}). Absolute
-indicator levels are therefore only interpretable together with the set of methods that built the reference.
+\emph{(ii) The reference, and with it the box, changes when a method is added,} because a new candidate set can add
+points to $\mathcal{F}$ and remove points it dominates; this changes the reference hypervolume and the $\igdp$
+reference set and can widen or narrow the box. Adding the NSGA-II arm moves median levels slightly: on identical
+candidate sets NBI-C's median hypervolume ratio is $0.989$, $0.983$, $0.982$ and $0.976$ without NSGA-II in the
+reference (\cref{sec:results:metamodelfree}) and $0.990$, $0.981$, $0.981$ and $0.977$ with it (\cref{tab:nsga2}).
+Single partitions move more than the medians, and a paired contrast close to zero can change direction when a method
+is added. Absolute indicator levels, and paired differences close to zero, are therefore only interpretable together
+with the set of methods that built the reference; for this reason the NSGA-II comparison is also scored against the
+sample core, which contains no output of the five compared methods and does not change when one is added
+(\cref{sec:results:nsga2}).
 
 \emph{(iii) The box differs between replications,} since each replication has its own reference front. Absolute
 levels are comparable within a replication but not across partitions, and a mean of $\Delta\hv$ over 30 partitions is
-a mean over 30 different scales. Paired within-replication differences are unaffected, which is why medians, win
-counts and per-partition distributions are reported alongside means; \cref{sec:results:cost} withdraws one earlier
-between-partition reading that this rescaling, not the optimizers, produced.
+a mean over 30 different scales. Each paired difference is computed within a single box, which is why medians, win
+counts and per-partition distributions are reported alongside means, although a partition with an unusual box can
+still change a win count through consequence (i); \cref{sec:results:cost} withdraws one earlier between-partition
+reading that this rescaling, not the optimizers, produced.

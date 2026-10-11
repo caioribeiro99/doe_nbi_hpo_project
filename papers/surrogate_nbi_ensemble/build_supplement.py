@@ -93,9 +93,9 @@ def main() -> int:
 
     # S6 gate and regimes
     made.append(longtab(pd.read_csv(S / "reliability_gate_r30.csv"), "s6_gate",
-        "Reliability gate for all four responses, including the Brier and PR-AUC responses omitted from the main text.", "tab:s6gate", cols=["dataset","response","n","pass","p_pass","wilson_lo","wilson_hi","r2_external_median","r2_external_ci95_lo","r2_external_ci95_hi","spearman_median"]))
+        "Reliability gate for all four responses, including the Brier and PR-AUC responses omitted from the main text. The interval columns are the percentile-bootstrap 95\\% interval of the mean external $R^2$, printed beside its median.", "tab:s6gate", cols=["dataset","response","n","pass","p_pass","wilson_lo","wilson_hi","r2_external_median","r2_external_ci95_lo","r2_external_ci95_hi","spearman_median"]))
     made.append(longtab(pd.read_csv(S / "reliability_gate_conditional_gain_r30.csv"), "s6_gate_conditional",
-        "Anchor gain split by gate outcome. On BNP Paribas this split restates NBI-A's collapse and must not be read as evidence that real anchors add more when the surface is reliable.", "tab:s6cond", maxrows=40, cols=["dataset","gate_response","gate_passed","cost","endpoint","comparison","n","mean","median","wins","ties","losses"]))
+        "Anchor gain split by gate outcome, separately for each gate response. On BNP Paribas the ROC-AUC split restates NBI-A's collapse and must not be read as evidence that real anchors add more when the ROC-AUC surface is reliable.", "tab:s6cond", maxrows=40, cols=["dataset","gate_response","gate_passed","cost","endpoint","comparison","n","mean","median","wins","ties","losses"]))
     made.append(longtab(pd.read_csv(S / "bimodality_regimes_r30.csv"), "s6_regimes",
         "Exploratory regime diagnostics: Sarle's bimodality coefficient and a one- versus two-component Gaussian-mixture BIC difference. No formal multimodality test is claimed.", "tab:s6reg", maxrows=50, cols=["dataset","set","cost","metric","n","mean","median","sd","bimodality_coefficient","gmm_bic_delta"], landscape=True))
 
@@ -136,7 +136,7 @@ def main() -> int:
     made.append(longtab(pd.read_csv(N / "nsga2_indicator_levels.csv"), "s13_nsga2_levels",
         "Median indicator levels for every set under both reference definitions.", "tab:s13lev", maxrows=70, cols=["reference","cost","dataset","set","igd_plus","hv_ratio","gd_front","spacing","spacing_cv","n_front"], landscape=True))
     made.append(longtab(pd.read_csv(N / "nsga2_budget_runtime.csv"), "s13_nsga2_budget",
-        "NSGA-II realized evaluation and wall-clock ratios against NBI-C. Only evaluations are matched.", "tab:s13bud", cols=["dataset","n","nsga2_evals_total","nbi_c_evals_total","eval_ratio_median","nsga2_seconds_mean","nbi_c_seconds_mean","time_ratio_median","n_nondominated_median"], landscape=True))
+        "NSGA-II realized evaluation and wall-clock ratios against NBI-C. The evaluation columns are in different units: NSGA-II counts weight-vector evaluations and NBI-C counts each ROC-AUC and each log-loss computation (two per weight-vector evaluation), so a ratio of 1 means NSGA-II performed twice as many weight-vector evaluations; wall clock is not matched either.", "tab:s13bud", cols=["dataset","n","nsga2_evals_total","nbi_c_evals_total","eval_ratio_median","nsga2_seconds_mean","nbi_c_seconds_mean","time_ratio_median","n_nondominated_median"], landscape=True))
 
     # figures: everything not already in the main paper
     main_figs = {"fig01_methodology"}

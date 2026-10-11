@@ -11,9 +11,10 @@ Repository: `caioribeiro99/doe_nbi_hpo_project`.
 | Tag | Freezes |
 |---|---|
 | `pco213-postwork-r10` | the ten-replication study, retained as the robustness reference |
-| `pco213-postwork-r30` | the thirty-replication study reported here; every main number derives from this commit |
+| `pco213-postwork-r30` | the thirty-replication study reported here; the NSGA-II baseline, the anchor-injection control, the edge-condition tables and the standalone compute table were produced after this tag and are committed on the paper branch |
 | `paper-draft-v1-pre-nsga2` | the manuscript as it stood before the external baseline was run |
-| `paper-submission-v1` | the submitted state |
+| `paper-submission-v1` | an earlier frozen state of the submission package (not submitted) |
+| `paper-submission-v2` | the frozen submission package before this revision (not submitted) |
 
 ## Components
 

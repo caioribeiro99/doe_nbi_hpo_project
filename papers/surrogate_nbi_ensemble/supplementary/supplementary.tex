@@ -66,8 +66,25 @@ provenance --- source, acquisition command, the expected row, feature and positi
 SHA-256 checksum of the file actually used --- is in the corresponding
 \texttt{*\_dataset\_manifest.json}.
 
-The statistical analysis plan, fixed before the replicated benchmark and committed to version control, is
-\texttt{STATISTICAL\_ANALYSIS\_R30.md}.
+The statistical analysis plan is \texttt{STATISTICAL\_ANALYSIS\_R30.md}, first committed in \texttt{cf462b4} after
+replications 0--9 had been run and analysed, minutes after the extension was launched and before any replication of
+the extension had been completed; it is therefore prospective only for partitions 10--29. The tagged version (commit
+\texttt{b3ed050}) differs from it only in clarified wording and file references; no comparison, endpoint, test or
+family changed.
+
+\paragraph{Base-model pipelines.} Each base model is a \texttt{scikit-learn} pipeline whose preprocessing is fitted
+inside each training fold, and once on the whole training part for the holdout refit. Numeric features receive median
+imputation, with missing-value indicators on the two datasets that contain missing values (BNP Paribas and Porto
+Seguro), followed by standardization for logistic regression and $k$-nearest neighbours only. Categorical features
+keep a missing value as a level of its own and are one-hot encoded, with levels below 0.5\% frequency grouped as
+infrequent, for logistic regression, Gaussian naive Bayes and $k$-nearest neighbours, or ordinal-encoded, with unseen
+levels mapped to $-1$, for the random forest and XGBoost; binary features are passed through. Logistic regression
+uses $C = 1$ with L-BFGS and at most 2{,}000 iterations, $k$-nearest neighbours brute-force Euclidean search with
+uniform weights, and XGBoost the histogram method without early stopping; all hyperparameters not listed here or in
+Section~4.2 of the main text are library defaults. The resolved values are listed under \texttt{model\_params} in each dataset manifest, whose
+\texttt{random\_state} of 42 is a placeholder: the runs seed the stochastic models with $20260904 + r$. Every
+component probability, out of fold and on the holdout, is clipped to $[10^{-3}, 1-10^{-3}]$ before any blend is
+formed.
 
 \paragraph{Runner, checkpointing and execution provenance.}
 The benchmark is driven by a single checkpointed runner
@@ -110,16 +127,23 @@ matrices, the candidate sets and the reference samples.
 \input{tables/s3_scheffe_orders}
 \input{tables/s3_coefficients}
 
+\paragraph{The edge criterion.} For a maximized response such as ROC-AUC, on the edge $i$--$j$ the quadratic model
+gives $\hat y(t) = \beta_j + (\beta_i - \beta_j)t + \beta_{ij}t(1-t)$ with $t = w_i$, which has an interior maximum,
+at $t^* = (\beta_i - \beta_j + \beta_{ij})/(2\beta_{ij})$, if and only if $\beta_{ij} > |\beta_i - \beta_j|$; there
+$\hat y(t^*) - \max(\beta_i, \beta_j) = (\beta_{ij} - |\beta_i - \beta_j|)^2/(4\beta_{ij}) > 0$.
+
 \paragraph{Coefficient stability and the blend test, per cell.} The largest-magnitude interaction is the same term at
 $R = 10$ and $R = 30$ in all eight dataset--response cells and is the per-partition largest in 30 of 30 partitions in
 seven of them; on Porto Seguro's ROC-AUC surface two $k$-nearest-neighbour pairs alternate, 19 of 30 against 11 of 30.
-Between-partition coefficients of variation for the leading terms lie between 0.011 and 0.17. The largest interaction
-attaches to the weakest vertex of its pair --- $k$-nearest neighbours on Santander and Porto Seguro, Gaussian naive
-Bayes on BNP Paribas and UCI credit --- and tracks the vertex-quality gap of that pair (0.163, 0.145, 0.022 and
-0.107). For that pair the real out-of-fold 50/50 blend minus its better member is $-0.0050$ (Santander), $-0.0180$
-(BNP Paribas), $+0.0098$ (Porto Seguro) and $-0.0201$ (UCI credit) ROC-AUC, and the untouched holdout repeats the
-pattern (0/30, 0/30, 29/30, 0/30). Across all ten pairs of each dataset criterion and reality agree on 6, 4, 7 and 3
-pairs; all 20 disagreements are the surface predicting a blend the real objectives do not deliver.
+Between-partition coefficients of variation for the largest-magnitude term of each cell lie between 0.007 and 0.17.
+The largest interaction attaches to the weakest vertex of its pair: $k$-nearest neighbours on Santander and Porto
+Seguro, Gaussian naive Bayes on BNP Paribas and UCI credit. It tracks the vertex-quality gap of that pair (0.163,
+0.145, 0.022 and 0.107). For that pair the real out-of-fold 50/50 blend minus its better member is $-0.0050$
+(Santander), $-0.0180$ (BNP Paribas), $+0.0098$ (Porto Seguro) and $-0.0201$ (UCI credit) ROC-AUC, and the untouched
+holdout repeats the pattern (0/30, 0/30, 29/30, 0/30). Across all ten pairs of each dataset the criterion and the
+real 50/50 blend agree on 6, 4, 7 and 3 pairs; all 20 disagreements are the surface predicting a superior blend that
+the midpoint mixture does not deliver, a tally that tests only the midpoint of each edge and therefore overstates
+over-prediction.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=\textwidth]{fig16_surrogate_validation.png}
@@ -182,8 +206,8 @@ worst partition being 0.877. The 66-point random Dirichlet comparator has a hype
 \input{tables/s5_paired_tests}
 \input{tables/s5_proportions}
 
-\paragraph{Sample-core repetition and the descriptive effect sizes.} Scored against the method-independent sampled
-core rather than the augmented reference, the NBI-B versus NBI-A hypervolume median falls from $+0.196$ to $+0.145$
+\paragraph{Sample-core repetition and the descriptive effect sizes.} Scored against the sampled core, which contains
+no output of the five compared methods, rather than the augmented reference, the NBI-B versus NBI-A hypervolume median falls from $+0.196$ to $+0.145$
 on Santander and rises from $+0.058$ to $+0.070$ on BNP Paribas, and the ordering of the four datasets by median gain
 stays inverted with respect to surrogate reliability ($+0.145$, $+0.089$, $+0.078$ and $+0.070$). For NBI-C versus
 NBI-B on BNP Paribas the medians are $+0.0106$ hypervolume and $-0.0028$ IGD$^+$ against the augmented reference, and
@@ -255,9 +279,14 @@ converges fully the gap is at most 0.01.
 The reference has two layers. The \emph{sampled core} is built from Dirichlet samples, the simplex lattice, all
 vertices and edges, an $\varepsilon$-constraint sweep, the 66 design runs and the single-objective references; it
 contains the search output of none of the five compared methods. The \emph{final augmented reference} is the
-non-dominated union of that core with every candidate set. Because NBI-B and NBI-C contribute 30--40\% of its points,
-and NSGA-II 8--29\%, absolute indicator values computed against the augmented reference are partly self-graded, which
-is why every primary comparison is repeated against the sample core (Section~\ref{sec:s13}).
+non-dominated union of that core with every candidate set. Because the candidate sets contribute a substantial share
+of its points, in proportions that differ by dataset and arm (NSGA-II, for example, supplies 8--29\% of the points of
+the augmented union that includes it, averaged over four probed replications per dataset), absolute indicator values
+computed against the augmented reference are partly self-graded, which is why the primary comparisons are also
+scored against the sample core (selected contrasts in Section~\ref{sec:s5}) and the NSGA-II comparison against both
+references (Section~\ref{sec:s13}). On the weighted-cost front, 118 of the 120 replications met the 5\% displacement
+tolerance and the other two ended at most 6\% displaced (\texttt{tables/\allowbreak reference\_\allowbreak diagnostics.csv});
+the check does not cover the support-cost front.
 
 \section{Cost definition and the accuracy--calibration conflict}
 \label{sec:s9}
@@ -304,7 +333,7 @@ twenty partitions added in the extension the counts are 20/20, 10/20, 15/20 and 
 exactly.
 
 \paragraph{Knee-selected solutions compared across arms.} Pairing the knee-selected solution of two arms by partition
-under the weighted cost, the two contrasts that carry the only Holm-significant primary results have worse
+under the weighted cost, the two NBI contrasts that are Holm-significant on both primary endpoints have worse
 single-objective holdout accuracy at the selected point: Santander NBI-B minus NBI-A is $-0.0047$ holdout ROC-AUC,
 better in 15 of 30 partitions, with holdout log-loss worse in 16 of 30; UCI credit NBI-C minus NBI-B is $-0.0119$,
 better in 6 of 30, with log-loss worse in 24 of 30. Both selected points are also materially cheaper, by $0.97$ and
@@ -355,15 +384,18 @@ augmented with the same three anchors, and changing nothing else, isolates the t
 \texttt{scripts/\allowbreak pco213\_anchor\_injection\_control.py} and
 \texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak anchor\_injection\_control.csv}.
 
-\section{Evaluation-matched NSGA-II baseline}
+\section{External NSGA-II baseline}
 \label{sec:s13}
 \input{tables/s13_nsga2_effects}
 \input{tables/s13_nsga2_levels}
 \input{tables/s13_nsga2_budget}
 
 The pre-specified configuration is \texttt{nsga2\_\allowbreak preregistered\_\allowbreak config.json}, committed before the first run. The
-full verified report, including the ten verification checks, is
-\texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak nsga2/\allowbreak NSGA2\_BASELINE\_REPORT.md}.
+full report, including the ten verification checks, is
+\texttt{reports/\allowbreak pco213\_\allowbreak postwork\_\allowbreak benchmark/\allowbreak nsga2/\allowbreak NSGA2\_\allowbreak BASELINE\_\allowbreak REPORT.md}.
+That report describes the budget as matched to NBI-C's evaluations; the caption of Table~\ref{tab:s13bud} states why
+the two evaluation counts are in different units, and a dated erratum filed beside the report
+(\texttt{NSGA2\_\allowbreak BASELINE\_\allowbreak ERRATUM.md}) records the correction.
 
 \section{Corrections log}
 \label{sec:s14}
@@ -383,8 +415,8 @@ returned candidates and is degenerate under the weighted cost; it is a floor che
 \item \textbf{Uniform spacing was treated as an advantage of NBI.} It does not survive revalidation, and the
 NSGA-II arm shows the shortfall is a property of the CHIM construction rather than of the objective geometry.
 \item \textbf{The gate-conditional anchor gain on BNP Paribas} was read as evidence that real anchors add more when
-the surface is reliable. It restates NBI-A's collapse, since three of the five gate-passing partitions are collapse
-partitions.
+the ROC-AUC surface is reliable. It restates NBI-A's collapse, since three of the five partitions that pass the
+ROC-AUC gate are collapse partitions.
 \item \textbf{The A-versus-B contrast was described as a clean single-factor experiment.} It is not: replacing the
 anchors also moves the utopia point, rescales both normalization axes, reorients the CHIM and substitutes three
 returned candidates (Section~\ref{sec:s12}).

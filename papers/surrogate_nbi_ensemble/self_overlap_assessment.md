@@ -34,7 +34,7 @@ for XGBoost hyperparameter optimization.
 | **Validation** | Comparison with other optimizers and benchmark functions; RF monitoring; no visible confirmation runs | Every candidate revalidated on real out-of-fold objectives; empirical Pareto reference with convergence check; untouched-holdout confirmation; external reliability gate | **None.** |
 | **Datasets / problems** | One case study | 4 datasets × 30 partitions = 120 replications | **None.** |
 | **Statistical analysis** | None beyond descriptive comparison | Paired by partition; percentile bootstrap; Wilson/Jeffreys; Nadeau–Bengio corrected tests with Holm within dataset; rank-biserial effect sizes | **None.** |
-| **Empirical findings** | A selected optimum for the turning process; MBPA yields interpolated weights | Real anchors repair surrogate NBI; the gate detects bad surfaces but not bad anchors; β_ij marks weak vertices, not synergy; cost definition changes the winner; R10→R30 stability | **None.** |
+| **Empirical findings** | A selected optimum for the turning process; MBPA yields interpolated weights | On Santander and BNP Paribas anchor misplacement had the largest observed effect among surrogate-pipeline failures, and real anchors improved both endpoints in every partition there; the gate detects bad surfaces but not bad anchors; β_ij marks weak vertices, not synergy; cost definition changes the winner; what the first ten of thirty replications did and did not settle | **None.** |
 | **Claimed contribution** | A hybrid multivariate NBI with mixture-design post-optimization | A validation architecture and a set of conditions under which the inherited pipeline is and is not trustworthy | **Low, if framed correctly.** |
 
 **Net assessment.** Two of thirteen dimensions overlap substantially with the predecessor (the polynomial family and
@@ -83,8 +83,8 @@ as a control condition.
 
 **In the cover letter**, first paragraph: name the predecessor, state the shared framework, and state the four things
 this manuscript adds that it does not contain (compositional decision variables with non-smooth ML objectives; the
-anchor decomposition; revalidation against an independent empirical reference; 120 replications with corrected paired
-inference).
+anchor decomposition; revalidation against an empirical reference whose sampled core contains no output of the compared
+methods; 120 replications with paired inference and Nadeau–Bengio-corrected primary tests).
 
 ---
 
