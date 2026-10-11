@@ -853,11 +853,11 @@ rule is matched-to-the-most-expensive-arm, not matched-to-each-arm, and is not r
 
 **The grid comparator's composition.** At the frozen 386-evaluation budget over seven
 factors the coarse grid admits $\lfloor 386^{1/7}\rfloor = 2$ levels per factor, so it
-is a 128-point two-level corner mesh plus 258 uniformly sampled points — **67% of the
-comparator is uniform random padding**, and the implementation reports the split rather
+is a 128-point two-level corner mesh plus 258 uniformly sampled points: 67% of the
+comparator is uniform random padding, and the implementation reports the split rather
 than describing the whole set as a grid. The mesh also contains the design's 64
-factorial corners, so **64 of the grid's 386 evaluations re-measure points that are
-themselves among the 88 design rows inside the CORE reference**. The grid is therefore
+factorial corners, so 64 of the grid's 386 evaluations re-measure points that are
+themselves among the 88 design rows inside the CORE reference. The grid is therefore
 scored partly against its own points, which favours it on a CORE-relative indicator
 relative to arms whose candidates come from surrogate subproblems and coincide with a design
 corner, if at all, only in some units. This is a property of the frozen
@@ -954,9 +954,9 @@ this surrogate architecture, two objectives and this budget.
 
 ### 6.1 Protocol integrity, accounting and the screened panel
 
-The confirmatory campaign executed **120 of 120 units with 0 failures and 0 methodological
-failures**, in 9 h 46 min of wall clock on 14 workers at one thread each. A unit is one
-`(dataset, replication)` pair — 4 datasets $\times$ $R = 30$ replicated outer partitions — and every
+The confirmatory campaign executed 120 of 120 units with 0 failures and 0 methodological
+failures, in 9 h 46 min of wall clock on 14 workers at one thread each. A unit is one
+`(dataset, replication)` pair (4 datasets $\times$ $R = 30$ replicated outer partitions), and every
 arm, control and baseline ran at every unit.
 
 Every request is charged to the requesting method whether or not it is served from cache
@@ -974,9 +974,9 @@ values (Supplement S4.4). Fitting once per dataset keeps the
 the 78-point external validation set is disjoint from the fitting sample in coded space on all four
 datasets, so the surrogate gate audits a surface against rows that never helped define its target.
 
-The primary endpoint is the **CORE-relative hypervolume ratio**. The CORE reference is a finite,
-method-independent empirical set — the 88 design rows plus the 200 anchor-search rows, **288 points
-before Pareto filtering, present in every unit** — that no compared method contributes to. It is not
+The primary endpoint is the CORE-relative hypervolume ratio. The CORE reference is a finite,
+method-independent empirical set (the 88 design rows plus the 200 anchor-search rows, 288 points
+before Pareto filtering, present in every unit) that no compared method contributes to. It is not
 the true Pareto front, and a ratio above 1 is not an error: it means the returned set improved on
 that finite reference.
 
@@ -988,9 +988,9 @@ by a pre-campaign amendment (Section 5.1), executed in full under identical arms
 and excluded only from the primary inferential family. Dataset is the generalization unit; nothing
 is pooled.
 
-Two integrity items are reported rather than smoothed. First, the campaign output contains **140
-non-finite cells**, being Schott spacing and its coefficient of variation on the **70
-method-by-reference blocks whose front has one point**. Schott spacing requires at least two gaps and
+Two integrity items are reported rather than smoothed. First, the campaign output contains 140
+non-finite cells, being Schott spacing and its coefficient of variation on the 70
+method-by-reference blocks whose front has one point. Schott spacing requires at least two gaps and
 is undefined on a single-point front; `NaN` is the mathematically correct value there. Those blocks
 are excluded from spacing summaries rather than propagated through a median. Second, five separate verification passes, carried out with the AI assistance stated in the generative-AI declaration, recomputed eleven headline claims from the raw per-unit artifacts, and the central contrast
 was additionally rebuilt from `candidate_revalidation` rows through the frozen factor model with an
@@ -1013,12 +1013,12 @@ primary dataset (Table 3).
 
 **Table 3.** The historical specification contrast, HISTORICAL-WS $\rightarrow$ WS-S, CORE reference, $R=30$.
 
-This is a **non-detection at $R = 30$**, not a demonstration of no effect: exact ties occur in 3, 4
+This is a non-detection at $R = 30$, not a demonstration of no effect: exact ties occur in 3, 4
 and 8 of the 30 replications on MAGIC, Adult and Bank Marketing, and the frozen design resolves only
-medium effects. It does establish that this contrast — the one place a normalization-reference
-hypothesis would have to appear — does not carry the historical-to-canonical difference.
+medium effects. It does establish that this contrast, the one place a normalization-reference
+hypothesis would have to appear, does not carry the historical-to-canonical difference.
 
-The **as-run to shared-specification gap** is a descriptive control quantity rather than a member of
+The as-run to shared-specification gap is a descriptive control quantity rather than a member of
 the frozen primary family, and carries no multiplicity correction. It compares the frozen
 dissertation solver, called unmodified with its own asymmetric weight grid on uncoded surfaces and an
 observed-extrema box that this study's code computes to the archived specification (Section 3.3),
@@ -1290,7 +1290,7 @@ $\rho$ had medians of 0.854, 0.891, 0.867 and 0.855 on MAGIC, Spambase, Adult an
 Marketing.
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
-composite-quality surrogate failed the frozen criterion in every replication — and they
+composite-quality surrogate failed the frozen criterion in every replication, and they
 also carry the largest geometry effects, +0.2549 and +0.2281, Holm-significant on both.
 The relative advantage of NBI front construction over specification-matched weighted
 scalarization therefore persisted where the surrogate did not meet its own external
@@ -1501,7 +1501,7 @@ Replacing the historical observed-extrema normalization with the payoff-matrix r
 produced no detectable change in CORE-relative hypervolume on any primary dataset: medians
 $+0.0000$, $-0.0006$ and $+0.0000$, exact ties in 3, 4 and 8 of 30 replications, Holm $p$
 of 0.5165, 0.2087 and 0.3896. This is a non-detection at $R = 30$, not a demonstration
-that normalization has no effect — and it is where a DoE-range-normalization explanation
+that normalization has no effect; it is where a DoE-range-normalization explanation
 of the historical pipeline's behaviour would have shown, had that been the principal
 driver.
 
@@ -1543,7 +1543,7 @@ replications whose surface met the frozen criterion.
 ### 7.9 The estimand is the returned front
 
 Every result above is a property of the set an arm returns, after real revalidation of
-every candidate and scoring against a finite method-independent reference — not the
+every candidate and scoring against a finite method-independent reference, not the
 out-of-sample performance of a configuration a practitioner would deploy. No selection
 rule collapses the front to a point, and the holdout stage is an audit. A median advantage
 of $+0.2549$ on Adult says NBI-S's front occupies more space relative to CORE than WS-S's;

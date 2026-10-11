@@ -72,7 +72,7 @@ $\rho$ had medians of 0.854, 0.891, 0.867 and 0.855 on MAGIC, Spambase, Adult an
 Marketing.
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
-composite-quality surrogate failed the frozen criterion in every replication — and they
+composite-quality surrogate failed the frozen criterion in every replication, and they
 also carry the largest geometry effects, +0.2549 and +0.2281, Holm-significant on both.
 The relative advantage of NBI front construction over specification-matched weighted
 scalarization therefore persisted where the surrogate did not meet its own external

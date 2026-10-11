@@ -128,11 +128,11 @@ rule is matched-to-the-most-expensive-arm, not matched-to-each-arm, and is not r
 
 **The grid comparator's composition.** At the frozen 386-evaluation budget over seven
 factors the coarse grid admits $\lfloor 386^{1/7}\rfloor = 2$ levels per factor, so it
-is a 128-point two-level corner mesh plus 258 uniformly sampled points — **67% of the
-comparator is uniform random padding**, and the implementation reports the split rather
+is a 128-point two-level corner mesh plus 258 uniformly sampled points: 67% of the
+comparator is uniform random padding, and the implementation reports the split rather
 than describing the whole set as a grid. The mesh also contains the design's 64
-factorial corners, so **64 of the grid's 386 evaluations re-measure points that are
-themselves among the 88 design rows inside the CORE reference**. The grid is therefore
+factorial corners, so 64 of the grid's 386 evaluations re-measure points that are
+themselves among the 88 design rows inside the CORE reference. The grid is therefore
 scored partly against its own points, which favours it on a CORE-relative indicator
 relative to arms whose candidates come from surrogate subproblems and coincide with a design
 corner, if at all, only in some units. This is a property of the frozen

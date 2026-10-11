@@ -2,9 +2,9 @@
 
 ### 6.1 Protocol integrity, accounting and the screened panel
 
-The confirmatory campaign executed **120 of 120 units with 0 failures and 0 methodological
-failures**, in 9 h 46 min of wall clock on 14 workers at one thread each. A unit is one
-`(dataset, replication)` pair — 4 datasets $\times$ $R = 30$ replicated outer partitions — and every
+The confirmatory campaign executed 120 of 120 units with 0 failures and 0 methodological
+failures, in 9 h 46 min of wall clock on 14 workers at one thread each. A unit is one
+`(dataset, replication)` pair (4 datasets $\times$ $R = 30$ replicated outer partitions), and every
 arm, control and baseline ran at every unit.
 
 Every request is charged to the requesting method whether or not it is served from cache
@@ -22,9 +22,9 @@ values (Supplement S4.4). Fitting once per dataset keeps the
 the 78-point external validation set is disjoint from the fitting sample in coded space on all four
 datasets, so the surrogate gate audits a surface against rows that never helped define its target.
 
-The primary endpoint is the **CORE-relative hypervolume ratio**. The CORE reference is a finite,
-method-independent empirical set — the 88 design rows plus the 200 anchor-search rows, **288 points
-before Pareto filtering, present in every unit** — that no compared method contributes to. It is not
+The primary endpoint is the CORE-relative hypervolume ratio. The CORE reference is a finite,
+method-independent empirical set (the 88 design rows plus the 200 anchor-search rows, 288 points
+before Pareto filtering, present in every unit) that no compared method contributes to. It is not
 the true Pareto front, and a ratio above 1 is not an error: it means the returned set improved on
 that finite reference.
 
@@ -36,9 +36,9 @@ by a pre-campaign amendment (Section 5.1), executed in full under identical arms
 and excluded only from the primary inferential family. Dataset is the generalization unit; nothing
 is pooled.
 
-Two integrity items are reported rather than smoothed. First, the campaign output contains **140
-non-finite cells**, being Schott spacing and its coefficient of variation on the **70
-method-by-reference blocks whose front has one point**. Schott spacing requires at least two gaps and
+Two integrity items are reported rather than smoothed. First, the campaign output contains 140
+non-finite cells, being Schott spacing and its coefficient of variation on the 70
+method-by-reference blocks whose front has one point. Schott spacing requires at least two gaps and
 is undefined on a single-point front; `NaN` is the mathematically correct value there. Those blocks
 are excluded from spacing summaries rather than propagated through a median. Second, five separate verification passes, carried out with the AI assistance stated in the generative-AI declaration, recomputed eleven headline claims from the raw per-unit artifacts, and the central contrast
 was additionally rebuilt from `candidate_revalidation` rows through the frozen factor model with an
@@ -61,12 +61,12 @@ primary dataset (Table 3).
 
 **Table 3.** The historical specification contrast, HISTORICAL-WS $\rightarrow$ WS-S, CORE reference, $R=30$.
 
-This is a **non-detection at $R = 30$**, not a demonstration of no effect: exact ties occur in 3, 4
+This is a non-detection at $R = 30$, not a demonstration of no effect: exact ties occur in 3, 4
 and 8 of the 30 replications on MAGIC, Adult and Bank Marketing, and the frozen design resolves only
-medium effects. It does establish that this contrast — the one place a normalization-reference
-hypothesis would have to appear — does not carry the historical-to-canonical difference.
+medium effects. It does establish that this contrast, the one place a normalization-reference
+hypothesis would have to appear, does not carry the historical-to-canonical difference.
 
-The **as-run to shared-specification gap** is a descriptive control quantity rather than a member of
+The as-run to shared-specification gap is a descriptive control quantity rather than a member of
 the frozen primary family, and carries no multiplicity correction. It compares the frozen
 dissertation solver, called unmodified with its own asymmetric weight grid on uncoded surfaces and an
 observed-extrema box that this study's code computes to the archived specification (Section 3.3),

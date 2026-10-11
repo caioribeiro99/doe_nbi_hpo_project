@@ -92,7 +92,7 @@ Replacing the historical observed-extrema normalization with the payoff-matrix r
 produced no detectable change in CORE-relative hypervolume on any primary dataset: medians
 $+0.0000$, $-0.0006$ and $+0.0000$, exact ties in 3, 4 and 8 of 30 replications, Holm $p$
 of 0.5165, 0.2087 and 0.3896. This is a non-detection at $R = 30$, not a demonstration
-that normalization has no effect — and it is where a DoE-range-normalization explanation
+that normalization has no effect; it is where a DoE-range-normalization explanation
 of the historical pipeline's behaviour would have shown, had that been the principal
 driver.
 
@@ -134,7 +134,7 @@ replications whose surface met the frozen criterion.
 ### 7.9 The estimand is the returned front
 
 Every result above is a property of the set an arm returns, after real revalidation of
-every candidate and scoring against a finite method-independent reference — not the
+every candidate and scoring against a finite method-independent reference, not the
 out-of-sample performance of a configuration a practitioner would deploy. No selection
 rule collapses the front to a point, and the holdout stage is an audit. A median advantage
 of $+0.2549$ on Adult says NBI-S's front occupies more space relative to CORE than WS-S's;
