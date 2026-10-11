@@ -1,12 +1,14 @@
 # Claims and evidence map (R = 30, frozen at tag `pco213-postwork-r30`, commit `b3ed050`)
 
+Post-tag artifacts used by the manuscript, committed on paper/surrogate-nbi-ensemble-weighting after b3ed050 from the stored outputs of the R = 30 run: nsga2/* (a82231f, ea860b7), anchor_injection_control.csv (0a7d140), papers/surrogate_nbi_ensemble/tables/edge_condition_*.csv (e1c5253) and papers/surrogate_nbi_ensemble/tables/tab05_compute.csv (4234eb1). Added on revision/paper1-matheus-review (c226312, 0fb0e70): statistics/rq9_sign_agreement_r30.csv and its _summary.json, statistics/solver_fix_crosscheck.csv, nsga2/nsga2_execution_summary.json and nsga2/NSGA2_BASELINE_ERRATUM.md.
+
 Every quantitative sentence in the Results section must trace to a row of this document. Paths are relative to
 `reports/pco213_postwork_benchmark/` (tables, statistics) or `figures/pco213_postwork_benchmark/` (benchmark figures);
 manuscript figures are in `papers/surrogate_nbi_ensemble/figures/` and are regenerated from the same artifacts by
-`build_assets.py`. Δ > 0 always means the second-named (new) method is better (ΔHV = HV_new − HV_ref;
+`build_assets.py`. Δ > 0 always means the first-named (new) method is better (ΔHV = HV_new − HV_ref;
 ΔIGD+ = IGD+_ref − IGD+_new). "30/30" style counts are wins over the 30 outer partitions of one dataset; nothing is
 pooled over the 120 partitions. Statistical unit: one outer partition of one dataset; the dataset is the unit of
-generalization. Tier: PRIMARY (pre-specified endpoint, paired, corrected test), SECONDARY (pre-specified descriptive),
+generalization. Tier: PRIMARY (endpoint and computational protocol fixed before the ten-partition benchmark; analysis plan, comparator pairing and Holm family committed in cf462b4 and prospective only for partitions 10–29; paired, corrected test), SECONDARY (pre-specified descriptive),
 EXPLORATORY (post hoc diagnosis).
 
 Sign/level conventions: HV ratio = hypervolume of the set / hypervolume of the empirical reference (same partition,
@@ -32,8 +34,8 @@ credit". Exact per-endpoint counts: Porto IGD+ 23/0/7, Porto HV 24/0/6, UCI IGD+
 - Source: `statistics/paired_primary_effects.csv` (cost = weighted, comparison = "nbi_B vs nbi_A"); `statistics/paired_primary_tests.csv`.
 - Figures: manuscript Fig. 4 (paired deltas), Fig. 3 (example fronts); benchmark `r30_fig02_paired_delta_hv.png`, `r30_fig06_win_tie_loss.png`.
 - Wilson 95% for 30/30: [0.886, 1.000]; for 24/30: [0.627, 0.905].
-- Limitations: (i) the BNP mean is driven by 7/30 NBI-A collapse partitions (bimodal; mean +0.28 vs median +0.06), so the mean-based corrected test is uninformative and the median/win fraction is the evidence; (ii) Porto and UCI win fractions are dominated by partitions 10–29 (18/20 and 19/20 vs 6/10 and 5/10+1 tie in partitions 0–9; Fisher p = 0.009 on UCI) — partition sensitivity, not a sharpened fixed rate; (iii) under the support cost the UCI effect reverses (NBI-B worse in 26–27/30) and BNP shrinks to 19–20/30 (C1-S below).
-- Wording allowed: "real anchors improved NBI-B over NBI-A in every partition of the two datasets whose AUC surfaces almost never pass the gate, and in 24 of 30 partitions on the other two (weighted cost)".
+- Limitations: (i) the BNP mean is driven by 7/30 NBI-A collapse partitions (bimodal; mean +0.28 vs median +0.06), so the mean-based corrected test is uninformative and the median/win fraction is the evidence; (ii) Porto and UCI win fractions are dominated by partitions 10–29 (18/20 and 19/20 vs 6/10 and 5/10+1 tie in partitions 0–9; Fisher p = 0.009 on UCI); the batch difference is exploratory and unexplained (P1-C16), not evidence of a sharpened fixed rate; (iii) under the support cost the UCI effect reverses (NBI-B worse in 26–27/30) and BNP shrinks to 19–20/30 (C1-S below).
+- Wording allowed: "real anchors improved NBI-B over NBI-A in every partition of the two datasets whose AUC surfaces almost never pass the gate, unanimous on Santander and BNP Paribas; 23–24 of 30 on Porto Seguro and 24 of 30 on UCI credit (weighted cost; Holm-NB significant only on Santander)".
 - Wording NOT allowed: "the gate predicts when real anchors are needed" (see C5).
 
 ### C1-S — same comparison under the support cost — SECONDARY (sensitivity)
@@ -49,7 +51,7 @@ credit". Exact per-endpoint counts: Porto IGD+ 23/0/7, Porto HV 24/0/6, UCI IGD+
 
 ---
 
-## C2 — Metamodel-free NBI-C approximates the empirical reference closely and is best or tied-best (weighted cost) — PRIMARY (C vs B) / SECONDARY (levels)
+## C2 — Metamodel-free NBI-C approximates the empirical reference closely and is best or tied-best among the surrogate-derived methods (weighted cost); NSGA-II, given about twice NBI-C's weight-vector evaluations, does better (RQ5b) — PRIMARY (C vs B) / SECONDARY (levels)
 
 Levels (median over 30 partitions; `README.md` median table, `tables/pareto_quality.csv`):
 
@@ -71,9 +73,9 @@ Paired C vs B (weighted; `statistics/paired_primary_effects.csv`):
 
 - **CORRECTED (verified 2026-09-09 against `tables/pareto_quality.csv`).** The earlier phrasing "HV ≥ 0.97 in 30/30 partitions of each dataset" is FALSE. Per-partition counts of HV ratio ≥ 0.97: Santander 30/30, BNP 30/30, Porto 24/30, UCI 25/30. At ≥ 0.95: 30/30, 30/30, 26/30, 30/30. Minima: 0.971, 0.975, 0.877, 0.961. The defensible statements are (a) the **median** HV ratio is 0.989 / 0.983 / 0.982 / 0.976, and (b) HV ratio ≥ 0.95 in all 30 partitions of three datasets and 26/30 on Porto. The FINAL_REPORT §11-A sentence refers to medians and must not be read as a per-partition count.
 - Figures: manuscript Fig. 3, Fig. 4; benchmark `fig05_hv_ratio.png`, `fig04_igd_plus.png`.
-- Limitations: (i) NBI-C is not evaluation-matched to anything (≈ 4.2 × 10⁵ real OOF evaluations per partition; 0 for A/B); (ii) NBI-C candidates form 8–25% of the reference front it is graded against (direction unaffected, magnitude partly self-graded); (iii) the UCI gap C − B is a subproblem-convergence effect of NBI-B (median 29/66 certified; Spearman(ΔHV, n_valid_B) = −0.92; retaining B's unconverged iterates cuts the gap to +0.108 HV while keeping 30/30); (iv) the UCI Holm p ≈ 0.010 is knife-edge (0.017–0.018 with ρ = 0.30 or a 16-test family); (v) on BNP the IGD+/HV split is genuine: B is closer to the reference (IGD+), C covers more volume.
+- Limitations: (i) NBI-C is not budget-matched to anything (≈ 4.2 × 10⁵ recorded real objective evaluations per partition, one ROC-AUC plus one log-loss computation per weight vector; none inside the A/B solves, but NBI-B's anchors cost ≈ 4 × 10⁴ ROC-AUC search evaluations); (ii) NBI-C candidates are part of the reference front it is graded against: own points lower its HV ratio, and the BNP C − B IGD+ direction reverses against the sample core (6/0/24 -> 20/0/10; F13); (iii) the UCI gap C − B is a subproblem-convergence effect of NBI-B (median 29/66 certified; Spearman(ΔHV, n_valid_B) = −0.92; retaining B's unconverged iterates cuts the gap to +0.108 HV while keeping 30/30); (iv) the UCI Holm p ≈ 0.010 is knife-edge (0.017–0.018 with ρ = 0.30 or a 16-test family); (v) on BNP the IGD+/HV split is genuine: B is closer to the reference (IGD+), C covers more volume.
 - **Compute premium — CORRECTED after adversarial review (MUST FIX 7/8).** The solver-stage-only ratio (C/B = 73.1×, 39.5×, 44.9×, 3.1× from `tables/stage_times.csv`) is misleading, because NBI-B and NBI-C both depend on the single-objective references stage that produces the real anchors, and that stage is dominated by the direct ROC-AUC search over 4 × 10⁴ compositions. Charged **standalone**, each arm carrying the stages it depends on, the premium of NBI-C over NBI-B is **6.2×, 5.9×, 5.9×, 2.3×** and NBI-B costs **1.2–12.7×** the standalone wall clock of NBI-A. Table 5 and its caption carry the standalone accounting; the manuscript quotes "2.3 to 6.2 times" in Results, Discussion and Limitations. **Forbidden:** the solver-stage ratios 73/40/45/3, the range "3 to 73" or "3 to 77", and "NBI-B costs essentially what NBI-A costs" — real anchors are not free.
-- **Anchor-injection control (new artifact, `anchor_injection_control.csv`).** Because a vertex β returns its anchor directly, NBI-B's set contains the three real optima, which are also reference points. Rescoring NBI-A's set augmented with the same anchors closes a median **80%** (Santander), **90%** (BNP), **49%** (Porto) and **1%** (UCI credit) of the A→B hypervolume gap; residual CHIM effect +0.038, +0.005, +0.068, +0.097 HV. **Forbidden:** presenting A vs B as a single-factor contrast, or the anchor gain as wholly a CHIM-relocation effect.
+- **Anchor-injection control (new artifact, `anchor_injection_control.csv`).** Because a vertex β returns its anchor directly, NBI-B's set contains the three real optima, which are also reference points. Rescoring NBI-A's set augmented with the same anchors closes a median **80%** (Santander), **90%** (BNP), **49%** (Porto) and **1%** (UCI credit) of the A→B hypervolume gap; residual CHIM effect, median over all 30 partitions (S12): +0.038, +0.005, +0.021, +0.091 HV; the earlier +0.068 and +0.097 are medians over the 24 partitions in which NBI-B improves on NBI-A (pco213_anchor_injection_control.py:67,73,78). **Forbidden:** presenting A vs B as a single-factor contrast, or the anchor gain as wholly a CHIM-relocation effect.
 
 ---
 
@@ -91,10 +93,10 @@ Paired C vs B (weighted; `statistics/paired_primary_effects.csv`):
 - Under the support cost UCI reverses to 0/30 (scalarization better) and Santander IGD+ reverses to 30/30 in C's favour.
 - Wording allowed: "random scalarization on externally validated surfaces is a cheap alternative that ties NBI-C on UCI and matches it on Santander hypervolume".
 
-## C4 — NBI-C vs 66-point random Dirichlet(1) search — floor check only — SECONDARY
+## C4 — NBI-C vs 66-point random Dirichlet(1) search — PRIMARY (in the Holm family), read only as a floor check
 
 - 30/30 wins on every dataset and endpoint (ΔHV +0.71 / +0.94 / +0.93 / +0.25); the comparator's HV ratio is exactly 0 in 10/30 (Santander), 21/30 (BNP), 25/30 (Porto) partitions because uniform blends cost 8–20× the reference front (`tables/pareto_quality.csv`, set = random_dirichlet_budget).
-- Every other set, including the unoptimized 66-run design, also beats it 30/30 (`statistics/win_tie_loss.csv`).
+- The other sets beat it in most cells, not all (dated correction, 2026-10-11): on UCI credit NBI-A and NBI-B do not (HV 5/0/25 and 16/0/14; IGD+ 6/0/24 and 13/0/17), and random scalarization wins 28/2/0 on BNP Paribas HV and 29/0/1 on Porto Seguro HV and IGD+; every other cell is 30/0/0 (`statistics/win_tie_loss.csv`, weighted cost).
 - Wording NOT allowed: "budget-matched", "search efficiency". It is candidate-count-matched only.
 
 ---
@@ -111,8 +113,8 @@ Paired C vs B (weighted; `statistics/paired_primary_effects.csv`):
 - Source: `statistics/reliability_gate_r30.csv`; manuscript Table 2, Fig. 5, Fig. 2; benchmark `r30_fig04_gate_pass.png`, `fig16_surrogate_validation.png`.
 - Extrapolation excess ≈ 0 everywhere (`tables/scheffe_orders.csv`, column extrapolation_excess): failures are polynomial misspecification, not range extrapolation.
 - Brier surface: R²ext = 1.000 in 120/120 (algebraic identity — quadratic in w — used only as a sanity check).
-- Within-dataset gate does NOT predict anchor failure (EXPLORATORY, `FINAL_REPORT.md` §7): on BNP the 7 NBI-A collapse partitions (7, 9, 18, 20, 23, 26, 27) are exactly those where the quadratic AUC order is selected (7/7 vs 0/22 linear-selected), have *higher* external R² (median 0.46 vs 0.08) and pass the gate more often (3/7 vs 2/23). On Porto gate pass does not change the B − A gain (12/16 vs 12/14); only on UCI does NBI-A's HV correlate with R²ext (+0.59 AUC, +0.57 log-loss). Source: `statistics/reliability_gate_conditional_gain_r30.csv`, `statistics/bimodality_regimes_r30.csv`.
-- Wording allowed: "the gate identifies unusable surfaces; it does not predict anchor misplacement".
+- Within-dataset gate does NOT predict anchor failure (EXPLORATORY, `FINAL_REPORT.md` §7): on BNP the 7 NBI-A collapse partitions (7, 9, 18, 20, 23, 26, 27) are exactly those where the quadratic AUC order is selected (7/7 vs 0/22 linear-selected), have *higher* external R² (median 0.46 vs 0.08) and pass the ROC-AUC gate more often (3/7 vs 2/23). Uncommitted recount (P1-017; selected-order `reliable` flag in `tables/scheffe_orders.csv`): the log-loss gate passes 0/7 collapse partitions vs 3/23, and no BNP partition passes both gates. On Porto gate pass does not change the B − A gain (12/16 vs 12/14); only on UCI does NBI-A's HV correlate with R²ext (+0.59 AUC, +0.57 log-loss). Source: `statistics/reliability_gate_conditional_gain_r30.csv`, `statistics/bimodality_regimes_r30.csv`.
+- Wording allowed: "the ROC-AUC gate identifies unusable surfaces; no gate variant singles out the BNP collapse partitions".
 
 ---
 
@@ -135,15 +137,15 @@ principle as new.** The claim is the empirical one below.
 | UCI | gnb·xgb | 0.130 | 0.100 | 30/30 | 0/30 | 3/10 | 7 | 0 |
 
 - Source: `papers/surrogate_nbi_ensemble/tables/edge_condition_summary.csv` and `edge_condition_per_replication.csv`, generated by `build_assets.py::tab07_edge_condition` from `experiments/.../scheffe.json` (quadratic coefficients, all 120 replications) and `statistics/coefficient_stability_r30.csv`.
-- **The defensible claim:** the fitted surfaces satisfy the correct classical criterion in 30/30 partitions on all four datasets, yet the real out-of-fold blend beats its better member on only one of them; over all 40 dataset-pair cells the disagreement is one-directional (20 over-predictions, 0 under-predictions). This is a *surrogate misspecification* result about classifier-performance surfaces, not a correction of mixture-design theory.
-- Tier: SECONDARY. Limitation: conditional on the heterogeneous five-model zoo; a zoo of near-equal vertices would produce smaller β_ij and a smaller gap to test.
+- **The defensible claim:** the fitted surfaces satisfy the correct classical criterion in 30/30 partitions on all four datasets, yet the real out-of-fold blend beats its better member on only one of them; the all-pairs tally (20 cells where the criterion predicts a superior blend that the real 50/50 midpoint does not deliver, 0 the reverse) compares an edge-optimum criterion with a midpoint test, so it overstates over-prediction and cannot detect a superior real blend away from the midpoint (F15); wording NOT allowed: "one-directional", "a superior blend that does not exist", "none is a real one missed". This is a *surrogate misspecification* result about classifier-performance surfaces, not a correction of mixture-design theory.
+- Tier: SECONDARY. Limitation: conditional on the heterogeneous five-model zoo; whether the surface, anchor, cost and coefficient results hold for a zoo of near-equal members is untested (Limitations, P1-D-20); no prediction is made.
 
-- Sign stability: top-4 AUC interactions have sign frequency exactly 1.0 in all 4 datasets; top-1 term identical at R = 10 and R = 30 in all 8 cells; top-1 per-partition frequency 1.00 (Santander gnb·knn, BNP gnb·xgb, UCI gnb·xgb) and 0.63 (Porto gnb·knn vs knn·xgb 0.37). Between-partition CV 0.011–0.17 for the top pair (`statistics/coefficient_stability_r30.csv`).
+- Sign stability: top-4 AUC interactions have sign frequency exactly 1.0 in all 4 datasets; top-1 term identical at R = 10 and R = 30 in all 8 cells; top-1 per-partition frequency 1.00 (Santander gnb·knn, BNP gnb·xgb, UCI gnb·xgb) and 0.63 (Porto gnb·knn vs knn·xgb 0.37). Between-partition CV 0.011–0.17 for the top ROC-AUC pair, and 0.007–0.17 for the largest-magnitude term over all eight ROC-AUC and log-loss cells (Santander log-loss gnb·knn 0.0068 to BNP ROC-AUC gnb·xgb 0.172); all stability statistics come from the quadratic fit kept in every partition whatever order is selected (`scripts/pco213_run_postwork_benchmark.py:366-369`; `statistics/coefficient_stability_r30.csv`).
 - Largest AUC β_ij (mean ± sd): Santander gnb·knn +0.243 ± 0.003; BNP gnb·xgb +0.148 ± 0.026; Porto gnb·knn +0.071 ± 0.008; UCI gnb·xgb +0.130 ± 0.008.
 - Vertex-quality gap of the top pair: 0.163 / 0.145 / 0.022 / 0.107 (Santander / BNP / Porto / UCI).
 - Real 50/50 blend of the top-β pair minus its better member (OOF AUC, mean of 30; freq. blend beats better member): Santander −0.0050 (0/30), BNP −0.0180 (0/30), Porto +0.0098 (30/30), UCI −0.0201 (0/30). Holdout: 0/30, 0/30, 29/30, 0/30 (FINAL_REPORT §4).
 - Pairs whose 50/50 blend beats the better member in ≥ 80% of partitions carry the largest β only on Porto (FINAL_REPORT §4 list).
-- Log-loss interactions are negative by convexity (Jensen); only AUC signs are informative.
+- Log-loss interaction signs are uninformative: by convexity a real blend never lies above its chord, yet the fitted log-loss interactions of the pairs without GNB are stably positive on BNP Paribas and Porto Seguro (statistics/coefficient_stability_r30.csv). ROC-AUC signs are interpretable; what the blend test contradicts is the reading of a large β_ij through β_ij > |β_i − β_j| as a blend that beats its better member (F15).
 - Figures: manuscript Fig. 7; benchmark `r30_fig05_beta_ij_stability.png`, `fig10_beta_ij_roc_auc.png`, `fig15_diversity_vs_beta.png`.
 - Limitation: depends on the fixed five-model zoo (a very weak component inflates the interactions of every pair containing it).
 - Wording NOT allowed: "large β_ij identifies complementary classifiers".
@@ -205,27 +207,22 @@ principle as new.** The claim is the empirical one below.
 | Reference sizes/displacement (12) | 9/12 | Porto displacement −21% |
 | Holdout − OOF AUC (16) | 16/16 | ≤ 0.003 |
 | Runtime (4) | 3/4 | ≤ 4% |
-| Primary effects: median sign (32) | 32/32 identical | Porto/UCI B − A from ≈ 50% to 80% wins |
+| Primary effects: median sign (32) | 28/32 for R = 10 vs R = 30 and for partitions 0–9 vs 10–29 (exceptions: UCI B − A IGD+; NBI-C vs scalarization on Santander IGD+ and on UCI IGD+ and HV; all 13 Holm-significant R = 30 effects agree in both batches; `statistics/rq9_sign_agreement_r30.csv`, computed from tables/pareto_quality.csv, not from the stability CSV) | Porto/UCI B − A from ≈ 50% to 80% wins |
 
-- Source: `statistics/r10_vs_r30_stability.csv`; manuscript Table 4, Fig. 6; benchmark `r30_fig03_r10_vs_r30_stability.png`.
-- Caveat: nested criterion (partitions 0–9 are one third of the R = 30 sample); against partitions 10–29 alone only 6/12 HV and 5/12 IGD+ cells pass; the Santander IGD+ level and the Porto/UCI anchor win rates differ between batches under an identical protocol — the partition sensitivity the extension was designed to expose.
-- Wording allowed: "no directional conclusion reversed; R = 30 resolved the Porto/UCI anchor effect, quantified the BNP collapse rate (7/30) and exposed two artifacts".
+- Source: `statistics/r10_vs_r30_stability.csv` (levels only; the median-sign row comes from `statistics/rq9_sign_agreement_r30.csv`); manuscript Table 4, Fig. 6; benchmark `r30_fig03_r10_vs_r30_stability.png`.
+- Caveat: nested criterion (partitions 0–9 are one third of the R = 30 sample); against partitions 10–29 alone only 6/12 HV and 5/12 IGD+ cells pass; the Santander IGD+ level shifts between batches (all three NBI variants), and the HV anchor win rates are 6/10 vs 18/20 on Porto (Fisher p = 0.14) and 5/10 vs 19/20 on UCI (p = 0.009), uncorrected. The batch comparisons are exploratory: STATISTICAL_ANALYSIS_R30.md §6 specifies only the nested comparison.
+- Wording allowed: "no statistically established effect reversed; median sign agrees in 28/32 primary cells between the first ten and the twenty new partitions and between R = 10 and R = 30 (exceptions named); R = 30 made the Porto/UCI anchor effect consistent in direction and quantified the BNP collapse rate (7/30)". Not allowed: "identical sign in all 32 cells", "changed no directional conclusion", "ten partitions identify the conclusions", "the batch disagreement is the partition sensitivity the extension was designed to measure", "under an identical protocol" (until the run-batch ticket is resolved), and "the extension exposed two cost artifacts" (the BNP normalization stretch was already noted at R = 10, a91f222 FINAL_REPORT.md Q6; allowed form: "one of them an artifact noted but not resolved in the ten-partition analysis"; the second, the Santander deployment-cost gap of Section 5.6, is not recorded in either report, so the manuscript says "the first of them noted but not resolved in the ten-partition analysis, the second not recorded there").
 
 ---
 
 ## C11 — Empirical Pareto reference quality and its self-grading — SECONDARY (infrastructure)
 
 **Wording rule (added 2026-09-11).** The reference has two layers and the manuscript must never conflate them.
-(a) The **sampled core** — ≥ 10⁵ Dirichlet points, lattice, vertices, edges and the ε-constraint sweep — is
-constructed independently of the surrogate and of every candidate method. (b) The **final augmented reference** used
-for scoring is the non-dominated union of that core with *every* candidate set. Permitted: "an empirical reference
-whose sampled core is constructed independently of the surrogate and is subsequently augmented with all candidate
-sets". **Forbidden:** "an independent reference", "a reference the methods cannot influence", "independently
-constructed reference", or any phrasing implying the *final* reference is method-independent. The self-grading
-caveat (NBI-B and NBI-C contribute 30–40% of the final front) must accompany any absolute indicator value.
+(a) The sampled core — ≥ 10⁵ Dirichlet points, lattice, vertices, edges, the design and validation compositions, the ε-constraint sweep and the single-objective references — contains no output of the five compared methods but is not independent of the surrogate: those references include the two Scheffé-surface optima that NBI-A receives as anchors (03_methodology.tex:196-200; scripts/pco213_run_postwork_benchmark.py:463-465). (b) The final augmented reference used for scoring is the non-dominated union of that core with every candidate set. Permitted: "an empirical reference whose sampled core contains no output of the compared methods and is subsequently augmented with all candidate sets". Forbidden: "an independent reference", "a reference the methods cannot influence", "independently constructed reference", "a sampled core built (or constructed) independently of the surrogate", or any phrasing implying the final reference is method-independent. The self-grading
+caveat (candidate sets contribute a large share of the final front (NBI-B and NBI-C most on BNP Paribas and Porto Seguro, random scalarization on Santander; the 30–40% figure holds only for BNP and Porto and its source quality.json is unversioned); own points lower an arm's HV ratio, and two primary IGD+ contrasts reverse against the sample core) must accompany any absolute indicator value.
 
 
-- Median 100,564 points per partition; median displacement by an independent 20k check 2.2–3.9%; 116/120 partitions within the 5% tolerance (max 6.0% at the 3-round cap). Median sample-front sizes: weighted 135 / 120 / 94 / 481, support 40 / 39 / 14 / 87. Final reference = non-dominated union of sample and every candidate set (NBI-B/C contribute 30–40% of points). HV effect of residual displacement ≤ 0.2% (HV ratio ≥ 0.998). Source: `tables/reference_diagnostics.csv`, FINAL_REPORT §5.
+- Median 100,564 points per partition; median displacement by an independent 20k check 2.2–3.9%; 118/120 replications end within the 5% tolerance; 4 reach the 3-round cap, 2 of them above 5% (max 5.97%); weighted-cost front only (runner:487-510). Median sample-front sizes: weighted 135 / 120 / 94 / 481, support 40 / 39 / 14 / 87. Final reference = non-dominated union of sample and every candidate set (NBI-B/C contribute 30–40% of points). HV effect of residual displacement ≤ 0.2% (HV ratio ≥ 0.998): the R = 10, weighted-front estimate (a91f222 FINAL_REPORT.md:131), no longer cited in the manuscript. Source: `tables/reference_diagnostics.csv`, FINAL_REPORT §5.
 - Wording NOT allowed: "true Pareto front".
 
 ## C12 — NBI outcome rates and failure modes — SECONDARY / EXPLORATORY
@@ -244,7 +241,7 @@ caveat (NBI-B and NBI-C contribute 30–40% of the final front) must accompany a
 ## C14 — Execution provenance — SECONDARY
 
 - 120/120 partitions; 3,600 model fits; 19,920 design evaluations; 23,760 NBI subproblems; 50.2 M real-objective evaluations (NBI-C); 15.5 M reference points + 2.4 M check points; 4.8 M direct-AUC-search evaluations; 81.1 h cumulative stage time (R = 10: 27.5 h; extension 53.6 h); 2 retries total (Porto rep 0 comparators, UCI rep 0 reference), 0 in partitions 10–29; 68 tests. Source: `summary.json` (counts, runtime), `manifests/benchmark_manifest.json`.
-- Environment: Python 3.11.15, numpy 2.4.6, pandas 3.0.5, scipy 1.17.1, scikit-learn 1.9.0, statsmodels 0.15.0, xgboost 3.2.0, macOS arm64 (Apple M4 Max), 8 worker threads.
+- Environment: Python 3.11.15, numpy 2.4.6, pandas 3.0.5, scipy 1.17.1, scikit-learn 1.9.0, statsmodels 0.15.0, xgboost 3.2.0, macOS arm64 (Apple M4 Max, 14 cores). kNN, RF and XGBoost set to all cores (n_jobs = −1) for fitting and cost timing; the runner's n_jobs = 8 reaches only the batched weight evaluations of the empirical-reference stage; NSGA-II runs executed as 8 concurrent processes (119 of 120; the uci_credit rep 0 pilot ran alone). Test count 68 at b3ed050; 83 at 422098a after the NSGA-II tests.
 
 ---
 
@@ -285,3 +282,7 @@ wrong claim; that is what this document's per-claim mapping is for.
 7. Santander deployment-cost gap attributed to the AUC optimum (C7).
 8. NBI replaces SLSQP for the mono-objective log-loss problem (SLSQP is the direct reference; C13).
 9. The present paper introduced DoE + RSM + NBI (inherited from Pereira et al., 2025; see research_lineage.md).
+10. NSGA-II "evaluation-matched" to NBI-C, at a "matched (evaluation) budget", with "the same number of real objective evaluations" or at "equal evaluation count" (NSGA-II evaluated 1.999992× NBI-C's weight vectors; F3).
+11. A practitioner recommendation of NSGA-II drawn from one untuned configuration (P1-C01).
+12. A sampled reference core "built/constructed independently of the surrogate" (C11; P1-C14).
+13. Tag pco213-postwork-r30 as "the source of every number in this paper" (post-tag artifacts, header note).

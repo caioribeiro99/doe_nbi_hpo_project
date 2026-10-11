@@ -78,6 +78,20 @@ preregistration exists for this study. The evidence of advance specification is 
 the gate thresholds, primary endpoints, comparison families and analysis rules were committed before the replicated
 benchmark was launched.
 
+> **Correction note (2026-10-11, correction made on the revision branch `revision/paper1-matheus-review`; F2,
+> option K).** The last sentence of the paragraph above is wrong as written; it is kept unchanged as the historical
+> record. Of the items it names, the gate thresholds (external R² ≥ 0.5 and Spearman ≥ 0.9) and the computation of
+> the two endpoint indicators (IGD+ and hypervolume ratio) were committed before the ten-partition benchmark was
+> launched (runner `c2e37c4`, 2026-09-04 21:38:01; launch 21:38:16 in `benchmark.log`), and the Nadeau–Bengio test
+> with ρ = 0.25 was in the 2026-07-07 plan (`a483f4f`). The primary designation of the four comparisons, the NBI-C
+> pairing of both comparators, the per-dataset 8-test Holm family and the remaining analysis rules, including the
+> bimodality rule, were first committed with the analysis plan `STATISTICAL_ANALYSIS_R30.md` in
+> `cf462b4` (2026-09-06 08:48:53): after partitions 0–9 had been run and analysed (R = 10 report `a91f222`, 01:51:53),
+> about seven minutes after the R = 30 extension was launched (08:42:13) and before its first partition completed
+> (09:41:48). They are prospective for partitions 10–29 only, so the sentence fails for either reading of "the
+> replicated benchmark". The frozen plan and manifests are not edited; the manuscript on the revision branch states
+> this chronology.
+
 **New claim.** "a reliability gate pre-specified before the replicated benchmark"; "whose thresholds were fixed and
 committed to version control before the replicated benchmark was run"; "fixed in advance as the two primary
 endpoints". The methodology now states explicitly: *"We describe this as pre-specification rather than preregistration:
