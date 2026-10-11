@@ -149,8 +149,17 @@ def main() -> int:
         for r in reg["registry"]:
             b = r["standalone_logical_budget"]
             print(f"| `{r['identifier']}` | {r['kind']} | `{r['runner_stage']}` | "
-                  f"{b if b is not None else '—'} | "
+                  f"{b if b is not None else 'n/a'} | "
                   f"{'yes' if r['revalidated_on_real_learner'] else 'n/a'} | {r['isolates']} |")
+        plan = logical_budget_plan(2)
+        print(f"\nn/a: not applicable. Standalone budgets are defined for the five arms; the "
+              f"direct-search comparators run at the frozen comparator budget of "
+              f"{plan['comparator_budget']} real evaluations (matched NSGA-II, "
+              f"{NSGA2_POP * NSGA2_GEN}), and the unmatched NSGA-II context run at "
+              f"{NSGA2_UNMATCHED_MULTIPLIER}x the matched budget. Revalidation applies to the "
+              "arms, whose candidates are selected on the surrogates, and to the control, which "
+              "reuses NBI-S's revalidated set; the other entities evaluate on the real learner "
+              "directly or return no candidate set.")
     else:
         print(json.dumps(reg, indent=2))
     return 0

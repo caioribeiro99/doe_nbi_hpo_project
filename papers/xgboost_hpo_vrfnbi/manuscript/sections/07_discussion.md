@@ -7,10 +7,9 @@ surrogate-assisted multiobjective hyperparameter pipeline: the objective specifi
 its normalization reference, the geometry of front construction, and the provenance of the
 anchor and payoff information that geometry consumes. The contribution is not a new
 algorithm but a prospectively frozen mechanistic decomposition of an existing one.
-Code-level reconstruction of the archived dissertation implementation showed that front
-construction there used normalized weighted scalarization, although the historical text
-used Normal Boundary Intersection terminology, which is why the historical-to-canonical
-difference decomposes into a normalization row and a geometry row.
+Because that existing method is a weighted sum normalized by an observed-extrema box
+(Section 3), the historical-to-canonical difference decomposes into a normalization row and
+a geometry row.
 
 ### 7.2 Geometry moved the indicator
 

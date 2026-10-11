@@ -207,16 +207,16 @@ def test_exactly_the_confirmed_authors_are_credited() -> None:
     """A fourth author could previously be added and credited with anything."""
     block = MAN[MAN.index("**Author contributions (CRediT).**"):
                 MAN.index("The CRediT role *Resources* is not assigned.")]
-    named = set(re.findall(r"^\*([^*]+)\* —", block, re.M))
+    named = set(re.findall(r"^\*([^*]+)\*:", block, re.M))
     assert named == set(ROLES), f"credited authors are {sorted(named)}"
 
 
 @pytest.mark.parametrize("author,roles", ROLES.items())
 def test_credit_roles_are_exactly_as_confirmed(author: str, roles: list[str]) -> None:
-    start = MAN.index("*%s* —" % author)
+    start = MAN.index("*%s*:" % author)
     entry = MAN[start:MAN.index(".\n", start) + 1]
     flat = " ".join(entry.split())
-    stated = {r.strip(" .*") for r in flat.split("—", 1)[1].split(";")}
+    stated = {r.strip(" .*") for r in flat.split(":", 1)[1].split(";")}
     assert stated == set(roles), (
         f"{author}: extra {sorted(stated - set(roles))}, "
         f"missing {sorted(set(roles) - stated)}")
@@ -225,7 +225,7 @@ def test_credit_roles_are_exactly_as_confirmed(author: str, roles: list[str]) ->
 def test_resources_is_deliberately_unassigned() -> None:
     assert "The CRediT role *Resources* is not assigned." in MAN
     for author in ROLES:
-        start = MAN.index("*%s* —" % author)
+        start = MAN.index("*%s*:" % author)
         assert "Resources" not in MAN[start:MAN.index(".\n", start)]
 
 

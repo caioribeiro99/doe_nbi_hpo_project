@@ -106,7 +106,8 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
     rows = [(DISP[d], cell(d, "HISTORICAL-WS -> WS-S")) for d in PRIMARY]
     eff = "; ".join(f"{n} {r['median_diff']:+.4f}" for n, r in rows)
     wtl = "; ".join(f"{n} {r['wins_for_second']}/{r['ties']}/{r['losses']}" for n, r in rows)
-    unc = "; ".join(f"{n} {fmt_ci(r['median_diff_ci95'])}" for n, r in rows)
+    unc = "; ".join(f"{n} {fmt_ci(r['median_diff_ci95'])}, rank-biserial {r['rank_biserial']:+.2f}"
+                    for n, r in rows)
     inf = "; ".join(f"{n} Holm p = {r['holm_p']:.4f}" for n, r in rows)
     L.append(claim_block(
         1, "The historical specification and normalization effect is undetectable",
@@ -199,11 +200,13 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
     eff = "; ".join("%s %+.4f" % (n, r["median_diff"]) for n, r in rows)
     wtl = "; ".join("%s %d/%d/%d" % (n, r["wins_for_second"], r["ties"], r["losses"])
                     for n, r in rows)
-    unc = "; ".join("%s %s" % (n, fmt_ci(r["median_diff_ci95"])) for n, r in rows)
-    inf = "; ".join("%s Holm p = %.4f" % (n, r["holm_p"]) for n, r in rows)
+    unc = "; ".join("%s %s, rank-biserial %+.2f" % (n, fmt_ci(r["median_diff_ci95"]),
+                                                   r["rank_biserial"]) for n, r in rows)
+    inf = "; ".join("%s Holm p = %s" % (n, ("%.2e" % r["holm_p"]) if r["holm_p"] < 1e-3
+                                        else ("%.4f" % r["holm_p"])) for n, r in rows)
     L.append(claim_block(
         4, "Anchor and payoff provenance — a negative result, reported as such",
-        "Holding NBI geometry fixed, what happens when payoff and anchor information "
+        "Holding the NBI formulation fixed, what happens when payoff and anchor information "
         "changes from surrogate-derived to the pre-specified empirical-real procedure?",
         "The paired per-replication difference in CORE-relative hypervolume ratio "
         "between NBI-S and NBI-R, which differ ONLY in anchor and payoff provenance. "
@@ -303,7 +306,7 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
     sb = cell("spambase", "WS-S -> NBI-S")
     d2 = ver["CORRECTION_2_boundary_control"]["dispersion"]
     L.append(claim_block(
-        7, "The prospectively retained boundary dataset did not resolve",
+        7, "The boundary dataset did not resolve",
         "What happens on a dataset that failed the pre-campaign front-geometry screen and "
         "was retained as a boundary control by amendment 22?",
         "The same geometry contrast as Claim 2, on the dataset excluded in advance from "

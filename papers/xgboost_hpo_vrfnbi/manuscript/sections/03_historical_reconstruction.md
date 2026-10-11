@@ -1,4 +1,4 @@
-## 3. Historical method reconstruction
+## 3. The historical method
 
 ### 3.1 What the archived implementation computes
 
@@ -23,7 +23,7 @@ divergence is reported as provenance, not as a finding: it was recorded in the p
 methodology log (`docs/METHODOLOGY_DECISIONS.md`, entry D1) before this study examined the code,
 and no claim is made about any other implementation of NBI.
 
-### 3.2 Four properties carried forward verbatim
+### 3.2 Properties carried forward
 
 Four further properties of the archived implementation are relevant because each could, on its own,
 displace a returned front (Table 1).
@@ -42,8 +42,8 @@ repaired.
 
 The normalization box is built from the component-wise maxima and minima of the design rows. These
 are not the objective values attained at the other objective's minimizer, which is what a payoff
-matrix supplies, so the historical method differs from canonical NBI in two independent respects —
-geometry and reference — rather than one.
+matrix supplies, so the historical method differs from canonical NBI in two independent respects,
+geometry and reference, rather than one.
 
 The weight grid is asymmetric. At the solver's default step it sweeps $b$ from $0.05$ to $1.00$
 and forms $(1-b, b)$, so the

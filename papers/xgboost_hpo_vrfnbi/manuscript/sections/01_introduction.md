@@ -13,9 +13,10 @@ individually.
 These three choices are not interchangeable. The normalization reference fixes the scale on
 which any scalarized objective is combined. The construction geometry determines which points
 of a nonconvex front are reachable at all: a weighted sum cannot return points in a nonconvex
-region, whereas Normal Boundary Intersection (NBI) distributes subproblems along a segment of
-the convex hull of individual minima (CHIM) and searches along a quasi-normal direction.
-Anchor provenance determines the payoff matrix, and therefore the CHIM itself — surrogate
+region, whereas Normal Boundary Intersection (NBI; Das and Dennis 1998) distributes
+subproblems along a segment of the convex hull of individual minima (CHIM) and searches along
+a quasi-normal direction. Anchor provenance determines the payoff matrix, and therefore the
+CHIM itself: surrogate
 anchors are free once the surfaces exist, while empirical anchors are bought with real
 evaluations. In a pipeline where all three are set together, a reported gain is consistent
 with any of them.

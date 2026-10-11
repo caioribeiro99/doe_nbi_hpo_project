@@ -1,4 +1,4 @@
-### 5.7 HISTORICAL-WS-asrun — the archived solver, called unmodified
+### 5.7 HISTORICAL-WS-asrun: the archived solver, called unmodified
 
 HISTORICAL-WS-asrun calls the frozen `v0.1.0-dissertation` solver unmodified: normalized weighted
 scalarization by SLSQP from ten multistarts, with the maximization orientation, the observed-extrema
@@ -13,7 +13,7 @@ historical method; its standalone cost is 108 real evaluations, 88 design rows p
 revalidations. The two historical entities are separate identifiers with different costs and are
 never pooled (Supplement S6).
 
-### 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
+### 5.8 HISTORICAL-WS: the same weighted sum under the shared specification
 
 HISTORICAL-WS applies the same weighted-sum scalarization, solver and shared symmetric weight grid
 as the rest of the arm set, over the same surrogates fitted in coded units to the shared,
@@ -22,7 +22,7 @@ historical observed-extrema normalization box instead of the payoff-matrix refer
 HISTORICAL-WS $\to$ WS-S contrast isolates specification and normalization and nothing else.
 Standalone cost 186 real evaluations: 88 design, 78 external validation, 20 revalidations.
 
-### 5.9 WS-S — weighted sum over the surrogate payoff reference
+### 5.9 WS-S: weighted sum over the surrogate payoff reference
 
 WS-S minimizes a weighted sum of min–max normalized surrogate predictions over the shared
 symmetric weight grid, normalized against the payoff reference rather than observed extremes. The
@@ -34,7 +34,7 @@ frozen protocol calls it the true nadir, although it is not the Pareto nadir); t
 the contrast's sensitivity to using it as the far end of the box a secondary analysis, but that
 analysis was not run and is not reported (Section 8.7). Standalone cost 186.
 
-### 5.10 NBI-S — canonical Normal Boundary Intersection
+### 5.10 NBI-S: canonical Normal Boundary Intersection
 
 Surrogate anchors are obtained by per-objective minimization of the fitted surfaces over the coded
 box. With $q = 2$ minimized objectives, $F(x)$ the vector of their fitted surfaces and anchor
@@ -67,7 +67,7 @@ geometry contrasts with the count published. None occurred: $\Phi$ had rank 2 an
 coincided in all 240 NBI-S and NBI-R arm-units. Standalone cost 186; WS-S $\to$ NBI-S changes the
 scalarization geometry and nothing else (Figure 1).
 
-### 5.11 NBI-R — NBI with empirical-real anchors
+### 5.11 NBI-R: NBI with empirical-real anchors
 
 NBI-R is NBI-S with anchors and payoff matrix obtained by direct search on the real objectives
 under a pre-declared per-objective budget: for each objective, the best of 100 configurations drawn
@@ -214,7 +214,7 @@ $\mathrm{SE}_{\text{corr}}^{2} = (1/R + n_{\text{test}}/n_{\text{train}})\,s^{2}
 80/20 outer split ($n_{\text{test}}/n_{\text{train}} = 0.25$),
 
 $$\frac{\mathrm{SE}_{\text{corr}}}{\mathrm{SE}_{\text{naive}}} \;=\; \sqrt{\frac{1/30 + 0.25}{1/30}}
-\;=\; \sqrt{8.5} \;=\; 2.9155 .$$
+\;=\; \sqrt{8.5} \;=\; 2.9155 . \tag{3}$$
 
 This is not an equicorrelation reading of $\rho = 0.25$, which would give 3.3166. It is a sensitivity
 and never the study's significance test: the correction was derived for a

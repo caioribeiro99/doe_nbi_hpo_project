@@ -43,9 +43,10 @@ individually.
 These three choices are not interchangeable. The normalization reference fixes the scale on
 which any scalarized objective is combined. The construction geometry determines which points
 of a nonconvex front are reachable at all: a weighted sum cannot return points in a nonconvex
-region, whereas Normal Boundary Intersection (NBI) distributes subproblems along a segment of
-the convex hull of individual minima (CHIM) and searches along a quasi-normal direction.
-Anchor provenance determines the payoff matrix, and therefore the CHIM itself — surrogate
+region, whereas Normal Boundary Intersection (NBI; Das and Dennis 1998) distributes
+subproblems along a segment of the convex hull of individual minima (CHIM) and searches along
+a quasi-normal direction. Anchor provenance determines the payoff matrix, and therefore the
+CHIM itself: surrogate
 anchors are free once the surfaces exist, while empirical anchors are bought with real
 evaluations. In a pipeline where all three are set together, a reported gain is consistent
 with any of them.
@@ -198,8 +199,8 @@ weighted-sum arm runs alongside the historical one.
 ### 2.3 Design of experiments and response surfaces for hyperparameter tuning
 
 Treating hyperparameter tuning as a designed experiment with a fitted response surface is prior art.
-Lujan-Moreno, Howard, Rojas and Montgomery (2018) give the canonical statement — screening factorial
-then response surface methodology, on a random forest, single objective — and Vasquez-Ramos et al.
+Lujan-Moreno, Howard, Rojas and Montgomery (2018) give the canonical statement (screening factorial
+then response surface methodology, on a random forest, single objective) and Vasquez-Ramos et al.
 (2025) apply response surface methodology to XGBoost hyperparameters with a Box–Behnken design and a
 single response, without a Pareto front, factor reduction, or multiobjective scalarization. Neither
 the framing nor its application to XGBoost hyperparameters is claimed here.
@@ -231,7 +232,7 @@ indicator, and IGD⁺ (Ishibuchi, Masuda, Tanigaki and Nojima 2015) as a seconda
 unlike IGD, it is weakly Pareto compliant and does not reward sets that move away from the reference.
 Schott spacing and a joint non-dominated fraction complete the frozen secondary set. All are computed
 against a finite empirical reference set, so the primary endpoint is reported throughout as a
-**CORE-relative hypervolume ratio**: that reference is not a true Pareto front, and a ratio above one
+CORE-relative hypervolume ratio: that reference is not a true Pareto front, and a ratio above one
 means the returned set improved on a finite reference. Because the replicated
 outer partitions share training data, paired differences across replications are not independent.
 Nadeau and Bengio (2003) quantify that variance inflation for resampled estimates; their corrected
@@ -256,7 +257,7 @@ the three mechanisms it bundles. Section 3 describes the historical pipeline and
 from canonical NBI, and Section 4 states the three single-factor contrasts.
 
 
-## 3. Historical method reconstruction
+## 3. The historical method
 
 ### 3.1 What the archived implementation computes
 
@@ -281,7 +282,7 @@ divergence is reported as provenance, not as a finding: it was recorded in the p
 methodology log (`docs/METHODOLOGY_DECISIONS.md`, entry D1) before this study examined the code,
 and no claim is made about any other implementation of NBI.
 
-### 3.2 Four properties carried forward verbatim
+### 3.2 Properties carried forward
 
 Four further properties of the archived implementation are relevant because each could, on its own,
 displace a returned front (Table 1).
@@ -300,8 +301,8 @@ repaired.
 
 The normalization box is built from the component-wise maxima and minima of the design rows. These
 are not the objective values attained at the other objective's minimizer, which is what a payoff
-matrix supplies, so the historical method differs from canonical NBI in two independent respects —
-geometry and reference — rather than one.
+matrix supplies, so the historical method differs from canonical NBI in two independent respects,
+geometry and reference, rather than one.
 
 The weight grid is asymmetric. At the solver's default step it sweeps $b$ from $0.05$ to $1.00$
 and forms $(1-b, b)$, so the
@@ -369,11 +370,11 @@ is normalized, which scalarization geometry builds the front, and where the anch
 matrix come from. The design separates them by changing one factor at a time, everything else
 held fixed and checked at run time by a contrast fingerprint.
 
-**RQ1 — Specification and normalization.** Does replacing the historical observed-extrema
+**RQ1: Specification and normalization.** Does replacing the historical observed-extrema
 normalization with the payoff-matrix reference change the returned front? Contrast:
 HISTORICAL-WS $\rightarrow$ WS-S, differing only in that reference.
 
-**RQ2 — Front-construction geometry.** At a fixed reference, does canonical NBI construction
+**RQ2: Front-construction geometry.** At a fixed reference, does canonical NBI construction
 change the returned front relative to specification-matched weighted scalarization? Contrast:
 WS-S $\rightarrow$ NBI-S, differing only in scalarization geometry.
 
@@ -417,8 +418,8 @@ for them are not reported, and the one test on them is post hoc (Section 8.7).
 
 *Family and multiplicity.* Within each primary-panel dataset, three contrasts $\times$ one
 indicator, Holm-corrected within that dataset; the other arm pairs and all baseline comparisons
-are descriptive and uncorrected. Primary evidence is the descriptive triple — median difference
-with bootstrap interval, win fraction with Wilson interval, rank-biserial — and the test is
+are descriptive and uncorrected. Primary evidence is the descriptive triple (median difference
+with bootstrap interval, win fraction with Wilson interval, rank-biserial), and the test is
 secondary.
 
 *Boundary-control interpretation.* The protocol declared that a null geometry difference on
@@ -444,7 +445,7 @@ neither is revised now.
 runs at every replication regardless, and every primary comparison is also reported conditioned
 on it (Supplement S11).
 
-Throughout, **the dataset is the unit of generalization and nothing is pooled**: the primary
+Throughout, the dataset is the unit of generalization and nothing is pooled: the primary
 datasets are never combined into a 90-replication analysis, and no conclusion extends beyond
 this panel, this surrogate architecture, two objectives and this budget.
 
@@ -456,7 +457,7 @@ this panel, this surrogate architecture, two objectives and this budget.
 Four public binary-classification datasets are used, each obtainable under CC BY 4.0 with a
 published SHA-256. MAGIC Gamma Telescope is the continuity dataset, the one the historical
 pipeline used; Adult / Census Income contributes scale and mixed types; Bank Marketing
-contributes class imbalance with independently constructed categorical features; Spambase is
+contributes the strongest class imbalance with independently constructed categorical features; Spambase is
 small and entirely numeric.
 
 Roles were assigned by a screening rule frozen before the campaign, applied to the 88 design rows
@@ -502,11 +503,12 @@ encoded.
 the design in coded units on $[-1,1]$; integers are cast by `int(round(·))` at
 evaluation time.
 
-A configuration is written in coded units as $x \in [-1, 1]^7$ and mapped to natural units
-by $\text{natural}_i(x) = lo_i + (x_i + 1)(hi_i - lo_i)/2$. `max_depth` and `n_estimators`
-are cast by `int(round(·))` at evaluation time, so every surrogate is fitted on a continuous
-relaxation whose evaluated points are rounded; the gap is carried rather than repaired, with
-each subproblem reporting the objective displacement induced by rounding beside its residual.
+A configuration is written in coded units as $x \in [-1, 1]^7$ and mapped to natural units by
+$\text{natural}_i(x) = \ell_i + (x_i + 1)(u_i - \ell_i)/2$, with $\ell_i$ and $u_i$ the Low and High
+bounds of Table 2. `max_depth` and `n_estimators` are cast by `int(round(·))` at evaluation time, so
+every surrogate is fitted on a continuous relaxation whose evaluated points are rounded; the gap is
+carried rather than repaired, with each subproblem recording the objective displacement induced by
+rounding beside its residual (Supplement S12.2).
 
 ### 5.3 The 88-run face-centred central composite design
 
@@ -721,7 +723,7 @@ Everything specified here is scoped to these four datasets, this surrogate archi
 objectives and this budget.
 
 
-### 5.7 HISTORICAL-WS-asrun — the archived solver, called unmodified
+### 5.7 HISTORICAL-WS-asrun: the archived solver, called unmodified
 
 HISTORICAL-WS-asrun calls the frozen `v0.1.0-dissertation` solver unmodified: normalized weighted
 scalarization by SLSQP from ten multistarts, with the maximization orientation, the observed-extrema
@@ -736,7 +738,7 @@ historical method; its standalone cost is 108 real evaluations, 88 design rows p
 revalidations. The two historical entities are separate identifiers with different costs and are
 never pooled (Supplement S6).
 
-### 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
+### 5.8 HISTORICAL-WS: the same weighted sum under the shared specification
 
 HISTORICAL-WS applies the same weighted-sum scalarization, solver and shared symmetric weight grid
 as the rest of the arm set, over the same surrogates fitted in coded units to the shared,
@@ -745,7 +747,7 @@ historical observed-extrema normalization box instead of the payoff-matrix refer
 HISTORICAL-WS $\to$ WS-S contrast isolates specification and normalization and nothing else.
 Standalone cost 186 real evaluations: 88 design, 78 external validation, 20 revalidations.
 
-### 5.9 WS-S — weighted sum over the surrogate payoff reference
+### 5.9 WS-S: weighted sum over the surrogate payoff reference
 
 WS-S minimizes a weighted sum of min–max normalized surrogate predictions over the shared
 symmetric weight grid, normalized against the payoff reference rather than observed extremes. The
@@ -757,7 +759,7 @@ frozen protocol calls it the true nadir, although it is not the Pareto nadir); t
 the contrast's sensitivity to using it as the far end of the box a secondary analysis, but that
 analysis was not run and is not reported (Section 8.7). Standalone cost 186.
 
-### 5.10 NBI-S — canonical Normal Boundary Intersection
+### 5.10 NBI-S: canonical Normal Boundary Intersection
 
 Surrogate anchors are obtained by per-objective minimization of the fitted surfaces over the coded
 box. With $q = 2$ minimized objectives, $F(x)$ the vector of their fitted surfaces and anchor
@@ -790,7 +792,7 @@ geometry contrasts with the count published. None occurred: $\Phi$ had rank 2 an
 coincided in all 240 NBI-S and NBI-R arm-units. Standalone cost 186; WS-S $\to$ NBI-S changes the
 scalarization geometry and nothing else (Figure 1).
 
-### 5.11 NBI-R — NBI with empirical-real anchors
+### 5.11 NBI-R: NBI with empirical-real anchors
 
 NBI-R is NBI-S with anchors and payoff matrix obtained by direct search on the real objectives
 under a pre-declared per-objective budget: for each objective, the best of 100 configurations drawn
@@ -937,7 +939,7 @@ $\mathrm{SE}_{\text{corr}}^{2} = (1/R + n_{\text{test}}/n_{\text{train}})\,s^{2}
 80/20 outer split ($n_{\text{test}}/n_{\text{train}} = 0.25$),
 
 $$\frac{\mathrm{SE}_{\text{corr}}}{\mathrm{SE}_{\text{naive}}} \;=\; \sqrt{\frac{1/30 + 0.25}{1/30}}
-\;=\; \sqrt{8.5} \;=\; 2.9155 .$$
+\;=\; \sqrt{8.5} \;=\; 2.9155 . \tag{3}$$
 
 This is not an equicorrelation reading of $\rho = 0.25$, which would give 3.3166. It is a sensitivity
 and never the study's significance test: the correction was derived for a
@@ -996,13 +998,7 @@ independent dominance filter and a two-dimensional hypervolume sweep, reproducin
 per-unit values with zero difference. Nine claims reproduced exactly; two were corrected, and
 both were the author's.
 
-### 6.2 The historical reconstruction: specification and normalization
-
-A code-level reconstruction of the archived dissertation implementation established that its front
-construction is a min–max normalized weighted scalarization over component-wise observed extrema of
-the design rows, although the historical text uses Normal Boundary Intersection terminology. That
-fact fixes the arm set: the historical method enters as a weighted-sum arm, and the geometry question
-needs a separate, specification-matched contrast.
+### 6.2 The historical method: specification and normalization
 
 **HISTORICAL-WS $\rightarrow$ WS-S isolates normalization alone**: the same weighted sum, the same
 surrogates, the same symmetric weight grid, differing only in whether the normalization box comes
@@ -1037,18 +1033,13 @@ further (Figure 1).
 
 ### 6.3 Front-construction geometry: WS-S versus NBI-S
 
-The second contrast in the frozen decomposition holds the surrogate models, the
-canonicalized objective set, the scaling, the decision space, the candidate realizer,
-the weight grid and the payoff reference fixed, and changes only the scalarization
-geometry: a weighted sum of min–max normalized surrogate objectives (WS-S) against a
-canonical NBI construction with a CHIM, a quasi-normal direction and a $\max t$
-subproblem (NBI-S). Isolation was enforced at run time by a contrast fingerprint over
-the solver configuration, the realizer, the weight grid, the surrogate identities and
-the reference. Every returned candidate was re-evaluated on the real learner before any
-indicator was computed. Differences are paired by replication and formed as
-(second − first), with $R = 30$ per dataset; Holm correction is applied within each
-dataset over the family of three primary contrasts, and the dataset — not the
-replication — is the generalization unit.
+The second contrast changes only the scalarization geometry, from a weighted sum of
+min–max normalized surrogate objectives (WS-S) to a canonical NBI construction with a
+CHIM, a quasi-normal direction and a $\max t$ subproblem (NBI-S); everything else is
+held fixed and checked at run time by the contrast fingerprint (Section 5.11). Every returned
+candidate was re-evaluated on the real learner before any indicator was computed.
+Differences are paired by replication and formed as (second − first), with $R = 30$
+per dataset and Holm correction within each dataset (Section 5.15).
 
 Under these conditions, canonical NBI front construction produced higher
 real-revalidated CORE-relative hypervolume than specification-matched weighted
@@ -1425,10 +1416,9 @@ surrogate-assisted multiobjective hyperparameter pipeline: the objective specifi
 its normalization reference, the geometry of front construction, and the provenance of the
 anchor and payoff information that geometry consumes. The contribution is not a new
 algorithm but a prospectively frozen mechanistic decomposition of an existing one.
-Code-level reconstruction of the archived dissertation implementation showed that front
-construction there used normalized weighted scalarization, although the historical text
-used Normal Boundary Intersection terminology, which is why the historical-to-canonical
-difference decomposes into a normalization row and a geometry row.
+Because that existing method is a weighted sum normalized by an observed-extrema box
+(Section 3), the historical-to-canonical difference decomposes into a normalization row and
+a geometry row.
 
 ### 7.2 Geometry moved the indicator
 
@@ -1582,9 +1572,6 @@ competitive with the coarse grid, this design was not built to answer.
 
 ## 8. Limitations
 
-This study is a mechanistic decomposition executed under one frozen set of conditions. The
-conditions are the limits.
-
 ### 8.1 Scope of the design
 
 Four datasets, two objectives, one surrogate architecture, one budget regime, one learner
@@ -1678,15 +1665,6 @@ The gate is diagnostic, not adaptive: no replication was removed, so the Adult a
 geometry effects come entirely from failing replications (Section 6.7), and the study measures
 relative front-construction geometry, not absolute surrogate trustworthiness (Section 7.8).
 
-**Undefined spacing.** Schott spacing requires at least two gaps. It is undefined on
-single-point fronts, giving 140 non-finite cells across the 70 method-by-reference blocks whose
-front has one point. Those cells are counted and excluded from spacing summaries rather than
-propagated, so spacing is summarized over a subset of blocks.
-
-**Single machine.** All 120 units ran on one machine, 14 workers × 1 thread, 9h46m wall clock.
-No cross-platform or cross-BLAS replication was attempted, so hardware-independent numerical
-reproducibility is untested and timing figures are not machine-independent.
-
 ### 8.6 The process
 
 The protocol reached its frozen state through 23 numbered amendments and seven adversarial
@@ -1740,8 +1718,8 @@ indicators, reported only as medians in Supplement S10.
 ### 9.1 Version tags
 
 Five tags separate what was specified from what was measured (Supplement S1). `v0.1.0-dissertation`
-(`67d9fe5`) is the historical implementation this study reconstructs; it is read and executed as
-archived, never edited. `xgboost-hpo-protocol-v1` froze the specification before the
+(`67d9fe5`) is the archived historical implementation; it is read and executed as archived, never
+edited. `xgboost-hpo-protocol-v1` froze the specification before the
 measurement-validation pilot, `-v2` incorporated the pilot, and `-v3` (`9b15ba7`) is the
 confirmatory protocol under which every unit ran. These tags record what was specified before the
 confirmatory campaign; the 23 numbered amendments between them carry the cause of each change beside it.
@@ -1757,7 +1735,7 @@ resulting 64-bit integer is passed to `numpy.random.SeedSequence`. BLAKE2b rathe
 `hash()`, which is salted per process: a campaign resumed in a new interpreter would otherwise draw
 different candidates. All 3,840 campaign streams are distinct, stable across processes and
 `PYTHONHASHSEED`, and independent of execution order and worker count. Because the replication index
-remains a seed component, the paired design still pairs — every method sees the same outer partition
+remains a seed component, the paired design still pairs: every method sees the same outer partition
 at a given replication. Seeds are narrowed to 32 bits only where a third-party API validates that
 range. Unit seeds derive from `SEED_BASE = 20260914`.
 
@@ -1789,7 +1767,9 @@ cross-method information.
 The campaign manifest stamps the environment: Python 3.11.15 on macOS 26.6.2 (arm64), numpy 2.4.6,
 pandas 3.0.5, and in the same environment xgboost 3.2.0, scikit-learn 1.9.0 and scipy 1.17.1.
 Execution used 14 process workers, one XGBoost thread per fit, `spawn` start method, completing
-120/120 units with 0 failures in 9h46m. Two provenance scripts that
+120/120 units with 0 failures in 9h46m, all on one machine. No cross-platform or cross-BLAS
+replication was attempted, so hardware-independent numerical reproducibility is untested and
+timing figures are machine-specific. Two provenance scripts that
 execute the archived dissertation code require an interpreter contemporary with it (numpy < 2,
 pandas < 3); they refuse to run on pandas 3 and print that recipe rather than patch a historical
 artifact.
@@ -1899,7 +1879,7 @@ manuscript. Apart from the bounds restated in Table 2, no figure, table or resul
 from the dissertation or from the companion manuscript.
 
 **Data and code availability.** The protocol, the frozen factor models, every analysis
-artifact and every script are version-controlled and tagged; see §9. Raw datasets are
+artifact and every script are version-controlled and tagged; see Section 9. Raw datasets are
 public and are retrieved by checksum-verified loaders; evaluation caches are
 deliberately unversioned.
 
@@ -1916,13 +1896,13 @@ Desenvolvimento Científico e Tecnológico (CNPq), process 312844/2023-9.
 
 **Author contributions (CRediT).**
 
-*Caio Tertuliano Ribeiro* — Conceptualization; Methodology; Software; Validation;
+*Caio Tertuliano Ribeiro*: Conceptualization; Methodology; Software; Validation;
 Formal analysis; Investigation; Data curation; Project administration; Writing –
 original draft; Visualization.
 
-*Matheus Costa Pereira* — Methodology; Writing – review & editing.
+*Matheus Costa Pereira*: Methodology; Writing – review & editing.
 
-*Anderson Paulo de Paiva* — Conceptualization; Supervision; Funding acquisition;
+*Anderson Paulo de Paiva*: Conceptualization; Supervision; Funding acquisition;
 Writing – review & editing.
 
 The CRediT role *Resources* is not assigned. The taxonomy does not require every role to
@@ -2039,8 +2019,8 @@ https://doi.org/10.1007/s11227-025-07600-4
 ## Figure captions
 
 **Figure 1. The arm lattice.** Each arrow is a single-factor contrast and the label
-names the one thing it varies; everything else is held fixed by a run-time fingerprint
-over the solver configuration, realizer, weight grid, surrogate identities and
+names the one thing it varies; the other configured inputs are held fixed by a run-time
+fingerprint over the solver configuration, realizer, weight grid, surrogate identities and
 reference. The three primary contrasts are marked.
 
 **Figure 2. The geometry contrast, per replication.** Paired differences in
@@ -2050,7 +2030,8 @@ vertical scales differ by dataset.
 
 **Figure 3. Dispersion across the panel.** The same paired differences as Figure 2,
 shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
-which is why its contrast does not resolve at $R = 30$ despite a larger point estimate.
+which is why its contrast does not resolve at $R = 30$ despite a numerically larger point
+estimate.
 
 **Figure 4. Anchor provenance and the associated geometry.** Left: the full
 NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which inserts
@@ -2067,5 +2048,5 @@ significance differs between references; no cell changes direction.
 **Figure 6. Surrogate-gate regime and baselines.** Left: per-dataset pass rates of the
 frozen external reliability criterion over $R = 30$; the gate is diagnostic and filters
 nothing. Right: median CORE-relative hypervolume ratio by method. The dashed rule marks
-the CORE reference itself and is **not** an upper bound — a ratio above it means the
+the CORE reference itself and is *not* an upper bound: a ratio above it means the
 candidate set improved on the finite reference.

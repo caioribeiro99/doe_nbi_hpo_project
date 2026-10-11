@@ -57,7 +57,7 @@ def main() -> int:
     package_tag = f"`{PACKAGE_TAG}`"
     src = pathlib.Path(REPO/"papers"/"xgboost_hpo_vrfnbi"/"manuscript"/"SOURCE_COMMIT")
     source_commit = src.read_text().strip() if src.exists() else head
-    w(f"**Manuscript source commit** `{source_commit[:12]}` — the state of the")
+    w(f"**Manuscript source commit** `{source_commit[:12]}`: the state of the")
     w("manuscript and analysis sources from which this supplement was generated.")
     w("The final package commit and tag are recorded in S17; they differ from the")
     w("source commit by the metadata-only step that records this provenance, and no")
@@ -104,7 +104,22 @@ def main() -> int:
         lo, hi = BOUNDS[p]
         w(f"| `{p}` | {lo} | {hi} | {'integer' if p in INT_PARAMS else 'continuous'} |")
     w("\nAll seven enter the design in coded units on $[-1, 1]$; integers are cast by")
-    w("`int(round(·))` at evaluation time.\n")
+    from fractions import Fraction
+    from doe_xgb.campaign.design import DESIGN_CSV
+    dz = pd.read_csv(DESIGN_CSV, sep=";", decimal=",", encoding="utf-8-sig")
+    dz.columns = [str(c).strip().strip('"') for c in dz.columns]
+    lo_d, hi_d = BOUNDS["max_depth"]
+    mid_d = (lo_d + hi_d) / 2
+    at_mid = np.isclose(dz["max_depth"].astype(float), mid_d)
+    n_ctr = int((at_mid & (dz["PtType"] == 0)).sum())
+    n_ax = int((at_mid & (dz["PtType"] == -1)).sum())
+    cast_d = int(round(mid_d))
+    coded_d = Fraction(2 * (cast_d - lo_d), hi_d - lo_d) - 1
+    w("`int(round(·))` at evaluation time, with ties rounded to even. The `max_depth` mid-level")
+    w(f"of {mid_d:g} is therefore evaluated as {cast_d}, and the {n_ctr + n_ax} design runs at that level")
+    w(f"(the {n_ctr} centre runs and the {n_ax} axial runs of the other six factors) enter every")
+    w("replication's surface fits at that value, coded "
+      f"${coded_d.numerator}/{coded_d.denominator}$ rather than 0.\n")
 
     w("## S4. Responses and objective construction\n")
     w("| response | role | transform |"); w("|---|---|---|")
@@ -513,7 +528,7 @@ def main() -> int:
             w(f"| {DISP[ds]} | {e} | {g('hv_ratio')} | {g('igd_plus')} | {g('gd')} | "
               f"{g('spacing')} | {g('joint_nondominated_fraction')} | {g('n_front')} |")
     c1 = ver["CORRECTION_1_non_finite"]
-    w(f"\n**Undefined spacing.** {c1['n_cells']} cells are non-finite — spacing and")
+    w(f"\n**Undefined spacing.** {c1['n_cells']} cells are non-finite: spacing and")
     w(f"spacing_cv on the {c1['n_blocks']} method-by-reference blocks whose front has one")
     w("point. Schott spacing requires at least two gaps, so NaN is the correct value and")
     w("those units are excluded from spacing summaries rather than propagated.\n")

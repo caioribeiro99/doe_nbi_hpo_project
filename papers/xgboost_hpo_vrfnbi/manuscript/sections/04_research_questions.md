@@ -5,11 +5,11 @@ is normalized, which scalarization geometry builds the front, and where the anch
 matrix come from. The design separates them by changing one factor at a time, everything else
 held fixed and checked at run time by a contrast fingerprint.
 
-**RQ1 — Specification and normalization.** Does replacing the historical observed-extrema
+**RQ1: Specification and normalization.** Does replacing the historical observed-extrema
 normalization with the payoff-matrix reference change the returned front? Contrast:
 HISTORICAL-WS $\rightarrow$ WS-S, differing only in that reference.
 
-**RQ2 — Front-construction geometry.** At a fixed reference, does canonical NBI construction
+**RQ2: Front-construction geometry.** At a fixed reference, does canonical NBI construction
 change the returned front relative to specification-matched weighted scalarization? Contrast:
 WS-S $\rightarrow$ NBI-S, differing only in scalarization geometry.
 
@@ -53,8 +53,8 @@ for them are not reported, and the one test on them is post hoc (Section 8.7).
 
 *Family and multiplicity.* Within each primary-panel dataset, three contrasts $\times$ one
 indicator, Holm-corrected within that dataset; the other arm pairs and all baseline comparisons
-are descriptive and uncorrected. Primary evidence is the descriptive triple — median difference
-with bootstrap interval, win fraction with Wilson interval, rank-biserial — and the test is
+are descriptive and uncorrected. Primary evidence is the descriptive triple (median difference
+with bootstrap interval, win fraction with Wilson interval, rank-biserial), and the test is
 secondary.
 
 *Boundary-control interpretation.* The protocol declared that a null geometry difference on
@@ -80,6 +80,6 @@ neither is revised now.
 runs at every replication regardless, and every primary comparison is also reported conditioned
 on it (Supplement S11).
 
-Throughout, **the dataset is the unit of generalization and nothing is pooled**: the primary
+Throughout, the dataset is the unit of generalization and nothing is pooled: the primary
 datasets are never combined into a 90-replication analysis, and no conclusion extends beyond
 this panel, this surrogate architecture, two objectives and this budget.

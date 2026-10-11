@@ -1,17 +1,12 @@
 ### 6.3 Front-construction geometry: WS-S versus NBI-S
 
-The second contrast in the frozen decomposition holds the surrogate models, the
-canonicalized objective set, the scaling, the decision space, the candidate realizer,
-the weight grid and the payoff reference fixed, and changes only the scalarization
-geometry: a weighted sum of min–max normalized surrogate objectives (WS-S) against a
-canonical NBI construction with a CHIM, a quasi-normal direction and a $\max t$
-subproblem (NBI-S). Isolation was enforced at run time by a contrast fingerprint over
-the solver configuration, the realizer, the weight grid, the surrogate identities and
-the reference. Every returned candidate was re-evaluated on the real learner before any
-indicator was computed. Differences are paired by replication and formed as
-(second − first), with $R = 30$ per dataset; Holm correction is applied within each
-dataset over the family of three primary contrasts, and the dataset — not the
-replication — is the generalization unit.
+The second contrast changes only the scalarization geometry, from a weighted sum of
+min–max normalized surrogate objectives (WS-S) to a canonical NBI construction with a
+CHIM, a quasi-normal direction and a $\max t$ subproblem (NBI-S); everything else is
+held fixed and checked at run time by the contrast fingerprint (Section 5.11). Every returned
+candidate was re-evaluated on the real learner before any indicator was computed.
+Differences are paired by replication and formed as (second − first), with $R = 30$
+per dataset and Holm correction within each dataset (Section 5.15).
 
 Under these conditions, canonical NBI front construction produced higher
 real-revalidated CORE-relative hypervolume than specification-matched weighted

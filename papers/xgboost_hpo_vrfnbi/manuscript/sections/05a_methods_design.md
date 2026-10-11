@@ -5,7 +5,7 @@
 Four public binary-classification datasets are used, each obtainable under CC BY 4.0 with a
 published SHA-256. MAGIC Gamma Telescope is the continuity dataset, the one the historical
 pipeline used; Adult / Census Income contributes scale and mixed types; Bank Marketing
-contributes class imbalance with independently constructed categorical features; Spambase is
+contributes the strongest class imbalance with independently constructed categorical features; Spambase is
 small and entirely numeric.
 
 Roles were assigned by a screening rule frozen before the campaign, applied to the 88 design rows
@@ -51,11 +51,12 @@ encoded.
 the design in coded units on $[-1,1]$; integers are cast by `int(round(·))` at
 evaluation time.
 
-A configuration is written in coded units as $x \in [-1, 1]^7$ and mapped to natural units
-by $\text{natural}_i(x) = lo_i + (x_i + 1)(hi_i - lo_i)/2$. `max_depth` and `n_estimators`
-are cast by `int(round(·))` at evaluation time, so every surrogate is fitted on a continuous
-relaxation whose evaluated points are rounded; the gap is carried rather than repaired, with
-each subproblem reporting the objective displacement induced by rounding beside its residual.
+A configuration is written in coded units as $x \in [-1, 1]^7$ and mapped to natural units by
+$\text{natural}_i(x) = \ell_i + (x_i + 1)(u_i - \ell_i)/2$, with $\ell_i$ and $u_i$ the Low and High
+bounds of Table 2. `max_depth` and `n_estimators` are cast by `int(round(·))` at evaluation time, so
+every surrogate is fitted on a continuous relaxation whose evaluated points are rounded; the gap is
+carried rather than repaired, with each subproblem recording the objective displacement induced by
+rounding beside its residual (Supplement S12.2).
 
 ### 5.3 The 88-run face-centred central composite design
 

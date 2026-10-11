@@ -3,7 +3,7 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-**Manuscript source commit** `eeac042339b6` — the state of the
+**Manuscript source commit** `eeac042339b6`: the state of the
 manuscript and analysis sources from which this supplement was generated.
 The final package commit and tag are recorded in S17; they differ from the
 source commit by the metadata-only step that records this provenance, and no
@@ -51,7 +51,10 @@ The corrections made after the campaign to two claims from the analysis are reco
 | `n_estimators` | 50 | 700 | integer |
 
 All seven enter the design in coded units on $[-1, 1]$; integers are cast by
-`int(round(·))` at evaluation time.
+`int(round(·))` at evaluation time, with ties rounded to even. The `max_depth` mid-level
+of 10.5 is therefore evaluated as 10, and the 22 design runs at that level
+(the 10 centre runs and the 12 axial runs of the other six factors) enter every
+replication's surface fits at that value, coded $-1/15$ rather than 0.
 
 ## S4. Responses and objective construction
 
@@ -356,22 +359,24 @@ as a post-campaign description; it changes no role.
 | `WS-S` | arm | `ws_s` | 186 | yes | weighted-sum scalarization over the surrogate payoff reference. The geometry baseline for the primary contrast. |
 | `NBI-S` | arm | `nbi_s` | 186 | yes | Normal Boundary Intersection on the same surrogates and the same surrogate reference as WS-S. WS-S to NBI-S isolates front-construction geometry. |
 | `NBI-R` | arm | `nbi_r` | 386 | yes | NBI with anchors and payoff matrix from direct search on the REAL objectives. NBI-S to NBI-R isolates anchor and payoff provenance. |
-| `ANCHOR-INJECTION-CONTROL` | control | `anchor_injection_control` | — | yes | NBI-S's own revalidated candidate set augmented with the same empirical anchors NBI-R receives, changing nothing else. It measures the indicator gain from adding those anchors alone to NBI-S's set; it was frozen to separate the set-composition part of the NBI-S to NBI-R gap from the relocated-geometry part, a reading that holds only if NBI-R returns its own anchors. Costs no new real evaluations. |
-| `GRID` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, which is matched to the most expensive arm (NBI-R) and not pairwise to each arm |
-| `RANDOM` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, matched to the most expensive arm and not pairwise to each arm |
-| `BAYES-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on quality, at the frozen comparator budget; excluded from front indicators and from the AUGMENTED reference |
-| `BAYES-COST` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on cost; same exclusion |
-| `TPE-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective TPE on quality; same exclusion |
-| `TPE-COST` | baseline | `direct_baselines` | — | n/a | single-objective TPE on cost; same exclusion |
-| `NSGA2-MATCHED` | baseline | `direct_baselines` | — | n/a | NSGA-II at 32 x 12 = 384 evaluations, run at the frozen comparator budget to within a disclosed two-evaluation shortfall (384 against 386); this is a budget-level match to the most expensive arm, not a pairwise match to NBI-S |
-| `NSGA2-UNMATCHED` | context | `nsga2_unmatched` | — | n/a | NSGA-II at 10x the matched budget, one replication per dataset. A CONTEXT baseline: no fairness claim attaches to it and it enters no budget-matched comparison. |
-| `DESIGN` | shared stage | `design` | — | n/a | 88 face-centred central composite runs |
-| `EXTERNAL-VALIDATION-AUDIT` | shared stage, AUDIT-ONLY | `external_validation` | — | n/a | 78 points: the design's complementary half fraction plus 14 axial runs at half radius. Reaches the reliability gate diagnostics and NOTHING else. A gate failure changes no execution. |
-| `SURROGATE-ANCHORS` | reference construction | `surrogate_anchors` | — | n/a | per-objective minimization of the fitted surrogates over the coded box |
-| `EMPIRICAL-ANCHORS` | reference construction | `empirical_anchors` | — | n/a | direct search on the REAL objectives, one budget per objective. Best found within the declared budget; never described as certified optima. |
-| `REFERENCE-CORE` | reference construction | `reference_core` | — | n/a | the reference front used for indicators |
-| `AUGMENTED-REFERENCE` | reference construction | `augmented_reference` | — | n/a | reports self_grading_share_of_front |
-| `HOLDOUT-CONFIRMATION` | confirmation stage | `holdout_confirmation` | — | n/a | selected candidates re-measured on the held-out partition |
+| `ANCHOR-INJECTION-CONTROL` | control | `anchor_injection_control` | n/a | yes | NBI-S's own revalidated candidate set augmented with the same empirical anchors NBI-R receives, changing nothing else. It measures the indicator gain from adding those anchors alone to NBI-S's set; it was frozen to separate the set-composition part of the NBI-S to NBI-R gap from the relocated-geometry part, a reading that holds only if NBI-R returns its own anchors. Costs no new real evaluations. |
+| `GRID` | baseline | `direct_baselines` | n/a | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, which is matched to the most expensive arm (NBI-R) and not pairwise to each arm |
+| `RANDOM` | baseline | `direct_baselines` | n/a | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, matched to the most expensive arm and not pairwise to each arm |
+| `BAYES-QUALITY` | baseline | `direct_baselines` | n/a | n/a | single-objective Bayesian optimization on quality, at the frozen comparator budget; excluded from front indicators and from the AUGMENTED reference |
+| `BAYES-COST` | baseline | `direct_baselines` | n/a | n/a | single-objective Bayesian optimization on cost; same exclusion |
+| `TPE-QUALITY` | baseline | `direct_baselines` | n/a | n/a | single-objective TPE on quality; same exclusion |
+| `TPE-COST` | baseline | `direct_baselines` | n/a | n/a | single-objective TPE on cost; same exclusion |
+| `NSGA2-MATCHED` | baseline | `direct_baselines` | n/a | n/a | NSGA-II at 32 x 12 = 384 evaluations, run at the frozen comparator budget to within a disclosed two-evaluation shortfall (384 against 386); this is a budget-level match to the most expensive arm, not a pairwise match to NBI-S |
+| `NSGA2-UNMATCHED` | context | `nsga2_unmatched` | n/a | n/a | NSGA-II at 10x the matched budget, one replication per dataset. A CONTEXT baseline: no fairness claim attaches to it and it enters no budget-matched comparison. |
+| `DESIGN` | shared stage | `design` | n/a | n/a | 88 face-centred central composite runs |
+| `EXTERNAL-VALIDATION-AUDIT` | shared stage, AUDIT-ONLY | `external_validation` | n/a | n/a | 78 points: the design's complementary half fraction plus 14 axial runs at half radius. Reaches the reliability gate diagnostics and NOTHING else. A gate failure changes no execution. |
+| `SURROGATE-ANCHORS` | reference construction | `surrogate_anchors` | n/a | n/a | per-objective minimization of the fitted surrogates over the coded box |
+| `EMPIRICAL-ANCHORS` | reference construction | `empirical_anchors` | n/a | n/a | direct search on the REAL objectives, one budget per objective. Best found within the declared budget; never described as certified optima. |
+| `REFERENCE-CORE` | reference construction | `reference_core` | n/a | n/a | the reference front used for indicators |
+| `AUGMENTED-REFERENCE` | reference construction | `augmented_reference` | n/a | n/a | reports self_grading_share_of_front |
+| `HOLDOUT-CONFIRMATION` | confirmation stage | `holdout_confirmation` | n/a | n/a | selected candidates re-measured on the held-out partition |
+
+n/a: not applicable. Standalone budgets are defined for the five arms; the direct-search comparators run at the frozen comparator budget of 386 real evaluations (matched NSGA-II, 384), and the unmatched NSGA-II context run at 10x the matched budget. Revalidation applies to the arms, whose candidates are selected on the surrogates, and to the control, which reuses NBI-S's revalidated set; the other entities evaluate on the real learner directly or return no candidate set.
 
 ## S7. Budget
 
@@ -554,7 +559,7 @@ to the reference.
 | Bank Marketing | RANDOM | 0.3190 | 0.3257 | 0.3119 | 0.1037 | 0.0000 | 7.0000 |
 | Bank Marketing | NSGA2-MATCHED | 0.9674 | 0.0934 | 0.2182 | 0.0451 | 0.4929 | 20.5000 |
 
-**Undefined spacing.** 140 cells are non-finite — spacing and
+**Undefined spacing.** 140 cells are non-finite: spacing and
 spacing_cv on the 70 method-by-reference blocks whose front has one
 point. Schott spacing requires at least two gaps, so NaN is the correct value and
 those units are excluded from spacing summaries rather than propagated.

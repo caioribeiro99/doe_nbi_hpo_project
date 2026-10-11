@@ -46,13 +46,7 @@ independent dominance filter and a two-dimensional hypervolume sweep, reproducin
 per-unit values with zero difference. Nine claims reproduced exactly; two were corrected, and
 both were the author's.
 
-### 6.2 The historical reconstruction: specification and normalization
-
-A code-level reconstruction of the archived dissertation implementation established that its front
-construction is a min–max normalized weighted scalarization over component-wise observed extrema of
-the design rows, although the historical text uses Normal Boundary Intersection terminology. That
-fact fixes the arm set: the historical method enters as a weighted-sum arm, and the geometry question
-needs a separate, specification-matched contrast.
+### 6.2 The historical method: specification and normalization
 
 **HISTORICAL-WS $\rightarrow$ WS-S isolates normalization alone**: the same weighted sum, the same
 surrogates, the same symmetric weight grid, differing only in whether the normalization box comes

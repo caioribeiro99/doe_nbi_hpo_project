@@ -3,8 +3,8 @@
 ### 9.1 Version tags
 
 Five tags separate what was specified from what was measured (Supplement S1). `v0.1.0-dissertation`
-(`67d9fe5`) is the historical implementation this study reconstructs; it is read and executed as
-archived, never edited. `xgboost-hpo-protocol-v1` froze the specification before the
+(`67d9fe5`) is the archived historical implementation; it is read and executed as archived, never
+edited. `xgboost-hpo-protocol-v1` froze the specification before the
 measurement-validation pilot, `-v2` incorporated the pilot, and `-v3` (`9b15ba7`) is the
 confirmatory protocol under which every unit ran. These tags record what was specified before the
 confirmatory campaign; the 23 numbered amendments between them carry the cause of each change beside it.
@@ -20,7 +20,7 @@ resulting 64-bit integer is passed to `numpy.random.SeedSequence`. BLAKE2b rathe
 `hash()`, which is salted per process: a campaign resumed in a new interpreter would otherwise draw
 different candidates. All 3,840 campaign streams are distinct, stable across processes and
 `PYTHONHASHSEED`, and independent of execution order and worker count. Because the replication index
-remains a seed component, the paired design still pairs — every method sees the same outer partition
+remains a seed component, the paired design still pairs: every method sees the same outer partition
 at a given replication. Seeds are narrowed to 32 bits only where a third-party API validates that
 range. Unit seeds derive from `SEED_BASE = 20260914`.
 
@@ -52,7 +52,9 @@ cross-method information.
 The campaign manifest stamps the environment: Python 3.11.15 on macOS 26.6.2 (arm64), numpy 2.4.6,
 pandas 3.0.5, and in the same environment xgboost 3.2.0, scikit-learn 1.9.0 and scipy 1.17.1.
 Execution used 14 process workers, one XGBoost thread per fit, `spawn` start method, completing
-120/120 units with 0 failures in 9h46m. Two provenance scripts that
+120/120 units with 0 failures in 9h46m, all on one machine. No cross-platform or cross-BLAS
+replication was attempted, so hardware-independent numerical reproducibility is untested and
+timing figures are machine-specific. Two provenance scripts that
 execute the archived dissertation code require an interpreter contemporary with it (numpy < 2,
 pandas < 3); they refuse to run on pandas 3 and print that recipe rather than patch a historical
 artifact.

@@ -1,8 +1,8 @@
 ## Figure captions
 
 **Figure 1. The arm lattice.** Each arrow is a single-factor contrast and the label
-names the one thing it varies; everything else is held fixed by a run-time fingerprint
-over the solver configuration, realizer, weight grid, surrogate identities and
+names the one thing it varies; the other configured inputs are held fixed by a run-time
+fingerprint over the solver configuration, realizer, weight grid, surrogate identities and
 reference. The three primary contrasts are marked.
 
 **Figure 2. The geometry contrast, per replication.** Paired differences in
@@ -12,7 +12,8 @@ vertical scales differ by dataset.
 
 **Figure 3. Dispersion across the panel.** The same paired differences as Figure 2,
 shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
-which is why its contrast does not resolve at $R = 30$ despite a larger point estimate.
+which is why its contrast does not resolve at $R = 30$ despite a numerically larger point
+estimate.
 
 **Figure 4. Anchor provenance and the associated geometry.** Left: the full
 NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which inserts
@@ -29,5 +30,5 @@ significance differs between references; no cell changes direction.
 **Figure 6. Surrogate-gate regime and baselines.** Left: per-dataset pass rates of the
 frozen external reliability criterion over $R = 30$; the gate is diagnostic and filters
 nothing. Right: median CORE-relative hypervolume ratio by method. The dashed rule marks
-the CORE reference itself and is **not** an upper bound — a ratio above it means the
+the CORE reference itself and is *not* an upper bound: a ratio above it means the
 candidate set improved on the finite reference.

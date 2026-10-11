@@ -1,8 +1,5 @@
 ## 8. Limitations
 
-This study is a mechanistic decomposition executed under one frozen set of conditions. The
-conditions are the limits.
-
 ### 8.1 Scope of the design
 
 Four datasets, two objectives, one surrogate architecture, one budget regime, one learner
@@ -95,15 +92,6 @@ in 8/30 replications on MAGIC and 9/30 on Spambase, and in 0/30 on Adult and Ban
 The gate is diagnostic, not adaptive: no replication was removed, so the Adult and Bank Marketing
 geometry effects come entirely from failing replications (Section 6.7), and the study measures
 relative front-construction geometry, not absolute surrogate trustworthiness (Section 7.8).
-
-**Undefined spacing.** Schott spacing requires at least two gaps. It is undefined on
-single-point fronts, giving 140 non-finite cells across the 70 method-by-reference blocks whose
-front has one point. Those cells are counted and excluded from spacing summaries rather than
-propagated, so spacing is summarized over a subset of blocks.
-
-**Single machine.** All 120 units ran on one machine, 14 workers × 1 thread, 9h46m wall clock.
-No cross-platform or cross-BLAS replication was attempted, so hardware-independent numerical
-reproducibility is untested and timing figures are not machine-independent.
 
 ### 8.6 The process
 

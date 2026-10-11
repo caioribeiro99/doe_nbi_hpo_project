@@ -25,28 +25,31 @@ CSS = """
 body { font-family: "Times New Roman", Georgia, serif; font-size: 10.5pt;
        line-height: 1.45; color: #111; max-width: 100%; }
 h1 { font-size: 16pt; line-height: 1.25; margin: 0 0 6pt; }
-h2 { font-size: 12.5pt; margin: 16pt 0 5pt; border-bottom: 0.6pt solid #bbb;
-     padding-bottom: 2pt; page-break-after: avoid; }
+h2 { font-size: 12.5pt; margin: 16pt 0 5pt; page-break-after: avoid; }
 h3 { font-size: 11pt; margin: 12pt 0 4pt; page-break-after: avoid; }
 h4 { font-size: 10.5pt; font-style: italic; font-weight: 650;
      margin: 10pt 0 3pt; page-break-after: avoid; }
 p { margin: 0 0 7pt; text-align: justify; }
 table { border-collapse: collapse; width: 100%; font-size: 8.5pt; margin: 7pt 0;
+        border-top: 0.8pt solid #111; border-bottom: 0.8pt solid #111;
         page-break-inside: avoid; }
-th, td { border: 0.4pt solid #bbb; padding: 2.5pt 4pt; text-align: left;
+th, td { border: none; padding: 2.5pt 4pt; text-align: left;
          vertical-align: top; word-break: normal; }
-th { background: #f0f2f5; font-weight: 600; }
-td:nth-child(n+3) { text-align: right; }
-code { font-family: "SF Mono", Menlo, monospace; font-size: 8.5pt;
-       background: #f4f5f7; padding: 0.5pt 2pt; border-radius: 2pt; }
+th { font-weight: 600; border-bottom: 0.5pt solid #111; }
+th:nth-child(n+3), td:nth-child(n+3) { text-align: right; }
+code { font-family: "SF Mono", Menlo, monospace; font-size: 8.5pt; }
 img { max-width: 100%; display: block; margin: 8pt auto; page-break-inside: avoid; }
 blockquote { border-left: 2pt solid #ccc; margin: 7pt 0; padding: 2pt 0 2pt 9pt;
              color: #333; }
+hr { display: none; }
 strong { font-weight: 650; }
 h4 + p, h3 + p, h2 + p { margin-top: 0; }
 mjx-container { font-size: 100% !important; }
 mjx-container[display="true"] { margin: 9pt 0 !important; page-break-inside: avoid; }
 mjx-container svg { vertical-align: baseline; }
+/* MathJax 3 strokes every glyph outline (stroke-width 3/1000 em), which prints math,
+   bare numbers included, heavier than the Times body text. Fill the glyphs only. */
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] { stroke-width: 0 !important; }
 """
 
 # MathJax is told the delimiters mathprotect emits. Local font caching keeps every

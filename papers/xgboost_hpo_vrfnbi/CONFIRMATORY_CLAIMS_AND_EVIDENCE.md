@@ -38,7 +38,7 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 | **Reference** | CORE (primary) |
 | **Effect estimate** | MAGIC +0.0000; Adult -0.0006; Bank Marketing +0.0000 |
 | **Win / tie / loss** | MAGIC 14/3/13; Adult 9/4/17; Bank Marketing 8/8/14 |
-| **Uncertainty** | MAGIC [-0.0022, +0.0056]; Adult [-0.0033, +0.0000]; Bank Marketing [-0.0088, +0.0000] |
+| **Uncertainty** | MAGIC [-0.0022, +0.0056], rank-biserial +0.14; Adult [-0.0033, +0.0000], rank-biserial -0.28; Bank Marketing [-0.0088, +0.0000], rank-biserial -0.21 |
 | **Multiplicity-adjusted inference** | MAGIC Holm p = 0.5165; Adult Holm p = 0.2087; Bank Marketing Holm p = 0.3896 |
 | **Machine-readable source** | `analysis/primary_analysis.json` → `primary_family.core.<dataset>` |
 | **Verification status** | CONFIRMED by independent recomputation from raw artifacts (Claim set C4). |
@@ -91,15 +91,15 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 
 | field | value |
 |---|---|
-| **Scientific question** | Holding NBI geometry fixed, what happens when payoff and anchor information changes from surrogate-derived to the pre-specified empirical-real procedure? |
+| **Scientific question** | Holding the NBI formulation fixed, what happens when payoff and anchor information changes from surrogate-derived to the pre-specified empirical-real procedure? |
 | **Estimand** | The paired per-replication difference in CORE-relative hypervolume ratio between NBI-S and NBI-R, which differ ONLY in anchor and payoff provenance. The quasi-normal is derived from each arm's own payoff matrix, so it moves with the reference by construction; that is the intervention, not a confound. |
 | **Dataset role** | primary geometry-confirmatory panel |
 | **Endpoint** | CORE-relative hypervolume ratio |
 | **Reference** | CORE (primary) |
 | **Effect estimate** | MAGIC -0.0741; Adult -0.0192; Bank Marketing -0.4093 |
 | **Win / tie / loss** | MAGIC 2/0/28; Adult 11/0/19; Bank Marketing 7/0/23 |
-| **Uncertainty** | MAGIC [-0.0957, -0.0482]; Adult [-0.1610, +0.0299]; Bank Marketing [-0.5821, -0.2059] |
-| **Multiplicity-adjusted inference** | MAGIC Holm p = 0.0000; Adult Holm p = 0.1607; Bank Marketing Holm p = 0.0000 |
+| **Uncertainty** | MAGIC [-0.0957, -0.0482], rank-biserial -0.99; Adult [-0.1610, +0.0299], rank-biserial -0.37; Bank Marketing [-0.5821, -0.2059], rank-biserial -0.82 |
+| **Multiplicity-adjusted inference** | MAGIC Holm p = 2.79e-08; Adult Holm p = 0.1607; Bank Marketing Holm p = 4.73e-05 |
 | **Machine-readable source** | `analysis/primary_analysis.json` → `primary_family.core.<dataset>` |
 | **Verification status** | CONFIRMED by independent recomputation. |
 
@@ -147,7 +147,7 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
 
 **Prohibited stronger wording.** Do NOT choose the reference that produces significance. Do NOT describe the disagreement as a direction conflict — it is not.
 
-### Claim 7 — The prospectively retained boundary dataset did not resolve
+### Claim 7 — The boundary dataset did not resolve
 
 | field | value |
 |---|---|

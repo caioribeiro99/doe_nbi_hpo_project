@@ -30,7 +30,7 @@ manuscript. Apart from the bounds restated in Table 2, no figure, table or resul
 from the dissertation or from the companion manuscript.
 
 **Data and code availability.** The protocol, the frozen factor models, every analysis
-artifact and every script are version-controlled and tagged; see §9. Raw datasets are
+artifact and every script are version-controlled and tagged; see Section 9. Raw datasets are
 public and are retrieved by checksum-verified loaders; evaluation caches are
 deliberately unversioned.
 
@@ -47,13 +47,13 @@ Desenvolvimento Científico e Tecnológico (CNPq), process 312844/2023-9.
 
 **Author contributions (CRediT).**
 
-*Caio Tertuliano Ribeiro* — Conceptualization; Methodology; Software; Validation;
+*Caio Tertuliano Ribeiro*: Conceptualization; Methodology; Software; Validation;
 Formal analysis; Investigation; Data curation; Project administration; Writing –
 original draft; Visualization.
 
-*Matheus Costa Pereira* — Methodology; Writing – review & editing.
+*Matheus Costa Pereira*: Methodology; Writing – review & editing.
 
-*Anderson Paulo de Paiva* — Conceptualization; Supervision; Funding acquisition;
+*Anderson Paulo de Paiva*: Conceptualization; Supervision; Funding acquisition;
 Writing – review & editing.
 
 The CRediT role *Resources* is not assigned. The taxonomy does not require every role to

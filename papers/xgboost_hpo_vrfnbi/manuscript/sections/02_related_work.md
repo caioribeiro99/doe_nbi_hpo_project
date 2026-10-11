@@ -36,8 +36,8 @@ weighted-sum arm runs alongside the historical one.
 ### 2.3 Design of experiments and response surfaces for hyperparameter tuning
 
 Treating hyperparameter tuning as a designed experiment with a fitted response surface is prior art.
-Lujan-Moreno, Howard, Rojas and Montgomery (2018) give the canonical statement — screening factorial
-then response surface methodology, on a random forest, single objective — and Vasquez-Ramos et al.
+Lujan-Moreno, Howard, Rojas and Montgomery (2018) give the canonical statement (screening factorial
+then response surface methodology, on a random forest, single objective) and Vasquez-Ramos et al.
 (2025) apply response surface methodology to XGBoost hyperparameters with a Box–Behnken design and a
 single response, without a Pareto front, factor reduction, or multiobjective scalarization. Neither
 the framing nor its application to XGBoost hyperparameters is claimed here.
@@ -69,7 +69,7 @@ indicator, and IGD⁺ (Ishibuchi, Masuda, Tanigaki and Nojima 2015) as a seconda
 unlike IGD, it is weakly Pareto compliant and does not reward sets that move away from the reference.
 Schott spacing and a joint non-dominated fraction complete the frozen secondary set. All are computed
 against a finite empirical reference set, so the primary endpoint is reported throughout as a
-**CORE-relative hypervolume ratio**: that reference is not a true Pareto front, and a ratio above one
+CORE-relative hypervolume ratio: that reference is not a true Pareto front, and a ratio above one
 means the returned set improved on a finite reference. Because the replicated
 outer partitions share training data, paired differences across replications are not independent.
 Nadeau and Bengio (2003) quantify that variance inflation for resampled estimates; their corrected

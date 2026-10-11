@@ -110,8 +110,23 @@ changed; the remaining seven are v5's own words in v5's order.
 This is a reversible indexing choice, not a scientific one. If the author prefers to keep
 "design of experiments", drop one of the others instead.
 
-## Unretrieved — not asserted anywhere above
+## Unretrieved: not asserted anywhere above
 
 Whether the 2024 formatting rules still hold in September 2026; whether the "4 potential
 referees" requirement (2023 capture only) still applies; ORCID policy; cover-letter
 requirement for regular articles; accepted supplementary-file formats.
+
+## Recheck on the live pages immediately before upload
+
+Every rule above comes from the 2024-06-30 archive capture, except the abstract-length rule, which was
+confirmed on 2026-10-11 from the search-engine index of the live page (the page itself returns HTTP 403 to
+automated retrieval). Before uploading, confirm on the journal's live pages:
+
+- whether a PDF is accepted at first submission, and the editable-source, figure-file,
+  resolution and caption-file rules;
+- the abstract word limit (250 words on 2026-10-11; the revised abstract is 248 words), and the
+  abbreviation rule with its first-page footnote;
+- the page guidance (technical papers 20-30 pages, at most 50);
+- the highlights and graphical-abstract rules;
+- the current generative-AI policy wording and section title, against the declaration as
+  revised by the authors (decision Q3).

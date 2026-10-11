@@ -1,7 +1,7 @@
 """Assemble the Applied Soft Computing submission package.
 
-Declarations, title and abstract are EXTRACTED from the manuscript at
-paper2-manuscript-v5, never retyped. Author metadata is written only where an
+Declarations (the generative-AI declaration included), title and abstract are EXTRACTED
+from the manuscript at the tag named by TAG, never retyped. Author metadata is written only where an
 authoritative source was checked; anything unverified is emitted as an explicit
 AUTHOR INPUT REQUIRED marker rather than guessed.
 
@@ -218,8 +218,8 @@ cost), under a protocol frozen before the confirmatory campaign, with 30 replica
 partitions per dataset and every returned candidate re-evaluated on the real learner.
 
 Relevance to Applied Soft Computing: the work sits in two areas the journal names
-explicitly — Machine and Deep Learning, since the optimized learner is a gradient-boosted
-decision-tree model, and Multi-objective Optimization, which is the object of the study.
+explicitly, Machine and Deep Learning (the optimized learner is a gradient-boosted
+decision-tree model) and Multi-objective Optimization (the object of the study).
 Evolutionary computing enters as an NSGA-II comparator rather than as the contribution,
 and we state that plainly rather than overclaiming it.
 
@@ -239,12 +239,13 @@ as unresolved rather than omitted, together with the construct limitation that p
 reading it as evidence about front geometry.
 
 The work is original, is not under consideration elsewhere, and has not been published
-previously. There is no prior conference version.
+previously. There is no prior conference version. It extends the first author's master's
+dissertation, as disclosed in the Declarations.
 
 Yours sincerely,
 
 Caio Tertuliano Ribeiro, on behalf of all authors
-Corresponding author — {CORRESPONDING_EMAIL}
+Corresponding author: {CORRESPONDING_EMAIL}
 Institute of Production Engineering and Management (IEPG), Federal University of
 Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
 """
@@ -353,11 +354,16 @@ Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
     print("wrote:")
     for f in sorted(OUT.glob("ASOC_*")):
         print(f"  {f.name}")
+    print(f"  highlight lengths (limit 85): {[len(x) for x in HIGHLIGHTS]}")
     print(f"  highlights over 85 characters: {over or 'none'}")
+    print(f"  abstract: {len(abstract.split())} words (whitespace tokens)")
+    unresolved = man.count("[[AUTHOR") + man.count("[[ARTIFACT")
+    print(f"  unresolved [[AUTHOR]]/[[ARTIFACT]] slots in the manuscript: {unresolved}")
+    print(f"  missing for upload: {missing or 'none'}")
     tp = (OUT / "ASOC_TITLE_PAGE.md").read_text()
     print(f"  corresponding author: {CORRESPONDING_EMAIL}")
     print(f"  AUTHOR INPUT REQUIRED markers on the title page: {tp.count(MARK)}")
-    return 1 if over else 0
+    return 1 if over or missing or unresolved else 0
 
 
 if __name__ == "__main__":
