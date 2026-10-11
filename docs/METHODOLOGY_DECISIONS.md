@@ -48,6 +48,14 @@ spacing on the front.
 4. The article will report both methods side-by-side so the reviewer can
    see why the correction matters.
 
+**Addendum (2026-10-11, revision of the XGBoost HPO manuscript; the dated entry above is unchanged).**
+The manuscript (`papers/xgboost_hpo_vrfnbi`, Section 3) cites this entry as the record, made before that study
+examined the code, that the dissertation's front construction is a normalized weighted sum. Items 1 to 4 were
+carried out: canonical NBI is `src/doe_xgb/nbi_core.py`; the legacy routine is preserved in
+`src/doe_xgb/scalarization.py`; `src/doe_xgb/nbi.py` remains a compatibility shim; and the manuscript reports the
+historical weighted-sum arms (HISTORICAL-WS-asrun, HISTORICAL-WS) beside the canonical NBI arms (NBI-S, NBI-R), never
+calling the weighted sum NBI.
+
 ---
 
 ## D2 — N-objective generality

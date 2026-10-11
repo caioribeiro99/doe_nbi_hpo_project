@@ -6,7 +6,7 @@
   "design_kind_alias": ["CCDFC", "CCFCD", "Face-Centered Central Composite Design"],
   "n_factors": 7,
   "n_runs": 88,
-  "n_center": 4,
+  "n_center": 10,
   "alpha_axial": 1.0,
   "factor_names": [
     "subsample",

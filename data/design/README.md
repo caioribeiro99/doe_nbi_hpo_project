@@ -8,7 +8,7 @@ the pipeline.
 
 - `hyperparameter_design.csv` — Minitab-generated face-centered CCD
   (CCDFC / CCFCD) over the seven XGBoost hyperparameters. 88 rows
-  (corners + axial + 4 center points). Used by every dissertation and
+  (64 corners + 14 axial + 10 center points). Used by every dissertation and
   article-track replica.
 - `hyperparameter_design.csv.metadata.json` — sidecar with generator,
   design type, factor bounds, SHA-256, and CSV format conventions

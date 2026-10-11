@@ -55,3 +55,13 @@ is corrected accordingly. Re-read the live page at upload.
 - The tests that read files at the v6 tag (P2-T-33 to P2-T-35) are deferred to the retag commit.
 - `PROTOCOL_AMENDMENTS.md`, the protocol, `PROTOCOL_V3_FREEZE_REPORT.md` and every committed analysis artifact are
   not edited; the post-campaign corrections are filed in the new file `PROTOCOL_ERRATA_POST_CAMPAIGN.md`.
+
+## Dispositions recorded during implementation
+
+- Section 3 (P2-014 E1/E3): retained before Section 4 because RQ1 is defined on it, retitled "The historical method";
+  the stated-once, D1-citation and no-audit-heading conditions are met (P2-L-09, P2-L-10, P2-L-12).
+- `docs/METHODOLOGY_DECISIONS.md` D1 (P2-014 E7): the entry has no numbered open item 8; a dated addendum records how
+  its four decision items were carried out, and the dated entry is unchanged.
+- Tables are numbered in order of appearance: the Section 3 table is Table 1 and the hyperparameter table Table 2.
+- The ASOC package files (`submission/ASOC_*.md`) are generated from the committed manuscript; until the v6 tag exists
+  they are regenerated from the revision branch head as a draft (`ASOC_PACKAGE_SOURCE_REF`), never by hand.
