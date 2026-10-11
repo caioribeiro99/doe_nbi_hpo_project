@@ -27,8 +27,16 @@ ORCIDS = {
 }
 
 
+def package_source() -> str:
+    """The ref the working-tree package was built from: the commit a DRAFT manifest names,
+    otherwise TAG (build_asoc_package.py, ASOC_PACKAGE_SOURCE_REF)."""
+    mf = SUB / "ASOC_PACKAGE_MANIFEST.md"
+    m = re.search(r"\*\*DRAFT\*\*: generated from commit `([0-9a-f]+)`", mf.read_text()) if mf.exists() else None
+    return m.group(1) if m else TAG
+
+
 def at_tag(rel: str) -> str:
-    return subprocess.run(["git", "show", f"{TAG}:{PAPER}/{rel}"], cwd=ROOT,
+    return subprocess.run(["git", "show", f"{package_source()}:{PAPER}/{rel}"], cwd=ROOT,
                           capture_output=True, text=True, check=True).stdout
 
 
@@ -179,7 +187,7 @@ def test_highlights_respect_the_character_limit() -> None:
     p = SUB / "ASOC_HIGHLIGHTS.md"
     if not p.exists():
         pytest.skip("not built")
-    bullets = [m.group(1) for m in re.finditer(r"^- (.+?)  \*\(\d+ characters\)\*$",
+    bullets = [m.group(1) for m in re.finditer(r"^- (.+)$",
                                                p.read_text(), re.M)]
     assert 3 <= len(bullets) <= 5, f"{len(bullets)} highlights; the journal allows 3 to 5"
     for b in bullets:

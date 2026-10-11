@@ -39,7 +39,7 @@ EAAI. Author details stay in the manuscript.
 
 | Item | Journal's words | Status |
 |---|---|---|
-| Abstract length | The 2024-06-30 capture states no limit (guide:264-268). The live guide, as indexed by search on 2026-10-11 (direct retrieval returns HTTP 403), asks for "a concise and factual abstract which does not exceed 250 words", stating the purpose, basic procedures, main findings with their statistical significance where applicable, and principal conclusions. | **MET for the live rule**: the revised abstract is 248 words (whitespace tokens of the source), defines CORE and NBI-S at first mention and carries the weighting-conditionality sentence of protocol section 11. Recheck the live page at upload. |
+| Abstract length | The 2024-06-30 capture states no limit (guide:264-268). The live guide, as indexed by search on 2026-10-11 (direct retrieval returns HTTP 403), asks for "a concise and factual abstract which does not exceed 250 words", stating the purpose, basic procedures, main findings with their statistical significance where applicable, and principal conclusions. | **MET for the live rule**: the revised abstract is 247 words (whitespace tokens of the source), defines CORE and NBI-S at first mention and carries the weighting-conditionality sentence of protocol section 11. Recheck the live page at upload. |
 | Reference formatting at submission | "This journal does not set strict requirements on reference formatting at submission… References can be in any style or format as long as the style is consistent." | **PASS** — author-date, consistent. |
 | Reference style at proof | "Indicate references by adding a number within square brackets in the text… Number references in the order they appear." | Applied by the publisher after acceptance. |
 | Section numbering | "Subsections should be numbered 1.1 (then 1.1.1, 1.1.2, …)… Use this numbering also for internal cross-referencing." | **PASS** — repaired in v3/v4. |
@@ -124,7 +124,7 @@ automated retrieval). Before uploading, confirm on the journal's live pages:
 
 - whether a PDF is accepted at first submission, and the editable-source, figure-file,
   resolution and caption-file rules;
-- the abstract word limit (250 words on 2026-10-11; the revised abstract is 248 words), and the
+- the abstract word limit (250 words on 2026-10-11; the revised abstract is 247 words), and the
   abbreviation rule with its first-page footnote;
 - the page guidance (technical papers 20-30 pages, at most 50);
 - the highlights and graphical-abstract rules;

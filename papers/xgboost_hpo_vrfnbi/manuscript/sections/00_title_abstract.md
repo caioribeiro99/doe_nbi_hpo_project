@@ -3,8 +3,8 @@
 ## Abstract
 
 Surrogate-assisted multiobjective hyperparameter optimization usually changes scalarization
-specification, front-construction geometry and anchor provenance at once, confounding their
-effects. A prospectively frozen reconstruction varies the three one at a time for seven XGBoost
+specification, front-construction geometry and anchor provenance at once, confounding
+them. A prospectively frozen reconstruction varies the three one at a time for seven XGBoost
 hyperparameters (88-run central composite design, four datasets, 30 replications), with
 real-learner revalidation of every returned candidate. Both objectives are fixed latent factors
 (composite quality and leaf-count complexity), so every effect refers to this frozen objective
@@ -15,11 +15,11 @@ the three datasets passing a pre-campaign front-geometry screen: median paired d
 $+0.037$ (MAGIC), $+0.255$ (Adult) and $+0.228$ (Bank Marketing), with bootstrap intervals
 excluding zero and Holm-significant signed-rank tests; Nadeau–Bengio corrected tests reached
 $p < 0.05$ only on Adult. On Adult and Bank Marketing every replication's surrogate failed its
-external reliability gate. Empirical-real anchors degraded the front on MAGIC and Bank Marketing;
-on Adult the change was undetectable (Nadeau–Bengio $p < 0.05$ on MAGIC only). All conclusions
+external reliability gate. Empirical-real anchors degraded the front on MAGIC ($-0.074$) and Bank
+Marketing ($-0.409$); on Adult ($-0.019$) it was undetectable (Nadeau–Bengio $p < 0.05$ on MAGIC only). All conclusions
 are conditional on the composite's variance weighting: its pre-declared alternative changed the
-returned fronts in over 20% of replications but reversed no contrast. A coarse grid given 386
-evaluations, against NBI-S's 186, led it by the paired median on all four datasets, meeting the
+returned fronts in over 20% of replications, reversing no contrast. A coarse grid given 386
+evaluations, against NBI-S's 186, led it by the paired median on every dataset, meeting the
 21-of-30 direction rule on two. On Spambase, the boundary dataset, the composite runs against raw
 quality over uniform draws (post hoc), so its unresolved result is uninformative.
 
