@@ -4,14 +4,20 @@
 \paragraph{Four datasets is the binding constraint.} The statistical unit is one outer partition, but the unit of
 \emph{generalization} is the dataset, and there are four. Every replication-level interval here describes partition
 sensitivity within a dataset, not uncertainty about a population of datasets, so every cross-dataset mechanism
-statement is an association over four points and not a tested hypothesis. The ordering ``real anchors matter most
-where the surrogate is unreliable'' is not one we can claim at all: the median anchor effect is largest on Santander,
-whose ROC-AUC surfaces never pass the gate, and second largest on UCI credit, whose surfaces always pass
-(\cref{sec:results:anchors}). All four datasets are binary tabular problems of $3\times10^{4}$ to $2\times10^{5}$
-rows, and all four are financial-risk problems --- retail banking, insurance claims, motor insurance and consumer
-credit --- three of them from Kaggle competitions, so the four points are not four independent domains. Nothing here
-establishes behaviour on multiclass problems, text or image data, on very small samples, or on ensembles of more than
-five members, where the simplex and design grow quickly.
+statement is an association over four points and not a tested hypothesis; in particular, the benefit of real anchors
+does not track surrogate reliability (\cref{sec:results:anchors}). All four datasets are binary tabular problems of
+$3\times10^{4}$ to $2\times10^{5}$ rows from financial-services applications, three of them from Kaggle competitions,
+so the four points are not four independent domains. Nothing here establishes behaviour outside financial services,
+on multiclass problems, text or image data, very small samples or ensembles of more than five members, where the
+simplex and design grow quickly, and every conclusion is scoped to the one-shot, no-infill case
+(\cref{sec:rel:surrogate}). Repeating the unchanged protocol on a broader, prospectively specified panel that includes
+other domains is a natural next step.
+
+\paragraph{The partitions ran in two batches.} Partitions 0--9 and 10--29 ran as two separate batches with the same recorded
+platform and core count, and some indicator levels and anchor win rates differ between them (\cref{sec:results:r30}). The
+recorded provenance does not include the machine's power or thermal state, its concurrent load or thread-related
+environment variables during either batch, so we report the difference as exploratory and cannot explain it; every
+interval and test here treats the 30 partitions of a dataset as exchangeable.
 
 \paragraph{The A-to-B contrast changes four things at once.} Replacing the surrogate anchors with the real
 single-objective optima simultaneously moves the utopia point, rescales both normalization axes through the payoff
@@ -67,12 +73,13 @@ support cost are sensitive to $\varepsilon$ and to the cost range that sets the 
 conditional on the active members running one after another (\cref{sec:method:cost}). The cost objective is realistic
 for the setting measured, not universal.
 
-\paragraph{No claim of universal dominance, and confounded comparators.} NBI-C is best or tied-best on the primary
-endpoints under the weighted cost on these four datasets; it ties with random scalarization on UCI credit, loses to it
-on Santander $\igdp$, and loses its support-cost advantage on BNP Paribas and UCI credit. Its advantage over
-scalarization on BNP Paribas and Porto Seguro is confounded with the objective source: NBI-C optimizes exact
-objectives, scalarization optimizes surrogates. Separating the NBI construction from the objective source would
-require a scalarization arm on the cached out-of-fold objectives, which we did not run.
+\paragraph{No claim of universal dominance, and confounded comparators.} Among the surrogate-derived methods, NBI-C is
+best or tied-best on the primary endpoints under the weighted cost on these four datasets; it ties with random
+scalarization on UCI credit, is not statistically separated from it on Santander $\igdp$, where the direction depends
+on the reference (\cref{sec:results:metamodelfree}), and loses its support-cost advantage on BNP Paribas and UCI
+credit. Its advantage over scalarization on BNP Paribas and Porto Seguro is confounded with the objective source:
+NBI-C optimizes exact objectives, scalarization optimizes surrogates, and separating the two would require a
+scalarization arm on the cached out-of-fold objectives, which we did not run.
 
 \paragraph{Selection rules and the holdout analysis.} Holdout transfer is verified only within a candidate set and in
 level, for a knee rule under the weighted cost with TOPSIS and the support cost as sensitivity analyses

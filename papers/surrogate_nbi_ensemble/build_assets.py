@@ -779,9 +779,10 @@ def tab07_edge_condition():
 $i$--$j$ of a quadratic Scheff\'e model the fitted surface has an interior optimum exceeding both pure components if
 and only if $\hat\beta_{ij} > |\hat\beta_i - \hat\beta_j|$. Columns 3--5 evaluate that criterion for the
 largest-$\hat\beta$ pair of each dataset; column 6 gives the partitions in which the \emph{real} out-of-fold 50/50
-blend of the same pair beats its better member. The last three columns compare criterion and reality across all ten
-pairs: agreements, cases where the surface predicts a superior blend that does not exist, and the reverse. The error
-is systematic and one-directional. Source: \texttt{tables/edge\_condition\_summary.csv}.}
+blend of the same pair beats its better member. The last three columns compare the criterion with the real 50/50 blend
+across all ten pairs: agreements, cases where the surface predicts a superior blend that the midpoint mixture does not
+deliver, and the reverse. Because only the midpoint of each real edge is tested, the tally overstates over-prediction
+and cannot detect a superior real blend elsewhere on the edge. Source: \texttt{tables/edge\_condition\_summary.csv}.}
 \label{tab:edge}
 \small
 \setlength{\tabcolsep}{4pt}

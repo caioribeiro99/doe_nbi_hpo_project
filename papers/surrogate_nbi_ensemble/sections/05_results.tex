@@ -17,7 +17,8 @@ differences between the multiobjective methods studied here.
 \centering
 \includegraphics[width=\textwidth]{fig05_reliability_gate.pdf}
 \caption{Left: reliability-gate pass frequency per dataset and response over 30 partitions, with Wilson 95\%
-intervals. Right: the external $\rext$ of the selected order per partition; the dashed line is the gate threshold.
+intervals. Right: the external $\rext$ of the selected order per partition; the dashed line is the gate's $\rext$
+threshold, and because the gate also requires $\rho_{\mathrm{ext}} \ge 0.9$, some Porto Seguro points above it fail.
 Within Santander the two responses fall on opposite sides of the gate.}
 \label{fig:gate}
 \end{figure}
@@ -129,8 +130,9 @@ magnitude of the benefit.
 
 \Cref{tab:paired} scores every set against the augmented reference of its own replication
 (\cref{sec:method:reference}). The sample-core repetition of all four primary comparisons, computed from
-\texttt{nsga2/\allowbreak nsga2\_\allowbreak pareto\_\allowbreak quality.csv}, moves the magnitudes without changing any direction here and leaves the
-ordering above inverted in the same way (supplementary Section~S5).
+\texttt{nsga2/\allowbreak nsga2\_\allowbreak pareto\_\allowbreak quality.csv}, moves the magnitudes without changing
+the direction of any NBI-B versus NBI-A comparison and leaves the ordering above inverted in the same way; it does
+reverse two small $\igdp$ readings, discussed in \cref{sec:results:metamodelfree} (supplementary Section~S5).
 
 \begin{figure}[t]
 \centering
@@ -185,13 +187,14 @@ gradient-boosting vertex to an interior mixture the empirical reference dominate
 but one partition collapses with a cheap anchor, making cost a marker rather than the mechanism (per-partition ratios
 and anchor costs in supplementary Section~S6).
 
-The consequence for the gate is uncomfortable. Because the quadratic order is selected precisely when it predicts
-unseen points better, the collapsed partitions have \emph{higher} external $\rext$ (median 0.46 against 0.08) and pass
-the gate \emph{more} often (3 of 7 against 2 of 23) than those where NBI-A works: a gate on surface quality does not
-protect against this failure, while real anchors do, NBI-B reaching $0.935$--$0.996$ in all thirty partitions. It also
-settles how the gate-conditional analysis must be read --- the apparently larger anchor benefit where the gate passes
-on BNP Paribas ($+0.64$ against $+0.21$) is NBI-A's collapse restated, since three of the five gate-passing partitions
-are collapse partitions, and is not evidence that real anchors add more when the surface is reliable.
+The consequence for the gate is uncomfortable. Because the quadratic ROC-AUC order is selected precisely when it
+predicts unseen points better, the collapsed partitions have \emph{higher} ROC-AUC external $\rext$ (median 0.46 against
+0.08) and their ROC-AUC surface passes the gate \emph{more} often (3 of 7 against 2 of 23) than those where NBI-A works:
+the ROC-AUC gate does not single out this failure, while real anchors remove it, NBI-B reaching $0.935$--$0.996$ in all
+thirty partitions. It also settles how the gate-conditional analysis must be read: the apparently larger anchor
+benefit where the ROC-AUC gate passes on BNP Paribas ($+0.64$ against $+0.21$) is NBI-A's collapse restated, since three
+of the five gate-passing partitions are collapse partitions, and is not evidence that real anchors add more when the
+ROC-AUC surface is reliable.
 
 \begin{figure}[t]
 \centering
@@ -240,10 +243,15 @@ uniformly preferable: what its premium buys depends strongly on the dataset.
 
 \input{tables/tab05_compute}
 
-\paragraph{Cheap comparators.} Random weighted scalarization is strong where the surfaces are reliable --- it ties
-NBI-C on UCI credit (differences within $\pm 0.002$, win fractions $16/30$ and $18/30$, corrected $p = 1.00$), matches
-it on Santander hypervolume ($0.978$ against $0.989$) and beats it on Santander $\igdp$ in $20/30$ --- and collapses
-where they are not, to a median of one front point and hypervolume ratio $0.474$ on BNP Paribas. The comparison is
+\paragraph{Cheap comparators.} Random weighted scalarization is strong on UCI credit, whose surfaces pass the gate
+in every partition, and on Santander, whose log-loss surface always passes it although its ROC-AUC surface never does;
+it collapses on BNP Paribas, whose surfaces rarely pass (\cref{tab:gate}), to a median of one front point and
+hypervolume ratio $0.474$. It ties NBI-C on UCI credit (differences within $\pm 0.002$, win fractions $16/30$ and
+$18/30$, corrected $p = 1.00$). On Santander it trails NBI-C narrowly on hypervolume ($0.978$ against $0.989$; NBI-C
+better in $25/30$, corrected $p = 0.06$) and beats it on $\igdp$ in $20/30$ (corrected $p = 0.35$), but both readings
+depend on the reference: against the sample core, which contains no output of the compared methods, both move toward
+NBI-C and the $\igdp$ majority reverses (computed from
+\texttt{nsga2/\allowbreak nsga2\_\allowbreak pareto\_\allowbreak quality.csv}; supplementary Section~S5). The comparison is
 confounded and we say so: NBI-C optimizes exact objectives while scalarization optimizes surrogates, so its BNP
 Paribas and Porto Seguro advantage cannot be attributed to the NBI construction rather than to the objective source.
 On identical surfaces NBI-B beats scalarization $30/30$ on BNP Paribas and $25/30$ on Porto Seguro but loses $29/30$
@@ -315,12 +323,13 @@ construction does not deliver it. Scored post hoc under the support cost, which 
 largely transfers (supplementary Section~S13), most strongly on BNP Paribas; the one reversal is Santander $\igdp$, where
 NBI-C is marginally closer in 17 of 30 partitions.
 
-This bounds one claim --- NBI-C is best or tied-best \emph{among the surrogate-derived methods}, not among
-multiobjective optimizers generally --- and leaves untouched every conclusion about the surrogate pipeline itself
-(reliability, anchor misplacement, the gate's blind spot, the coefficient result, the cost-definition result), because
-NSGA-II is not part of that pipeline and was never proposed as a component of it. A conventional optimizer on the same
-objectives behaves differently, modestly and consistently, and a practitioner whose evaluations are cheap enough to
-run either should prefer it.
+This bounds one claim: NBI-C is best or tied-best \emph{among the surrogate-derived methods}, not among
+multiobjective optimizers generally. It leaves untouched every conclusion about the surrogate pipeline itself
+(reliability, anchor misplacement, the ROC-AUC gate's blind spot, the coefficient result, the cost-definition result),
+because NSGA-II is not part of that pipeline and was never proposed as a component of it. A single untuned NSGA-II
+configuration on the same objectives, given twice the weight-vector evaluations of NBI-C's solve, gave a modestly but
+consistently better approximation on these four datasets, at about $2.2\times$ the wall clock. Whether NSGA-II also
+leads at an equal number of weight-vector evaluations was not tested.
 
 \subsection{RQ6: The actual multiobjective conflict}
 \label{sec:results:conflict}
@@ -357,7 +366,8 @@ scalarization takes the support-cost hypervolume in $22/30$, and several paired 
 
 The mechanism, where it can be isolated, is that a method optimizing $\sum_i w_i c_i$ has no incentive to zero out a
 component. The raw 66-run design occupies exactly the cheap supports the NBI sets miss and can win outright under a
-step cost --- as it does in $13/30$ BNP Paribas partitions.
+step cost when the normalization box's cost range excludes the $k$-nearest-neighbour region, as it does in the $13/30$
+BNP Paribas partitions whose support-cost box is narrow (supplementary Section~S9).
 
 One earlier reading did not survive scrutiny and we correct it here: the apparent bimodality of NBI-C's BNP Paribas
 support hypervolume is a per-replication normalization artifact, not a regime --- the normalization box rescales the
@@ -381,7 +391,7 @@ standard deviation of about $0.0012$, and when the two disagree the holdout regr
 rates are specific to the selection rule and cost definition --- under the support cost they become $28$, $28$, $17$
 and $16$ of 30 --- and are not dataset properties.
 
-\subsection{RQ9: Did ten replications suffice?}
+\subsection{RQ9: Did the first ten replications suffice?}
 \label{sec:results:r30}
 
 \input{tables/tab04_r10_vs_r30}

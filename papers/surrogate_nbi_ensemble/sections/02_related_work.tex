@@ -117,11 +117,11 @@ method \citep{messac2003normalized} derives its normalization and its constraint
 does, so on fitted surfaces it too would take its anchors from the surrogate; our protocol was frozen with NBI as the
 front generator, so we do not evaluate whether the effect we report carries over to it.
 
-What we did not find is a study computing a CHIM method's anchors both ways on one problem and comparing the
-resulting fronts --- the surrogate \emph{provenance} of the anchor error, and the controlled contrast, rather than the
-fact that anchors matter. The closest external analogue we located is the NBI-A pattern itself:
-\citet{abolghasemian2022haulage} runs a modified NBI on regression metamodels validated by fit statistics alone,
-its Pareto solutions never re-evaluated on the simulation (supplementary literature review). At the other
+To the best of our literature search, no prior study computes a CHIM method's anchors both from a fitted surrogate
+and from the true objectives on the same problem and compares the resulting fronts; the gap concerns the surrogate
+\emph{provenance} of the anchor error and that controlled contrast, not whether anchors matter. The closest external
+analogue we located is the NBI-A pattern itself: \citet{abolghasemian2022haulage} runs a modified NBI on regression
+metamodels validated by fit statistics alone, and reports no re-evaluation of its Pareto solutions on the simulation. At the other
 extreme, \citet{gellerich2023doenbi} derive the experimental plan from the NBI subproblems themselves and evaluate each
 subproblem by physical test, with no metamodel anywhere and anchors that are real experimental optima. A metamodel-free
 NBI is thus published prior art and the idea of our NBI-C arm is not claimed as new; because that study has no

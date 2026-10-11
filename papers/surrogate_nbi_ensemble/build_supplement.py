@@ -128,7 +128,7 @@ def main() -> int:
         hv_A_plus_anchors=("hv_A_plus_anchors", "median"),
         fraction_closed=("fraction_closed", "median"),
         residual_chim=("residual_chim_effect", "median")).round(4).reset_index(),
-        "s12_anchor_injection", "Anchor-injection control: median over partitions of the fraction of the NBI-A to NBI-B hypervolume gap closed by adding the three real anchors to NBI-A's own candidate set, and the residual attributable to the relocated CHIM.", "tab:s12"))
+        "s12_anchor_injection", "Anchor-injection control: median over partitions of the fraction of the NBI-A to NBI-B hypervolume gap closed by adding the three real anchors to NBI-A's own candidate set, and the residual attributable to the relocated CHIM. The fraction closed is a median over the partitions in which NBI-B improves on NBI-A, the only ones where it is defined; the other columns are medians over all 30 partitions.", "tab:s12"))
 
     # S13 NSGA-II
     made.append(longtab(pd.read_csv(N / "nsga2_paired_effects.csv"), "s13_nsga2_effects",

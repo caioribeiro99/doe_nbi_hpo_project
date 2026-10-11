@@ -26,18 +26,19 @@ the identical Normal Boundary Intersection three ways — surrogate objectives w
 surfaces with anchors recomputed from real out-of-fold optima, and metamodel-free on the real objectives — revalidate
 every returned candidate on the true objectives, and score everything against an empirical Pareto reference whose
 sampled core the compared methods do not generate. The whole pipeline is replicated over four datasets and 30 outer
-partitions each, paired by partition, with the Nadeau–Bengio correction for partition overlap.
+partitions each, paired by partition, with the Nadeau–Bengio correction for partition overlap in the primary tests.
 
 Four findings seem to us worth the journal's space:
 
-1. **Anchor placement, not surface accuracy, is where a one-shot surrogate pipeline is most exposed** — and we
+1. **On two of the four datasets, anchor placement, not surface accuracy, is where a one-shot surrogate pipeline is
+   most exposed**, and we
    decompose even that. Because a vertex subproblem returns its anchor directly, part of the measured gain is the
    injection of extreme solutions rather than the relocated CHIM; a control that adds the same anchors to the
    surrogate-anchored arm closes a median 80%, 90%, 49% and 1% of the gap on the four datasets. The mechanism is
    therefore mostly set composition on two datasets and mostly geometry on another.
 2. **An external reliability gate detects unusable surfaces but not misplaced anchors**, and on one dataset the two
-   actively diverge: the partitions where the surrogate-anchored arm collapses are the ones whose selected surface
-   fits held-out compositions *better*.
+   actively diverge: the partitions where the surrogate-anchored arm collapses are the ones whose selected ROC-AUC
+   surface fits held-out compositions *better*.
 3. **The classical synergism criterion can be satisfied by a surface whose real blend contradicts it.** For the
    leading classifier pair the fitted quadratic meets the criterion in every partition of all four datasets, yet the
    real 50/50 blend beats its better member on only one.
@@ -52,7 +53,7 @@ under both reference definitions, and markedly more evenly spaced revalidated fr
 bounds what the pipeline is worth relative to one standard optimizer without disturbing the diagnosis of the pipeline
 itself, and we think a reader is better served by knowing it.
 
-The study is fully reproducible: four annotated Git tags freeze the exact states, every stochastic component is
+The study is reproducible: four annotated Git tags freeze the exact states, every stochastic component is
 seeded, datasets carry checksums and acquisition commands, the runners are checkpointed and resumable, the library
 has 83 unit tests, and one script regenerates every figure and table from the frozen artifacts.
 

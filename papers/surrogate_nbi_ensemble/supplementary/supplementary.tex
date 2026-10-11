@@ -212,7 +212,9 @@ on Santander and rises from $+0.058$ to $+0.070$ on BNP Paribas, and the orderin
 stays inverted with respect to surrogate reliability ($+0.145$, $+0.089$, $+0.078$ and $+0.070$). For NBI-C versus
 NBI-B on BNP Paribas the medians are $+0.0106$ hypervolume and $-0.0028$ IGD$^+$ against the augmented reference, and
 $+0.0077$ and $+0.0025$ against the sample core, which is why the main text records that split as
-reference-dependent. The NBI-C versus NBI-B means are $+0.108$ on Porto Seguro and $+0.277$ on UCI credit, against
+reference-dependent. The same holds for NBI-C versus random scalarization on Santander: NBI-C wins $25/30$ partitions
+on hypervolume and $10/30$ on IGD$^+$ against the augmented reference, and its IGD$^+$ deficit does not persist against
+the sample core or against the augmented union with NSGA-II. The NBI-C versus NBI-B means are $+0.108$ on Porto Seguro and $+0.277$ on UCI credit, against
 anchor-effect means of $+0.085$ and $+0.060$ on the same datasets. Where the corrected test is uninformative the three
 descriptive quantities reported in its place are the median with its bootstrap interval, the win fraction with its
 Wilson interval (for example $[0.89, 1.00]$ for a 30/30 fraction) and the rank-biserial correlation (1.00 on the two
@@ -242,9 +244,10 @@ establishes significance.
 \paragraph{The BNP Paribas collapse, in full.} NBI-A's weighted hypervolume ratio splits into 21 partitions at
 0.891--0.928, two intermediate, and seven collapsing to 0.036--0.120: partitions 7, 9, 18, 20, 23, 26 and 27. The
 seven coincide exactly with the partitions in which the parsimony rule selects the quadratic ROC-AUC order (7 of 7,
-against 0 of 22 linear-selected partitions). Their external $R^2$ is \emph{higher} (median 0.456 against 0.075) and
-they pass the gate more often (3 of 7 against 2 of 23), which is the basis for the main text's statement that the
-gate does not protect against anchor misplacement. NBI-B reaches 0.935--0.996 in all thirty partitions. In six of the
+against 0 of 22 linear-selected partitions). Their ROC-AUC external $R^2$ is \emph{higher} (median 0.456 against
+0.075) and their ROC-AUC surface passes the gate more often (3 of 7 against 2 of 23), which is the basis for the main
+text's statement that the ROC-AUC gate does not single out this failure. NBI-B reaches 0.935--0.996 in all thirty
+partitions. In six of the
 seven collapses the surrogate anchor carries $k$-nearest neighbours and costs 16--31~ms per 1{,}000 rows, giving
 Spearman $-0.69$ between anchor cost and hypervolume; partition 26 collapses with a cheap anchor, which is why anchor
 cost is described as a marker rather than the mechanism.
@@ -344,7 +347,7 @@ contrasts with the smaller indicator effects.
 \paragraph{How much there is to win at all.} The gain of the log-loss optimum over the best single model on the
 untouched holdout is $+0.0076$, $+0.0038$, $+0.0053$ and $+0.0005$ ROC-AUC on Santander, BNP Paribas, Porto Seguro
 and UCI credit, better than the best single model in 30, 30, 29 and 23 of 30 partitions. On UCI credit the
-out-of-fold gain is $+0.0007$ and the overlap-corrected $p$ is $0.24$: on that dataset no weighting method in this
+out-of-fold gain is $+0.0007$ and the Nadeau--Bengio-corrected $p$ is $0.24$: on that dataset no weighting method in this
 study separates from the best single model on held-out data.
 
 \begin{figure}[htbp]\centering

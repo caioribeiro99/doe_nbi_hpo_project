@@ -96,13 +96,15 @@ that the optimizers actually minimized; the support-cost repetition is a sensiti
 untouched 20\% holdout enters no primary endpoint: it is used only for the confirmation analysis of
 \cref{sec:results:holdout}. All other indicators are descriptive.
 
-Paired differences are signed so that $\Delta > 0$ always favours the second-named method:
+Paired differences are signed so that $\Delta > 0$ always favours the first-named (new) method:
 $\Delta\hv = \hv_{\text{new}} - \hv_{\text{ref}}$ and
 $\Delta\igdp = \igdp_{\text{ref}} - \igdp_{\text{new}}$. For each dataset $\times$ comparison $\times$ endpoint we
 report the mean and median with percentile-bootstrap 95\% intervals (10{,}000 resamples, fixed seed), the quartiles
 and range \citep{efron1993bootstrap}, the win/tie/loss counts with a tie tolerance of $10^{-4}$, the win fraction
 with a Wilson 95\% interval \citep{wilson1927probable}, and the matched-pairs rank-biserial correlation
-\citep{kerby2014simple} as a distribution-free effect size.
+\citep{kerby2014simple} as a distribution-free effect size. These and all other replication-level intervals in this
+paper treat the replications of a dataset as independent observations: they describe partition sensitivity within
+that dataset, carry no correction for partition overlap and do not by themselves establish significance.
 
 An ordinary paired $t$-test on resampled partitions is anticonservative, so the primary test is the Nadeau--Bengio
 corrected resampled $t$-test \citep{nadeau2003inference}: with $J = 30$ paired differences $d_j$,
@@ -125,5 +127,5 @@ is applied across datasets, because datasets are not pooled. A Wilcoxon signed-r
 
 Where a paired-difference distribution is visibly bimodal or heavy-tailed, the mean-based test is uninformative by
 construction and we say so, reporting the median with its bootstrap interval, the win fraction with its Wilson
-interval and the rank-biserial correlation as the evidence instead. Throughout, effect consistency takes precedence
+interval and the rank-biserial correlation as descriptive evidence of consistency instead. Throughout, effect consistency takes precedence
 over $p$-values. Frequencies over replications are reported with Wilson and Jeffreys 95\% intervals \citep{brown2001interval}.

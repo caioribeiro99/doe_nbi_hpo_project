@@ -28,9 +28,10 @@ multiobjective --- this paper's question.
 The applications in which this framework matured share three properties that classifier ensembles do not.
 
 First, \emph{the responses are smooth}: tool life or process cost varies smoothly with cutting speed, where a
-low-order polynomial is a defensible local model. The area under the ROC curve is instead a rank statistic, piecewise
-constant in the weights. No experimental design repairs a misspecified model class, and a smooth surrogate fitted to a
-step-like response misrepresents it systematically.
+low-order polynomial is a defensible local model. The area under the receiver operating characteristic curve (ROC-AUC)
+is instead a rank statistic, piecewise constant in the weights. A richer design alone cannot remove the approximation
+bias of an unsuitable model class, so whether a low-order polynomial represents such a response adequately has to be
+measured on unseen compositions rather than assumed.
 
 Second, \emph{the decision variables are the mixture}. When the simplex holds scalarization weights, as in the lineage
 above, NBI's anchors are optima of the surrogate in another space; when it holds the decision variables themselves,
@@ -88,8 +89,8 @@ partitioned 30 times each, giving 120 replications with recorded seeds. The four
 come from financial-services applications, so any cross-dataset statement is made within a single application domain.
 Because partitions of one dataset overlap heavily, we treat the replication distribution as partition sensitivity, not
 a sample from a population: comparisons are paired by partition and tested with the Nadeau--Bengio correction
-\citep{nadeau2003inference}, the dataset is the unit of generalization, and nothing is pooled across the 120
-replications.
+\citep{nadeau2003inference}, which the descriptive bootstrap and Wilson intervals do not carry; the dataset is the
+unit of generalization; and nothing is pooled across the 120 replications.
 
 \subsection{Research questions}
 
@@ -106,7 +107,7 @@ and how do both compare with a canonical evolutionary optimizer on the same obje
 \item[\textbf{RQ6}] How large is the actual conflict between discrimination and calibration?
 \item[\textbf{RQ7}] Does the definition of deployment cost change which method wins?
 \item[\textbf{RQ8}] Do solutions selected on out-of-fold data transfer to an untouched holdout?
-\item[\textbf{RQ9}] Would a third of the replications have produced the same conclusions?
+\item[\textbf{RQ9}] Would the first ten replications have produced the same conclusions?
 \end{enumerate}
 
 \subsection{Contributions}
@@ -117,22 +118,25 @@ error, anchor misplacement and solver behaviour}, through three NBI variants def
 The ingredients are not new and are not claimed: anchor and ideal/nadir misestimation is an established failure mode
 \citep{isermann1988payoff,deb2010nadir,he2021normalization}, the choice of individual minima has already been treated
 as a design lever \citep{herrmann2026nonextreme}, and NBI run metamodel-free on measured objectives with real anchors
-is published \citep{gellerich2023doenbi}. What we did not find is a study that computes the anchors of a CHIM method
-both from a fitted surrogate and from the true objectives on the same problem and compares the resulting fronts, so
+is published \citep{gellerich2023doenbi}. To the best of our literature search, no prior study computes the anchors
+of a method built on the convex hull of individual minima (CHIM) both from a fitted surrogate and from the true
+objectives on the same problem and compares the resulting fronts, so
 what is new here is the surrogate \emph{provenance} of the anchor error and the controlled comparison of the two
 constructions; the nearest ensemble-weighting precedent \citep{kwon2024ensemble} optimizes one metric at a time and
 has no anchors or front.
 
-\item \textbf{Evidence that, among failures attributable to the surrogate pipeline, anchor misplacement has the
-largest observed effect.} Real anchors improve both primary endpoints in 30 of 30 partitions on the two datasets whose
-ROC-AUC surfaces almost never pass the gate, in 23 (IGD$^+$) and 24 (hypervolume) of 30 on Porto Seguro, and in 24 of
-30 on UCI credit. Removing the surrogate entirely, once anchors are correct, adds much less --- except on UCI credit,
-where subproblem convergence rather than surrogate error dominates, the counterexample that prevents a universal
-claim.
+\item \textbf{Evidence that, on two of the four datasets, anchor misplacement has the largest observed effect among
+failures attributable to the surrogate pipeline.} Under the continuous cost the arms optimize, real anchors improve both
+primary endpoints in 30 of 30 partitions on the two datasets whose ROC-AUC surfaces almost never pass the gate
+(Santander and BNP Paribas), in 23 (IGD$^+$) and 24 (hypervolume) of 30 on Porto Seguro, and in 24 of 30 on UCI
+credit; after correction the improvement is significant only on Santander. Removing the surrogate entirely, once
+anchors are correct, adds much less on Santander and BNP Paribas, about as much on Porto Seguro, and three times as
+much on UCI credit, where subproblem convergence rather than surrogate error dominates; the tie and the reversal
+prevent a universal claim.
 
 \item \textbf{A demonstration that an external reliability gate detects unusable surfaces but not misplaced anchors.}
 On one dataset the two properties diverge: the partitions where surrogate-anchored NBI collapses are precisely those
-where the parsimony rule selects a surface that fits held-out compositions \emph{better} and passes the gate more
+where the parsimony rule selects a ROC-AUC surface that fits held-out compositions \emph{better} and passes the gate more
 often. Surface quality and argmax quality are different properties, and only the second governs NBI.
 
 \item \textbf{A replicated evaluation architecture for ensemble-weight optimization}: external surrogate validation,
@@ -143,9 +147,9 @@ reported explicitly.
 
 \item \textbf{Two findings about how these surfaces should be read.} The classical synergism criterion $\beta_{ij} >
 |\beta_i - \beta_j|$ holds for the leading pair's fitted surfaces on all four datasets in every partition, yet the
-real blend beats its better member on only one; across all pairs the surrogate over-predicts blending gains 20 times
-and under-predicts none. And the continuous cost these methods optimize disagrees with the step cost deployment pays
-often enough to change the winning method in up to 24 of 30 partitions. That a change of cost accounting can reorder
+real 50/50 blend beats its better member on only one. And the continuous cost these methods optimize disagrees with
+the step cost deployment pays often enough to change the winning method in up to 24 of 30 partitions. That a change
+of cost accounting can reorder
 a comparison is known across ensemble and cascade architectures \citep{wang2022committees}; what is reported here is
 the disagreement between two accountings applied to one and the same weight vector.
 \end{enumerate}

@@ -61,7 +61,9 @@ c_{\mathrm{w}}(\wvec) \;=\; \sum_{i=1}^{M} w_i c_i ,
 the natural linear mixture response, which coincides with $c_{\mathrm{sup}}$ at the vertices but not on the
 interior. We therefore optimize \cref{eq:weightedcost} and score the \emph{same} solutions under
 \cref{eq:supportcost}, reporting every comparison under both; \cref{sec:results:cost} shows that the choice changes
-which method wins.
+which method wins. Because each $c_i$ is timed separately, including that model's own preprocessing,
+\cref{eq:supportcost} is the time to run the active members one after another; it excludes model loading, and
+parallel execution or preprocessing shared between members would give a different cost (\cref{sec:limitations}).
 
 \subsection{Mixture design and Scheff\'e surrogates}
 \label{sec:method:scheffe}
@@ -97,9 +99,13 @@ surface is reliable only if
 \label{eq:gate}
 \end{equation}
 We describe this as pre-specification rather than preregistration: there is no
-external registry entry, and the evidence is the version-controlled commit history. The gate is a hypothesis under
+external registry entry, and the evidence is the version-controlled commit history. No source is cited for the two
+thresholds: they are a convention chosen for this study, set before the replicated benchmark was run and not
+calibrated on its results, although a single-dataset Santander pilot run had been completed before they were
+committed. \Cref{tab:gate} reports the median $\rext$ and $\rho_{\mathrm{ext}}$ beside each pass
+count, so that their distance from the thresholds can be read directly. The gate is a hypothesis under
 test, not a filter applied to the results: surrogate-based optimization is run and reported \emph{regardless} of the
-gate outcome, so that its predictive value can be measured (\cref{sec:results:gate}).
+gate outcome, so that its predictive value can be measured (\cref{sec:results:anchors}; supplementary Section~S6).
 
 \subsection{Normal Boundary Intersection on the simplex}
 \label{sec:method:nbi}
