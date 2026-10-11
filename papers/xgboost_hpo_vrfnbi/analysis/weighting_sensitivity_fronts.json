@@ -1,0 +1,158 @@
+{
+  "datasets": {
+    "adult": {
+      "arms": {
+        "HISTORICAL-WS": {
+          "replications_front_differs": 13
+        },
+        "NBI-R": {
+          "replications_front_differs": 18
+        },
+        "NBI-S": {
+          "replications_front_differs": 14
+        },
+        "WS-S": {
+          "replications_front_differs": 17
+        }
+      },
+      "contrasts_equal_weight": {
+        "HISTORICAL-WS -> WS-S": {
+          "losses": 22,
+          "median_diff": -0.0011814839265099214,
+          "ties": 2,
+          "wins": 6
+        },
+        "NBI-S -> NBI-R": {
+          "losses": 18,
+          "median_diff": -0.0266465271731951,
+          "ties": 0,
+          "wins": 12
+        },
+        "WS-S -> NBI-S": {
+          "losses": 0,
+          "median_diff": 0.25431678660254503,
+          "ties": 0,
+          "wins": 30
+        }
+      },
+      "n_replications": 30,
+      "rule_fires": true
+    },
+    "bank_marketing": {
+      "arms": {
+        "HISTORICAL-WS": {
+          "replications_front_differs": 16
+        },
+        "NBI-R": {
+          "replications_front_differs": 21
+        },
+        "NBI-S": {
+          "replications_front_differs": 16
+        },
+        "WS-S": {
+          "replications_front_differs": 14
+        }
+      },
+      "contrasts_equal_weight": {
+        "HISTORICAL-WS -> WS-S": {
+          "losses": 14,
+          "median_diff": 0.0,
+          "ties": 7,
+          "wins": 9
+        },
+        "NBI-S -> NBI-R": {
+          "losses": 23,
+          "median_diff": -0.43891812984315337,
+          "ties": 0,
+          "wins": 7
+        },
+        "WS-S -> NBI-S": {
+          "losses": 3,
+          "median_diff": 0.3205181007200842,
+          "ties": 0,
+          "wins": 27
+        }
+      },
+      "n_replications": 30,
+      "rule_fires": true
+    },
+    "magic": {
+      "arms": {
+        "HISTORICAL-WS": {
+          "replications_front_differs": 13
+        },
+        "NBI-R": {
+          "replications_front_differs": 14
+        },
+        "NBI-S": {
+          "replications_front_differs": 19
+        },
+        "WS-S": {
+          "replications_front_differs": 9
+        }
+      },
+      "contrasts_equal_weight": {
+        "HISTORICAL-WS -> WS-S": {
+          "losses": 13,
+          "median_diff": 0.0,
+          "ties": 3,
+          "wins": 14
+        },
+        "NBI-S -> NBI-R": {
+          "losses": 29,
+          "median_diff": -0.0775779979637653,
+          "ties": 0,
+          "wins": 1
+        },
+        "WS-S -> NBI-S": {
+          "losses": 3,
+          "median_diff": 0.039454228181010687,
+          "ties": 0,
+          "wins": 27
+        }
+      },
+      "n_replications": 30,
+      "rule_fires": true
+    },
+    "spambase": {
+      "arms": {
+        "HISTORICAL-WS": {
+          "replications_front_differs": 14
+        },
+        "NBI-R": {
+          "replications_front_differs": 14
+        },
+        "NBI-S": {
+          "replications_front_differs": 23
+        },
+        "WS-S": {
+          "replications_front_differs": 15
+        }
+      },
+      "contrasts_equal_weight": {
+        "HISTORICAL-WS -> WS-S": {
+          "losses": 8,
+          "median_diff": 1.0328877779297585e-05,
+          "ties": 6,
+          "wins": 16
+        },
+        "NBI-S -> NBI-R": {
+          "losses": 24,
+          "median_diff": -0.5933707738592865,
+          "ties": 1,
+          "wins": 5
+        },
+        "WS-S -> NBI-S": {
+          "losses": 12,
+          "median_diff": 0.02234498624597059,
+          "ties": 2,
+          "wins": 16
+        }
+      },
+      "n_replications": 30,
+      "rule_fires": true
+    }
+  },
+  "label": "retrospective (declared in the frozen protocol, section 11 item 1; computed after the campaign from stored outputs); the rescoring operationalization is post hoc",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/weighting_sensitivity_fronts.py"
+}

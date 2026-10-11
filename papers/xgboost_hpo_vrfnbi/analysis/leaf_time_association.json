@@ -1,0 +1,245 @@
+{
+  "datasets": {
+    "adult": {
+      "all_evaluations": {
+        "f_cost_vs_time": {
+          "max": 0.8713026240798639,
+          "median": 0.8518521322736222,
+          "min": 0.8217344465225181
+        },
+        "leaves_vs_time": {
+          "max": 0.8853610067979303,
+          "median": 0.870556459537754,
+          "min": 0.8440507562328838
+        }
+      },
+      "design_rows": {
+        "f_cost_vs_time": {
+          "max": 0.8245618305744888,
+          "median": 0.7947663096397274,
+          "min": 0.7785783836416749
+        },
+        "leaves_vs_time": {
+          "max": 0.8761737839365266,
+          "median": 0.8695715676728335,
+          "min": 0.8636319376825706
+        }
+      },
+      "n_evaluations": 90458,
+      "n_units": 30
+    },
+    "bank_marketing": {
+      "all_evaluations": {
+        "f_cost_vs_time": {
+          "max": 0.8724009282613793,
+          "median": 0.8510283468715865,
+          "min": 0.8250012214329989
+        },
+        "leaves_vs_time": {
+          "max": 0.8952810350146045,
+          "median": 0.8775984167904523,
+          "min": 0.8472438802794107
+        }
+      },
+      "design_rows": {
+        "f_cost_vs_time": {
+          "max": 0.7570107108081792,
+          "median": 0.7285053554040897,
+          "min": 0.6440847127555989
+        },
+        "leaves_vs_time": {
+          "max": 0.9025316455696203,
+          "median": 0.8935126582278481,
+          "min": 0.8870253164556962
+        }
+      },
+      "n_evaluations": 90540,
+      "n_units": 30
+    },
+    "magic": {
+      "all_evaluations": {
+        "f_cost_vs_time": {
+          "max": 0.9298775721721019,
+          "median": 0.9165647655024487,
+          "min": 0.898824398866547
+        },
+        "leaves_vs_time": {
+          "max": 0.9425343332706955,
+          "median": 0.932670295571979,
+          "min": 0.9186710435183266
+        }
+      },
+      "design_rows": {
+        "f_cost_vs_time": {
+          "max": 0.904381694255112,
+          "median": 0.8955817916260954,
+          "min": 0.8858325219084714
+        },
+        "leaves_vs_time": {
+          "max": 0.9146299902629016,
+          "median": 0.9074245374878287,
+          "min": 0.8971032132424537
+        }
+      },
+      "n_evaluations": 90592,
+      "n_units": 30
+    },
+    "spambase": {
+      "all_evaluations": {
+        "f_cost_vs_time": {
+          "max": 0.926494097186568,
+          "median": 0.9185403045154238,
+          "min": 0.8964615107583059
+        },
+        "leaves_vs_time": {
+          "max": 0.9610096096154025,
+          "median": 0.9569204813279686,
+          "min": 0.952730363084626
+        }
+      },
+      "design_rows": {
+        "f_cost_vs_time": {
+          "max": 0.8523369036027263,
+          "median": 0.8201557935735151,
+          "min": 0.7718111002921129
+        },
+        "leaves_vs_time": {
+          "max": 0.9409931840311588,
+          "median": 0.9351415995654104,
+          "min": 0.9199853943524829
+        }
+      },
+      "n_evaluations": 90080,
+      "n_units": 30
+    }
+  },
+  "definitions": {
+    "all_evaluations": "every unique cross-validated evaluation in the unit's cache (fold_id 'all'), one row per physical fit; holdout fits excluded, and the unmatched NSGA-II run's fits (outside the unit; replication 0 only) excluded",
+    "design_rows": "the unit's unique design configurations, requested by the design stage (79: the 10 replicated centre points of the 88-row design are one fit)",
+    "f_cost": "the frozen cost objective: frozen reference factor model, applied",
+    "median, min, max": "over the dataset's units",
+    "n_evaluations": "all_evaluations rows summed over the dataset's units",
+    "per-unit statistic": "Spearman correlation (average ranks for ties) of Time_MeanFold with raw Leaves_Mean (leaves_vs_time) and with f_cost (f_cost_vs_time)"
+  },
+  "diagnostics": {
+    "adult": {
+      "design_evaluations_per_unit": [
+        79
+      ],
+      "evaluations_per_unit_max": 3020,
+      "evaluations_per_unit_min": 3006,
+      "holdout_evaluations_excluded": 146,
+      "n_design_evaluations": 2370,
+      "unmatched_run_evaluations_excluded": 3786,
+      "variant_with_unmatched_run_fits_in_replication_0": {
+        "all_evaluations": {
+          "f_cost_vs_time": {
+            "max": 0.934286172642373,
+            "median": 0.8528727954421982,
+            "min": 0.8217344465225181
+          },
+          "leaves_vs_time": {
+            "max": 0.9467845746570857,
+            "median": 0.8714394786623731,
+            "min": 0.8440507562328838
+          }
+        },
+        "replication_0": {
+          "f_cost_vs_time": 0.934286172642373,
+          "leaves_vs_time": 0.9467845746570857
+        }
+      }
+    },
+    "bank_marketing": {
+      "design_evaluations_per_unit": [
+        79
+      ],
+      "evaluations_per_unit_max": 3029,
+      "evaluations_per_unit_min": 2997,
+      "holdout_evaluations_excluded": 150,
+      "n_design_evaluations": 2370,
+      "unmatched_run_evaluations_excluded": 3776,
+      "variant_with_unmatched_run_fits_in_replication_0": {
+        "all_evaluations": {
+          "f_cost_vs_time": {
+            "max": 0.8965843562431423,
+            "median": 0.8518623815413926,
+            "min": 0.8250012214329989
+          },
+          "leaves_vs_time": {
+            "max": 0.9332857409054546,
+            "median": 0.8786217090836315,
+            "min": 0.8472438802794107
+          }
+        },
+        "replication_0": {
+          "f_cost_vs_time": 0.8965843562431423,
+          "leaves_vs_time": 0.9332857409054546
+        }
+      }
+    },
+    "magic": {
+      "design_evaluations_per_unit": [
+        79
+      ],
+      "evaluations_per_unit_max": 3026,
+      "evaluations_per_unit_min": 3010,
+      "holdout_evaluations_excluded": 150,
+      "n_design_evaluations": 2370,
+      "unmatched_run_evaluations_excluded": 3778,
+      "variant_with_unmatched_run_fits_in_replication_0": {
+        "all_evaluations": {
+          "f_cost_vs_time": {
+            "max": 0.9298775721721019,
+            "median": 0.9165647655024487,
+            "min": 0.8943776396372123
+          },
+          "leaves_vs_time": {
+            "max": 0.9425343332706955,
+            "median": 0.932670295571979,
+            "min": 0.9244634232748172
+          }
+        },
+        "replication_0": {
+          "f_cost_vs_time": 0.8943776396372123,
+          "leaves_vs_time": 0.9297911671484975
+        }
+      }
+    },
+    "spambase": {
+      "design_evaluations_per_unit": [
+        79
+      ],
+      "evaluations_per_unit_max": 3016,
+      "evaluations_per_unit_min": 2985,
+      "holdout_evaluations_excluded": 140,
+      "n_design_evaluations": 2370,
+      "unmatched_run_evaluations_excluded": 3720,
+      "variant_with_unmatched_run_fits_in_replication_0": {
+        "all_evaluations": {
+          "f_cost_vs_time": {
+            "max": 0.926494097186568,
+            "median": 0.9179068320817518,
+            "min": 0.8653298423595045
+          },
+          "leaves_vs_time": {
+            "max": 0.9610096096154025,
+            "median": 0.9566541826874149,
+            "min": 0.8779062007889886
+          }
+        },
+        "replication_0": {
+          "f_cost_vs_time": 0.8653298423595045,
+          "leaves_vs_time": 0.8779062007889886
+        }
+      }
+    }
+  },
+  "inputs": [
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/evaluations.sqlite",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/design.json",
+    "papers/xgboost_hpo_vrfnbi/audits/reference_factor_models/<dataset>.json"
+  ],
+  "label": "retrospective (declared in the frozen protocol: protocol/OBJECTIVE_DEFINITIONS.md section 9 and protocol/COST_OBJECTIVE_CLAIM_BOUNDARY.md; computed after the campaign from stored outputs)",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/leaf_time_association.py"
+}

@@ -1,0 +1,145 @@
+{
+  "checks": {
+    "evaluations_per_run": 386,
+    "max_abs_difference_core_minimum_vs_stored_core_front": 0.0,
+    "max_abs_difference_stored_vs_recomputed_endpoint": 0.0
+  },
+  "datasets": {
+    "adult": {
+      "bayes_cost": {
+        "best_median": -2.2371472526090637,
+        "best_q1": -2.3103916543058127,
+        "best_q3": -2.187954685031324,
+        "core_best_median": -2.387309704648109,
+        "n_replications": 30
+      },
+      "bayes_quality": {
+        "best_median": -0.7072666110828206,
+        "best_q1": -0.7124411069775384,
+        "best_q3": -0.6997197658826797,
+        "core_best_median": -0.6828414448519335,
+        "n_replications": 30
+      },
+      "tpe_cost": {
+        "best_median": -2.1627050823683605,
+        "best_q1": -2.2381305646606795,
+        "best_q3": -2.0103682196771304,
+        "core_best_median": -2.387309704648109,
+        "n_replications": 30
+      },
+      "tpe_quality": {
+        "best_median": -0.7056836088438478,
+        "best_q1": -0.7129175736982843,
+        "best_q3": -0.6999437147564764,
+        "core_best_median": -0.6828414448519335,
+        "n_replications": 30
+      }
+    },
+    "bank_marketing": {
+      "bayes_cost": {
+        "best_median": -2.5827754186278655,
+        "best_q1": -2.6388443789210467,
+        "best_q3": -2.456513903645682,
+        "core_best_median": -2.5155965981731754,
+        "n_replications": 30
+      },
+      "bayes_quality": {
+        "best_median": -0.9303787523009521,
+        "best_q1": -0.9455526720795085,
+        "best_q3": -0.910424047102956,
+        "core_best_median": -0.8870360653204611,
+        "n_replications": 30
+      },
+      "tpe_cost": {
+        "best_median": -2.4021429490586854,
+        "best_q1": -2.529911296766755,
+        "best_q3": -2.207283979070026,
+        "core_best_median": -2.5155965981731754,
+        "n_replications": 30
+      },
+      "tpe_quality": {
+        "best_median": -0.9187097577895862,
+        "best_q1": -0.9341326814719453,
+        "best_q3": -0.9085730769697588,
+        "core_best_median": -0.8870360653204611,
+        "n_replications": 30
+      }
+    },
+    "magic": {
+      "bayes_cost": {
+        "best_median": -1.799665353520953,
+        "best_q1": -1.8467774003780022,
+        "best_q3": -1.7847771594990067,
+        "core_best_median": -2.051780404431713,
+        "n_replications": 30
+      },
+      "bayes_quality": {
+        "best_median": -0.8104527056190207,
+        "best_q1": -0.8263032503353928,
+        "best_q3": -0.7975533890804882,
+        "core_best_median": -0.7353943453123741,
+        "n_replications": 30
+      },
+      "tpe_cost": {
+        "best_median": -1.7940419729720927,
+        "best_q1": -1.849561090912529,
+        "best_q3": -1.7507207265070504,
+        "core_best_median": -2.051780404431713,
+        "n_replications": 30
+      },
+      "tpe_quality": {
+        "best_median": -0.8053253486122905,
+        "best_q1": -0.8220072421047258,
+        "best_q3": -0.790861951774444,
+        "core_best_median": -0.7353943453123741,
+        "n_replications": 30
+      }
+    },
+    "spambase": {
+      "bayes_cost": {
+        "best_median": -2.5862194715117743,
+        "best_q1": -2.7100463532167556,
+        "best_q3": -2.362911029070477,
+        "core_best_median": -3.0281460472624033,
+        "n_replications": 30
+      },
+      "bayes_quality": {
+        "best_median": -0.8545526637763624,
+        "best_q1": -0.8715782054974097,
+        "best_q3": -0.8192149870251543,
+        "core_best_median": -0.8448210989966916,
+        "n_replications": 30
+      },
+      "tpe_cost": {
+        "best_median": -2.3099212763260404,
+        "best_q1": -2.514703824797962,
+        "best_q3": -2.1699050965742783,
+        "core_best_median": -3.0281460472624033,
+        "n_replications": 30
+      },
+      "tpe_quality": {
+        "best_median": -0.8164546672328712,
+        "best_q1": -0.8475237998467836,
+        "best_q3": -0.7677966794355273,
+        "core_best_median": -0.8448210989966916,
+        "n_replications": 30
+      }
+    }
+  },
+  "definitions": {
+    "best": "the run's stored endpoint: the minimum of its own objective (index 0 f_quality, index 1 f_cost; both minimized) over its 386 real evaluations",
+    "best_median, best_q1, best_q3": "median and 25th/75th percentiles over replications, numpy linear interpolation",
+    "core_best_median": "post hoc context: median over replications of the minimum of the same objective over that replication's 288 CORE rows (88 design + 200 anchor-search rows); no compared method contributes to CORE",
+    "objective_map": "frozen reference factor model per dataset, applied"
+  },
+  "inputs": [
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/metrics_by_method.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/direct_baselines.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/design.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/empirical_anchors.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/reference_core.json",
+    "papers/xgboost_hpo_vrfnbi/audits/reference_factor_models/<dataset>.json"
+  ],
+  "label": "retrospective (declared in the frozen protocol, section 3; computed after the campaign from stored outputs); the CORE context column is post hoc",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/single_objective_endpoints.py"
+}

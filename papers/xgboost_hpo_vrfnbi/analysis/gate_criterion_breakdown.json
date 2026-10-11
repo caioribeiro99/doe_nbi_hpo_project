@@ -1,0 +1,2376 @@
+{
+  "dataset_order": [
+    "magic",
+    "spambase",
+    "adult",
+    "bank_marketing"
+  ],
+  "datasets": {
+    "adult": {
+      "cost": {
+        "external_r2": {
+          "max": 0.9345616738906264,
+          "median": 0.919477729425012,
+          "min": 0.8972110375138462
+        },
+        "external_spearman": {
+          "max": 0.9226849100266821,
+          "median": 0.9080413257628448,
+          "min": 0.8804739564233234
+        },
+        "failures": 8,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 8
+        },
+        "of": 30,
+        "passes": 22
+      },
+      "quality": {
+        "external_r2": {
+          "max": 0.9137993047100275,
+          "median": 0.8989101774320882,
+          "min": 0.8741559082081731
+        },
+        "external_spearman": {
+          "max": 0.8995365364975549,
+          "median": 0.8671039289943115,
+          "min": 0.8458220845338266
+        },
+        "failures": 30,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 30
+        },
+        "of": 30,
+        "passes": 0
+      }
+    },
+    "bank_marketing": {
+      "cost": {
+        "external_r2": {
+          "max": 0.927483226956983,
+          "median": 0.894038395861052,
+          "min": 0.839841128623689
+        },
+        "external_spearman": {
+          "max": 0.9546023596656508,
+          "median": 0.9308792473349434,
+          "min": 0.880195753613475
+        },
+        "failures": 3,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 3
+        },
+        "of": 30,
+        "passes": 27
+      },
+      "quality": {
+        "external_r2": {
+          "max": 0.894802021396657,
+          "median": 0.875700915188261,
+          "min": 0.8487782048436636
+        },
+        "external_spearman": {
+          "max": 0.87123380846911,
+          "median": 0.8554571287873511,
+          "min": 0.8368351057020846
+        },
+        "failures": 30,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 30
+        },
+        "of": 30,
+        "passes": 0
+      }
+    },
+    "magic": {
+      "cost": {
+        "external_r2": {
+          "max": 0.9074568266946036,
+          "median": 0.8996978952695203,
+          "min": 0.8758277972004759
+        },
+        "external_spearman": {
+          "max": 0.9459274902312876,
+          "median": 0.9408439661604218,
+          "min": 0.9253842700792599
+        },
+        "failures": 0,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 0
+        },
+        "of": 30,
+        "passes": 30
+      },
+      "quality": {
+        "external_r2": {
+          "max": 0.849141165980662,
+          "median": 0.7164114519513598,
+          "min": 0.5738860723240082
+        },
+        "external_spearman": {
+          "max": 0.9188843996971678,
+          "median": 0.8536454282940289,
+          "min": 0.7870424523151799
+        },
+        "failures": 22,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 22
+        },
+        "of": 30,
+        "passes": 8
+      }
+    },
+    "spambase": {
+      "cost": {
+        "external_r2": {
+          "max": 0.9312194233658714,
+          "median": 0.9103061800191803,
+          "min": 0.8821190211104658
+        },
+        "external_spearman": {
+          "max": 0.9595149124163548,
+          "median": 0.9465973684566132,
+          "min": 0.9333131002924346
+        },
+        "failures": 0,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 0
+        },
+        "of": 30,
+        "passes": 30
+      },
+      "quality": {
+        "external_r2": {
+          "max": 0.9623653890709968,
+          "median": 0.9352934165895479,
+          "min": 0.9186770170074333
+        },
+        "external_spearman": {
+          "max": 0.9214121603114539,
+          "median": 0.8906656044488437,
+          "min": 0.8438614985656988
+        },
+        "failures": 21,
+        "failures_by_criterion": {
+          "both": 0,
+          "r2_only": 0,
+          "spearman_only": 21
+        },
+        "of": 30,
+        "passes": 9
+      }
+    }
+  },
+  "gate": {
+    "r2_threshold": 0.5,
+    "rule": "external R^2 >= r2_threshold and external Spearman rho >= spearman_threshold (doe_xgb.campaign.design.gate_pass)",
+    "spearman_threshold": 0.9
+  },
+  "inputs": [
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/external_validation.json"
+  ],
+  "label": "post hoc",
+  "overall": {
+    "external_r2_max": 0.9623653890709968,
+    "external_r2_min": 0.5738860723240082,
+    "failures_by_criterion": {
+      "both": 0,
+      "r2_only": 0,
+      "spearman_only": 114
+    },
+    "failures_by_objective": {
+      "cost": {
+        "both": 0,
+        "r2_only": 0,
+        "spearman_only": 11
+      },
+      "quality": {
+        "both": 0,
+        "r2_only": 0,
+        "spearman_only": 103
+      }
+    },
+    "n_cells": 240,
+    "n_cells_r2_at_or_above_threshold": 240,
+    "n_cells_spearman_at_or_above_threshold": 126,
+    "n_failures": 114,
+    "n_units": 120
+  },
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/gate_criterion_breakdown.py",
+  "units": [
+    {
+      "dataset": "magic",
+      "external_r2": 0.6230328016698299,
+      "external_spearman": 0.8185537156280644,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 0
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.897806830080038,
+      "external_spearman": 0.9424120183613853,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 0
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7353945906165966,
+      "external_spearman": 0.8629020530405103,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 1
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.896096422375317,
+      "external_spearman": 0.9408186749958901,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 1
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.705046137221195,
+      "external_spearman": 0.8542903570673493,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 2
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8999274040035696,
+      "external_spearman": 0.9395288256047749,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 2
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7514975934935584,
+      "external_spearman": 0.8520267835296167,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 3
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9012530690760379,
+      "external_spearman": 0.9412486247929285,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 3
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.5849999506785994,
+      "external_spearman": 0.8118723249308898,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 4
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8939095552599968,
+      "external_spearman": 0.9374735231634626,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 4
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7866254174811541,
+      "external_spearman": 0.909855396870682,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 5
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9013824851801804,
+      "external_spearman": 0.9427155123357654,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 5
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7738961021463195,
+      "external_spearman": 0.9065675246929699,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 6
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8994676990397656,
+      "external_spearman": 0.9418050304126253,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 6
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7223852998262483,
+      "external_spearman": 0.8416194035209362,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 7
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9008840036246307,
+      "external_spearman": 0.9414762452737134,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 7
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6816615399790764,
+      "external_spearman": 0.8316925586766903,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 8
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8950654025888043,
+      "external_spearman": 0.9433225002845255,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 8
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7918799679699977,
+      "external_spearman": 0.9188843996971678,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 9
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9013297003773508,
+      "external_spearman": 0.9420073597288787,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 9
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7104376040764714,
+      "external_spearman": 0.838382113992112,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 10
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9074568266946036,
+      "external_spearman": 0.941982068564347,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 10
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7528501147896305,
+      "external_spearman": 0.8652920832004625,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 11
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9003658711436129,
+      "external_spearman": 0.9402875605407252,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 11
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6886252114743259,
+      "external_spearman": 0.8652162092271307,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 12
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9001463863289272,
+      "external_spearman": 0.9374802412777096,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 12
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.849141165980662,
+      "external_spearman": 0.903254361190814,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 13
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9027173799130043,
+      "external_spearman": 0.9443847291948557,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 13
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6642771280674247,
+      "external_spearman": 0.8275827184545503,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 14
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8873696116378104,
+      "external_spearman": 0.9364239331990392,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 14
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7768467843832824,
+      "external_spearman": 0.8885348103644418,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 15
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9004778038223071,
+      "external_spearman": 0.9404140163633834,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 15
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7984323693397145,
+      "external_spearman": 0.9075033036973956,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 16
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8999594267027603,
+      "external_spearman": 0.9392759139594583,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 16
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6270345875404295,
+      "external_spearman": 0.8392319858925711,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 17
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8907288711234143,
+      "external_spearman": 0.9369676966745837,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 17
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6762307671999217,
+      "external_spearman": 0.8369657998232515,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 18
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8983160511636468,
+      "external_spearman": 0.9427913858293604,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 18
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.5738860723240082,
+      "external_spearman": 0.7870424523151799,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 19
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8758277972004759,
+      "external_spearman": 0.9253842700792599,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 19
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7797134655953438,
+      "external_spearman": 0.9041269118841299,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 20
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8976435352718672,
+      "external_spearman": 0.9459274902312876,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 20
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6208248413118285,
+      "external_spearman": 0.8469857871729735,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 21
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8883806676811657,
+      "external_spearman": 0.9350076190301785,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 21
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.783450760793035,
+      "external_spearman": 0.9094507356795788,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 22
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8994683865354708,
+      "external_spearman": 0.9394276609466482,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 22
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7696501771362825,
+      "external_spearman": 0.9108796955106614,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 23
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9000987321555517,
+      "external_spearman": 0.9408692573249534,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 23
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7245143827011093,
+      "external_spearman": 0.8746498732447195,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 24
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8994111713112649,
+      "external_spearman": 0.9372526207969245,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 24
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7031027388695248,
+      "external_spearman": 0.8530004995207084,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 25
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9029379598194441,
+      "external_spearman": 0.9408945484894852,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 25
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8017522563192693,
+      "external_spearman": 0.8951232003820878,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 26
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8990490537035172,
+      "external_spearman": 0.9402875605407252,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 26
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.692156355397149,
+      "external_spearman": 0.836814051876588,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 27
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9042767265294717,
+      "external_spearman": 0.9423108537032586,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 27
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.7103156823545873,
+      "external_spearman": 0.8461339049341793,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 28
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.9074563072963824,
+      "external_spearman": 0.9432719179554622,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 28
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.6415616413796922,
+      "external_spearman": 0.8269498634728797,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 29
+    },
+    {
+      "dataset": "magic",
+      "external_r2": 0.8868819982570576,
+      "external_spearman": 0.931985305759128,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 29
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9450891641926912,
+      "external_spearman": 0.9214121603114539,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 0
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9164367635618025,
+      "external_spearman": 0.9484499579721318,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 0
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9399409505348593,
+      "external_spearman": 0.8648115480360277,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 1
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9034849732364975,
+      "external_spearman": 0.9414063241144949,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 1
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9354178374576456,
+      "external_spearman": 0.8912156907554993,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 2
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9102557833740317,
+      "external_spearman": 0.9451241488077539,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 2
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9315823811737514,
+      "external_spearman": 0.8495029265772153,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 3
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.912007316633429,
+      "external_spearman": 0.9535588055098073,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 3
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.955366779855396,
+      "external_spearman": 0.9006493547730883,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 4
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9105175422135762,
+      "external_spearman": 0.9572579319414761,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 4
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9201843160250958,
+      "external_spearman": 0.8524260549577004,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 5
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8965716303598178,
+      "external_spearman": 0.9371320902834692,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 5
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9475318337667855,
+      "external_spearman": 0.9187200060882822,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 6
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.926879586345406,
+      "external_spearman": 0.9582629918563798,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 6
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9353018340785993,
+      "external_spearman": 0.8873334724533547,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 7
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8821190211104658,
+      "external_spearman": 0.9333131002924346,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 7
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9312181624412037,
+      "external_spearman": 0.8942506496887718,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 8
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9240065243089446,
+      "external_spearman": 0.9549118913675579,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 8
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9401117985611139,
+      "external_spearman": 0.8585848667392526,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 9
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9177491118313368,
+      "external_spearman": 0.9457757432440976,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 9
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9273765102918506,
+      "external_spearman": 0.9069468945596288,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 10
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8922214483369393,
+      "external_spearman": 0.947109517776603,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 10
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9186770170074333,
+      "external_spearman": 0.8574338130418356,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 11
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8944198469208373,
+      "external_spearman": 0.9355283792819745,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 11
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9457126653638556,
+      "external_spearman": 0.8985754661686853,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 12
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8910678342134878,
+      "external_spearman": 0.9351214299901762,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 12
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9428063863548424,
+      "external_spearman": 0.881895837697908,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 13
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9118324179765654,
+      "external_spearman": 0.9518389954476195,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 13
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9329247970663288,
+      "external_spearman": 0.9076501117093692,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 14
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9293752220020778,
+      "external_spearman": 0.9591294781168198,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 14
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9327315299754252,
+      "external_spearman": 0.8607215569240885,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 15
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8834096744412292,
+      "external_spearman": 0.9389151286567669,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 15
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9326426646535372,
+      "external_spearman": 0.8901155181421879,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 16
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9120398669727621,
+      "external_spearman": 0.9452952111179959,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 16
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9432152905652236,
+      "external_spearman": 0.8782033753622615,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 17
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9152566938942315,
+      "external_spearman": 0.9595149124163548,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 17
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9278962800393049,
+      "external_spearman": 0.8439535148395907,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 18
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8924031922336302,
+      "external_spearman": 0.9463760693677288,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 18
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9352849991004966,
+      "external_spearman": 0.8807577280979306,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 19
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8992553129922927,
+      "external_spearman": 0.9464266520166167,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 19
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9253968207680374,
+      "external_spearman": 0.9115878525950917,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 20
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8951430673031476,
+      "external_spearman": 0.9467680848966098,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 20
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9516543761364462,
+      "external_spearman": 0.8775330842313286,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 21
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9181133697684546,
+      "external_spearman": 0.9528066869839021,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 21
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9315391086193134,
+      "external_spearman": 0.9061701855269757,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 22
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9220367441635028,
+      "external_spearman": 0.9541657972964618,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 22
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9623653890709968,
+      "external_spearman": 0.8855377884178351,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 23
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9103565766643289,
+      "external_spearman": 0.9482729187010243,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 23
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.938761393153884,
+      "external_spearman": 0.909362216044025,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 24
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.899496924450579,
+      "external_spearman": 0.9416718830211562,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 24
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.93775567404967,
+      "external_spearman": 0.8923575411579717,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 25
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8983250848641879,
+      "external_spearman": 0.9434422757322319,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 25
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.920613524110486,
+      "external_spearman": 0.8438614985656988,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 26
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8974869429359358,
+      "external_spearman": 0.9443654090744357,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 26
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9403784402131119,
+      "external_spearman": 0.8982283539245565,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 27
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.8943801876764025,
+      "external_spearman": 0.9428352839455775,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 27
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9316717094831859,
+      "external_spearman": 0.8994733081864451,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 28
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9202126580137544,
+      "external_spearman": 0.9588446923185903,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 28
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9305856029388523,
+      "external_spearman": 0.9137376151728264,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "quality",
+      "replication": 29
+    },
+    {
+      "dataset": "spambase",
+      "external_r2": 0.9312194233658714,
+      "external_spearman": 0.958604424736373,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 29
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8885413604252322,
+      "external_spearman": 0.8615573680457691,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 0
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.918683116349984,
+      "external_spearman": 0.9156286751223459,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 0
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8999794611738797,
+      "external_spearman": 0.8637203370815748,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 1
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9173330920054041,
+      "external_spearman": 0.8941311852704257,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 1
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9103409183963059,
+      "external_spearman": 0.879569461069086,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 2
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9146105167092693,
+      "external_spearman": 0.8998216972900516,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 2
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.899947002183112,
+      "external_spearman": 0.8458220845338266,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 3
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9166402920439664,
+      "external_spearman": 0.8925125507403988,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 3
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9071391077571159,
+      "external_spearman": 0.8779124497024746,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 4
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9082881910671362,
+      "external_spearman": 0.8990376711895699,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 4
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8949958427085616,
+      "external_spearman": 0.8532217154457933,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 5
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9196770457986243,
+      "external_spearman": 0.8926642977275888,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 5
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9137993047100275,
+      "external_spearman": 0.8984490095464657,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 6
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9221283951352381,
+      "external_spearman": 0.9102416570771,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 6
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8929283941709273,
+      "external_spearman": 0.8781274817118822,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 7
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9208880147023346,
+      "external_spearman": 0.9134030526435588,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 7
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8995602493597286,
+      "external_spearman": 0.8714994362454369,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 8
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9177361207774628,
+      "external_spearman": 0.9117085446199369,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 8
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9018351709865451,
+      "external_spearman": 0.8910512971466137,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 9
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9239739635481548,
+      "external_spearman": 0.9117338357844686,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 9
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8954349748992776,
+      "external_spearman": 0.8599130056208877,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 10
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9327528403252648,
+      "external_spearman": 0.9226849100266821,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 10
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8874496219049319,
+      "external_spearman": 0.8637076881398449,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 11
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9143451421796568,
+      "external_spearman": 0.9101657835835051,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 11
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9026237982834794,
+      "external_spearman": 0.8914433126754947,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 12
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8972110375138462,
+      "external_spearman": 0.9025025607304088,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 12
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8741559082081731,
+      "external_spearman": 0.8559159400342529,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 13
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9228232285581387,
+      "external_spearman": 0.9075102113076796,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 13
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8909941985565384,
+      "external_spearman": 0.8710205681870145,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 14
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9328969483061844,
+      "external_spearman": 0.9199787554217932,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 14
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8874627069190604,
+      "external_spearman": 0.8670723066399869,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 15
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9296668779039166,
+      "external_spearman": 0.915097560667181,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 15
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9055131847960378,
+      "external_spearman": 0.8664272106117642,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 16
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.92506905508089,
+      "external_spearman": 0.9224067072168337,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 16
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9002648666254696,
+      "external_spearman": 0.8742948523677355,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 17
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9183313054080158,
+      "external_spearman": 0.9081930727500348,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 17
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8992146187623602,
+      "external_spearman": 0.8725745962924748,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 18
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9180730751707684,
+      "external_spearman": 0.9084712755598832,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 18
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8868338380781512,
+      "external_spearman": 0.8662121786023567,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 19
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9122941996316135,
+      "external_spearman": 0.8940553117768307,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 19
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8825508670560919,
+      "external_spearman": 0.8541197903086132,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 20
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9186658314463813,
+      "external_spearman": 0.8922849302596138,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 20
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8909370633459148,
+      "external_spearman": 0.8675782643091813,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 21
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9345616738906264,
+      "external_spearman": 0.9198270084346032,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 21
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8905457893504342,
+      "external_spearman": 0.8669205193392286,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 22
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9132320486002908,
+      "external_spearman": 0.9053604623224876,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 22
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9038882066729619,
+      "external_spearman": 0.8589896328746081,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 23
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9269828490846653,
+      "external_spearman": 0.9097611249509984,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 23
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.909104738670508,
+      "external_spearman": 0.8677427005516695,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 24
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9030358410544574,
+      "external_spearman": 0.8804739564233234,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 24
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8847824729038551,
+      "external_spearman": 0.8671355513486362,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 25
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9214249346137874,
+      "external_spearman": 0.9110509743421136,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 25
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8923623493684911,
+      "external_spearman": 0.8585469199140632,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 26
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9223681085817733,
+      "external_spearman": 0.9032865868308906,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 26
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9067754640169546,
+      "external_spearman": 0.8995365364975549,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 27
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9192784130513999,
+      "external_spearman": 0.9053857534870192,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 27
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9013835012244765,
+      "external_spearman": 0.8564218977034472,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 28
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9198033787724975,
+      "external_spearman": 0.9003275205806851,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 28
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.8986057361018164,
+      "external_spearman": 0.8726125431176646,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 29
+    },
+    {
+      "dataset": "adult",
+      "external_r2": 0.9204878094138785,
+      "external_spearman": 0.9078895787756547,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 29
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8601917304891997,
+      "external_spearman": 0.8663649313242721,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 0
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8855714031288889,
+      "external_spearman": 0.9056892474613993,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 0
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8783836693942705,
+      "external_spearman": 0.8591385540053971,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 1
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8870773485853913,
+      "external_spearman": 0.9261245084029893,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 1
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8774094725923209,
+      "external_spearman": 0.8505542587387197,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 2
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.927483226956983,
+      "external_spearman": 0.944738805498299,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 2
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8671148338142318,
+      "external_spearman": 0.8470765168257864,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 3
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9201947672464633,
+      "external_spearman": 0.9517191669090403,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 3
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8699740270540126,
+      "external_spearman": 0.8588681167299989,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 4
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8816849077492754,
+      "external_spearman": 0.9324725907004388,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 4
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8656707099763307,
+      "external_spearman": 0.8563404282621291,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 5
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8843858695553606,
+      "external_spearman": 0.9166656128681445,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 5
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8487782048436636,
+      "external_spearman": 0.8368351057020846,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 6
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8959340376532509,
+      "external_spearman": 0.9225584542040238,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 6
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8720415388470444,
+      "external_spearman": 0.8462367887004645,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 7
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.874635412784666,
+      "external_spearman": 0.9061444884229695,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 7
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8598210215990627,
+      "external_spearman": 0.8564851424120965,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 8
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9089121003937127,
+      "external_spearman": 0.9479254922292897,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 8
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.871379152627148,
+      "external_spearman": 0.8501387749905659,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 9
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.907546611390517,
+      "external_spearman": 0.9130995586691788,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 9
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.873622903171625,
+      "external_spearman": 0.8431727777055738,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 10
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8591858423113758,
+      "external_spearman": 0.880195753613475,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 10
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8929487778307755,
+      "external_spearman": 0.8472370236946645,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 11
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9143839317814122,
+      "external_spearman": 0.9418556127416887,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 11
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8857667094464445,
+      "external_spearman": 0.87123380846911,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 12
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8834237195342809,
+      "external_spearman": 0.9346223396856308,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 12
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8525281336497628,
+      "external_spearman": 0.8510663469657894,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 13
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.839841128623689,
+      "external_spearman": 0.8962992469687308,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 13
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8755228082750122,
+      "external_spearman": 0.8627976415158244,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 14
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.912110470976955,
+      "external_spearman": 0.9469897191416178,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 14
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.894802021396657,
+      "external_spearman": 0.8647601278968494,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 15
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9192751136296604,
+      "external_spearman": 0.9371261649742662,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 15
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8820019555375046,
+      "external_spearman": 0.8606466442412194,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 16
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8993043495760115,
+      "external_spearman": 0.9370250003161394,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 16
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8773587422287616,
+      "external_spearman": 0.8378770358660345,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 17
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8663753119469486,
+      "external_spearman": 0.9033624603244855,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 17
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8758480636789481,
+      "external_spearman": 0.8627210706849161,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 18
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.905466505542848,
+      "external_spearman": 0.9355581127733026,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 18
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.870107241383834,
+      "external_spearman": 0.8547131025396136,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 19
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8945285454582058,
+      "external_spearman": 0.9518203315671668,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 19
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8913513387538469,
+      "external_spearman": 0.8562011550350885,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 20
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8930145981396289,
+      "external_spearman": 0.9321438055615271,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 20
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8794013418902512,
+      "external_spearman": 0.865039169956023,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 21
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8935482462638983,
+      "external_spearman": 0.9258968879222044,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 21
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8660241982695585,
+      "external_spearman": 0.856289783452296,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 22
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8451055835848472,
+      "external_spearman": 0.8811568178656786,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "cost",
+      "replication": 22
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8920386524857319,
+      "external_spearman": 0.8536815757459015,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 23
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8924455131347002,
+      "external_spearman": 0.9094323398120866,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 23
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.886985813682583,
+      "external_spearman": 0.8470344444553328,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 24
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8922583531594904,
+      "external_spearman": 0.9296146891083599,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 24
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8763058473693902,
+      "external_spearman": 0.8587713791341085,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 25
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9013549478861763,
+      "external_spearman": 0.9546023596656508,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 25
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8626676352186347,
+      "external_spearman": 0.8535169801139446,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 26
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8989007020811913,
+      "external_spearman": 0.9066756028781344,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 26
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8755537666975739,
+      "external_spearman": 0.8511113516468816,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 27
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9147196780534176,
+      "external_spearman": 0.918081918081918,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 27
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.879570472462997,
+      "external_spearman": 0.8462494499029227,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 28
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8850096987498677,
+      "external_spearman": 0.9397058637564967,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 28
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.8837833711172804,
+      "external_spearman": 0.8622405486076624,
+      "failed_criterion": "spearman_only",
+      "gate_pass": false,
+      "objective": "quality",
+      "replication": 29
+    },
+    {
+      "dataset": "bank_marketing",
+      "external_r2": 0.9211510898706564,
+      "external_spearman": 0.9485324801780497,
+      "failed_criterion": "none",
+      "gate_pass": true,
+      "objective": "cost",
+      "replication": 29
+    }
+  ]
+}

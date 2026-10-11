@@ -1,0 +1,255 @@
+{
+  "datasets": {
+    "adult": {
+      "contrasts": {
+        "leaf": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 17,
+            "median_diff": -0.0006243628518725064,
+            "ties": 4,
+            "wins": 9
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 19,
+            "median_diff": -0.019207524009663857,
+            "ties": 0,
+            "wins": 11
+          },
+          "WS-S -> NBI-S": {
+            "losses": 0,
+            "median_diff": 0.25485334242289653,
+            "ties": 0,
+            "wins": 30
+          }
+        },
+        "time": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 15,
+            "median_diff": -0.0010299053105801703,
+            "ties": 2,
+            "wins": 13
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 12,
+            "median_diff": 0.06963769154861132,
+            "ties": 0,
+            "wins": 18
+          },
+          "WS-S -> NBI-S": {
+            "losses": 8,
+            "median_diff": 0.11948974010676883,
+            "ties": 0,
+            "wins": 22
+          }
+        }
+      },
+      "n_replications": 30,
+      "winner_counts_leaf": {
+        "NBI-R": 11,
+        "NBI-S": 19
+      },
+      "winner_counts_time": {
+        "HISTORICAL-WS": 4,
+        "NBI-R": 16,
+        "NBI-S": 8,
+        "WS-S": 2
+      },
+      "winner_differs": 16
+    },
+    "bank_marketing": {
+      "contrasts": {
+        "leaf": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 14,
+            "median_diff": 0.0,
+            "ties": 8,
+            "wins": 8
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 23,
+            "median_diff": -0.4093376880920574,
+            "ties": 0,
+            "wins": 7
+          },
+          "WS-S -> NBI-S": {
+            "losses": 6,
+            "median_diff": 0.22807352871514036,
+            "ties": 0,
+            "wins": 24
+          }
+        },
+        "time": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 10,
+            "median_diff": 0.0029615290836813996,
+            "ties": 4,
+            "wins": 16
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 24,
+            "median_diff": -0.40042805530570647,
+            "ties": 1,
+            "wins": 5
+          },
+          "WS-S -> NBI-S": {
+            "losses": 10,
+            "median_diff": 0.06163701570519786,
+            "ties": 1,
+            "wins": 19
+          }
+        }
+      },
+      "n_replications": 30,
+      "winner_counts_leaf": {
+        "HISTORICAL-WS": 3,
+        "HISTORICAL-WS/WS-S (tied)": 1,
+        "NBI-R": 7,
+        "NBI-S": 17,
+        "WS-S": 2
+      },
+      "winner_counts_time": {
+        "HISTORICAL-WS": 4,
+        "HISTORICAL-WS/WS-S/NBI-S/NBI-R (tied)": 1,
+        "NBI-R": 3,
+        "NBI-S": 15,
+        "WS-S": 7
+      },
+      "winner_differs": 14
+    },
+    "magic": {
+      "contrasts": {
+        "leaf": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 13,
+            "median_diff": 0.0,
+            "ties": 3,
+            "wins": 14
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 28,
+            "median_diff": -0.07414992974020673,
+            "ties": 0,
+            "wins": 2
+          },
+          "WS-S -> NBI-S": {
+            "losses": 4,
+            "median_diff": 0.03744346173598184,
+            "ties": 0,
+            "wins": 26
+          }
+        },
+        "time": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 16,
+            "median_diff": -3.556231921108405e-05,
+            "ties": 0,
+            "wins": 14
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 23,
+            "median_diff": -0.02487853281065755,
+            "ties": 0,
+            "wins": 7
+          },
+          "WS-S -> NBI-S": {
+            "losses": 7,
+            "median_diff": 0.055499632344364,
+            "ties": 0,
+            "wins": 23
+          }
+        }
+      },
+      "n_replications": 30,
+      "winner_counts_leaf": {
+        "HISTORICAL-WS": 1,
+        "NBI-R": 1,
+        "NBI-S": 24,
+        "WS-S": 4
+      },
+      "winner_counts_time": {
+        "HISTORICAL-WS": 2,
+        "NBI-R": 6,
+        "NBI-S": 17,
+        "WS-S": 5
+      },
+      "winner_differs": 9
+    },
+    "spambase": {
+      "contrasts": {
+        "leaf": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 6,
+            "median_diff": 0.0018373157443371535,
+            "ties": 8,
+            "wins": 16
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 25,
+            "median_diff": -0.6932438222530626,
+            "ties": 0,
+            "wins": 5
+          },
+          "WS-S -> NBI-S": {
+            "losses": 10,
+            "median_diff": 0.05001922979874765,
+            "ties": 2,
+            "wins": 18
+          }
+        },
+        "time": {
+          "HISTORICAL-WS -> WS-S": {
+            "losses": 9,
+            "median_diff": 0.006049932885429987,
+            "ties": 6,
+            "wins": 15
+          },
+          "NBI-S -> NBI-R": {
+            "losses": 20,
+            "median_diff": -0.9574254942270701,
+            "ties": 3,
+            "wins": 7
+          },
+          "WS-S -> NBI-S": {
+            "losses": 7,
+            "median_diff": 0.18746905661774937,
+            "ties": 2,
+            "wins": 21
+          }
+        }
+      },
+      "n_replications": 30,
+      "winner_counts_leaf": {
+        "HISTORICAL-WS": 3,
+        "HISTORICAL-WS/WS-S (tied)": 2,
+        "HISTORICAL-WS/WS-S/NBI-S (tied)": 2,
+        "NBI-R": 3,
+        "NBI-S": 14,
+        "WS-S": 6
+      },
+      "winner_counts_time": {
+        "HISTORICAL-WS": 4,
+        "HISTORICAL-WS/WS-S (tied)": 1,
+        "HISTORICAL-WS/WS-S/NBI-S/NBI-R (tied)": 2,
+        "NBI-R": 5,
+        "NBI-S": 15,
+        "WS-S": 3
+      },
+      "winner_differs": 17
+    }
+  },
+  "definitions": {
+    "contrast_order": [
+      "HISTORICAL-WS -> WS-S",
+      "WS-S -> NBI-S",
+      "NBI-S -> NBI-R"
+    ],
+    "difference": "per replication, the CORE-relative hypervolume ratio of the second arm minus that of the first; positive favours the second arm",
+    "leaf": "cost axis f_cost, the frozen leaf-count factor, against the stored CORE reference: the primary objective space",
+    "quality": "the frozen variance-weighted quality composite under both definitions",
+    "tie_rule": "a paired difference of absolute value at most 1e-12 is a tie, and arms whose ratio is within 1e-12 of the largest share the win, labelled 'A/B (tied)'; no non-zero gap or difference lies between 1e-13 and 1e-6 (checked). The frozen primary analysis counts only an exact zero as a tie; under that rule the leaf contrasts reproduce analysis/primary_analysis.json (checked: W/T/L exactly, medians to 1e-12)",
+    "time": "cost axis Time_MeanFold in seconds, untransformed, with the CORE front rebuilt in that space from the 88 design rows and the 200 anchor-search rows",
+    "winner": "the arm of HISTORICAL-WS, WS-S, NBI-S and NBI-R with the largest CORE-relative hypervolume ratio"
+  },
+  "label": "post hoc (operationalization of an analysis declared in the frozen protocol, section 11 item 4)",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/cost_definition_sensitivity.py"
+}

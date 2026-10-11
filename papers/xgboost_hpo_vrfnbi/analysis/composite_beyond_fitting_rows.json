@@ -1,0 +1,160 @@
+{
+  "datasets": {
+    "adult": {
+      "design_rows_max": 0.8501926824751542,
+      "design_rows_min": 0.8092575772273124,
+      "fitting_rows": 0.8353777370170813,
+      "fitting_rows_committed": 0.8353777370170813,
+      "n_replications": 30,
+      "no_positive_fitting_rows": {
+        "are_the_n_worst": true,
+        "n_fitting_rows": 88,
+        "n_rows": 13,
+        "ranks_from_worst": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "random_max": 0.6387080485887571,
+      "random_median": 0.5615172954129455,
+      "random_min": 0.4605058033904883,
+      "random_negative": 0,
+      "random_rows_per_replication": [
+        386
+      ],
+      "reversals_fitting": [
+        150,
+        615
+      ],
+      "reversals_random_pooled": [
+        165459,
+        631606
+      ]
+    },
+    "bank_marketing": {
+      "design_rows_max": 0.9159957318847608,
+      "design_rows_min": 0.8729089321775324,
+      "fitting_rows": 0.8957310029188971,
+      "fitting_rows_committed": 0.8957310029188971,
+      "n_replications": 30,
+      "no_positive_fitting_rows": {
+        "are_the_n_worst": true,
+        "n_fitting_rows": 88,
+        "n_rows": 16,
+        "ranks_from_worst": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ]
+      },
+      "random_max": 0.7612655569517842,
+      "random_median": 0.6937728375973947,
+      "random_min": 0.6022991347729268,
+      "random_negative": 0,
+      "random_rows_per_replication": [
+        386
+      ],
+      "reversals_fitting": [
+        149,
+        421
+      ],
+      "reversals_random_pooled": [
+        64664,
+        444082
+      ]
+    },
+    "magic": {
+      "design_rows_max": 0.944937786047496,
+      "design_rows_min": 0.8890995511424263,
+      "fitting_rows": 0.9290646301995609,
+      "fitting_rows_committed": 0.9290646301995609,
+      "n_replications": 30,
+      "no_positive_fitting_rows": {
+        "are_the_n_worst": null,
+        "n_fitting_rows": 88,
+        "n_rows": 0,
+        "ranks_from_worst": []
+      },
+      "random_max": 0.9786620095572982,
+      "random_median": 0.9411126047106285,
+      "random_min": 0.9031607104386957,
+      "random_negative": 0,
+      "random_rows_per_replication": [
+        386
+      ],
+      "reversals_fitting": [
+        0,
+        905
+      ],
+      "reversals_random_pooled": [
+        22,
+        893138
+      ]
+    },
+    "spambase": {
+      "design_rows_max": 0.31020555736823074,
+      "design_rows_min": 0.18792934681963688,
+      "fitting_rows": 0.24258591345602695,
+      "fitting_rows_committed": 0.24258591345602695,
+      "n_replications": 30,
+      "no_positive_fitting_rows": {
+        "are_the_n_worst": true,
+        "n_fitting_rows": 88,
+        "n_rows": 1,
+        "ranks_from_worst": [
+          1
+        ]
+      },
+      "random_max": -0.18196496839706863,
+      "random_median": -0.38742497009758126,
+      "random_min": -0.5401446687625745,
+      "random_negative": 30,
+      "random_rows_per_replication": [
+        386
+      ],
+      "reversals_fitting": [
+        1045,
+        1311
+      ],
+      "reversals_random_pooled": [
+        835492,
+        1111951
+      ]
+    }
+  },
+  "inputs": [
+    "papers/xgboost_hpo_vrfnbi/audits/reference_factor_models/<dataset>.json",
+    "papers/xgboost_hpo_vrfnbi/audits/pilot_stage_a/<dataset>_design.csv",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/design.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/factor_model.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_XX/direct_baselines.json"
+  ],
+  "label": "post hoc",
+  "note": "Computed after the campaign from stored evaluations with the frozen reference factor models; it changes no frozen number and fed no arm. Alignment is composite_alignment (Spearman of f_quality with the equal-weight mean of the six standardized canonicalized quality responses, standardized within each sample). Random-search rows are the configurations baselines.random_search drew uniformly in the coded box per replication. A reversal is an ordered pair at least as good on all six quality responses and strictly better on one that receives the larger f_quality; random-search pairs are formed within replications and pooled as [reversed, pairs]. no_positive_fitting_rows ranks the fitting rows with Recall_Mean 0 and Specificity_Mean 1 among the f_quality values of all fitting rows, rank 1 being the largest (worst).",
+  "post_hoc": true,
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/composite_beyond_fitting_rows.py"
+}

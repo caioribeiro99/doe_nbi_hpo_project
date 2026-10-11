@@ -1,0 +1,67 @@
+{
+  "datasets": {
+    "adult": {
+      "greedy_recorded": {
+        "min_abs_phi": 0.9480204893438534,
+        "replications_with_negative_phi": []
+      },
+      "n_replications": 30,
+      "optimal": {
+        "cost_factor_recovered": 30,
+        "min_phi": 0.9480204893438534,
+        "n_below_0_85": 0,
+        "n_below_0_95": 1,
+        "n_negative": 0
+      }
+    },
+    "bank_marketing": {
+      "greedy_recorded": {
+        "min_abs_phi": 0.3514664286831747,
+        "replications_with_negative_phi": [
+          15,
+          16,
+          23,
+          29
+        ]
+      },
+      "n_replications": 30,
+      "optimal": {
+        "cost_factor_recovered": 30,
+        "min_phi": 0.7507385143497843,
+        "n_below_0_85": 4,
+        "n_below_0_95": 10,
+        "n_negative": 0
+      }
+    },
+    "magic": {
+      "greedy_recorded": {
+        "min_abs_phi": 0.8946571324928027,
+        "replications_with_negative_phi": []
+      },
+      "n_replications": 30,
+      "optimal": {
+        "cost_factor_recovered": 30,
+        "min_phi": 0.8946571324928027,
+        "n_below_0_85": 0,
+        "n_below_0_95": 6,
+        "n_negative": 0
+      }
+    },
+    "spambase": {
+      "greedy_recorded": {
+        "min_abs_phi": 0.917847497260183,
+        "replications_with_negative_phi": []
+      },
+      "n_replications": 30,
+      "optimal": {
+        "cost_factor_recovered": 30,
+        "min_phi": 0.9178474972601828,
+        "n_below_0_85": 0,
+        "n_below_0_95": 2,
+        "n_negative": 0
+      }
+    }
+  },
+  "label": "retrospective (declared in the frozen protocol, section 7.2 and amendment 14; computed after the campaign from stored outputs); the optimal-assignment matching rule is post hoc",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/tucker_congruence_refit.py"
+}

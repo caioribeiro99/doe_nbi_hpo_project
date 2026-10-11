@@ -1,0 +1,208 @@
+{
+  "computed": "after the campaign, from committed pre-campaign artifacts",
+  "datasets": {
+    "adult": {
+      "cumulative_variance_share": [
+        0.6821595166191518,
+        0.8036631284452985,
+        0.9037634955354769,
+        0.9782795778291223,
+        0.9938487928475005,
+        0.9999999999829388,
+        1.0
+      ],
+      "eigenvalues": [
+        4.775116616334063,
+        0.8505252827830279,
+        0.7007025696312473,
+        0.5216125760555189,
+        0.10898450512864699,
+        0.043058449948067526,
+        1.1942919991986145e-10
+      ],
+      "kaiser_retained": 1,
+      "lambda3_over_lambda4": 1.3433391022318193,
+      "leaf_count_variance_reproduced": [
+        0.33309690299671946,
+        0.782640907215056,
+        0.9805271350831679
+      ],
+      "n_components_fixed": 3,
+      "n_fitting_rows": 88,
+      "objective_coefficients_on_Z": {
+        "f_cost": {
+          "Accuracy_Mean": 0.13155700757064923,
+          "Leaves_Mean": 0.9923308791164238,
+          "LogLoss_Mean": 0.19704688504354997,
+          "Precision_Mean": 0.10447953686931105,
+          "Recall_Mean": 0.09913538555977612,
+          "RocAuc_Mean": -0.28982367587221175,
+          "Specificity_Mean": -0.025611165955576262
+        },
+        "f_quality": {
+          "Accuracy_Mean": 0.18942749818224222,
+          "Leaves_Mean": 0.1653241099689947,
+          "LogLoss_Mean": 0.16526725338184062,
+          "Precision_Mean": 0.14632837825396572,
+          "Recall_Mean": 0.18181954522539628,
+          "RocAuc_Mean": 0.051626819563834865,
+          "Specificity_Mean": -0.14681517874234964
+        }
+      },
+      "spearman_weighted_vs_equal_fitting_rows": 0.9910404853658321
+    },
+    "bank_marketing": {
+      "cumulative_variance_share": [
+        0.6662364109803256,
+        0.7880852015500425,
+        0.8773200408006584,
+        0.9613833555696891,
+        0.9928851744064088,
+        0.9999999999517561,
+        1.0
+      ],
+      "eigenvalues": [
+        4.663654876862278,
+        0.8529415339880175,
+        0.6246438747543116,
+        0.5884432033832151,
+        0.2205127318570373,
+        0.049803778817432136,
+        3.3770689942607594e-10
+      ],
+      "kaiser_retained": 1,
+      "lambda3_over_lambda4": 1.0615193975611634,
+      "leaf_count_variance_reproduced": [
+        0.4061185298978185,
+        0.7534603260506747,
+        0.8911644481148988
+      ],
+      "n_components_fixed": 3,
+      "n_fitting_rows": 88,
+      "objective_coefficients_on_Z": {
+        "f_cost": {
+          "Accuracy_Mean": 0.13842833485036704,
+          "Leaves_Mean": 0.8827040649920802,
+          "LogLoss_Mean": 0.10486617955254134,
+          "Precision_Mean": 0.32846181228536453,
+          "Recall_Mean": 0.07987835293836815,
+          "RocAuc_Mean": -0.48017772732924213,
+          "Specificity_Mean": -0.03040504547119971
+        },
+        "f_quality": {
+          "Accuracy_Mean": 0.20913581943512669,
+          "Leaves_Mean": 0.18886325102146906,
+          "LogLoss_Mean": 0.13868904202611912,
+          "Precision_Mean": 0.23212797433489765,
+          "Recall_Mean": 0.1959896643992442,
+          "RocAuc_Mean": -0.029157138028218357,
+          "Specificity_Mean": -0.17024227198276853
+        }
+      },
+      "spearman_weighted_vs_equal_fitting_rows": 0.9872485648021588
+    },
+    "magic": {
+      "cumulative_variance_share": [
+        0.569770012383316,
+        0.806713503795136,
+        0.9339989495332387,
+        0.977474416630696,
+        0.9920061019476901,
+        0.999999999999484,
+        1.0
+      ],
+      "eigenvalues": [
+        3.9883900866832125,
+        1.6586044398827395,
+        0.8909981201667191,
+        0.30432826968220134,
+        0.10172179721895873,
+        0.055957286362557264,
+        3.6119084594288165e-12
+      ],
+      "kaiser_retained": 2,
+      "lambda3_over_lambda4": 2.927753379918189,
+      "leaf_count_variance_reproduced": [
+        0.17099236956698569,
+        0.17552184396537823,
+        0.9877197059692306
+      ],
+      "n_components_fixed": 3,
+      "n_fitting_rows": 88,
+      "objective_coefficients_on_Z": {
+        "f_cost": {
+          "Accuracy_Mean": -0.015199229266746698,
+          "Leaves_Mean": 1.0059095059086796,
+          "LogLoss_Mean": 0.19160838771790234,
+          "Precision_Mean": -0.12751731095144422,
+          "Recall_Mean": -0.008454762580326448,
+          "RocAuc_Mean": -0.02959918150786564,
+          "Specificity_Mean": -0.014629759860483335
+        },
+        "f_quality": {
+          "Accuracy_Mean": 0.11466437100302053,
+          "Leaves_Mean": 0.011441231843708405,
+          "LogLoss_Mean": 0.27514123896366466,
+          "Precision_Mean": 0.2788131538121973,
+          "Recall_Mean": 0.02768471066739811,
+          "RocAuc_Mean": 0.26169028140748923,
+          "Specificity_Mean": 0.24307491574804663
+        }
+      },
+      "spearman_weighted_vs_equal_fitting_rows": 0.9880245857547244
+    },
+    "spambase": {
+      "cumulative_variance_share": [
+        0.6364475627997094,
+        0.7924838735920882,
+        0.9160931566746555,
+        0.9749954577469354,
+        0.9961880878344138,
+        1.0,
+        1.0
+      ],
+      "eigenvalues": [
+        4.455132939597966,
+        1.092254175546651,
+        0.8652649815779717,
+        0.4123161075059598,
+        0.14834841061234863,
+        0.026683385159103432,
+        0.0
+      ],
+      "kaiser_retained": 2,
+      "lambda3_over_lambda4": 2.098547609046452,
+      "leaf_count_variance_reproduced": [
+        0.29680049579574747,
+        0.682127560275306,
+        0.8402342032348571
+      ],
+      "n_components_fixed": 3,
+      "n_fitting_rows": 88,
+      "objective_coefficients_on_Z": {
+        "f_cost": {
+          "Accuracy_Mean": -0.0053904776104378455,
+          "Leaves_Mean": 0.7063122520152177,
+          "LogLoss_Mean": -0.06635458454577779,
+          "Precision_Mean": 0.1189205520479476,
+          "Recall_Mean": 0.03114432870504046,
+          "RocAuc_Mean": -0.42607147438693344,
+          "Specificity_Mean": -0.393044201587966
+        },
+        "f_quality": {
+          "Accuracy_Mean": 0.1948073754524132,
+          "Leaves_Mean": 0.17785224423561663,
+          "LogLoss_Mean": 0.15943587577676582,
+          "Precision_Mean": 0.17456339735727297,
+          "Recall_Mean": 0.20905859483968306,
+          "RocAuc_Mean": -0.011520886706464846,
+          "Specificity_Mean": -0.30217303369709664
+        }
+      },
+      "spearman_weighted_vs_equal_fitting_rows": 0.9889946119454315
+    }
+  },
+  "descriptive_only": true,
+  "label": "retrospective",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/factor_dimensionality.py"
+}

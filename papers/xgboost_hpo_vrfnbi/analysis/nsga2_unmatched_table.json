@@ -1,0 +1,109 @@
+{
+  "checks": {
+    "core_front_rebuilt_from_stored_rows": "equal to the stored front, all datasets",
+    "max_abs_difference_rescored_vs_stored": 2.220446049250313e-16,
+    "rescored_entities": [
+      "NSGA2-MATCHED",
+      "GRID",
+      "RANDOM"
+    ],
+    "rescored_indicators": [
+      "hv_ratio",
+      "igd_plus",
+      "gd",
+      "joint_nondominated_fraction",
+      "n_front"
+    ]
+  },
+  "datasets": {
+    "adult": {
+      "core_hv_ratio": 1.4052937945229576,
+      "generations": 120,
+      "logical_evaluations": 3840,
+      "matched_core_hv_ratio": 0.8060309807676218,
+      "n_front": 176,
+      "population": 32,
+      "replication": 0
+    },
+    "bank_marketing": {
+      "core_hv_ratio": 2.000127808703355,
+      "generations": 120,
+      "logical_evaluations": 3840,
+      "matched_core_hv_ratio": 0.7861855347354426,
+      "n_front": 177,
+      "population": 32,
+      "replication": 0
+    },
+    "magic": {
+      "core_hv_ratio": 1.0268852773313988,
+      "generations": 120,
+      "logical_evaluations": 3840,
+      "matched_core_hv_ratio": 0.9356996559380686,
+      "n_front": 186,
+      "population": 32,
+      "replication": 0
+    },
+    "spambase": {
+      "core_hv_ratio": 6.445909743075759,
+      "generations": 120,
+      "logical_evaluations": 3840,
+      "matched_core_hv_ratio": 0.0937457983987621,
+      "n_front": 1091,
+      "population": 32,
+      "replication": 0
+    }
+  },
+  "definitions": {
+    "core_hv_ratio": "doe_xgb.campaign.scoring.indicators on every stored row of the unmatched run against the replication's stored CORE front: dominance filter, normalization box spanned by the CORE front, reference point 1.1 per normalized axis; as the campaign scored matched NSGA-II, GRID and RANDOM",
+    "logical_evaluations": "real evaluations requested by the run (population x generations), reconciled against the unit's cache ledger",
+    "matched_core_hv_ratio": "NSGA2-MATCHED core__hv_ratio, same dataset and replication, from analysis/indicators_long.csv",
+    "n_front": "frozen-code count of non-dominated rows; repeated rows are kept, see diagnostics for distinct counts"
+  },
+  "diagnostics": {
+    "adult": {
+      "core_front_points": 6,
+      "matched_n_front": 23,
+      "matched_n_front_distinct_objective_vectors": 21,
+      "n_front_distinct_configurations": 157,
+      "n_front_distinct_objective_vectors": 108,
+      "unique_configurations_requested": 3786
+    },
+    "bank_marketing": {
+      "core_front_points": 4,
+      "matched_n_front": 15,
+      "matched_n_front_distinct_objective_vectors": 14,
+      "n_front_distinct_configurations": 163,
+      "n_front_distinct_objective_vectors": 72,
+      "unique_configurations_requested": 3776
+    },
+    "magic": {
+      "core_front_points": 12,
+      "matched_n_front": 38,
+      "matched_n_front_distinct_objective_vectors": 34,
+      "n_front_distinct_configurations": 165,
+      "n_front_distinct_objective_vectors": 105,
+      "unique_configurations_requested": 3778
+    },
+    "spambase": {
+      "core_front_points": 3,
+      "matched_n_front": 1,
+      "matched_n_front_distinct_objective_vectors": 1,
+      "n_front_distinct_configurations": 1036,
+      "n_front_distinct_objective_vectors": 403,
+      "unique_configurations_requested": 3720
+    }
+  },
+  "inputs": [
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/nsga2_unmatched.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/reference_core.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/design.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/empirical_anchors.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/direct_baselines.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/metrics_by_method.json",
+    "experiments/xgboost_hpo_vrfnbi_confirmatory/<dataset>/rep_00/metrics.json",
+    "papers/xgboost_hpo_vrfnbi/analysis/indicators_long.csv",
+    "papers/xgboost_hpo_vrfnbi/audits/reference_factor_models/<dataset>.json"
+  ],
+  "label": "retrospective (declared in protocol/NSGA2_DECISION.md, section 5; computed after the campaign from stored outputs)",
+  "script": "papers/xgboost_hpo_vrfnbi/scripts/nsga2_unmatched_table.py"
+}
