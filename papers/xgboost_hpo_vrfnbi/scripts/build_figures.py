@@ -22,7 +22,16 @@ DISP = {"magic": "MAGIC", "adult": "Adult", "bank_marketing": "Bank Marketing",
         "spambase": "Spambase (boundary)"}
 PRIMARY = ("magic", "adult", "bank_marketing")
 plt.rcParams.update({"font.size": 9, "figure.dpi": 200, "savefig.bbox": "tight",
-                     "axes.spines.top": False, "axes.spines.right": False})
+                     "axes.spines.top": False, "axes.spines.right": False,
+                     "pdf.fonttype": 42})
+
+
+def save(fig, stem: str, number: int) -> None:
+    """Write the 200-dpi PNG used by the HTML review copy and the vector PDF Figure_<n>.pdf
+    that the journal package uploads as a separate figure file (decision C4)."""
+    fig.savefig(FIG/f"{stem}.png")
+    fig.savefig(FIG/f"Figure_{number}.pdf")
+    plt.close(fig)
 
 
 def hv(ds, method, ref="core"):
@@ -33,27 +42,31 @@ def hv(ds, method, ref="core"):
 def fig_arm_lattice():
     """The causal decomposition: what each contrast holds fixed and what it varies."""
     fig, ax = plt.subplots(figsize=(7.2, 2.5)); ax.axis("off")
-    nodes = [("HISTORICAL-WS\n-asrun", 0.03), ("HISTORICAL-WS", 0.27),
-             ("WS-S", 0.51), ("NBI-S", 0.72), ("NBI-R", 0.93)]
-    for name, x in nodes:
-        ax.add_patch(plt.Rectangle((x-0.085, 0.45), 0.17, 0.22, fc="#eef2f7",
+    names = ["HISTORICAL-WS\n-asrun", "HISTORICAL-WS", "WS-S", "NBI-S", "NBI-R"]
+    w = 0.16                                   # box width; boxes stay inside the axes
+    xs = [w / 2 + 0.005 + i * (1 - w - 0.01) / 4 for i in range(5)]
+    for name, x in zip(names, xs):
+        ax.add_patch(plt.Rectangle((x - w / 2, 0.45), w, 0.22, fc="#eef2f7",
                                    ec="#3b4a5a", lw=1.0, zorder=2))
-        ax.text(x, 0.56, name, ha="center", va="center", fontsize=8, zorder=3)
-    labels = [("reproduction\n→ shared spec", 0.15), ("normalization", 0.39),
-              ("front geometry", 0.615), ("anchor provenance", 0.825)]
-    for txt, x in labels:
-        ax.annotate("", xy=(x+0.075, 0.56), xytext=(x-0.075, 0.56),
-                    arrowprops=dict(arrowstyle="->", lw=1.2, color="#3b4a5a"))
-        ax.text(x, 0.30, txt, ha="center", va="center", fontsize=7.5, style="italic")
-    ax.text(0.61, 0.13, "primary contrasts", ha="center", fontsize=7.5, color="#8a1c1c")
-    ax.plot([0.31, 0.91], [0.20, 0.20], color="#8a1c1c", lw=1.0)
+        ax.text(x, 0.56, name, ha="center", va="center", fontsize=7.5, zorder=3)
+    labels = ["reproduction\n→ shared spec", "normalization", "front geometry", "anchor provenance"]
+    gaps = [(xs[i] + xs[i + 1]) / 2 for i in range(4)]
+    for i, txt in enumerate(labels):        # each arrow runs from one box edge to the next
+        ax.annotate("", xy=(xs[i + 1] - w / 2 - 0.004, 0.56), xytext=(xs[i] + w / 2 + 0.004, 0.56),
+                    arrowprops=dict(arrowstyle="->", lw=1.2, color="#3b4a5a"), zorder=1)
+        ax.text(gaps[i], 0.30, txt, ha="center", va="center", fontsize=7.5, style="italic")
+    # the three primary contrasts: normalization, front geometry and anchor provenance
+    lo, hi = gaps[1] - 0.085, gaps[3] + 0.085
+    ax.text((lo + hi) / 2, 0.13, "primary contrasts", ha="center", fontsize=7.5, color="#8a1c1c")
+    ax.plot([lo, hi], [0.20, 0.20], color="#8a1c1c", lw=1.0)
     ax.set_xlim(0, 1); ax.set_ylim(0.05, 0.75)
-    fig.savefig(FIG/"fig1_arm_lattice.png"); plt.close(fig)
+    save(fig, "fig1_arm_lattice", 1)
 
 
 def fig_primary_effects():
     """Paired geometry effect per primary dataset, and the boundary dataset beside it."""
     fig, axes = plt.subplots(1, 4, figsize=(7.6, 2.5), sharey=False)
+    fig.subplots_adjust(wspace=0.45)  # room for each panel's own y-axis labels
     for ax, ds in zip(axes, PRIMARY + ("spambase",)):
         d = hv(ds, "nbi_s") - hv(ds, "ws_s")
         ax.axhline(0, color="#999", lw=0.8, zorder=1)
@@ -65,7 +78,7 @@ def fig_primary_effects():
         ax.set_xlabel("replication (sorted)", fontsize=7.5)
         ax.tick_params(labelsize=7)
     axes[0].set_ylabel("WS-S → NBI-S\nΔ CORE-relative HV", fontsize=8)
-    fig.savefig(FIG/"fig2_geometry_effect.png"); plt.close(fig)
+    save(fig, "fig2_geometry_effect", 2)
 
 
 def fig_boundary_dispersion():
@@ -81,7 +94,7 @@ def fig_boundary_dispersion():
                         PRIMARY + ("spambase",)], fontsize=7)
     ax.set_ylabel("WS-S → NBI-S\nΔ CORE-relative HV", fontsize=8)
     ax.tick_params(labelsize=7)
-    fig.savefig(FIG/"fig3_boundary_dispersion.png"); plt.close(fig)
+    save(fig, "fig3_boundary_dispersion", 3)
 
 
 def fig_anchor_and_chim():
@@ -107,7 +120,7 @@ def fig_anchor_and_chim():
                                          fontsize=7, rotation=20, ha="right")
     a2.set_ylabel("CHIM extent, NBI-R / NBI-S", fontsize=8); a2.set_ylim(0, 1.15)
     a2.tick_params(labelsize=7)
-    fig.savefig(FIG/"fig4_anchor_provenance.png"); plt.close(fig)
+    save(fig, "fig4_anchor_provenance", 4)
 
 
 def fig_reference_sensitivity():
@@ -129,7 +142,7 @@ def fig_reference_sensitivity():
     ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.tick_params(labelsize=7)
     ax.text(-0.5, 0.45, "red = the one cell whose\nsignificance differs", fontsize=6.5,
             color="#b03030", va="top")
-    fig.savefig(FIG/"fig5_reference_sensitivity.png"); plt.close(fig)
+    save(fig, "fig5_reference_sensitivity", 5)
 
 
 def fig_gate_and_baselines():
@@ -157,7 +170,7 @@ def fig_gate_and_baselines():
                                          fontsize=7, rotation=20, ha="right")
     a2.set_ylabel("median CORE-relative HV", fontsize=8)
     a2.legend(fontsize=6, frameon=False, ncol=2); a2.tick_params(labelsize=7)
-    fig.savefig(FIG/"fig6_gate_and_baselines.png"); plt.close(fig)
+    save(fig, "fig6_gate_and_baselines", 6)
 
 
 def main() -> int:
@@ -165,7 +178,7 @@ def main() -> int:
     for f in (fig_arm_lattice, fig_primary_effects, fig_boundary_dispersion,
               fig_anchor_and_chim, fig_reference_sensitivity, fig_gate_and_baselines):
         f(); print(f"  built {f.__name__}")
-    print(f"\nwrote {len(list(FIG.glob('*.png')))} figures to {FIG}")
+    print(f"\nwrote {len(list(FIG.glob('*.png')))} PNG and {len(list(FIG.glob('Figure_*.pdf')))} vector figures to {FIG}")
     return 0
 
 

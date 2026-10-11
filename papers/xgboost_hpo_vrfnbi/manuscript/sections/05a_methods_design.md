@@ -30,7 +30,7 @@ generalization; nothing is pooled.
 ### 5.2 Decision space
 
 Seven XGBoost hyperparameters are optimized, with the bounds of the archived historical
-configuration retained unchanged (Table 1). Every other learner setting is fixed and identical for
+configuration retained unchanged (Table 2). Every other learner setting is fixed and identical for
 every method: `XGBClassifier` with the binary logistic objective, `tree_method="hist"`, one thread
 per fit and no early stopping, so every fit runs all `n_estimators` boosting rounds; there is no
 class reweighting, the training seed is the replication's seed (Section 5.13), the remaining
@@ -47,7 +47,7 @@ encoded.
 | `gamma` | 0.05 | 5.00 | continuous |
 | `n_estimators` | 50 | 700 | integer |
 
-**Table 1.** The seven XGBoost hyperparameters and their frozen bounds. All enter
+**Table 2.** The seven XGBoost hyperparameters and their frozen bounds. All enter
 the design in coded units on $[-1,1]$; integers are cast by `int(round(·))` at
 evaluation time.
 
@@ -64,7 +64,7 @@ runs, version-controlled, reused byte-identically across datasets and replicatio
 It comprises 64 factorial points, 14 axial points and 10 centre points; face-centred means an axial
 distance of $\alpha = 1$, so no run leaves the coded box. The factorial points are the resolution
 VII half fraction of $2^7$ with generator $G = ABCDEF$ and defining relation $I = +ABCDEFG$, where
-$A$ to $G$ are the factors in the order of Table 1 (so $G$ is `n_estimators`): the 64 corners whose
+$A$ to $G$ are the factors in the order of Table 2 (so $G$ is `n_estimators`): the 64 corners whose
 seven coded levels multiply to $+1$. In this fraction each main effect is aliased only with a
 six-factor interaction and each two-factor interaction only with a five-factor interaction, so no
 two linear or interaction terms of the full quadratic of Section 5.6 are aliased with each other,
@@ -263,7 +263,7 @@ CHIM (Sections 5.9–5.10) inherit that value, which in general does not minimiz
 The external gate (Section 5.3) measures neither consequence.
 
 One arm is the exception to this shared procedure: HISTORICAL-WS-asrun (Section 5.7), whose surfaces
-this study's code fits in the archived uncoded natural-unit parameterization (Table 2), on this
+this study's code fits in the archived uncoded natural-unit parameterization (Table 1), on this
 study's objectives.
 
 Everything specified here is scoped to these four datasets, this surrogate architecture, two

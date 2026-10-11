@@ -2,51 +2,26 @@
 
 ## Abstract
 
-Surrogate-assisted multiobjective hyperparameter optimization pipelines routinely
-change scalarization specification, Pareto-front construction geometry, and anchor
-provenance together, so an observed difference cannot be attributed to any one of
-them. We report a prospectively frozen, provenance-preserving reconstruction that
-varies the three one at a time, with seven XGBoost hyperparameters on an 88-run face-centred
-central composite design, four datasets, 30 replicated outer partitions and every returned
-candidate revalidated on the real learner. Both minimized objectives are latent: a
-Varimax-rotated composite quality factor and a leaf-count model-complexity factor, each a fixed
-linear score of six quality responses and the log leaf count, fitted per dataset on pilot
-design runs. The budget ledger counted every request, repeats included: 396,120 logical evaluations,
-377,316 of them unique.
-
-Replacing the archived observed-extrema normalization with a payoff-matrix reference
-produced no detectable change. Holding the surrogate model, scaling, decision space,
-candidate realization and budget fixed, canonical Normal Boundary Intersection (NBI) on the
-surrogate payoff matrix (NBI-S) improved hypervolume over specification-matched weighted
-scalarization on all three datasets that passed the pre-campaign front-geometry screen (a
-curved front among the non-dominated design runs). Measured against CORE, a 288-point
-empirical reference to which no compared method contributes, the median paired differences
-were $+0.037$ on MAGIC (26/30 wins), $+0.255$ on Adult (30/30) and $+0.228$ on Bank Marketing
-(24/30); all three bootstrap intervals exclude zero, and the secondary signed-rank test is
-Holm-significant within each dataset. The composite-quality surrogate met its frozen external
-reliability criterion in 8 of 30 replications on MAGIC, none on Adult or Bank Marketing and 9
-of 30 on the fourth dataset, Spambase; the criterion was diagnostic and removed nothing, so
-the Adult and Bank Marketing effects rest entirely on replications that failed it. Replacing
-surrogate-derived payoff information with a pre-specified empirical-real anchor procedure,
-costing 200 additional real evaluations, gave no benefit and degraded the front on two of
-the three ($-0.074$ on MAGIC; $-0.019$ on Adult, a non-detection; $-0.409$ on Bank
-Marketing). A post hoc analysis associates the deficit with contraction of the convex hull of
-individual minima, clearly on Adult and Bank Marketing, weakly on Spambase and not on MAGIC.
-Under the pre-declared Nadeau–Bengio corrected t-test, a sensitivity that allows for training
-data shared across partitions, the geometry improvement reaches unadjusted $p < 0.05$ on
-Adult only and the anchor deficit on MAGIC only. An AUGMENTED reference that adds to CORE every
-point a compared method is scored on gives the same bootstrap-interval conclusion
-in all 12 dataset-by-contrast cells and the same secondary-test conclusion in 11.
-On every dataset these conclusions are conditional on the variance-weighted quality composite: rescoring each arm's revalidated candidates after the campaign under the pre-declared equal weighting changed the non-dominated sets in more than 20% of replications; under the equal weighting the WS-S $\rightarrow$ NBI-S and NBI-S $\rightarrow$ NBI-R median differences kept their direction (Supplement S4.5). Under the frozen
-direct-search comparator budget the median paired difference favoured a coarse grid over
-NBI-S on all four datasets, with the grid receiving 386 real evaluations against 186
-standalone for NBI-S; the lead met the frozen 21-of-30 direction rule on MAGIC and Adult
-only, its bootstrap interval also excluded zero on Bank Marketing (20/30 wins), and it was
-unresolved on Spambase (18/30). On Spambase, which failed the screen and was retained as a boundary
-control, the geometry contrast did not resolve (a numerically larger point estimate than the
-smallest resolved effect, at roughly thirty times its dispersion), and its quality composite
-is negatively rank-correlated with raw quality over uniform draws of the decision box (a post
-hoc check), so this result cannot be read as evidence about front geometry.
+Surrogate-assisted multiobjective hyperparameter optimization usually changes scalarization
+specification, front-construction geometry and anchor provenance at once, confounding their
+effects. A prospectively frozen reconstruction varies the three one at a time for seven XGBoost
+hyperparameters (88-run central composite design, four datasets, 30 replications), with
+real-learner revalidation of every returned candidate. Both objectives are fixed latent factors
+(composite quality and leaf-count complexity), so every effect refers to this frozen objective
+space. Specification produced no detectable change. Against CORE, an empirical reference
+containing no compared method's output, Normal Boundary Intersection on the surrogate payoff
+matrix (NBI-S) improved the hypervolume ratio over specification-matched weighted scalarization on
+the three datasets passing a pre-campaign front-geometry screen: median paired differences
+$+0.037$ (MAGIC), $+0.255$ (Adult) and $+0.228$ (Bank Marketing), with bootstrap intervals
+excluding zero and Holm-significant signed-rank tests; Nadeau–Bengio corrected tests reached
+$p < 0.05$ only on Adult. On Adult and Bank Marketing every replication's surrogate failed its
+external reliability gate. Empirical-real anchors degraded the front on MAGIC and Bank Marketing;
+on Adult the change was undetectable (Nadeau–Bengio $p < 0.05$ on MAGIC only). All conclusions
+are conditional on the composite's variance weighting: its pre-declared alternative changed the
+returned fronts in over 20% of replications but reversed no contrast. A coarse grid given 386
+evaluations, against NBI-S's 186, led it by the paired median on all four datasets, meeting the
+21-of-30 direction rule on two. On Spambase, the boundary dataset, the composite runs against raw
+quality over uniform draws (post hoc), so its unresolved result is uninformative.
 
 **Keywords:** multiobjective hyperparameter optimization; Normal Boundary
 Intersection; weighted scalarization; response surface methodology; XGBoost;
@@ -309,7 +284,7 @@ and no claim is made about any other implementation of NBI.
 ### 3.2 Four properties carried forward verbatim
 
 Four further properties of the archived implementation are relevant because each could, on its own,
-displace a returned front (Table 2).
+displace a returned front (Table 1).
 
 | Property | Archived implementation |
 |---|---|
@@ -320,7 +295,7 @@ displace a returned front (Table 2).
 | Surrogate fit | full quadratic response surfaces in uncoded natural units |
 | Surrogate adequacy | no external validation and no gate |
 
-**Table 2.** Properties of the archived implementation, reproduced rather than
+**Table 1.** Properties of the archived implementation, reproduced rather than
 repaired.
 
 The normalization box is built from the component-wise maxima and minima of the design rows. These
@@ -343,10 +318,10 @@ $650$.
 ### 3.3 Calling the archived solver rather than reimplementing it
 
 HISTORICAL-WS-asrun calls the frozen `v0.1.0-dissertation` solver unmodified and keeps every
-property in Table 2. The solver is the only archived routine the arm calls: the uncoded
+property in Table 1. The solver is the only archived routine the arm calls: the uncoded
 surfaces and the observed-extrema box it receives follow the archived specification but are
 computed by this study's code, on this study's objectives (Section 3.5). The solver is called at its default grid
-step of 0.05, which gives the 20-point grid of Table 2; the archived replication runner defaults
+step of 0.05, which gives the 20-point grid of Table 1; the archived replication runner defaults
 instead to a step of 0.02 (50 pairs), and which of the two steps produced the dissertation's
 reported numbers could not be established from the archived code. Because the historical
 pipeline has no surrogate gate, the arm is charged no surrogate-validation budget, a property of
@@ -506,7 +481,7 @@ generalization; nothing is pooled.
 ### 5.2 Decision space
 
 Seven XGBoost hyperparameters are optimized, with the bounds of the archived historical
-configuration retained unchanged (Table 1). Every other learner setting is fixed and identical for
+configuration retained unchanged (Table 2). Every other learner setting is fixed and identical for
 every method: `XGBClassifier` with the binary logistic objective, `tree_method="hist"`, one thread
 per fit and no early stopping, so every fit runs all `n_estimators` boosting rounds; there is no
 class reweighting, the training seed is the replication's seed (Section 5.13), the remaining
@@ -523,7 +498,7 @@ encoded.
 | `gamma` | 0.05 | 5.00 | continuous |
 | `n_estimators` | 50 | 700 | integer |
 
-**Table 1.** The seven XGBoost hyperparameters and their frozen bounds. All enter
+**Table 2.** The seven XGBoost hyperparameters and their frozen bounds. All enter
 the design in coded units on $[-1,1]$; integers are cast by `int(round(·))` at
 evaluation time.
 
@@ -540,7 +515,7 @@ runs, version-controlled, reused byte-identically across datasets and replicatio
 It comprises 64 factorial points, 14 axial points and 10 centre points; face-centred means an axial
 distance of $\alpha = 1$, so no run leaves the coded box. The factorial points are the resolution
 VII half fraction of $2^7$ with generator $G = ABCDEF$ and defining relation $I = +ABCDEFG$, where
-$A$ to $G$ are the factors in the order of Table 1 (so $G$ is `n_estimators`): the 64 corners whose
+$A$ to $G$ are the factors in the order of Table 2 (so $G$ is `n_estimators`): the 64 corners whose
 seven coded levels multiply to $+1$. In this fraction each main effect is aliased only with a
 six-factor interaction and each two-factor interaction only with a five-factor interaction, so no
 two linear or interaction terms of the full quadratic of Section 5.6 are aliased with each other,
@@ -739,7 +714,7 @@ CHIM (Sections 5.9–5.10) inherit that value, which in general does not minimiz
 The external gate (Section 5.3) measures neither consequence.
 
 One arm is the exception to this shared procedure: HISTORICAL-WS-asrun (Section 5.7), whose surfaces
-this study's code fits in the archived uncoded natural-unit parameterization (Table 2), on this
+this study's code fits in the archived uncoded natural-unit parameterization (Table 1), on this
 study's objectives.
 
 Everything specified here is scoped to these four datasets, this surrogate architecture, two
@@ -1916,11 +1891,11 @@ Pereira et al. (2025) and de Azevedo et al. (2026), with which this work shares 
 **Overlap statement.** Besides the archived implementation and the latent-objective
 construction described above, the study takes three elements of its experimental set-up from
 the dissertation, each identified where it is used: the MAGIC Gamma Telescope dataset
-(Section 5.1), the seven hyperparameters and their bounds (Section 5.2, Table 1), and the
+(Section 5.1), the seven hyperparameters and their bounds (Section 5.2, Table 2), and the
 88-run face-centred central composite design (Section 5.3). The other three datasets were
 selected for this study (Section 5.1); the frozen protocol, the confirmatory campaign and every
 result reported here are specific to this study, and no dataset is shared with the companion
-manuscript. Apart from the bounds restated in Table 1, no figure, table or result is reproduced
+manuscript. Apart from the bounds restated in Table 2, no figure, table or result is reproduced
 from the dissertation or from the companion manuscript.
 
 **Data and code availability.** The protocol, the frozen factor models, every analysis

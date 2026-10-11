@@ -26,7 +26,7 @@ and no claim is made about any other implementation of NBI.
 ### 3.2 Four properties carried forward verbatim
 
 Four further properties of the archived implementation are relevant because each could, on its own,
-displace a returned front (Table 2).
+displace a returned front (Table 1).
 
 | Property | Archived implementation |
 |---|---|
@@ -37,7 +37,7 @@ displace a returned front (Table 2).
 | Surrogate fit | full quadratic response surfaces in uncoded natural units |
 | Surrogate adequacy | no external validation and no gate |
 
-**Table 2.** Properties of the archived implementation, reproduced rather than
+**Table 1.** Properties of the archived implementation, reproduced rather than
 repaired.
 
 The normalization box is built from the component-wise maxima and minima of the design rows. These
@@ -60,10 +60,10 @@ $650$.
 ### 3.3 Calling the archived solver rather than reimplementing it
 
 HISTORICAL-WS-asrun calls the frozen `v0.1.0-dissertation` solver unmodified and keeps every
-property in Table 2. The solver is the only archived routine the arm calls: the uncoded
+property in Table 1. The solver is the only archived routine the arm calls: the uncoded
 surfaces and the observed-extrema box it receives follow the archived specification but are
 computed by this study's code, on this study's objectives (Section 3.5). The solver is called at its default grid
-step of 0.05, which gives the 20-point grid of Table 2; the archived replication runner defaults
+step of 0.05, which gives the 20-point grid of Table 1; the archived replication runner defaults
 instead to a step of 0.02 (50 pairs), and which of the two steps produced the dissertation's
 reported numbers could not be established from the archived code. Because the historical
 pipeline has no surrogate gate, the arm is charged no surrogate-validation budget, a property of

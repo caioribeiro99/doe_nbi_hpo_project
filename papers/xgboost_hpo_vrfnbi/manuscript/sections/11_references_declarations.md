@@ -22,11 +22,11 @@ Pereira et al. (2025) and de Azevedo et al. (2026), with which this work shares 
 **Overlap statement.** Besides the archived implementation and the latent-objective
 construction described above, the study takes three elements of its experimental set-up from
 the dissertation, each identified where it is used: the MAGIC Gamma Telescope dataset
-(Section 5.1), the seven hyperparameters and their bounds (Section 5.2, Table 1), and the
+(Section 5.1), the seven hyperparameters and their bounds (Section 5.2, Table 2), and the
 88-run face-centred central composite design (Section 5.3). The other three datasets were
 selected for this study (Section 5.1); the frozen protocol, the confirmatory campaign and every
 result reported here are specific to this study, and no dataset is shared with the companion
-manuscript. Apart from the bounds restated in Table 1, no figure, table or result is reproduced
+manuscript. Apart from the bounds restated in Table 2, no figure, table or result is reproduced
 from the dissertation or from the companion manuscript.
 
 **Data and code availability.** The protocol, the frozen factor models, every analysis

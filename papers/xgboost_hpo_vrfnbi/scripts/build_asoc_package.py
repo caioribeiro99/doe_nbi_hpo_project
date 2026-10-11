@@ -17,7 +17,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[3]
 PAPER = "papers/xgboost_hpo_vrfnbi"
-TAG = "paper2-manuscript-v5"
+TAG = "paper2-manuscript-v6"     # the revision tag; keep tests/methodology/test_asoc_package.py:20 in step
 OUT = REPO / PAPER / "submission"
 
 MARK = "**AUTHOR INPUT REQUIRED**"
@@ -194,13 +194,11 @@ def main() -> int:
     (OUT / "ASOC_VITAE.md").write_text("\n".join(v))
 
     # ---- highlights ---------------------------------------------------------------
+    # The upload copy holds the bullets only: no heading, instruction or character counts
+    # (F14). The rule (3-5 bullets, at most 85 characters each, guide:276) is checked here,
+    # and the lengths are printed at the end of the run.
     over = [h for h in HIGHLIGHTS if len(h) > 85]
-    h = ["# Highlights\n",
-         "Applied Soft Computing: optional, 3-5 bullets, maximum 85 characters each "
-         "including spaces. Upload as a separate editable file.\n"]
-    for x in HIGHLIGHTS:
-        h.append(f"- {x}  *({len(x)} characters)*")
-    (OUT / "ASOC_HIGHLIGHTS.md").write_text("\n".join(h) + "\n")
+    (OUT / "ASOC_HIGHLIGHTS.md").write_text("".join(f"- {x}\n" for x in HIGHLIGHTS))
 
     # ---- cover letter -------------------------------------------------------------
     c = f"""# Cover letter
@@ -290,9 +288,19 @@ Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
          "Author-date, consistent — compliant"),
         ("Research data Option C: deposit, cite and link", ARCH, "guide capture",
          "Statement drafted with a DOI placeholder; deposit pending"),
-        ("No page limit, no file-size limit, no abstract word limit, no acronym ban",
-         ARCH, "guide capture — searched exhaustively, none stated",
-         "32 pp, 1.4 MB, 257-word abstract all unconstrained"),
+        ("Technical papers 20-30 pages, at most 50; no file-size limit stated", ARCH,
+         "guide capture:131", "v5 PDF 32 pp: within the maximum, above the 20-30 norm; "
+         "recount after conversion to the editable source"),
+        ("Abstract stands alone; no word limit stated; essential abbreviations defined at "
+         "first mention and in a first-page footnote", ARCH, "guide capture:264-268, 393",
+         f"{len(abstract.split())}-word abstract (whitespace tokens) defining NBI, NBI-S, CORE "
+         "and AUGMENTED; footnote to be set in the editable source; recheck the live word rule"),
+        ("Editable source files; a PDF is not an acceptable source file", ARCH,
+         "guide capture:246-247, 252, 511-512",
+         "LaTeX in Elsevier's elsarticle template (decision C4); see the manifest"),
+        ("Figures as separate files: vector, or bitmaps of at least 300/500/1000 dpi; captions "
+         "in a separate file", ARCH, "guide capture:302-320",
+         "Vector Figure_1 to Figure_6 and a captions file; see the manifest"),
     ]
     c = ["# Applied Soft Computing — submission checklist\n",
          "Every mutable journal rule carries its verification status. An archived rule is "
@@ -312,18 +320,34 @@ Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
     (OUT / "ASOC_SUBMISSION_CHECKLIST.md").write_text("\n".join(c))
 
     # ---- manifest ------------------------------------------------------------------
+    # The main document is the editable source: "A PDF is not an acceptable source file"
+    # (guide:247). Decision C4 (default): LaTeX in Elsevier's elsarticle template, built from
+    # sections/*.md into manuscript/latex/; Figure_1 to Figure_6 as separate vector files with
+    # a separate captions file (guide:302-320). The PDFs are review copies only.
     import hashlib
     man_dir = REPO / PAPER / "manuscript"
-    files = sorted(list(OUT.glob("ASOC_*")) +
-                   list(man_dir.glob("Paper2_*_FINAL_v5.pdf")))
+    version = TAG.rsplit("-", 1)[1]                    # "v6" for paper2-manuscript-v6
+    source = sorted(man_dir.glob("latex/*.tex")) + sorted(man_dir.glob("latex/*.bib"))
+    figures = sorted(man_dir.glob("figures/Figure_*.pdf")) + sorted(man_dir.glob("figures/Figure_*.eps"))
+    captions = sorted(man_dir.glob("latex/figure_captions.*"))
+    files = (sorted(list(OUT.glob("ASOC_*")) +
+                    list(man_dir.glob(f"Paper2_*_FINAL_{version}.pdf"))) + source + figures + captions)
+    missing = [what for what, got in (
+        ("editable manuscript source (manuscript/latex/*.tex and *.bib)", source),
+        ("vector figure files (manuscript/figures/Figure_*.pdf or .eps)", figures),
+        ("figure-captions file (manuscript/latex/figure_captions.*)", captions)) if not got]
     mf = ["# Package manifest\n",
-          "| file | bytes | sha256 |", "|---|---|---|"]
+          "| file | bytes | sha256 (first 32 hex) |", "|---|---|---|"]
     for f in files:
         mf.append("| `%s` | %s | `%s` |" % (f.name, format(f.stat().st_size, ","),
                                             hashlib.sha256(f.read_bytes()).hexdigest()[:32]))
-    mf.append("\nUpload roles: manuscript PDF as the main document; supplement as "
-              "supplementary material; graphical abstract, highlights, title page, vitae "
-              "and cover letter as separate files.")
+    mf.append("\nUpload roles: the editable LaTeX source (elsarticle template; .tex with "
+              "references.bib) as the main document; Figure_1 to Figure_6 as separate vector files "
+              "with a separate figure-captions file; supplement as supplementary material; graphical "
+              "abstract, highlights, title page, vitae and cover letter as separate files. The "
+              "manuscript PDF is a review copy only.")
+    if missing:
+        mf.append("\n**NOT READY FOR UPLOAD**: missing " + "; ".join(missing) + ".")
     (OUT / "ASOC_PACKAGE_MANIFEST.md").write_text("\n".join(mf))
 
     print("wrote:")
