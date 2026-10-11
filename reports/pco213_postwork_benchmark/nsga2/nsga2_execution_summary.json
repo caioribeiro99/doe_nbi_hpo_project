@@ -1,0 +1,55 @@
+{
+  "derivation": {
+    "pilot_runs": "stored nsga2_summary.json files absent from the pool manifest; the runner skips runs whose summary exists, and the pool's plan line counts only the other runs as pending, so these ran before the pool started, outside it",
+    "pool_wall_clock_hours": "manifest wall_clock_hours (perf_counter over the pool); excludes the pilot run",
+    "runs_in_pool": "runs recorded in nsga2_manifest.json, all logged by the pool and none skipped",
+    "runs_total": "dataset x replication rows of the runner's budget table (nbi_runs.csv, NBI-C)"
+  },
+  "inputs": [
+    "experiments/pco213_postwork_nsga2/nsga2_manifest.json",
+    "experiments/pco213_postwork_nsga2/nsga2.log",
+    "experiments/pco213_postwork_nsga2/<dataset>/rep_XX/nsga2_summary.json",
+    "reports/pco213_postwork_benchmark/tables/nbi_runs.csv"
+  ],
+  "label": "retrospective",
+  "pilot": {
+    "uci_credit/rep_00": {
+      "actual_evals": 441672,
+      "dataset": "uci_credit",
+      "in_pool_manifest": false,
+      "n_nondominated": 66,
+      "rep": 0,
+      "seconds": 665.973306083004,
+      "summary_existed_when_pool_was_planned": true,
+      "target_evals": 441648
+    }
+  },
+  "pilot_runs": [
+    "uci_credit/rep_00"
+  ],
+  "pool": {
+    "completed": 119,
+    "created_at": "2026-09-11T21:28:40-0300",
+    "fail_lines_logged": 0,
+    "failed": 0,
+    "finished_at": "2026-09-12T12:56:32-0300",
+    "git_commit": "56c76030cb82",
+    "pending_runs_planned_logged": 119,
+    "progress_lines_logged": 119,
+    "wall_clock_hours_from_stamps": 15.464444444444444,
+    "wall_clock_hours_logged": 15.46,
+    "wall_clock_hours_manifest": 15.464583728796375,
+    "workers": 8
+  },
+  "pool_wall_clock_hours": 15.464583728796375,
+  "run_seconds_sum_hours": {
+    "all": 123.31291069315074,
+    "pilot": 0.18499258502305665,
+    "pool": 123.12791810812769
+  },
+  "runs_in_pool": 119,
+  "runs_outside_pool": 1,
+  "runs_total": 120,
+  "script": "scripts/pco213_nsga2_execution_summary.py",
+  "workers": 8
+}
