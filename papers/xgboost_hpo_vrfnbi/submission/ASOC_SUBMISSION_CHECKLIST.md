@@ -19,7 +19,10 @@ Every mutable journal rule carries its verification status. An archived rule is 
 | No institutional-email requirement | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture: the rule is only "the email address of each author" | Any valid address satisfies it |
 | Reference formatting flexible at submission | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Author-date, consistent — compliant |
 | Research data Option C: deposit, cite and link | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture | Statement drafted with a DOI placeholder; deposit pending |
-| No page limit, no file-size limit, no abstract word limit, no acronym ban | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture — searched exhaustively, none stated | 32 pp, 1.4 MB, 257-word abstract all unconstrained |
+| Technical papers 20-30 pages, at most 50; no file-size limit stated | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture:131 | v5 PDF 32 pp: within the maximum, above the 20-30 norm; recount after conversion to the editable source |
+| Abstract stands alone; no word limit stated; essential abbreviations defined at first mention and in a first-page footnote | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture:264-268, 393 | 248-word abstract (whitespace tokens) defining NBI, NBI-S, CORE and AUGMENTED; footnote to be set in the editable source; recheck the live word rule |
+| Editable source files; a PDF is not an acceptable source file | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture:246-247, 252, 511-512 | LaTeX in Elsevier's elsarticle template (decision C4); see the manifest |
+| Figures as separate files: vector, or bitmaps of at least 300/500/1000 dpi; captions in a separate file | **ARCHIVE-ONLY (2024-06-30) — RECHECK AT SUBMISSION** | guide capture:302-320 | Vector Figure_1 to Figure_6 and a captions file; see the manifest |
 
 ## Why some rules could not be verified live
 
