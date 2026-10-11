@@ -15,14 +15,15 @@ replication — is the generalization unit.
 
 Under these conditions, canonical NBI front construction produced higher
 real-revalidated CORE-relative hypervolume than specification-matched weighted
-scalarization on all three primary datasets. The medians are **+0.0374** on MAGIC,
-**+0.2549** on Adult and **+0.2281** on Bank Marketing; the win/tie/loss counts are
+scalarization on all three primary datasets, those that passed the pre-campaign
+front-geometry screen on the design rows (Section 5.1). The medians are +0.0374 on MAGIC,
++0.2549 on Adult and +0.2281 on Bank Marketing; the win/tie/loss counts are
 26/0/4, 30/0/0 and 24/0/6; the percentile bootstrap intervals on the median are
 $[+0.0144, +0.0687]$, $[+0.1740, +0.5614]$ and $[+0.1670, +0.4741]$, none of them
 spanning zero; and the matched-pairs rank-biserial correlation is $+0.92$, $+1.00$ and
 $+0.88$. The secondary tests are Holm-significant within every primary dataset
-($p = 9.42\times10^{-7}$, $5.59\times10^{-9}$ and $9.72\times10^{-6}$). This is the
-primary positive result of the study, and its scope is exactly these datasets, this
+($p = 9.42\times10^{-7}$, $5.59\times10^{-9}$ and $9.72\times10^{-6}$). The geometry effect is the
+main positive result of the study, and its scope is exactly these datasets, this
 surrogate architecture, two objectives and this budget. It is not a claim that NBI
 recovers a true Pareto front: the endpoint is a ratio against CORE, a finite
 method-independent empirical reference of 288 points before Pareto filtering, so a
@@ -33,22 +34,22 @@ Two qualifications belong in the same breath as the result. First, the geometry
 advantage did not require a surrogate that passed the study's own external reliability
 criterion: on Adult and Bank Marketing the composite-quality gate passed in 0 of 30
 replications, and the geometry effect is Holm-significant on both. The gate was
-diagnostic rather than adaptive — every arm ran at every replication regardless of its
-outcome — and absolute surrogate trustworthiness and relative front-construction
+diagnostic rather than adaptive (every arm ran at every replication regardless of its
+outcome), and absolute surrogate trustworthiness and relative front-construction
 geometry are different questions, of which this study answers only the second. Second,
-under the frozen direct-search comparator budget the median paired difference
-favoured the coarse grid over NBI-S on all four datasets ($-0.0628$, $-0.0488$,
-$-0.1323$, $-0.1286$), and the grid's marginal median exceeded NBI-S on three of the
-four (grid 1.0068 vs NBI-S 0.9430 on MAGIC; 1.0476 vs 0.9951 on Adult; 1.0625 vs
-0.9979 on Bank Marketing) but **not on Spambase**, where NBI-S is the higher at 1.0812
-against 1.0192. The two statistics answer different questions and only the paired one
-is a within-replication comparison. The budget rule is matched to
-the most expensive arm (NBI-R, 386 evaluations), while WS-S and NBI-S cost 186
-standalone, so the comparators received roughly twice the real evaluations those arms
-require; the rule was frozen before any result existed and is not revised here. The
-geometry contrast compares two front constructions at a fixed surrogate budget; it is
-not a demonstration that the surrogate-assisted family is preferable to direct search.
-Section 6.8 reports this baseline in full.
+the coarse grid, given 386 real evaluations against NBI-S's 186 under the frozen
+maximum-arm comparator rule, had the higher paired median on all four datasets (NBI-S
+minus grid: $-0.0628$, $-0.0488$, $-0.1323$ and $-0.1286$ on MAGIC, Adult, Bank Marketing
+and Spambase); its lead met the frozen 21-of-30 direction rule (Section 5.15) on MAGIC and
+Adult only, its bootstrap interval also excluded zero on Bank Marketing (20/30), and it
+was unresolved on Spambase (18/30). The grid's marginal median exceeded NBI-S's on three
+of the four datasets (grid 1.0068 vs NBI-S 0.9430 on MAGIC; 1.0476 vs 0.9951 on Adult;
+1.0625 vs 0.9979 on Bank Marketing) but not on Spambase, where NBI-S is the higher at
+1.0812 against 1.0192. The two statistics answer different questions and only the paired
+one is a within-replication comparison. The geometry contrast compares two front
+constructions at a fixed surrogate budget; it is not a demonstration that the
+surrogate-assisted family is preferable to direct search. Section 6.8 reports this
+baseline, and the budget rule behind it, in full.
 
 | Contrast | Dataset | Median diff. | Bootstrap interval | Win/tie/loss | Rank-biserial | Holm $p$ |
 |---|---|---:|---:|---:|---:|---:|
@@ -91,29 +92,32 @@ construction returned more non-dominated solutions (Figure 2).
 
 Section 5.15 declared the Nadeau–Bengio corrected resampled $t$ as a sensitivity, with
 an inflation of $\sqrt{8.5} = 2.9155$ at $R = 30$ and $n_{\text{test}}/n_{\text{train}} = 0.25$.
-It is reported here whichever way it falls. **Under the corrected test the geometry
+It is reported here whichever way it falls, as unadjusted $p$-values. Under the corrected test the geometry
 contrast reaches $0.05$ on Adult ($p = 0.0148$) and on neither MAGIC
-($p = 0.0860$) nor Bank Marketing ($p = 0.0764$).** The
+($p = 0.0860$) nor Bank Marketing ($p = 0.0764$). The
 anchor-provenance contrast reaches it on MAGIC ($p = 0.0254$) and on neither
 Adult ($p = 0.4161$) nor Bank Marketing ($p = 0.0791$).
 
 This correction was derived for the generalization error of a learner under repeated
 resampling, and a Pareto quality indicator computed on a returned set is not that
 quantity; applying it here is a transfer, which is why it was declared a sensitivity
-and not the primary test. The descriptive triple remains primary. But a sensitivity
-declared before any result existed is reported whether or not it flatters the
+and not the study's significance test. The descriptive triple remains primary. But a sensitivity
+fixed before the confirmatory campaign is reported whether or not it flatters the
 finding, and under this one the geometry contrast clears $0.05$ on one of the three
 primary datasets rather than three. Every corrected $p$-value appears in
 Supplement S9.
 
 ### 6.4 Anchor and payoff provenance: NBI-S versus NBI-R
 
-The third contrast holds the NBI geometry fixed and changes only the provenance of the
-payoff matrix and anchors, from surrogate-derived (NBI-S) to the pre-specified
-empirical-real procedure that obtains each anchor by direct search on the true
-objectives (NBI-R). The quasi-normal direction is derived from each arm's own payoff
-matrix and so moves with the reference by construction; that displacement is the
-intervention, not a confound.
+The third contrast holds the NBI formulation fixed and changes one declared input, the
+provenance of the payoff matrix and anchors, from surrogate-derived (NBI-S) to the
+pre-specified empirical-real procedure that obtains each anchor by direct search on the true
+objectives (NBI-R). Because NBI builds its utopia point, CHIM and quasi-normal direction from
+the objective values at its anchors, that one input moves all three, and with them every
+subproblem target; that displacement is the intervention, not a confound. The same input
+also replaces surrogate-predicted payoff values with real measurements while the subproblems
+remain on the fitted surfaces (Section 5.11), and it costs 200 additional real evaluations,
+so the contrast estimates the joint effect of these changes.
 
 Replacing surrogate-derived payoff information with the frozen empirical-real anchor
 procedure did not improve the confirmatory NBI fronts, and degraded CORE-relative
@@ -163,12 +167,15 @@ absent on MAGIC; it is not a demonstrated cause of the deficit, and it is not pr
 
 Every dataset-by-contrast conclusion was recomputed under both the primary
 method-independent CORE reference and the mandatory AUGMENTED sensitivity reference.
-**Eleven of the twelve conclusions agree in direction and in significance, and no cell
-anywhere flips direction.** (Figure 5). The single disagreement is Adult's anchor-provenance
+Eleven of the twelve conclusions agree in direction and in significance, and no cell
+anywhere flips direction (Figure 5). The single disagreement is Adult's anchor-provenance
 contrast: under CORE the median is −0.0192 with Holm $p$ = 0.1607, non-significant;
 under AUGMENTED the median is −0.0535 with Holm $p$ = 0.0174, significant. The sign is
 negative under both references, so the disagreement is one of resolution, not of
-direction. Under AUGMENTED that cell is significant only on the secondary test: the
+direction. Because each reference also sets its own normalization box, and with it the
+hypervolume reference point in objective units (Section 5.14), the disagreement cannot be
+attributed to reference membership alone. Under AUGMENTED that cell is significant only on the
+secondary test: the
 primary descriptive triple remains equivocal, with the bootstrap interval on the median
 spanning zero.
 

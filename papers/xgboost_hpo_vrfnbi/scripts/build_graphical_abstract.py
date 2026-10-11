@@ -53,7 +53,7 @@ def main() -> int:
     ax.text(50, 35.4, "One pipeline change, three mechanisms, separated",
             ha="center", va="top", fontsize=8.4, fontweight="bold")
     ax.text(50, 31.6, "Surrogate-assisted multiobjective hyperparameter optimization "
-            "of XGBoost · 4 public datasets · R = 30",
+            "of XGBoost · 4 public datasets, 1 a boundary control · R = 30",
             ha="center", va="top", fontsize=5.5, color="#444")
 
     arms = ["HISTORICAL-WS", "WS-S", "NBI-S", "NBI-R"]
@@ -64,8 +64,8 @@ def main() -> int:
         ax.text(x, 22.6, name, ha="center", va="center", fontsize=5.6, family="monospace")
 
     labels = [("specification\n& normalization", "no detectable change", "#666"),
-              ("front-construction\ngeometry", "improved on 3/3", "#1a6fb5"),
-              ("anchor & payoff\nprovenance", "no benefit; worse on 2/3", "#b5321a")]
+              ("front-construction\ngeometry", "improved on 3/3 screened", "#1a6fb5"),
+              ("anchor & payoff\nprovenance", "no benefit; worse on 2/3 screened", "#b5321a")]
     for i, (x0, x1) in enumerate(zip(xs[:-1], xs[1:])):
         ax.add_patch(FancyArrowPatch((x0 + 8.8, 22.6), (x1 - 8.8, 22.6),
                                      arrowstyle="-|>", mutation_scale=7,

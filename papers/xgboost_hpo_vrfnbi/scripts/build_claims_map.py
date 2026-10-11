@@ -150,11 +150,14 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
         "CONFIRMED twice: by recomputation from `metrics_by_method.json`, and by a "
         "from-scratch rebuild through the frozen factor model with an independent "
         "dominance filter and hypervolume sweep (480/480 values to 0.000e+00).",
-        "\"Under the frozen study conditions, on three geometry-positive datasets and 30 "
+        "\"Under the frozen study conditions, on the three primary datasets (those that "
+        "passed the pre-campaign front-geometry screen on the design rows) and 30 "
         "replicated outer partitions, canonical NBI front construction produced higher "
         "real-revalidated CORE-relative hypervolume than specification-matched weighted "
-        "scalarization.\" The effect is Holm-significant within every primary dataset and "
-        "the rank-biserial correlation is ≥ +0.88 in all three.",
+        "scalarization.\" Every bootstrap interval excludes zero, the secondary signed-rank "
+        "test is Holm-significant within every primary dataset, and the rank-biserial "
+        "correlation is %+.2f, %+.2f and %+.2f on MAGIC, Adult and Bank Marketing."
+        % tuple(r["rank_biserial"] for _, r in rows),
         "Do NOT write \"NBI is better than weighted sum\" without the scope. Do NOT write "
         "that NBI *finds the true Pareto front*. Do NOT generalize beyond these datasets, "
         "this surrogate architecture, two objectives, or this budget. Do NOT claim it "
@@ -176,12 +179,13 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
         "CORE", eff, "not applicable — descriptive secondary indicators",
         "joint non-dominated fraction median differences " + "; ".join(
             "%s %+.4f" % (DISP[d], j[d]["median_diff"]) for d in PRIMARY),
-        inf + " — **non-significant on all four datasets**, including Spambase "
-        f"(p = {j['spambase']['wilcoxon_p_raw']:.3f})",
+        inf + " (a post hoc, unadjusted signed-rank check; the protocol declared secondary "
+        "indicators untested): **no raw p below 0.05 on any of the four datasets**, "
+        f"including Spambase (p = {j['spambase']['wilcoxon_p_raw']:.3f})",
         "`analysis/secondary_analysis.json` → `secondary_indicators`; "
         "`analysis/verified_claims.json` → `OTHER_CAVEATS.indicator_specificity`",
-        "CONFIRMED. The joint non-dominated fraction comparison is non-significant on "
-        "every dataset in the panel.",
+        "CONFIRMED. A post hoc, unadjusted check of the joint non-dominated fraction "
+        "detects no difference on any dataset in the panel.",
         "\"The advantage is specifically an improvement in convergence and coverage "
         "geometry as measured by hypervolume and IGD⁺.\" Secondary indicators are "
         "reported as medians (Supplement S10) without their declared intervals, are tested "
@@ -314,17 +318,30 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
         "`analysis/verified_claims.json` → `CORRECTION_2_boundary_control`",
         "**CORRECTED.** The author's original framing was overstated and a verifier "
         "refuted it.",
-        "\"Spambase was prospectively separated because the screening design showed "
-        "insufficient interior geometry. Its confirmatory comparison was highly unstable "
-        "and did not resolve the geometry contrast. This is CONSISTENT WITH the boundary "
-        "designation.\" Note also that the front size is not fixed at two in the "
-        "campaign: median %d, range %d–%d, exactly 2 in %d of 30 replications, against "
-        "the pre-campaign screening value of %d."
+        "\"Spambase was separated from the primary family before the confirmatory campaign "
+        "because screening on one pre-campaign pilot partition showed insufficient interior "
+        "front geometry in its frozen objective space. Its confirmatory comparison was "
+        "highly unstable and did not resolve the geometry contrast. This is CONSISTENT WITH "
+        "the boundary designation.\" The designation came from a pre-campaign amendment "
+        "(amendment 22) adopted after the screening failure was known, departing from the "
+        "replacement rule frozen at protocol v1. Note also that the front size is not "
+        "fixed at two in the campaign: median %d, range %d–%d, exactly 2 in %d of 30 "
+        "replications, against the pre-campaign screening value of %d. On the primary "
+        "datasets the design-row front had exactly two points in %d, %d and %d of 30 "
+        "replications, median %d, %d and %d, minimum %d, %d and %d (MAGIC, Adult, Bank "
+        "Marketing; row maxima are not quoted, since each of the ten identical centre rows "
+        "counts separately). Spambase's results are all measured in its frozen objective "
+        "space, whose quality composite is negatively aligned with raw quality beyond its "
+        "fitting rows (post hoc, Supplement S4.3), so the Spambase result cannot be read "
+        "as evidence about front geometry."
         % (d2["spambase"]["design_front_campaign_median"],
            d2["spambase"]["design_front_campaign_range"][0],
            d2["spambase"]["design_front_campaign_range"][1],
            d2["spambase"]["design_front_equals_two_in"],
-           d2["spambase"]["design_front_screening"]),
+           d2["spambase"]["design_front_screening"],
+           *[d2[k]["design_front_equals_two_in"] for k in PRIMARY],
+           *[d2[k]["design_front_campaign_median"] for k in PRIMARY],
+           *[d2[k]["design_front_campaign_range"][0] for k in PRIMARY]),
         "Do NOT write \"there was no geometry effect on Spambase\". Do NOT write \"the "
         "Spambase null confirms the mechanism\". **It does not confirm the boundary "
         "mechanism — it is consistent with it.** Preserve that distinction exactly. "
@@ -391,9 +408,9 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
         "What did the confirmatory campaign cost, and in what units?",
         "The logical request ledger, which is the scientific budget and the only figure "
         "entering a fairness comparison.", "all four datasets",
-        "logical evaluations; unique physical fits", "not applicable",
+        "logical evaluations; unique physical evaluations", "not applicable",
         "**396,120 logical evaluations**, exactly the declared registry total, every one "
-        "of the 120 units reconciling individually. **377,316 unique physical fits**, a "
+        "of the 120 units reconciling individually. **377,316 unique physical evaluations**, a "
         "4.75% cache hit rate.",
         "not applicable", "120/120 units, 0 failures, 0 methodological failures, 9h46m "
         "wall clock on 14 workers × 1 thread",

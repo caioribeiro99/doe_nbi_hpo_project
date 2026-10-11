@@ -12,31 +12,39 @@ departs from that rule (Section 5.1). It was executed in full, with the same arm
 seeds, evaluation machinery and $R = 30$ replicated outer partitions, and excluded only
 from the primary family.
 
-On the Claim 2 contrast the boundary dataset did not resolve. The median paired
-difference in CORE-relative hypervolume ratio from WS-S to NBI-S is **+0.0500**, which
-is numerically **larger** than MAGIC's significant +0.0374, with 18 wins, 2 ties and 10
+On the geometry contrast the boundary dataset did not resolve. The median paired
+difference in CORE-relative hypervolume ratio from WS-S to NBI-S is +0.0500, which
+is numerically larger than MAGIC's Holm-significant +0.0374, with 18 wins, 2 ties and 10
 losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.4369]$
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
-not location: the per-replication standard deviation is **1.7706** on Spambase against
-**0.0594** on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
+not location: the per-replication standard deviation is 1.7706 on Spambase against
+0.0594 on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
 (Figure 3).
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
-$R = 30$, not a demonstration that the effect is absent. It is **consistent with** the
-prospectively stated boundary designation and does **not** confirm the boundary
+$R = 30$, not a demonstration that the effect is absent. It is consistent with the
+boundary designation stated before the campaign and does not confirm the boundary
 mechanism: we neither read the non-significance as evidence that no geometry effect
 exists on Spambase, nor treat it as corroboration of the reasoning behind the
 designation. An earlier framing by the present authors asserted the stronger reading and
-was refuted by an independent verifier before publication.
+was refuted before publication by a post-campaign recomputation from the raw unit
+artifacts (Section 8.6).
 
-Two qualifications belong with it. First, the premise is less clean in execution than at
-screening: the two-point front is a **pre-campaign** design-row measurement, whereas
+Three qualifications belong with it. First, the premise is less clean in execution than at
+screening: the two-point front is a pre-campaign design-row measurement, whereas
 across the 30 confirmatory replications the design-row front has median size 3, range 2
-to 5, and is exactly 2 in 9 of them. The degeneracy that motivated the designation is
-not a fixed property of every replication. Second, Spambase is not globally null: its
-anchor-provenance contrast (Section 6.4) is strongly negative and significant at median
+to 5, and is exactly 2 in 9 of them and three or more in the other 21. The degeneracy that
+motivated the designation is not a fixed property of every replication. The three primary
+datasets never showed it: their design-row fronts had at least three points in every
+confirmatory replication (median 9, 6 and 5; minimum 6, 4 and 3 on MAGIC, Adult and Bank
+Marketing; Supplement S5). Second, Spambase is not globally null: its
+anchor-provenance contrast (Section 6.4) is strongly negative and Holm-significant at median
 $-0.6932$, the largest such deficit in the panel, and its historical reconstruction gap
-is also the panel's largest.
+is also the panel's largest. Third, all of these results are measured in Spambase's frozen
+objective space, whose quality composite agrees only weakly with equal-weight raw quality on
+its fitting rows and is negatively rank-correlated with it over configurations drawn
+uniformly from the decision box (post hoc; Supplement S4.3 and Section 8.5), so the Spambase
+result cannot be read as evidence about front geometry.
 
 The dispersion should be read with the scale of the endpoint (Section 6.1): the
 CORE-relative hypervolume ratio is not bounded above by one, exceeds 1 in 35% of
@@ -47,12 +55,12 @@ finite reference set is least informative about the trade-off surface.
 ### 6.7 The geometry advantage persisted where the surrogate failed its own gate
 
 The external reliability gate is an audit-only diagnostic. It scores the fitted
-surrogates on a 78-point set — the design's complementary half fraction plus 14 axial
-runs at half radius — that no fitting stage can reach, passing when external $R^2 \ge
-0.5$ and Spearman $\ge 0.9$ for the response. It is **diagnostic, not adaptive**: every
+surrogates on a 78-point set (the design's complementary half fraction plus 14 axial
+runs at half radius) that no fitting stage can reach, passing when external $R^2 \ge
+0.5$ and Spearman $\rho \ge 0.9$ for the objective. It is diagnostic, not adaptive: every
 arm ran at every replication whatever the gate said, so its pass rate is a result rather
 than a filter, and the primary comparisons are additionally reported conditioned on gate
-status.
+status (Supplement S11).
 
 Over the confirmatory campaign the composite-quality gate passed in **8 of 30**
 replications on MAGIC and **9 of 30** on Spambase, and in **0 of 30** on both Adult and
@@ -77,21 +85,23 @@ an unreliable one, or that NBI compensates for surrogate error.
 
 ### 6.8 Baselines: the frozen-budget direct grid comparison
 
-At the frozen comparator budget, **the median paired difference favoured the direct grid
-baseline over NBI-S on all four datasets**. Its marginal median CORE-relative
-hypervolume ratio is the higher of the two on MAGIC, Adult and Bank Marketing, but
-**not on Spambase**, where NBI-S is higher at 1.0812 against 1.0192. The paired
-statistic is the within-replication comparison; the marginal medians are not, and the
-two do not have to agree (Table 5, Figure 6). Against NBI-S:
+On the CORE-relative hypervolume ratio, the coarse grid, given 386 real evaluations against
+NBI-S's 186 under the frozen maximum-arm comparator rule, had the higher paired median on all
+four datasets; its lead met the frozen 21-of-30 direction rule (Section 5.15) on MAGIC and
+Adult only, its bootstrap interval also excluded zero on Bank Marketing (20/30), and it was
+unresolved on Spambase (18/30). The grid's marginal median is the higher of the two on MAGIC,
+Adult and Bank Marketing, but not on Spambase, where NBI-S is higher at 1.0812 against
+1.0192. The paired statistic is the within-replication comparison; the marginal medians are
+not, and the two do not have to agree (Table 5, Figure 6). Against NBI-S:
 
-| dataset | NBI-S median | GRID median | median difference (NBI-S − GRID) | NBI-S wins | raw $p$ |
+| dataset | NBI-S median | GRID median | median paired difference (NBI-S − GRID) | NBI-S wins | raw $p$ |
 |---|---:|---:|---:|---:|---:|
-| MAGIC | 0.9430 | 1.0068 | −0.0628 | 0/30 | 0.0000 |
-| Adult | 0.9951 | 1.0476 | −0.0488 | 5/30 | 0.0001 |
+| MAGIC | 0.9430 | 1.0068 | −0.0628 | 0/30 | 1.86e−09 |
+| Adult | 0.9951 | 1.0476 | −0.0488 | 5/30 | 1.37e−04 |
 | Bank Marketing | 0.9979 | 1.0625 | −0.1323 | 10/30 | 0.1642 |
 | Spambase | 1.0812 | 1.0192 | −0.1286 | 12/30 | 0.8774 |
 
-**Table 5.** Median CORE-relative hypervolume ratio by method. Direct-search comparators operate under the frozen comparator budget of 386 evaluations; WS-S and NBI-S cost 186 standalone.
+**Table 5.** NBI-S against the coarse grid: median CORE-relative hypervolume ratio of each method, median paired difference (NBI-S − GRID), NBI-S wins out of 30 replications, and the raw $p$ of a post hoc, unadjusted two-sided Wilcoxon signed-rank test (descriptive; outside the frozen primary family). Direct-search comparators operate under the frozen comparator budget of 386 evaluations; WS-S and NBI-S cost 186 standalone.
 
 The raw $p$ is below 0.05 on MAGIC and Adult and not on Bank Marketing or Spambase. This
 contrast is not in the frozen primary family, carries no Holm correction, and is
@@ -133,18 +143,21 @@ datasets.
 
 ### 6.9 Holdout confirmation
 
-Each unit re-measured its selected candidates on a held-out partition whose labels were
-structurally unavailable until the confirmation stage, at 5 audit-only real evaluations
-per unit, charged to the study and to no arm. Across all four datasets and all five
-arms, the **median per-replication difference** between internal and holdout accuracy has
-magnitude below **0.012** in every one of the 20 dataset-by-arm cells, the largest
-being **0.0117**, and is negative — the held-out partition scoring better than the
-internal resampling — in **13 of the 20** cells (Supplement S14). These are descriptive audit figures read from
-`analysis/secondary_analysis.json`, not confirmatory claims.
+Each unit re-measured one candidate per arm: the revalidated candidate nearest, after min–max
+normalization of the two objectives, to the utopia point of that arm's own revalidated set.
+Each selected configuration was refitted on the replication's full training partition and
+scored on a held-out partition whose labels were unavailable within the replication until the
+confirmation stage (on its overlap with the pre-campaign pilot data, see Supplement S4.1), at
+5 audit-only real evaluations per unit, charged to the study and to no arm. Across all four
+datasets and all five arms, the median per-replication difference between internal and
+holdout accuracy has magnitude below 0.012 in every one of the 20 dataset-by-arm cells, the
+largest being 0.0117, and is negative (the held-out partition scoring better than the
+internal resampling) in 13 of the 20 cells (Supplement S14). These are descriptive audit
+figures read from `analysis/secondary_analysis.json`, not confirmatory claims.
 
 The correct reading is an absence of gross optimism in the returned configurations at
-this budget — nothing more. The stage measures internal-versus-holdout optimism and was
+this budget, and nothing more. The stage measures internal-versus-holdout optimism and was
 never designed to rank arms, so the ordering of these differences is not interpreted and
 a smaller drop is not evidence that an arm is better. Every primary claim in this study
-is about the **returned front** under the frozen conditions, not about the
+is about the returned front under the frozen conditions, not about the
 generalization of a single deployed configuration.

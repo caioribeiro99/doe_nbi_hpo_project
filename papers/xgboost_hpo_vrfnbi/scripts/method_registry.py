@@ -47,9 +47,11 @@ ROLE = {
         "objectives. NBI-S to NBI-R isolates anchor and payoff provenance."),
     "ANCHOR-INJECTION-CONTROL": ("control", "anchor_injection_control",
         "NBI-S's own revalidated candidate set augmented with the same empirical "
-        "anchors NBI-R receives, changing nothing else. Separates the part of any "
-        "NBI-S to NBI-R gap that is set composition from the part that is relocated "
-        "geometry. Costs no new real evaluations."),
+        "anchors NBI-R receives, changing nothing else. It measures the indicator gain "
+        "from adding those anchors alone to NBI-S's set; it was frozen to separate the "
+        "set-composition part of the NBI-S to NBI-R gap from the relocated-geometry "
+        "part, a reading that holds only if NBI-R returns its own anchors. Costs no new "
+        "real evaluations."),
     "GRID": ("baseline", "direct_baselines",
         "direct-search comparator at the frozen 386-evaluation comparator budget, "
         "which is matched to the most expensive arm (NBI-R) and not pairwise to each arm"),

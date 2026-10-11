@@ -105,10 +105,10 @@ AI_TITLE = ("## Declaration of generative AI and AI-assisted technologies in the
 
 HIGHLIGHTS = [
     "Scalarization, front geometry and anchor provenance separated in one pipeline",
-    "Normal Boundary Intersection raised hypervolume on all three primary datasets",
+    "Normal Boundary Intersection raised hypervolume on 3 of 3 screened datasets",
     "Pre-specified real anchors gave no benefit and degraded two of three fronts",
-    "A frozen-budget coarse grid led on the paired statistic on all four datasets",
-    "Protocol frozen before any comparative result existed; 30 replications per set",
+    "Coarse grid given twice the evaluations led NBI-S; interval excluded zero on 3 of 4",
+    "Protocol frozen before the confirmatory campaign; 30 replications per dataset",
 ]
 
 
@@ -226,14 +226,19 @@ Evolutionary computing enters as an NSGA-II comparator rather than as the contri
 and we state that plainly rather than overclaiming it.
 
 We also report results that do not favour our own method line. The anchor-provenance
-mechanism gave no benefit and degraded the front on two of three datasets, and a
-frozen-budget coarse grid led the surrogate-assisted arms on the paired statistic on all
-four datasets. Both are reported in full, with the budget asymmetry that qualifies the
-second stated alongside it.
+mechanism gave no benefit and degraded the front on two of the three screened datasets. Under
+the frozen comparator budget, the median paired difference favoured a coarse grid over NBI-S
+(canonical Normal Boundary Intersection on the surrogate payoff matrix) on all four datasets,
+and the lead met the frozen 21-of-30 direction rule on two of them and had a bootstrap interval
+excluding zero on a third; the grid received 386 real
+evaluations against the 186 that NBI-S costs standalone. Both results are reported in full,
+with that budget asymmetry stated alongside the second.
 
 The protocol, the analysis code and every committed artifact are version controlled and
-tagged, and the manuscript states the tags. A prospectively designated boundary dataset
-that did not resolve is reported as unresolved rather than omitted.
+tagged, and the manuscript states the tags. A fourth dataset, which failed the pre-campaign
+front-geometry screen and was retained as a boundary control, did not resolve; it is reported
+as unresolved rather than omitted, together with the construct limitation that prevents
+reading it as evidence about front geometry.
 
 The work is original, is not under consideration elsewhere, and has not been published
 previously. There is no prior conference version.

@@ -29,8 +29,13 @@ generalization; nothing is pooled.
 
 ### 5.2 Decision space
 
-Seven XGBoost hyperparameters are optimized, with the bounds of the reconstructed
-historical configuration retained unchanged (Table 1).
+Seven XGBoost hyperparameters are optimized, with the bounds of the archived historical
+configuration retained unchanged (Table 1). Every other learner setting is fixed and identical for
+every method: `XGBClassifier` with the binary logistic objective, `tree_method="hist"`, one thread
+per fit and no early stopping, so every fit runs all `n_estimators` boosting rounds; there is no
+class reweighting, the training seed is the replication's seed (Section 5.13), the remaining
+parameters that affect training keep their library defaults, and categorical features are one-hot
+encoded.
 
 | Hyperparameter | Low | High | Type |
 |---|---:|---:|---|
@@ -65,36 +70,61 @@ six-factor interaction and each two-factor interaction only with a five-factor i
 two linear or interaction terms of the full quadratic of Section 5.6 are aliased with each other,
 and the axial runs make its squared terms separately estimable.
 
-One **real evaluation** is one stratified, shuffled, seeded 5-fold cross-validation of one
-configuration on one outer partition — five XGBoost fits. Outer partitions are resampled $R = 30$
-times per dataset on an 80/20 split, and every method sees the same split at a given replication,
-so comparisons are paired by partition.
+One *real evaluation* is one stratified, shuffled, seeded 5-fold cross-validation of one
+configuration on the 80% training part of one outer partition, that is, five XGBoost fits; the only
+exception is the holdout confirmation of Section 5.13, a single fit on that whole training part
+scored on the held-out 20%. Outer partitions are resampled $R = 30$ times per dataset on an 80/20
+split, and every method sees the same split at a given replication, so comparisons are paired by
+partition.
 
-A separate 78-point set — the design's complementary half fraction plus 14 axial runs at half
-the design's axial distance — is evaluated on the real objectives and is **audit-only**:
-disjoint from the 88 design rows by construction, reaching the surrogate reliability gate and
-nothing else. The gate passes when external $R^2 \ge 0.5$ and Spearman $\rho \ge 0.9$ per
-response, and is **diagnostic, not adaptive** — every arm runs at every replication whatever it
-returns, and its pass rate is reported as a covariate, never used as a filter.
+A separate 78-point set, made of the design's complementary half fraction ($I = -ABCDEFG$) and 14
+axial runs at half the design's axial distance, is evaluated on the real objectives and is
+*audit-only*: disjoint from the 88 design rows by construction, it reaches the surrogate reliability
+gate and nothing else. The gate passes when external $R^2 \ge 0.5$ and Spearman $\rho \ge 0.9$ per
+objective. Both cut-offs are fixed at protocol level, not calibrated for this problem: they were
+carried over unchanged from the companion manuscript in which the gate was first used (Declarations),
+frozen before the measurement-validation pilot (Section 9.1) and never moved. The audit set, by
+contrast, was adapted to this problem, because in that pilot uniformly sampled points carried too
+little response spread for external $R^2$ to be informative. The gate is diagnostic, not adaptive:
+every arm runs at every replication whatever it returns, and its pass rate is reported as a
+covariate (Supplement S11), never used as a filter.
 
 ### 5.4 Responses, transforms and orientation
 
-Seven responses are recorded per evaluation as the mean over folds. Six carry the `quality`
-role — `Accuracy_Mean`, `Precision_Mean`, `Recall_Mean`, `Specificity_Mean`, `RocAuc_Mean`,
-`LogLoss_Mean`, the threshold metrics computed at 0.5 and log-loss probabilities clipped to
-$[10^{-7}, 1 - 10^{-7}]$ — and one carries the `cost` role, `Leaves_Mean`, the total leaf count
-of the fitted ensemble summed over all trees. Mean per-fold wall-clock time, `Time_MeanFold`, is
-recorded on every evaluation and is a **secondary audit variable entering no objective**.
+Seven responses are recorded per evaluation as the mean over folds. Six carry the `quality` role:
+`Accuracy_Mean`, `Precision_Mean`, `Recall_Mean`, `Specificity_Mean`, `RocAuc_Mean` and
+`LogLoss_Mean`. The first four are computed at a fixed decision threshold of 0.5, and log-loss
+probabilities are clipped to $[10^{-7}, 1 - 10^{-7}]$. One response carries the `cost` role:
+`Leaves_Mean`, the total leaf count of the fitted ensemble summed over all trees. Mean per-fold
+wall-clock time, `Time_MeanFold`, is recorded on every evaluation and is a secondary audit variable
+entering no objective. The learner is fitted without class weighting (Section 5.2), and precision is
+set to 0 in a fold with no predicted positive. The positive class is 35.2% of MAGIC, 39.4% of
+Spambase, 24.9% of Adult and 12.7% of Bank Marketing. Among the 88 design rows on which the factor
+model of Section 5.5 is fitted, 13 on Adult, 16 on Bank Marketing, one on Spambase and none on MAGIC
+predict no positive case at 0.5, all at the design's lowest learning rate (0.01) and tree count
+(50). Their recall is 0, their precision 0 by that convention, their specificity 1 and their
+accuracy the majority-class rate, although they still rank cases well above chance (ROC AUC 0.77 to
+0.94 on Adult and Bank Marketing, 0.95 on the Spambase row; Section 8.5).
 
-Transform and orientation are declared per response, not inferred from data.
-`Leaves_Mean` is transformed by $\log 1p$; every other response is untransformed. The transform
-is not cosmetic: leaf count spans $591\times$ to $4,356\times$ over the design box, a
-quadratic fitted to it raw reaches in-sample $R^2$ of only 0.49 to 0.65 against 0.95
-transformed, and untransformed it strips the cost surface to an intercept on two datasets.
-Responses are then canonicalized to minimization by multiplying by $-1$ where
-higher is better, giving $M$, whose columns are standardized to $Z$ using the mean and sample
-standard deviation ($\text{ddof} = 1$) computed **on the design side only**, with $\sigma_j
-\leftarrow 1$ wherever $\sigma_j = 0$.
+The six quality responses measure different properties. The four threshold metrics, kept for
+continuity with the archived pipeline, describe one operating point at 0.5: accuracy is, fold by
+fold, the prevalence-weighted mean of recall and specificity, so it adds no dimension of its own,
+and on the 88 design rows recall and specificity are negatively rank-correlated on every dataset.
+ROC AUC is threshold-free and measures ranking; log loss scores the predicted probabilities and so
+reflects calibration as well as discrimination. The responses receive no hand-set weights: the
+factor stage of Section 5.5 combines them, together with leaf count, through loadings fitted once on
+the 88 design rows, so what the resulting quality composite tracks differs by dataset (Supplement
+S4.2).
+
+Transform and orientation are declared per response, not inferred from data. `Leaves_Mean` is
+transformed by $\log(1 + \cdot)$; every other response is untransformed. The transform is not
+cosmetic: leaf count varies by a factor of 591 to 4,356 over the design box, a quadratic fitted to
+it raw reaches in-sample $R^2$ of only 0.49 to 0.65 against 0.95 transformed, and untransformed it
+strips the cost surface to an intercept on two datasets. Responses are then canonicalized to
+minimization by multiplying by $-1$ where higher is better, giving $M$, whose columns are
+standardized to $Z$ using the mean and sample standard deviation (with the $n - 1$ divisor,
+$n = 88$) computed on the design side only (the pilot design rows of Section 5.5), with
+$\sigma_j \leftarrow 1$ wherever $\sigma_j = 0$.
 
 ### 5.5 Latent objective construction
 
@@ -169,16 +199,23 @@ flips reported rather than corrected, and is never applied.
 
 ### 5.6 Response surface models
 
-Each objective is modelled by a full quadratic response surface in **coded** units, fitted by
-ordinary least squares on the 88 design rows only, with backward elimination at $\alpha = 0.05$
-and hierarchy enforced. The surfaces are fitted to the objective of §5.5 — the factor score, not
-a raw response — so the $\log 1p$ of §5.4 sits inside the objective and the cost surface is fitted
-on the transformed scale by construction. The same procedure, elimination rule and coded
-parameterization are used identically by every arm that consumes a surrogate, which is what
-allows the arm contrasts of §5.7 to vary one mechanism at a time. Model order is fixed by this
-rule and never revised after the fact. One consequence is carried rather than smoothed over: a
-backward-eliminated quadratic is often minimized on a box corner, so two objectives' surrogate
-anchors can coincide and leave the payoff matrix rank-deficient.
+Each objective is modelled by a full quadratic response surface in *coded* units, fitted by ordinary
+least squares on the 88 design rows only, with backward elimination at $\alpha = 0.05$ and hierarchy
+enforced. Evaluation is deterministic within a replication, so the 10 centre points return identical
+responses and provide no estimate of pure error; the elimination's $t$-tests nonetheless count all
+88 rows, 79 of them distinct, with $88 - p$ residual degrees of freedom for a $p$-term model. The
+surfaces are fitted to the objective of Section 5.5, the factor score rather than a raw response, so
+the $\log(1 + \cdot)$ transform of Section 5.4 sits inside the objective and the cost surface is
+fitted on the transformed scale by construction. The same procedure, elimination rule and coded
+parameterization are used identically by every arm that consumes a surrogate, which is what allows
+the arm contrasts of Sections 5.8–5.11 to vary one mechanism at a time. Model order is fixed by this
+rule and never revised after the fact. Two of its consequences are carried rather than smoothed
+over. First, the rule is re-applied in every replication, so the retained terms vary across
+replications. Second, a hyperparameter eliminated from a surface leaves that surface flat along it,
+so that objective's surrogate anchor (Section 5.10) takes its value of that hyperparameter from the
+optimizer's starting point rather than from either objective; the payoff matrix, pseudo-nadir and
+CHIM (Sections 5.9–5.10) inherit that value, which in general does not minimize the other objective.
+The external gate (Section 5.3) measures neither consequence.
 
 One arm is the exception to this shared procedure: HISTORICAL-WS-asrun (Section 5.7), whose surfaces
 this study's code fits in the archived uncoded natural-unit parameterization (Table 2), on this

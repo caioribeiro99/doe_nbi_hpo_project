@@ -26,14 +26,15 @@ is associated with the deficit on three of four datasets. That association is re
 as an association.
 
 Two results limit how far the geometry finding should be carried. The advantage is
-specific to hypervolume and IGD⁺; the joint non-dominated fraction shows no significant
-difference on any dataset in the panel. And under the frozen direct-search comparator
-budget, the median paired difference favoured a coarse grid over NBI-S on all four
-datasets, and the grid held the higher marginal median on three of the four — not on
-Spambase — while receiving 386 real evaluations against the 186 the scalarization arms
-require standalone. That asymmetry is a property of the frozen
-comparator rule, not a defence of the arms: at the budget this protocol fixed in
-advance, direct search led.
+specific to hypervolume and IGD$^{+}$; the joint non-dominated fraction shows no detectable
+difference under CORE on any dataset in the panel. And under the frozen direct-search
+comparator budget, the median paired difference favoured a coarse grid over NBI-S on all four
+datasets: the grid's lead met the frozen 21-of-30 direction rule on MAGIC and Adult only, its
+bootstrap interval also excluded zero on Bank Marketing (20/30 wins), and it was unresolved on
+Spambase (18/30); the grid also held the higher marginal median on three of the four datasets,
+but not on Spambase. The grid received 386 real evaluations against the 186 that WS-S and NBI-S
+cost standalone. That asymmetry is a property of the frozen comparator rule, not a defence of
+the arms: at the budget this protocol fixed in advance, the grid led.
 
 What the study establishes is therefore narrower than "NBI is better", and more useful.
 Within this decision space, this surrogate architecture, two objectives and this budget,

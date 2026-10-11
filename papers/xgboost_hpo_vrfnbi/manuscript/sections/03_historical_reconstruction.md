@@ -9,9 +9,10 @@ $(\beta_1,\beta_2)$ on a fixed
 grid it maximizes $\sum_j \beta_j \bar f_j(x)$ by SLSQP from ten multistarts, where
 $\bar f_j = (f_j - \text{nadir}_j)/(\text{utopia}_j - \text{nadir}_j)$. That is normalized weighted
 scalarization. None of the structural elements of Normal Boundary Intersection is present: there are
-no per-objective anchor minimizers, no payoff matrix $\Phi$, no convex hull of individual minima, no
-quasi-normal direction $\hat n = -\Phi\mathbf{1}/\lVert\Phi\mathbf{1}\rVert$, no
-$\max t \ \text{s.t.}\ \Phi\beta + t\hat n = F(x)$ subproblem, and no auxiliary variable $t$ at all.
+no per-objective anchor minimizers, no payoff matrix and hence no $\Phi$, no convex hull of
+individual minima, no quasi-normal direction $\hat n = -\Phi\mathbf{1}/\lVert\Phi\mathbf{1}\rVert$,
+no $\max t \ \text{s.t.}\ \Phi\beta + t\hat n = F(x) - F^{*}$ subproblem, and no auxiliary
+variable $t$ at all.
 In this code $\beta$ indexes a weight grid rather than a CHIM coordinate. An optional inequality
 keeps both predictions inside the observed $[\text{nadir},\text{utopia}]$ box; that is a feasibility
 restriction on the prediction range, not a scalarization structure.
@@ -31,21 +32,21 @@ displace a returned front (Table 2).
 |---|---|
 | Front construction | normalized weighted scalarization over a $\beta$ grid |
 | Normalization reference | component-wise observed extrema of the 88 design rows |
-| Weight grid | asymmetric, 20 points at step 0.05 |
+| Weight grid | asymmetric, 20 points at the solver's default step of 0.05 |
 | Objective orientation | maximization, larger-is-better objectives |
 | Surrogate fit | full quadratic response surfaces in uncoded natural units |
 | Surrogate adequacy | no external validation and no gate |
 
 **Table 2.** Properties of the archived implementation, reproduced rather than
-repaired. `HISTORICAL-WS-asrun` calls the frozen `v0.1.0-dissertation` solver
-unmodified.
+repaired.
 
 The normalization box is built from the component-wise maxima and minima of the design rows. These
 are not the objective values attained at the other objective's minimizer, which is what a payoff
 matrix supplies, so the historical method differs from canonical NBI in two independent respects —
 geometry and reference — rather than one.
 
-The weight grid is asymmetric. It sweeps $b$ from $0.05$ to $1.00$ and forms $(1-b, b)$, so the
+The weight grid is asymmetric. At the solver's default step it sweeps $b$ from $0.05$ to $1.00$
+and forms $(1-b, b)$, so the
 pair $(0.00,1.00)$ is present and the pair $(1.00,0.00)$ is absent: the subproblem is solved at the
 pure-cost vertex and never at the pure-quality vertex, and the returned set is short at the quality
 end by construction on every run. The property is stated because any comparison against a symmetric
@@ -74,30 +75,29 @@ exactly the conflation this study is built to avoid.
 ### 3.4 The specification-matched control
 
 Faithfulness and comparability are separate requirements, so the historical weighted sum is run
-twice. `HISTORICAL-WS` applies the same weighted-sum solver under the shared specification — the
-symmetric weight grid with both vertices, minimization orientation, coded-unit surrogates, and the
-gated surrogates WS-S itself uses — and differs from WS-S in the normalization reference alone
-(Figure 1). The contrast `HISTORICAL-WS` $\rightarrow$ `WS-S` therefore identifies
-normalization as a single factor, isolated from geometry and from anchor provenance. The two
-historical entities are separate registry identifiers with different budgets and are never mixed in
-one table. Both have every returned candidate revalidated on the real learner, as the archived
-protocol did.
+twice. HISTORICAL-WS applies the weighted sum under the shared specification (the solver,
+symmetric weight grid with both vertices, minimization orientation and coded-unit surrogates that
+WS-S itself uses) and differs from WS-S in the normalization reference alone (Section 5.8,
+Figure 1). The contrast HISTORICAL-WS $\rightarrow$ WS-S therefore identifies normalization as a
+single factor, isolated from geometry and from anchor provenance. Both historical entities have
+every returned candidate revalidated on the real learner, as the archived protocol did.
 
 ### 3.5 What is not carried forward
 
-The reconstruction preserves the archived *optimizer*, not its objective space. The
-archived pipeline optimized four threshold quality metrics — accuracy, precision,
-recall and specificity — against mean per-fold wall-clock time as its cost response,
+What is carried forward is the archived *optimizer*, not its objective space. The
+archived pipeline optimized four threshold quality metrics (accuracy, precision,
+recall and specificity) against mean per-fold wall-clock time as its cost response,
 and used no ranking or calibration metric. This study optimizes a Varimax-rotated
-composite over six quality responses, which adds ROC AUC and log loss, against total
-leaf count.
+latent quality composite, oriented on six quality responses that add ROC AUC and log
+loss to the archived four, against a latent complexity factor dominated by total leaf
+count; both are fixed linear scores of all seven standardized responses (Section 5.5).
 
 The cost substitution is deliberate and is a limitation of the comparison. A wall-clock
 response is not reproducible from a seed: it varies with machine load, thread
 scheduling and hardware, so a replicated design cannot hold it fixed across 30
 partitions. Total leaf count is a deterministic model-complexity proxy that the same
-configuration and seed reproduce exactly. The consequence is that `HISTORICAL-WS-asrun`
-reproduces the archived *solver, normalization, weight grid and surface
+configuration and seed reproduce exactly. The consequence is that HISTORICAL-WS-asrun
+reproduces the archived *solver, normalization, weight-grid rule and surface
 parameterization* faithfully, while the objectives it optimizes are this study's, not
 the dissertation's. Differences between it and the other arms are therefore attributable
 to the optimizer's construction and not to the objective space, but no statement here

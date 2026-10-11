@@ -4,12 +4,13 @@
 
 Das and Dennis (1998) introduced Normal Boundary Intersection (NBI) as a scalarization that
 distributes subproblems geometrically rather than by weight. Each objective is minimized individually
-to obtain an anchor; the anchors fill the columns of the payoff matrix $\Phi$, whose diagonal is the
-utopia point. The convex hull of individual minima (CHIM) is the simplex spanned by the anchors, a
+to obtain an anchor; the anchors' objective vectors fill the columns of the payoff matrix, whose
+diagonal is the utopia point $F^{*}$, and $\Phi$ denotes the payoff matrix with $F^{*}$ subtracted
+from each column. The convex hull of individual minima (CHIM) is the simplex spanned by the anchors, a
 quasi-normal direction $\hat{n} = -\Phi\mathbf{1}/\lVert\Phi\mathbf{1}\rVert$ points from the CHIM
 toward the attainable set, and each subproblem maximizes the step $t$ along $\hat{n}$ from a CHIM
 point under an equality constraint. At $q = 2$, as here, the CHIM is a segment whose extent
-$\lVert\Phi_{:,0} - \Phi_{:,1}\rVert$ is the interval along which subproblem targets are placed.
+$\lVert\Phi_{:,1} - \Phi_{:,2}\rVert$ is the interval along which subproblem targets are placed.
 
 The property that motivates NBI is that an even spread of CHIM points tends to produce an even
 spread of boundary points, including in regions a weighted sum cannot reach, and that this behaviour
@@ -26,9 +27,10 @@ The weighted sum minimizes $\sum_k w_k \tilde{f}_k(x)$ over a weight grid. Every
 is a supported efficient point, lying on the convex hull of the attainable set; efficient points in
 non-convex regions of the frontier are unreachable at any weight vector, and uniform weight spacing
 does not produce uniform spacing of the returned points. The method is also scale-dependent, so it
-requires a normalization box, and the choice of that box — observed extrema over the design rows, a
-payoff-matrix utopia with a pseudo-nadir, or a true nadir from anti-optimization — is a modelling
-decision separate from the choice of geometry. Separating the two is why a specification-matched
+requires a normalization box, and the choice of that box (observed extrema over the design rows, a
+payoff-matrix utopia with a pseudo-nadir, or per-objective worst values over the box from
+anti-optimization) is a modelling decision separate from the choice of geometry. Separating the
+two is why a specification-matched
 weighted-sum arm runs alongside the historical one.
 
 ### 2.3 Design of experiments and response surfaces for hyperparameter tuning
@@ -47,9 +49,10 @@ surveyed by Morales-Hernández, Van Nieuwenhuyse and Rojas Gonzalez (2023) and K
 with dedicated benchmark suites (Eggensperger et al. 2021; Pfisterer et al. 2022) and an agreed
 baseline set (Guerrero-Viu et al. 2021). Posing HPO as multiobjective, trading quality against cost,
 and returning a Pareto front of configurations are therefore all established, and none is claimed
-here. The comparators used below — coarse grid, random search (Bergstra and Bengio 2012), Bayesian
-optimization, the tree-structured Parzen estimator, and NSGA-II — follow that literature; multi-fidelity
-methods are outside the frozen scope and are named as such in §7.
+here. The comparators used below are a coarse grid, random search (Bergstra and Bengio 2012), Bayesian
+optimization and the tree-structured Parzen estimator (TPE), both run on one objective at a time,
+and NSGA-II. Multiobjective Bayesian optimization and multi-fidelity methods are outside the frozen
+comparator set (Section 8.1).
 
 ### 2.5 PCA and Varimax-rotated factor objectives
 
@@ -70,8 +73,8 @@ against a finite empirical reference set, so the primary endpoint is reported th
 means the returned set improved on a finite reference. Because the replicated
 outer partitions share training data, paired differences across replications are not independent.
 Nadeau and Bengio (2003) quantify that variance inflation for resampled estimates; their corrected
-test is carried here as a pre-declared sensitivity, not as the primary test, since a set indicator
-computed on a returned front is not the generalization error it was derived for.
+test is carried here as a pre-declared sensitivity, not as the study's significance test, since a
+set indicator computed on a returned front is not the generalization error it was derived for.
 
 ### 2.7 Methodological lineage
 

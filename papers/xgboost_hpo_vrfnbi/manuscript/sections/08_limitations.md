@@ -13,7 +13,12 @@ direction is one vector, so the geometry contrast studied here is the two-object
 NBI and not its general-$q$ behaviour. Seven XGBoost hyperparameters, an 88-run face-centred
 central composite design and one fixed surrogate family define the decision space and the
 response model; a different design, a richer surrogate or a third objective are separate
-experiments, not extrapolations of this one.
+experiments, not extrapolations of this one. So are comparisons with multiobjective Bayesian
+optimization or multi-fidelity methods, none of which was run: Bayesian optimization and TPE each
+optimized one objective, and the only comparator guided by both is one untuned NSGA-II
+configuration. Multi-fidelity methods were scoped out before the campaign, because comparing them
+under the frozen comparator budget would first require deciding what a partial-fidelity evaluation
+costs; they are the obvious next comparison.
 
 The historical arm is likewise a single case. HISTORICAL-WS-asrun calls the solver of one archived
 implementation unmodified, on surfaces and an observed-extrema box that this study's code computes to
@@ -24,32 +29,29 @@ not about a class of published pipelines, and supports no estimate of how common
 
 ### 8.2 The budget rule favours the comparators
 
-The frozen comparator budget is the maximum over arms — `NBI-R`'s 386 evaluations — while
-`WS-S` and `NBI-S` cost 186 standalone. The comparators therefore received roughly twice the
-real evaluations those two arms require. The frozen-budget direct grid baseline nevertheless led: the median paired
-difference favoured it over NBI-S on all four datasets, and its marginal median was the
-higher of the two on three of the four — not on Spambase (Supplement S13). That asymmetry
-belongs with the result: the rule was
-fixed before any result existed and is not revised now, and the study can say neither what
-the surrogate-assisted arms would do at parity nor that the grid is more efficient. A
-budget-matched-per-arm comparison was not run.
+The frozen comparator budget is the maximum over arms, NBI-R's 386 evaluations, while WS-S and
+NBI-S cost 186 standalone, so the comparators received roughly twice the real evaluations of those
+two arms. The coarse grid had that advantage when it obtained the higher paired median against NBI-S
+on all four datasets, a lead that met the frozen 21-of-30 direction rule on MAGIC and Adult only and whose
+bootstrap interval also excluded zero on Bank Marketing (Section 6.8). The budget rule dates from
+protocol v1 (2026-09-13), before any arm was implemented, and its value of 386 from protocol v2;
+neither is revised now; the study can say neither what the surrogate-assisted arms would do at parity nor
+that the grid is more efficient. A budget-matched-per-arm comparison was not run.
 
 ### 8.3 The reference is finite
 
 CORE is a finite, method-independent empirical set of 288 points before Pareto filtering. It
 is not the true Pareto front, the primary endpoint is a CORE-relative hypervolume ratio rather
-than a fraction of attainable hypervolume, and the ratio exceeds 1 in 27.8% of method-unit
-rows. Ratios above 1 mean a candidate set improved on that finite reference; they are not
-errors, but the endpoint's upper scale is set by an empirical artifact whose composition
-would change under a different anchor search.
+than a fraction of attainable hypervolume, and the ratio exceeds 1 in between 13% (MAGIC) and 35%
+(Spambase) of each dataset's method-unit rows (Supplement S15). Ratios above 1 mean a candidate
+set improved on that finite reference; they are not errors, but the endpoint's upper scale is set
+by an empirical artifact whose composition would change under a different anchor search.
 
 ### 8.4 What the study did not resolve
 
-**Spambase.** The boundary dataset did not resolve the geometry contrast. Its median
-difference, $+0.0500$, is numerically larger than MAGIC's significant $+0.0374$, but its
-dispersion is roughly thirty times larger ($sd = 1.7706$ against $0.0594$) and the interval
-spans zero. This is consistent with the prospective boundary designation and does not confirm
-the boundary mechanism.
+**Spambase.** The boundary dataset did not resolve the geometry contrast at $R = 30$
+(Section 6.6). That is consistent with its boundary designation and does not confirm the boundary
+mechanism, and Section 8.5 explains why it is not evidence about front geometry either.
 
 **The CHIM association is not causal.** The anchor-injection control and the CHIM extent
 ratios locate the `NBI-S` → `NBI-R` deficit with the relocated payoff matrix rather than with

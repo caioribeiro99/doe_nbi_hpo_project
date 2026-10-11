@@ -15,11 +15,11 @@ never pooled (Supplement S6).
 
 ### 5.8 HISTORICAL-WS — the same weighted sum under the shared specification
 
-`HISTORICAL-WS` applies the same weighted-sum scalarization, solver and shared symmetric weight grid
-as the rest of the arm set, over the same gated surrogates fitted in coded units to the shared,
-minimization-canonicalized objectives. It differs from `WS-S` in exactly one respect: it retains the
+HISTORICAL-WS applies the same weighted-sum scalarization, solver and shared symmetric weight grid
+as the rest of the arm set, over the same surrogates fitted in coded units to the shared,
+minimization-canonicalized objectives. It differs from WS-S in exactly one respect: it retains the
 historical observed-extrema normalization box instead of the payoff-matrix reference, so the
-`HISTORICAL-WS` $\to$ `WS-S` contrast isolates specification and normalization and nothing else.
+HISTORICAL-WS $\to$ WS-S contrast isolates specification and normalization and nothing else.
 Standalone cost 186 real evaluations: 88 design, 78 external validation, 20 revalidations.
 
 ### 5.9 WS-S — weighted sum over the surrogate payoff reference
@@ -63,12 +63,16 @@ rank-deficient replication is excluded with the count published. Standalone cost
 
 ### 5.11 NBI-R — NBI with empirical-real anchors
 
-`NBI-R` is `NBI-S` with anchors and payoff matrix obtained by direct search on the real objectives
-under a pre-declared per-objective budget, 200 real evaluations per replication in total. Those
+NBI-R is NBI-S with anchors and payoff matrix obtained by direct search on the real objectives
+under a pre-declared per-objective budget: for each objective, the best of 100 configurations drawn
+uniformly at random in the coded box, 200 real evaluations per replication in total. Those
 points are the best found within that budget and are never described as certified optima. Because
-$\hat{n}$ is derived from each arm's own payoff matrix, it necessarily differs between `NBI-S` and
-`NBI-R`; that displacement is the intervention under test, not a confound. The anchor search is
-charged to this arm alone, taking its standalone cost to 386.
+the utopia point $F^{*}$, $\Phi$ and $\hat{n}$ are all built from each arm's own anchors, they move
+with the anchor source, and so does every subproblem target $F^{*} + \Phi\beta$; that displacement is
+the intervention under test, not a confound. For NBI-R, $F^{*}$ and $\Phi$ are computed from the real
+objectives measured at the empirical anchors, whereas its subproblem equality constraint, as in
+NBI-S, is imposed on the fitted surfaces. The anchor search is charged to this arm alone, taking its
+standalone cost to 386.
 
 **Contrast isolation, enforced at run time.** For each arm a `_contrast_fingerprint` is computed over
 the solver configuration, candidate realizer, weight grid, surrogate identities and reference, and
@@ -149,9 +153,24 @@ every contrast beside its self-grading share of the front (Supplement S9.2), nev
 primary reference. Where the two references disagree, that disagreement is itself a result and is
 reported prominently.
 
-The primary endpoint is the **CORE-relative hypervolume ratio**. CORE is a finite,
-method-independent empirical set of 288 points, not the true Pareto front; a ratio above 1 is
-expected and means the candidate set improved on that finite reference, and the endpoint is never
+The primary endpoint is the *CORE-relative hypervolume ratio*. In every unit (one dataset and
+replication), every indicator is computed on objectives min–max normalized by the range of the
+reference front, for the primary endpoint the CORE front. The hypervolume is computed exactly with
+reference point $1.1$ on each normalized axis, without clipping values better than the CORE front's
+best, and the ratio is $\mathrm{HV}(\tilde{S})/\mathrm{HV}(\tilde{R})$, where $\tilde{R}$ is the
+normalized CORE front and $\tilde{S}$ the normalized non-dominated subset of the points a method is
+scored on: an arm's real-revalidated candidates, or every evaluation of the grid, random-search and
+matched NSGA-II comparators. The box and the reference point depend on the CORE front alone, so
+every method scored in a unit shares them, whatever normalization its own scalarization uses, and
+none can move them; a paired difference is therefore a hypervolume difference divided by that unit's
+CORE hypervolume. The AUGMENTED ratio is computed in the same way in the AUGMENTED front's own box;
+that front weakly dominates every scored point, so the ratio cannot exceed 1, and switching
+references changes the normalization as well as the reference set unless the two fronts span the
+same range. The box rule and the reference point were fixed in the scoring code before the
+confirmatory campaign. CORE is a finite, method-independent empirical set of 288 points, not the
+true Pareto front; a CORE ratio above 1 is expected and means the candidate set improved on that
+finite reference in the hypervolume sense, dominating a larger normalized region than the CORE
+front, which it can do without weakly dominating every CORE-front point; the endpoint is never
 presented as a fraction of true Pareto hypervolume. IGD$^{+}$, generational distance, Schott spacing
 and the joint non-dominated fraction are secondary and descriptive: Supplement S10 gives their
 medians, the intervals declared for them are not reported (Section 8.7), and the one post hoc test
@@ -161,13 +180,26 @@ summaries rather than propagated through a median (Supplement S10).
 
 ### 5.15 Statistical analysis
 
-Comparisons are paired by replication, $R = 30$ per dataset. **The descriptive triple is primary**:
+Comparisons are paired by replication, $R = 30$ per dataset. The descriptive triple is primary:
 the median paired difference with a percentile bootstrap interval, win/tie/loss counts with Wilson
-intervals, and the matched-pairs rank-biserial correlation. The significance test is **secondary**.
-Holm correction is applied **within each dataset**, over a family of three identifying contrasts on
-one primary indicator. **The dataset is the unit of generalization and there is no pooling**: the
-three primary-panel datasets are never combined into a 90-replication analysis, and Spambase's
-identical comparisons form a separate, prospectively declared boundary-control family.
+intervals, and the matched-pairs rank-biserial correlation; win/tie/loss counts are read as a
+direction only when one arm wins at least 21 of the 30 replications, the smallest count whose Wilson
+interval excludes one half. The
+significance test is secondary: a two-sided Wilcoxon signed-rank test on the 30 paired differences,
+zero differences discarded, Holm-corrected within each dataset over a family of three identifying
+contrasts on one primary indicator; "Holm-significant" means a Holm-adjusted $p < 0.05$ in that
+family. The frozen protocol fixed the family and the within-dataset Holm correction and named only
+the Nadeau–Bengio corrected $t$-test, as a sensitivity; the signed-rank form was first recorded in
+the analysis code committed with the confirmatory results, and because that choice cannot be dated
+before the first result was seen it is reported as post hoc. The dataset is the unit of
+generalization and there is no pooling: the three primary-panel datasets are never combined into a
+90-replication analysis, and Spambase's identical comparisons form a separate boundary-control
+family, declared before the confirmatory campaign (Section 5.1). A claim that an effect holds on all
+three primary-panel datasets is therefore a conjunction of per-dataset results: it is made only if
+the effect is resolved in each dataset on its own (for the secondary test, within that dataset's
+Holm family), so it needs no correction across datasets. A count such as "two of the three" is a
+tally of per-dataset results, not a pooled test, and agreement across the three datasets is a
+pattern, not a tested claim that the effect holds beyond them.
 
 As a further sensitivity, the Nadeau–Bengio correction is derived rather than imported. With
 $\mathrm{SE}_{\text{corr}}^{2} = (1/R + n_{\text{test}}/n_{\text{train}})\,s^{2}$, $R = 30$ and an

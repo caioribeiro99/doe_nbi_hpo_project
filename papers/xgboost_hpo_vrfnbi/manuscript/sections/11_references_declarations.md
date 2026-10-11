@@ -11,14 +11,13 @@ performs normalized weighted scalarization for front construction although the d
 text uses NBI terminology. No claim is made about the correctness of the dissertation's reported
 results, whose objective space differs from this study's (Section 3.5).
 
-**Relationship to companion work by the same authors.** Three instruments used here
-were developed in a companion manuscript by the present authors (Ribeiro, Pereira and
-de Paiva, 2026, unpublished, frozen and not submitted): the external surrogate
-reliability gate, the comparator-budget rule — which matches direct-search
-comparators to the most expensive arm rather than pairwise to each arm — and the
-anchor-injection control. They are applied here, not introduced. The methodological
-lineage of the latent-objective construction is set out in §2.7 and includes Pereira
-et al. (2025) and de Azevedo et al. (2026), with which this work shares co-authors.
+**Relationship to companion work by the same authors.** Three instruments in this study were
+first used in a companion manuscript by the present authors (Ribeiro, Pereira and de Paiva 2026;
+unpublished, frozen and not submitted): the external surrogate reliability gate, the rule of
+matching direct-search comparators to the most expensive arm rather than pairwise to each arm,
+and the anchor-injection control. They are applied here, not introduced. The methodological
+lineage of the latent-objective construction is set out in Sections 2.5 and 2.7 and includes
+Pereira et al. (2025) and de Azevedo et al. (2026), with which this work shares co-authors.
 
 **Overlap statement.** Besides the archived implementation and the latent-objective
 construction described above, the study takes three elements of its experimental set-up from
