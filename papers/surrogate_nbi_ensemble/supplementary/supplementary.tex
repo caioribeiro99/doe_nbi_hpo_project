@@ -103,8 +103,18 @@ known cases, the 66-run design, NBI anchor and warm-start behaviour, and the res
 Execution consumed 81.1 hours of stage time (27.5 for the first ten replications, 53.6 for the extension) and
 produced 3{,}600 model fits, 19{,}920 design evaluations, 23{,}760 NBI subproblems, $5.02\times10^{7}$ real
 objective evaluations, $1.55\times10^{7}$ reference points and $4.8\times10^{6}$ direct-AUC-search evaluations, on
-the environment pinned in the main text. Two stages were retried, both in the first ten replications; none in the
-extension. The per-replication raw artifacts that are not version-controlled are the out-of-fold probability
+the environment pinned in the main text. Two stages were retried, both in replication~0 and none in the extension. The Porto Seguro
+comparator stage stopped because the simplex optimizer raised an error when no SLSQP start reported convergence at a
+vertex optimum; the optimizer was changed to compare its starts at their end points renormalized onto the simplex, to
+fall back to the best such point when no start reports convergence, and to evaluate the vertices and the centroid
+explicitly (commit \texttt{6fa7877}); the run was restarted, and one stage interrupted by the restart was rerun. The
+32 stages of replication~0 completed before the change, under commit \texttt{c2e37c4}, were kept. On the stored
+surfaces the explicit vertex and centroid check changes none of their 8 surrogate optima and moves 64 of their 132
+random-scalarization solutions onto the adjacent vertex by less than $10^{-10}$ in any weight. A moved solution can coincide with a point already on the reference front, so the
+replication-0 indicators could change slightly; they were not rescored with the moved solutions, and the effect
+of the other two changes on those stages cannot be checked without rerunning the optimizer. The
+extension ran under commit \texttt{5d1d5f4}, which changes only runner bookkeeping; the manifest's configuration
+history attributes the ten-replication configuration to that commit in error. The per-replication raw artifacts that are not version-controlled are the out-of-fold probability
 matrices, the candidate sets and the reference samples.
 
 \section{Base models and single-objective references}
@@ -360,16 +370,23 @@ study separates from the best single model on held-out data.
 \input{tables/s11_r10_r30}
 
 \paragraph{What tripling the replications changed.} Three findings changed status between $R = 10$ and $R = 30$. The
-Porto Seguro and UCI credit anchor effect went from an undecidable 6/10 and 5/10 with one tie to 24/30 with bootstrap
-intervals excluding zero; the BNP Paribas anchor collapse became a quantified rate of 7/30 with an identified
-trigger, selection of the quadratic ROC-AUC order; and the BNP Paribas support-cost bimodality and the Santander
-deployment-cost gap were exposed as artifacts (Sections~\ref{sec:s9} and~\ref{sec:s6}). In the extension batch alone
-the anchor win rates on hypervolume are 18/20 on Porto Seguro and 19/20 on UCI credit.
+Porto Seguro and UCI credit anchor effect went from an undecidable 6/10 and 5/10 with one tie to 24/30 on hypervolume
+(23--24/30 on IGD$^+$) with bootstrap intervals excluding zero, consistent in direction but not statistically
+established (Holm-adjusted Nadeau--Bengio $p = 0.79$ on Porto Seguro and $0.45$ on UCI credit, on both endpoints); the
+BNP Paribas anchor collapse became a quantified rate of 7/30 with an identified trigger, selection of the quadratic
+ROC-AUC order (Section~\ref{sec:s6}); and two cost readings, the BNP Paribas support-cost bimodality and the Santander
+deployment-cost gap, were shown to be artifacts (Section~\ref{sec:s9}), the first of them noted but not resolved in the
+ten-partition analysis, the second not recorded there.
 
 Against the twenty new partitions alone, rather than the nested $R = 30$ sample, only 6 of 12 hypervolume and 5 of 12
-IGD$^+$ cells agree with the $R = 10$ estimate, and the Porto Seguro and UCI credit anchor win rates differ between
-batches under an identical protocol (UCI credit Fisher $p = 0.009$). That disagreement is not a defect of either
-batch; it is the magnitude of partition sensitivity the extension was designed to measure.
+IGD$^+$ cells agree with the $R = 10$ estimate; the shift is clearest on Santander, whose IGD$^+$ is higher in the new
+partitions for all three NBI variants. The hypervolume anchor win rates are 6/10 against 18/20 on Porto Seguro (Fisher
+$p = 0.14$) and 5/10 against 19/20 on UCI credit ($p = 0.009$), both uncorrected. Analysed separately, the two batches
+give the same sign of the median paired effect in 28 of the 32 cells of the primary analysis, including every effect
+established at $R = 30$; the four exceptions, which are also the only cells whose sign differs between $R = 10$ and
+$R = 30$, are listed in Section~5.9 of the main text. These batch comparisons were not in the statistical analysis
+plan and are exploratory, and the difference between the batches is unexplained (run conditions in Section~7 of
+the main text); they show how far ten partitions can sit from the next twenty.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=\textwidth]{r30_fig03_r10_vs_r30_stability.png}

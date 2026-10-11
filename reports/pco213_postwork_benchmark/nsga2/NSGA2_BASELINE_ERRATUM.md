@@ -24,7 +24,9 @@ Read accordingly:
   in wall clock;
 - the about 2.2 times wall-clock ratio (median 2.157 to 2.252 per dataset, `nsga2_budget_runtime.csv`) is twice the
   weight-vector evaluations at a similar time per evaluation (per-vector ratio 1.08 to 1.13), not an amortization
-  effect;
+  effect; 119 of the 120 runs were executed in a pool of eight concurrent processes after the
+  `uci_credit` replication-0 pilot run, which ran alone, and the pool took 15.46 h of wall clock
+  (`nsga2_execution_summary.json`);
 - the headline describes NSGA-II under this budget. Whether it leads at an equal number of weight-vector evaluations
   was not tested.
 

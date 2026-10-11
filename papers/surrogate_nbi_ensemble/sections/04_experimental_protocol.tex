@@ -1,9 +1,15 @@
 \section{Experimental protocol}
 \label{sec:protocol}
 
-The protocol was fixed before the replicated study and was not changed after any result was observed; the extension
-from 10 to 30 replications reused it without modification, and \cref{sec:results:r30} reports what that extension
-changed.
+The computational protocol (partitions and seeds, base models, design, surfaces and gate thresholds, optimizers and
+scoring) was committed to version control before the replicated study was launched with the planned ten
+replications per dataset. Its only change during execution was a solver-robustness fix after a crash in
+replication~0; the replication-0 stages completed before the fix were kept, and the part of the change that can be
+checked on the stored surfaces moves no stored solution by more than $10^{-10}$ in any weight (supplementary Section~S1). After the ten-replication
+analysis had been completed and reported, the study was extended to 30 replications, reusing the computational
+protocol without modification, and \cref{sec:results:r30} reports what that extension changed. The NSGA-II baseline
+(\cref{sec:results:nsga2}) was added after the 30-replication analysis, with its configuration committed before its
+first run.
 
 \subsection{Datasets}
 \label{sec:protocol:data}

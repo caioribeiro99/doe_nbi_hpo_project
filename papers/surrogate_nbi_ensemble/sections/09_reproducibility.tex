@@ -17,8 +17,8 @@ library's behaviour is checked by those unit tests.
 replication $r$; the offsets, the seed map, the configuration history and the resolved library versions are in the
 master manifest (supplementary Section~S1). The environment is Python 3.11.15 with NumPy 2.4.6 \citep{harris2020numpy}, pandas 3.0.5,
 SciPy 1.17.1 \citep{virtanen2020scipy}, scikit-learn 1.9.0 \citep{pedregosa2011scikit}, statsmodels 0.15.0 and
-XGBoost 3.2.0 \citep{chen2016xgboost}, on macOS (Apple M4 Max, arm64), with eight worker threads. Execution provenance --- stage time and the fit, design, subproblem and objective-evaluation counts --- is in
-supplementary Section~S1. Two stages were retried, both in the first ten replications; none in the extension.
+XGBoost 3.2.0 \citep{chen2016xgboost}, on macOS (Apple M4 Max, 14 cores, arm64). Base-model inference is timed under the thread setting of \cref{sec:protocol:models}, the batched weight evaluations of the empirical-reference stage use eight worker threads, and the NSGA-II runs, except for one pilot run, were executed eight at a time as concurrent processes. Execution provenance (stage time and the fit, design, subproblem and objective-evaluation counts) is in
+supplementary Section~S1. Two stages were retried, both in replication 0 after the solver fix described there; none in the extension.
 
 \paragraph{Data availability and redistribution limits.} The raw datasets are not redistributed: the UCI
 default-of-credit-card-clients data are downloadable from the UCI Machine Learning Repository, while the three Kaggle
@@ -34,5 +34,6 @@ are committed in \texttt{tables/inference\_costs.csv}.
 
 \paragraph{What a replication requires.} Reproducing the aggregate results from the published tables and statistics
 requires only the repository; from raw data it requires the four datasets, the pinned environment and approximately 81
-hours of single-workstation compute, or proportionally less for a subset of datasets or replications, since the
-runner is resumable and parameterized by dataset and replication count.
+hours of single-workstation compute for the benchmark plus about 15.5 hours, with eight concurrent processes, for the
+NSGA-II baseline, or proportionally less for a subset of datasets or replications, since the benchmark runner is
+resumable and parameterized by dataset and replication count.
