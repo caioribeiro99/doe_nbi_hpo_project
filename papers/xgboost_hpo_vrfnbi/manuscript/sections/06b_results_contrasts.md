@@ -133,21 +133,23 @@ does is offered here.
 
 #### 6.4.1 What differs mechanically, stated as association
 
-Two prospectively frozen diagnostics narrow where the deficit comes from. The
-anchor-injection control inserts NBI-R's empirical anchors into NBI-S's revalidated
-candidate set and changes nothing else; because the control set is a superset of
+Two diagnostics narrow where the deficit comes from: a prospectively frozen control and a post hoc
+geometric measure. The anchor-injection control inserts NBI-R's empirical anchors into NBI-S's
+revalidated candidate set and changes nothing else; because the control set is a superset of
 NBI-S's, its effect is non-negative by construction. Its median effect is +0.0133 on
 MAGIC and +0.0000 on the other three datasets, against full NBI-S → NBI-R gaps of
-−0.0741, −0.0192, −0.4093 and −0.6932. The deficit is therefore associated with the
-geometric consequences of the relocated payoff matrix rather than with anchor
-point-set composition, though the control does not establish that the negative is
-entirely geometric. Solver behaviour is comparable between the two arms — certified
-fraction has median 1.000 over the 240 arm-units, with two exceptions at 0.900 and
+−0.0741, −0.0192, −0.4093 and −0.6932. Because NBI-R returned none of its own empirical anchors
+(Section 5.12), the control bounds what including those anchors adds to NBI-S's set rather than
+decomposing the gap: the anchor points are not part of NBI-R's returned set, so the deficit lies in
+the candidates NBI-R returns under its relocated frame, the joint change described at the start of
+Section 6.4; the control does not establish which part of that change produces it. Solver
+behaviour is comparable between the two arms: the certified fraction of the continuous subproblem
+solutions (Section 5.10) has median 1.000 over the 240 arm-units, with two exceptions at 0.900 and
 0.950; the per-unit maximum equality residual has median $6.6\times10^{-10}$, with a
 campaign maximum of $6.9\times10^{-1}$ on a single MAGIC NBI-S unit; and both arms
-return 20 distinct realized configurations in every unit. Solver behaviour is
-therefore comparable between the arms and does not account for the deficit, but it
-is not identical and we do not state it as a universal.
+return 20 distinct realized configurations in 239 of the 240 arm-units, with 19 in that same
+unit. Solver behaviour is therefore comparable between the arms and does not account for the
+deficit, but it is not identical and we do not state it as a universal.
 
 The second diagnostic is post hoc: it was defined after the confirmatory results were known and
 is computed from the matrix $\Phi$ recorded per replication. It is the CHIM extent

@@ -161,41 +161,86 @@ rows, a lower value of the quality composite defined next goes with higher recal
 specificity on Spambase, Adult and Bank Marketing, and with better values of all six quality
 responses on MAGIC.
 
-**Objective 1, composite quality.** $f_{\text{quality}}(x) = \sum_{j \in Q} w_j S_z[:, j]$
-with $w_j = h_j / \sum_{i \in Q} h_i$ and $h_j = \sum_i \Lambda_R[i, j]^2$ — the **rotated**
-sums of squared loadings, normalized over the two quality factors. Varimax redistributes variance
-across components, so an unrotated eigenvalue $\lambda_j$ and rotated component $j$ are not the
-same object and indexing one by the other pairs unrelated quantities. On this panel the rotated
-shares are 0.556/0.444, 0.775/0.225, 0.547/0.453 and 0.587/0.413 against unrotated 0.706/0.294,
-0.837/0.163, 0.872/0.128 and 0.845/0.155; on Adult the second factor's weight differs by a
-factor of 3.5; both shares are persisted under distinct names. Equal weighting — the historical
-choice — is the sensitivity declared in advance, and the two agree at Spearman 0.987 to 0.991.
+**Objective 1, composite quality.** $f_{\text{quality}}(x) = \sum_{j \in Q} w_j\, s_j(x)$, where $Q$
+is the index set of the two quality factors and $s_j(x)$ is the score on factor $j$ obtained by
+applying the frozen mapping that produces $S_z$ to the seven responses measured at configuration $x$
+(column $j$ of $S_z$ holds $s_j$ at the 88 design rows), with $w_j = h_j / \sum_{l \in Q} h_l$ and
+$h_j = \sum_{i=1}^{7} (\Lambda_R)_{ij}^2$: the *rotated* sums of squared loadings, normalized over
+the two quality factors. Varimax redistributes variance across components, so an unrotated
+eigenvalue $\lambda_j$ and rotated component $j$ are not the same object and indexing one by the
+other pairs unrelated quantities. On this panel the rotated shares are 0.556/0.444, 0.775/0.225,
+0.547/0.453 and 0.587/0.413 against unrotated 0.706/0.294, 0.837/0.163, 0.872/0.128 and 0.845/0.155;
+on Adult the second factor's weight differs by a factor of 3.5; both shares are persisted under
+distinct names. Equal weighting, the historical choice, is the sensitivity declared in advance. The
+two composites rank the 88 design rows at Spearman 0.987 to 0.991; that is rank agreement on the
+fitting sample, not the declared estimand. The declared comparison of returned fronts, with its 20%
+rule, was computed after the campaign from stored outputs by rescoring each arm's revalidated
+candidates with the equal-weight composite (a post hoc operationalization; no arm was re-solved),
+and is reported in Supplement S4.5.
 
-**Objective 2, leaf-count complexity.** $f_{\text{cost}}(x) = S_z[:, c]$, the cost-role factor,
-which loads on `Leaves_Mean` at 0.90 to 1.00 on this panel. It is a **deterministic
-model-complexity proxy**, never described as training time: it tracks measured per-fold time at
-Spearman $\approx 0.86$, an association and not an identity. Both objectives are minimized.
+**Objective 2, leaf-count complexity.** $f_{\text{cost}}(x) = s_c(x)$, where $c$ is the index of the
+cost-role factor, whose rotated loading on `Leaves_Mean` is 0.89 to 0.98 on this panel: a latent
+factor dominated by log leaf count. The `cost` role of Section 5.4 is named after the archived
+pipeline's cost response, wall-clock time (Section 3.5); here the role designates model complexity,
+measured as total leaf count. This objective is a deterministic model-complexity proxy, never
+described as training time: before the campaign, total leaf count tracked measured per-fold time at
+Spearman $\approx 0.86$ on 22 of the 88 MAGIC design configurations, an association and not an
+identity, and measured time itself differed by a median 1.3% between two fits of one configuration.
+The association over all 120 campaign units and the comparison of winning arms under the two cost
+definitions, both declared in the frozen protocol, were computed after the campaign from stored
+outputs and are reported in Supplement S4.6 (association) and S4.7 (winning arms). Both objectives
+are minimized.
 
-**$k = 3$ is fixed at protocol level, not criterion-selected.** It is inherited from the
-historical construction so that this study decomposes that construction rather than re-choosing
-its dimensionality. The Kaiser criterion retains 2, 2, 1 and 1 components on MAGIC, Spambase,
-Adult and Bank Marketing, with $\lambda_3/\lambda_4$ of 2.93, 2.10, 1.34 and 1.06 — never three.
-Eigenvalues and Kaiser counts are reported as diagnostics; the component count is never chosen by
-which value optimizes better.
+**What the two objectives contain.** Each factor score is computed from all of $Z$, so both
+objectives are linear scores of all seven standardized responses (Supplement S4.2). The coefficient
+of $f_{\text{quality}}$ on the standardized, log-transformed leaf count is $+0.01$ on MAGIC and
+$+0.17$ to $+0.19$ on Spambase, Adult and Bank Marketing, so at equal quality responses the
+composite prefers fewer leaves. On the 88-row fitting sample the two objectives are linearly
+uncorrelated by construction (absolute Pearson correlation below $10^{-15}$), because the quality
+factors and the cost factor are orthogonal there. Their rank correlation on that sample, $-0.20$,
+$+0.32$, $+0.10$ and $-0.02$ on MAGIC, Spambase, Adult and Bank Marketing, is a nonlinearity
+residual whose sign differs across datasets, not a measure of objective conflict; the objective
+conflict the study reports is the raw one between the six quality responses and leaf count
+(Supplement S5). How closely the composite tracks raw quality, on and beyond its fitting sample, is
+reported in Section 8.5 and Supplement S4.3.
 
-**One frozen model per dataset, fitted on the 88 design rows only.** The tuple $(\mu, \sigma, V,
-R, \text{roles}, \text{signs}, \mu_S, \sigma_S, w)$ is fitted once per dataset on the 88 design
-rows and **nothing else**, then applied unchanged to the 78 audit-only rows, every arm's
-revalidated candidates, every direct baseline, the reference sets and the holdout confirmation
-(Supplement S4.1). Two constraints force this scope at once. A per-replication refit
-makes the objective a different variable in every pair, so 30 paired indicator values would not
-live in one objective space. And an earlier specification adding the 78-point complement — 166
-points — was withdrawn, because that complement *is* the audit-only external construction (64 of
-its 78 coded points identical to the external set, the other 14 the same axial runs up to integer
+**$k = 3$ is fixed at protocol level, not criterion-selected.** It is inherited from the historical
+construction, which forced at least three components so that its cost response, wall-clock time, had
+a factor of its own beside the quality factors; keeping it lets this study decompose that
+construction rather than re-choose its dimensionality. The Kaiser criterion retains 2, 2, 1 and 1
+components on MAGIC, Spambase, Adult and Bank Marketing, with $\lambda_3/\lambda_4$ of 2.93, 2.10,
+1.34 and 1.06, never three. Adopting those counts would leave a single component to serve both
+objectives on Adult and Bank Marketing and would drop MAGIC's third component, which holds most of
+the leaf count's variance. Three components carry 87.7% to 93.4% of the total variance of $Z$, and
+two carry 78.8% to 80.7%. On Bank Marketing the third and fourth eigenvalues nearly tie, so the
+third retained direction is poorly determined. The first four eigenvalues, cumulative variance and
+Kaiser counts are reported in Supplement S4.1 as descriptive diagnostics; the component count is
+chosen neither by them nor by which value optimizes better.
+
+**One frozen model per dataset, fitted on the 88 design rows only.** The tuple
+$(\mu, \sigma, V, \lambda, R, \text{roles}, \text{signs}, \mu_S, \sigma_S, w)$ is fitted once per
+dataset on the 88 design rows as evaluated in the pre-campaign pilot, and nothing else: one
+cross-validated evaluation of each run, as in Section 5.3, on the 80% training part of a single
+stratified 80/20 partition of the dataset, the partition on which the screening of Section 5.1 was
+measured. That partition is not one of the 30 confirmatory partitions, so no replication's
+evaluations enter the fit; the model's standardization and factor orthogonality are exact on these
+pilot rows only. Every replication re-evaluates the same 88 configurations on its own partition, and
+the model is applied unchanged to those rows, on which the surfaces of Section 5.6 are fitted, and
+to the 78 audit-only rows, every arm's revalidated candidates, every direct baseline, the reference
+sets and the holdout confirmation (Supplement S4.1). Two constraints force this scope at once. A
+per-replication refit makes the objective a different variable in every pair, so 30 paired indicator
+values would not live in one objective space; for the same reason the four datasets, each with its
+own fitted model, do not share an objective space, and every contrast is computed within a dataset
+(Section 5.15). And an earlier specification that added the 78-point complement, for 166 fitting
+points in all, was withdrawn, because that complement *is* the audit-only external construction (64
+of its 78 coded points identical to the external set, the other 14 the same axial runs up to integer
 rounding of `max_depth`), which would let the gate validate a surface against data that helped
 define that surface's target; the intersection is verified as zero in coded space on all four
-datasets. The per-replication refit is computed and reported as a Tucker-congruence sensitivity,
-flips reported rather than corrected, and is never applied.
+datasets. The per-replication refit, the model a replication's own design rows would have produced,
+is computed only to measure its Tucker congruence with the pilot-fitted model and is never applied.
+Its congruences, declared in the frozen protocol and computed after the campaign from stored
+outputs, are reported in Supplement S4.4, both under the runner's greedy factor matching, which does
+not resolve factor sign, and under a post hoc optimal-assignment matching.
 
 ### 5.6 Response surface models
 

@@ -253,21 +253,24 @@ family of three contrasts. **Dataset is the generalization unit; there is no poo
         "must not be stated as a universal: over 240 arm-units the certified fraction "
         "has median 1.000 with two exceptions (0.900 and 0.950), the per-unit maximum "
         "equality residual has median 6.6e-10 with a campaign maximum of 6.9e-01 on one "
-        "MAGIC NBI-S unit, and both arms return 20 distinct realized configurations. An "
-        "earlier version of this row asserted 1.000 and 0.000 \"on every dataset\", "
-        "which is false.",
+        "MAGIC NBI-S unit, and both arms return 20 distinct realized configurations in 239 "
+        "of 240 arm-units, with 19 in that same unit. An earlier version of this row "
+        "asserted 1.000 and 0.000 \"on every dataset\", which is false.",
         "\"Inserting NBI-R's empirical anchors into NBI-S's returned set moves the "
         "indicator by approximately zero on three of four datasets, while the full "
-        "provenance change moves it substantially. The deficit is therefore associated "
-        "with the geometric consequences of the relocated payoff matrix rather than with "
-        "anchor point-set composition. The CHIM segment contracts to 20–81% of its "
-        "surrogate-derived extent under empirical anchors, and within three of four "
-        "datasets replications with greater contraction show larger deficits.\"",
-        "Do NOT state the CHIM contraction as a demonstrated cause. It is an association "
-        "measured across 30 replications within a dataset, positive on Adult (+0.68), "
-        "Bank Marketing (+0.68) and Spambase (+0.32) and **absent on MAGIC (−0.11)**. "
-        "Say so. Do NOT claim the anchor-injection control proves the negative is "
-        "*entirely* geometric."))
+        "provenance change moves it substantially. NBI-R returned none of its own empirical "
+        "anchors, so the control bounds what adding those anchors to NBI-S's set does rather "
+        "than decomposing the gap: the deficit lies in the candidates NBI-R returns under "
+        "its relocated payoff frame. In a post hoc analysis, the CHIM segment contracts to a "
+        "median 20–81% of its surrogate-derived extent under empirical anchors, and "
+        "replications with greater contraction show larger deficits clearly on Adult and "
+        "Bank Marketing, weakly on Spambase and not on MAGIC.\"",
+        "Do NOT state the CHIM contraction as a demonstrated cause, and do NOT present the "
+        "CHIM-extent diagnostic as prospectively frozen: it was defined after the results. "
+        "It is a post hoc association measured across 30 replications within a dataset, "
+        "positive on Adult (+0.68), Bank Marketing (+0.68) and Spambase (+0.32) and "
+        "**absent on MAGIC (−0.11)**. Say so. Do NOT claim the anchor-injection control "
+        "proves the negative is *entirely* geometric."))
 
     # ---- Claim 6: core vs augmented -------------------------------------------
     ac, aa = cell("adult", "NBI-S -> NBI-R", "core"), cell("adult", "NBI-S -> NBI-R", "augmented")

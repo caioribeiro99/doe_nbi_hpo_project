@@ -12,18 +12,21 @@ Two of the three mechanisms produced clear answers, in opposite directions. Corr
 the archived scalarization specification and its observed-extrema normalization changed
 nothing detectable. Replacing weighted scalarization with canonical Normal Boundary
 Intersection, holding everything else fixed, improved CORE-relative hypervolume on all
-three geometry-positive datasets, with 26, 30 and 24 of 30 paired wins and Holm-adjusted
-significance within each dataset. The third mechanism answered in the direction opposite
+three screened datasets, with 26, 30 and 24 of 30 paired wins, every bootstrap interval on the
+median difference excluding zero and the secondary test Holm-significant within each dataset;
+under the pre-declared Nadeau–Bengio sensitivity the improvement reached unadjusted $p < 0.05$
+on Adult alone. The third mechanism answered in the direction opposite
 to the one the pipeline's design would suggest: substituting a pre-specified
 empirical-real anchor procedure for surrogate-derived payoff information gave no
-benefit, and degraded the front on two of the three datasets. The frozen anchor-injection control moves the
-indicator by approximately zero on three of four datasets and by $+0.0133$ on MAGIC,
-where it accounts for about 18% of that dataset's gap, so the deficit is associated
-with the relocated payoff information rather than with which points enter the returned
-set,
-and the payoff matrices show a contraction of the convex hull of individual minima that
-is associated with the deficit on three of four datasets. That association is reported
-as an association.
+benefit, and degraded the front on two of the three datasets, of which only MAGIC reached
+unadjusted $p < 0.05$ under the Nadeau–Bengio sensitivity. The frozen anchor-injection
+control, which adds the empirical anchors to NBI-S's candidates and changes nothing else,
+moved the indicator by approximately zero on three of four datasets and by $+0.0133$ on
+MAGIC; because NBI-R returned none of its empirical anchors, the control bounds what anchor
+inclusion alone adds rather than decomposing the deficit. In a post hoc analysis the payoff
+matrices show a contraction of the convex hull of individual minima that is associated with
+the deficit, clearly on Adult and Bank Marketing, weakly on Spambase and not on MAGIC. Both
+are reported as associations, not as causes.
 
 Two results limit how far the geometry finding should be carried. The advantage is
 specific to hypervolume and IGD$^{+}$; the joint non-dominated fraction shows no detectable
@@ -36,11 +39,13 @@ but not on Spambase. The grid received 386 real evaluations against the 186 that
 cost standalone. That asymmetry is a property of the frozen comparator rule, not a defence of
 the arms: at the budget this protocol fixed in advance, the grid led.
 
-What the study establishes is therefore narrower than "NBI is better", and more useful.
-Within this decision space, this surrogate architecture, two objectives and this budget,
-front-construction geometry is the mechanism that moved the returned front;
-specification did not; and anchor provenance moved it the wrong way. The prospectively
-designated boundary dataset did not resolve, which is consistent with the reasoning
-that separated it in advance without confirming that reasoning. Whether the geometry
-advantage survives at larger budgets, at more than two objectives, or against direct
-search given equal evaluations, this design cannot say, and we have tried not to say it.
+What the study establishes is therefore narrower than "NBI is better".
+Within this decision space, this surrogate architecture, two objectives and this budget, and on
+the three screened datasets, front-construction geometry is the mechanism that moved the
+returned front; specification did not; and anchor provenance moved it the wrong way. Spambase,
+which failed the pre-campaign front-geometry screen and was retained as a boundary control
+before the confirmatory campaign, did not resolve; because its quality composite is negatively
+aligned with raw quality over configurations drawn uniformly from the decision box (post hoc; Section 8.5), that result is not
+evidence about front geometry in either direction. Whether the geometry advantage survives at
+larger budgets, at more than two objectives, or against direct search when the arms receive
+the comparators' 386 evaluations, this design cannot say, and we have tried not to say it.

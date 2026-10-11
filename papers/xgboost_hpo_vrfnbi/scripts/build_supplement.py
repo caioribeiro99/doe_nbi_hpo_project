@@ -117,12 +117,269 @@ def main() -> int:
         m = json.loads((PAPER/"audits"/"reference_factor_models"/f"{ds}.json").read_text())
         rs = m["reference_set"]
         qw = ", ".join(f"{x:.4f}" for x in m["quality_weights"])
-        w(f"| {DISP[ds]} | {rs['n_total']} design rows | {rs['external_validation_rows_used']} "
+        w(f"| {DISP[ds]} | {rs['n_total']} pilot design rows | {rs['external_validation_rows_used']} "
           f"| {qw} | {fd[ds]['kaiser']} | {fd[ds]['lambda3_over_lambda4']:.2f} |")
+    pilot_seed = json.loads((PAPER/"audits"/"pilot_stage_a"/"stage_a_report.json").read_text())["seed"]
     w("\nOne model per dataset, fitted on the 88 design rows only and applied to all 30")
-    w("replications. The 78-point audit-only external construction is excluded from the")
-    w("fit (amendment 23): 64 of its 78 coded points are identical to the external")
-    w("validation set and the rest are the same axial runs.\n")
+    w("replications. The fitting rows are the pre-campaign pilot (Stage A) evaluations of the")
+    w("design: stratified, shuffled five-fold cross-validation on the 80% training part of one")
+    w(f"stratified 80/20 partition per dataset (seed {pilot_seed}), the partition of the S5")
+    w("screening, drawn separately from the 30 confirmatory partitions. Each replication")
+    w("re-evaluates the same 88 configurations on its own partition and maps them through the")
+    w("frozen model. Because the pilot partition is a separate draw, its training part")
+    w("shares rows with every confirmatory holdout: a holdout is unseen within its replication,")
+    w("not by the pilot that fixed the objective definition. The 78-point audit-only external")
+    w("construction is excluded from the fit (amendment 23): 64 of its 78 coded points are")
+    w("identical to the external validation set and the rest are the same axial runs.\n")
+    # Dimensionality diagnostics (OBJECTIVE_DEFINITIONS.md section 8): descriptive only, and
+    # never a reason for k = 3. Shares are of the TOTAL variance of Z (the seven eigenvalues
+    # sum to 7), not the explained_variance_share_* fields of the model files.
+    fdim = json.loads((A/"factor_dimensionality.json").read_text())["datasets"]
+    w("Eigenvalues of the correlation matrix of the seven standardized responses $Z$ on the 88")
+    w("fitting rows; the cumulative percentage of the total variance of $Z$ carried by the first")
+    w("$k$ components, $100 \\sum_{j \\le k} \\lambda_j / 7$; and the percentage of the variance of")
+    w("the transformed leaf count that the first $k$ components reproduce. Varimax redistributes")
+    w("the $k = 3$ total among the rotated factors without changing it. The frozen model is")
+    w("applied unchanged to every replication, so these values are the same in every")
+    w("replication. They are descriptive: the component count is fixed at three for every")
+    w("dataset and was not chosen by them. From `analysis/factor_dimensionality.json`, written")
+    w("by `scripts/factor_dimensionality.py` after the campaign from the committed pre-campaign")
+    w("reference models.\n")
+    w("| dataset | $\\lambda_1$ | $\\lambda_2$ | $\\lambda_3$ | $\\lambda_4$ "
+      "| cumulative % of variance, $k = 1$ / 2 / 3 | leaf-count variance reproduced, %, $k = 2$ / 3 |")
+    w("|---|---:|---:|---:|---:|---:|---:|")
+    for ds in DATASETS:
+        dm = fdim[ds]
+        w(f"| {DISP[ds]} | " + " | ".join(f"{x:.3f}" for x in dm["eigenvalues"][:4])
+          + " | " + " / ".join(f"{100 * x:.1f}" for x in dm["cumulative_variance_share"][:3])
+          + " | " + " / ".join(f"{100 * x:.1f}" for x in dm["leaf_count_variance_reproduced"][1:3])
+          + " |")
+    w()
+
+    w("### S4.2 Rotated loadings and objective coefficients\n")
+    w("For each frozen model: the oriented rotated loadings $\\Lambda_R$ of the seven")
+    w("canonicalized (minimization-oriented) responses on the leading quality factor (the one with")
+    w("the larger quality weight in S4.1), the second quality factor and the cost factor; the")
+    w("correlation of each response with $f_{\\text{quality}}$; and the coefficients of the two")
+    w("objectives on the standardized responses $Z$ (`Leaves_Mean` after its $\\log(1 + \\cdot)$")
+    w("transform). A loading is the Pearson correlation of a response with a factor score on the")
+    w("88 fitting rows, so in the loading and correlation columns a positive entry means that the")
+    w("response tends to worsen as the score rises on those rows. The frozen model is applied")
+    w("unchanged to every other evaluation, where these correlations are not guaranteed to hold")
+    w("(S4.3). In the coefficient columns a positive entry means that, with the other responses")
+    w("held fixed, a worse value of that response raises the objective. The responses do not vary")
+    w("one at a time, so a coefficient describes the fixed linear map, not an effect of that")
+    w("response, and a coefficient and the loadings can differ in sign. Accuracy is, fold by fold,")
+    w("the prevalence-weighted mean of recall and specificity, so the coefficients on those three")
+    w("are not separately interpretable. Neither quality factor names the same quantity on two")
+    w("datasets. The coefficients are read from `analysis/factor_dimensionality.json`.\n")
+    w("| dataset | response | leading quality factor | second quality factor | cost factor "
+      "| correlation with $f_{\\text{quality}}$ | $f_{\\text{quality}}$ coefficient "
+      "| $f_{\\text{cost}}$ coefficient |")
+    w("|---|---|---:|---:|---:|---:|---:|---:|")
+    s42 = {}
+    for ds in DATASETS:
+        m = json.loads((PAPER/"audits"/"reference_factor_models"/f"{ds}.json").read_text())
+        assert list(m["response_names"]) == list(RESPONSES)
+        Lr = np.asarray(m["rotated_loadings"]); qw = np.asarray(m["quality_weights"])
+        Q = list(m["quality_factor_indices"]); cix = int(m["cost_factor_index"])
+        cols = [Q[int(np.argmax(qw))], Q[int(np.argmin(qw))], cix]
+        lq = (Lr[:, Q] @ qw) / np.sqrt((qw ** 2).sum())   # corr(response, f_quality), fitting rows
+        coef = fdim[ds]["objective_coefficients_on_Z"]
+        for i, r in enumerate(RESPONSES):
+            w(f"| {DISP[ds]} | `{r}` | " + " | ".join(f"{Lr[i, j]:+.3f}" for j in cols)
+              + f" | {lq[i]:+.3f} | {coef['f_quality'][r]:+.3f} | {coef['f_cost'][r]:+.3f} |")
+        s42[ds] = (m, Lr, Q, qw, cix, cols)
+    qrows = [i for i, r in enumerate(RESPONSES) if RESPONSES[r]["role"] == "quality"]
+    ileaf = list(RESPONSES).index("Leaves_Mean")
+    w("\n| dataset | role-block mean, leading / second quality factor | `Leaves_Mean` on the cost factor "
+      "| Spearman of $f_{\\text{quality}}$ with equal-weight quality badness, fitting rows |")
+    w("|---|---:|---:|---:|")
+    for ds in DATASETS:
+        m, Lr, Q, qw, cix, cols = s42[ds]
+        w(f"| {DISP[ds]} | {Lr[qrows, cols[0]].mean():+.3f} / {Lr[qrows, cols[1]].mean():+.3f} | "
+          f"{Lr[ileaf, cix]:+.3f} | "
+          f"{m['diagnostics_on_reference_set']['composite_alignment_with_raw_quality']:+.3f} |")
+    w("\nThe sign rule (Section 5.5) makes the two role-block means and the `Leaves_Mean` loading")
+    w("positive; it does not make every loading in a role block positive. The last column is the")
+    w("frozen orientation check of amendment 19 on the fitting rows; S4.3 evaluates it beyond them.\n")
+    lo_lr, lo_ne = BOUNDS["learning_rate"][0], BOUNDS["n_estimators"][0]
+    npos, ncorner = {}, set()
+    for ds in DATASETS:
+        dpl = pd.read_csv(PAPER/"audits"/"pilot_stage_a"/f"{ds}_design.csv")
+        none_pos = ((dpl["Recall_Mean"].to_numpy(float) == 0)
+                    & (dpl["Specificity_Mean"].to_numpy(float) == 1))
+        corner = (np.isclose(dpl["learning_rate"].to_numpy(float), lo_lr)
+                  & np.isclose(dpl["n_estimators"].to_numpy(float), lo_ne))
+        assert not (none_pos & ~corner).any()
+        npos[ds] = int(none_pos.sum()); ncorner.add(int(corner.sum()))
+    assert len(ncorner) == 1
+    both = lambda xs: ", ".join(xs[:-1]) + " and " + xs[-1]
+    w("At the 0.5 threshold, " + both([f"{npos[ds]} ({DISP[ds]})" for ds in DATASETS])
+      + " of the 88 fitting rows predict no positive case in any fold, so their recall and")
+    w(f"precision are 0 and their specificity 1. All of them are among the {ncorner.pop()} factorial")
+    w(f"design rows with `learning_rate` {lo_lr:g} and `n_estimators` {lo_ne:g} (Section 5.4).\n")
+
+    cb = json.loads((A/"composite_beyond_fitting_rows.json").read_text())["datasets"]
+    nrand = sorted({n for v in cb.values() for n in v["random_rows_per_replication"]})
+    w("### S4.3 The quality composite beyond its fitting sample (post hoc)\n")
+    w("Computed after the campaign by `scripts/composite_beyond_fitting_rows.py` from stored")
+    w("evaluations, with the frozen models; it changes no frozen number and fed no arm. Alignment")
+    w("is the frozen orientation check of amendment 19: the Spearman correlation of")
+    w("$f_{\\text{quality}}$ with the equal-weight mean of the six standardized canonicalized quality")
+    w("responses, which must be positive. Before the campaign it was evaluated on the 88-row fitting")
+    w("sample, and each replication recomputed it on its own design rows. Here it is also evaluated")
+    w(f"on the {'/'.join(map(str, nrand))} configurations that the random-search baseline drew uniformly from the")
+    w("coded decision box in each replication. A reversal is a pair of configurations in which one")
+    w("is at least as good on all six quality responses and strictly better on one, but receives")
+    w("the larger (worse) $f_{\\text{quality}}$; random-search pairs are formed within replications")
+    w("and pooled.\n")
+    w("| dataset | alignment, fitting sample | alignment, design rows (range over replications) "
+      "| alignment, random-search rows: median (range) | replications with negative alignment "
+      "| reversals, fitting sample (pairs) | reversal rate, random-search rows |")
+    w("|---|---:|---:|---:|---:|---:|---:|")
+    for ds in DATASETS:
+        r = cb[ds]
+        w(f"| {DISP[ds]} | {r['fitting_rows']:+.3f} | {r['design_rows_min']:+.3f} to "
+          f"{r['design_rows_max']:+.3f} | {r['random_median']:+.3f} ({r['random_min']:+.3f} to "
+          f"{r['random_max']:+.3f}) | {r['random_negative']}/{r['n_replications']} | "
+          f"{r['reversals_fitting'][0]:,}/{r['reversals_fitting'][1]:,} | "
+          + (lambda x: "<0.001" if x < 0.001 else f"{x:.3f}")(
+              r["reversals_random_pooled"][0] / r["reversals_random_pooled"][1]) + " |")
+    w()
+
+    # Analyses declared in the frozen protocol and computed after the campaign from stored
+    # outputs (decision C2, variant A). Each JSON is written by its committed script;
+    # implementation choices the protocol did not fix are labelled post hoc in the text.
+    tk = json.loads((A/"tucker_congruence_refit.json").read_text())["datasets"]
+    w("### S4.4 Per-replication refit: Tucker congruence\n")
+    w("Declared in the frozen protocol (section 7.2; amendment 14) and computed after the campaign")
+    w("from stored outputs by `scripts/tucker_congruence_refit.py`. In each replication the factor")
+    w("model refitted on that replication's own 88 design rows is compared with the frozen model by")
+    w("the Tucker congruence of matched loading columns; the refit is never applied. The runner")
+    w("recorded congruences under a greedy column matching that does not resolve factor sign, so a")
+    w("negative value there can be an artifact of the matching. The optimal-assignment matching")
+    w("beside it is post hoc: columns are matched by maximal total absolute congruence and each")
+    w("matched column is oriented before its congruence is computed. A congruence of 0.95 or more")
+    w("is conventionally read as equivalence, and 0.85 to 0.95 as fair similarity.\n")
+    w("| dataset | greedy, as recorded: minimum absolute congruence | greedy: replications with a "
+      "negative congruence | optimal (post hoc): minimum congruence | below 0.95 | below 0.85 "
+      "| cost factor recovered |")
+    w("|---|---:|---:|---:|---:|---:|---:|")
+    for ds in DATASETS:
+        tkd = tk[ds]; nrep = tkd["n_replications"]
+        gr, op = tkd["greedy_recorded"], tkd["optimal"]
+        w(f"| {DISP[ds]} | {gr['min_abs_phi']:.3f} | {len(gr['replications_with_negative_phi'])} of {nrep} | "
+          f"{op['min_phi']:.3f} | {op['n_below_0_95']} of {nrep} | {op['n_below_0_85']} of {nrep} | "
+          f"{op['cost_factor_recovered']} of {nrep} |")
+    w()
+
+    ws = json.loads((A/"weighting_sensitivity_fronts.json").read_text())["datasets"]
+    arrow = lambda c: c.replace(" -> ", " $\\rightarrow$ ")
+    lo88 = min(v["spearman_weighted_vs_equal"] for v in fd.values())
+    hi88 = max(v["spearman_weighted_vs_equal"] for v in fd.values())
+    arms4 = ("HISTORICAL-WS", "WS-S", "NBI-S", "NBI-R")
+    w("### S4.5 Front-level weighting sensitivity\n")
+    w("Declared in the frozen protocol (section 11, item 1) and computed after the campaign from")
+    w("stored outputs by `scripts/weighting_sensitivity_fronts.py`. The protocol asks how often")
+    w("variance weighting and equal weighting of the two quality factors disagree about the")
+    w("returned front. Two fronts differ if their non-dominated sets differ by at least one member")
+    w("after deduplication at the evaluation tolerance, and if they differ in more than 20% of")
+    w("replications on a dataset, the conclusions for that dataset are reported as conditional on")
+    w("the weighting, in the abstract as well. The protocol did not fix how the equal-weight fronts")
+    w("are obtained or which arms the rule counts. Post hoc, each arm's stored revalidated")
+    w("candidates, and the CORE reference, are rescored with the equal-weight composite (no arm was")
+    w("re-solved), configurations with identical stored evaluations count as one member, and the")
+    w("rule is counted as met on a dataset if it is met for any of the four")
+    w("arms. The design-row rank agreement of the two composites (Spearman "
+      f"{lo88:.3f} to {hi88:.3f},")
+    w("Section 5.5) is a different estimand.\n")
+    w("| dataset | " + " | ".join(f"{a}: fronts differ" for a in arms4) + " | more than 20% for any arm |")
+    w("|---|" + "---:|" * len(arms4) + "---|")
+    for ds in DATASETS:
+        v = ws[ds]; nrep = v["n_replications"]
+        w(f"| {DISP[ds]} | " + " | ".join(
+            f"{v['arms'][a]['replications_front_differs']} of {nrep}" for a in arms4)
+          + f" | {'yes' if v['rule_fires'] else 'no'} |")
+    w("\nThe three identifying contrasts under the equal-weight composite, against the rescored")
+    w("CORE reference: median paired difference in the hypervolume ratio (second minus first),")
+    w("with W/T/L; descriptive and untested.\n")
+    w("| dataset | contrast | median difference | W/T/L |")
+    w("|---|---|---:|---:|")
+    for ds in DATASETS:
+        for cname in ("HISTORICAL-WS -> WS-S", "WS-S -> NBI-S", "NBI-S -> NBI-R"):  # fixed order; the JSON stores sorted keys
+            cv = ws[ds]["contrasts_equal_weight"][cname]
+            w(f"| {DISP[ds]} | {arrow(cname)} | {cv['median_diff']:+.4f} | "
+              f"{cv['wins']}/{cv['ties']}/{cv['losses']} |")
+    w()
+
+    lt = json.loads((A/"leaf_time_association.json").read_text())["datasets"]
+    cos = json.loads((PAPER/"audits"/"cost_objective_selection.json").read_text())
+    pre = cos["fitted"]["total leaf count"]
+    jit = cos["wall_clock_self_agreement"]["median_relative_difference_between_two_fits"]
+    w("### S4.6 Leaf count and measured time\n")
+    w("Declared in the frozen protocol (`protocol/OBJECTIVE_DEFINITIONS.md`, section 9, and")
+    w("`protocol/COST_OBJECTIVE_CLAIM_BOUNDARY.md`) and computed after the campaign from stored")
+    w("outputs by `scripts/leaf_time_association.py`: the association between the leaf-count")
+    w("objective and measured mean per-fold time over all 120 units. Before the campaign, raw total")
+    w(f"leaf count tracked measured per-fold time at Spearman {pre['spearman_vs_measured_time']:.2f} on "
+      f"{pre['n_configurations_fitted_twice']} of the 88")
+    w(f"MAGIC design configurations, and two timings of one configuration differed by a median {100 * jit:.1f}%")
+    w("(`audits/cost_objective_selection.json`). Campaign timings were taken with several worker")
+    w("processes running in parallel (S17), so they carry load-dependent noise. The association is")
+    w("reported as measured; a weaker association is a finding about the proxy and changes no")
+    w("objective. Each cell is the median over units of the per-unit Spearman correlation, with")
+    w("its range. Post hoc choices: all evaluations are every cross-validated fit stored for the")
+    w("unit, excluding holdout fits and the unmatched NSGA-II run, which lies outside the unit;")
+    w("design rows are the 79 distinct design configurations, because the ten replicated centre")
+    w("points were fitted once.\n")
+    w("| dataset | units | all evaluations: raw leaf count | all evaluations: $f_{\\text{cost}}$ "
+      "| design rows: raw leaf count | design rows: $f_{\\text{cost}}$ |")
+    w("|---|---:|---:|---:|---:|---:|")
+    span = lambda s: f"{s['median']:.3f} ({s['min']:.3f} to {s['max']:.3f})"
+    for ds in DATASETS:
+        v = lt[ds]
+        w(f"| {DISP[ds]} | {v['n_units']} | {span(v['all_evaluations']['leaves_vs_time'])} | "
+          f"{span(v['all_evaluations']['f_cost_vs_time'])} | {span(v['design_rows']['leaves_vs_time'])} | "
+          f"{span(v['design_rows']['f_cost_vs_time'])} |")
+    w()
+
+    cd = json.loads((A/"cost_definition_sensitivity.json").read_text())["datasets"]
+    w("### S4.7 Cost-definition sensitivity\n")
+    w("Declared in the frozen protocol (section 11, item 4): whether the primary cost objective and")
+    w("measured time disagree about the winning arm, reported as a frequency over replications.")
+    w("Computed after the campaign from stored outputs by `scripts/cost_definition_sensitivity.py`.")
+    w("The protocol did not fix the operationalization. Post hoc, the winning arm is the one of")
+    w("HISTORICAL-WS, WS-S, NBI-S and NBI-R with the largest CORE-relative hypervolume ratio; under")
+    w("the time definition the cost axis of every candidate and of the CORE reference is the")
+    w("measured mean per-fold time, with the quality objective unchanged. No arm was re-run, and the")
+    w("timing noise of S4.6 applies. The time axis is in seconds, untransformed, and arms whose")
+    w("ratios agree to within $10^{-12}$ share the win (listed as tied).\n")
+    w("| dataset | replications in which the winning arm differs | winners, leaf-count cost "
+      "| winners, time cost |")
+    w("|---|---:|---|---|")
+    tally = lambda cnt: ", ".join(f"{k} {n}" for k, n in sorted(cnt.items(), key=lambda kv: (-kv[1], kv[0])))
+    for ds in DATASETS:
+        v = cd[ds]
+        w(f"| {DISP[ds]} | {v['winner_differs']} of {v['n_replications']} | "
+          f"{tally(v['winner_counts_leaf'])} | {tally(v['winner_counts_time'])} |")
+    w("\nThe three identifying contrasts under both cost definitions: median paired difference in")
+    w("the CORE-relative hypervolume ratio (second minus first), with W/T/L, ties being differences")
+    w("within $10^{-12}$; descriptive and untested. Under the leaf-count definition the values are")
+    w("those of the primary analysis; with its exact-zero tie rule Spambase HISTORICAL-WS")
+    w("$\\rightarrow$ WS-S reads 16/7/7 rather than 16/8/6, one replication differing by")
+    w("$9.7 \\times 10^{-15}$. Under measured time the geometry contrast stays positive on every")
+    w("dataset, smaller on Adult and Bank Marketing, and the anchor-provenance contrast changes")
+    w("sign on Adult.\n")
+    w("| dataset | contrast | leaf-count cost: median (W/T/L) | time cost: median (W/T/L) |")
+    w("|---|---|---:|---:|")
+    cell = lambda c: f"{c['median_diff']:+.4f} ({c['wins']}/{c['ties']}/{c['losses']})"
+    for ds in DATASETS:
+        for cname in ("HISTORICAL-WS -> WS-S", "WS-S -> NBI-S", "NBI-S -> NBI-R"):
+            ct = cd[ds]["contrasts"]
+            w(f"| {DISP[ds]} | {arrow(cname)} | "
+              f"{cell(ct['leaf'][cname])} | {cell(ct['time'][cname])} |")
+    w()
 
     w("## S5. Panel screening and dataset roles\n")
     w("| dataset | C1 raw conflict | C2 front / curvature | C3 min $R^2$ | C4 range | role |")
@@ -330,9 +587,14 @@ def main() -> int:
     w("the deficit. Across the 240 arm-units the certified fraction had median 1.000,")
     w("with two exceptions at 0.900 and 0.950; the per-unit maximum equality residual had")
     w("median 6.6e-10, against a campaign maximum of 6.9e-1 on a single MAGIC `NBI-S`")
-    w("unit; and both arms returned 20 distinct realized configurations in every unit.")
+    w("unit; and both arms returned 20 distinct realized configurations in 239 of the")
+    w("240 arm-units, with 19 in that same MAGIC `NBI-S` unit. The table entries are")
+    w("per-dataset medians of per-unit values; the rounding-displacement column is, per unit,")
+    w("the largest objective displacement induced by rounding on the fitted surfaces.")
     w("Solver behaviour is therefore comparable, but not identical, and the deficit is")
-    w("not solver failure, rounding or candidate collapse.\n")
+    w("not solver failure or candidate collapse. The protocol's fixed-integer re-solve was not")
+    w("implemented (Section 8.7), so the rounded points actually evaluated carry no equality")
+    w("certificate.\n")
     w("### S12.3 Historical reconstruction\n")
     w("| dataset | as-run | shared specification | WS-S | Δ(shared − as-run) |")
     w("|---|---:|---:|---:|---:|")
@@ -352,8 +614,61 @@ def main() -> int:
           f"{s['WS-S']['hv_ratio']['median']:.4f} | {s['NBI-S']['hv_ratio']['median']:.4f} | "
           f"{bva[ds]['nbi_s_wins']}/{bva[ds]['n']} |")
     w("\nThe unmatched NSGA-II run receives ten times the matched budget on one")
-    w("replication per dataset and is a **context baseline**: no fairness claim attaches")
+    w("replication per dataset and is a context baseline: no fairness claim attaches")
     w("to it and it enters no budget-matched comparison and neither reference.\n")
+    # Declared reports computed after the campaign from stored outputs (decision C2,
+    # variant A); each JSON is written by its committed script.
+    so = json.loads((A/"single_objective_endpoints.json").read_text())["datasets"]
+    runs = (("bayes_quality", "BAYES-QUALITY", "quality"), ("bayes_cost", "BAYES-COST", "cost"),
+            ("tpe_quality", "TPE-QUALITY", "quality"), ("tpe_cost", "TPE-COST", "cost"))
+    w("### S13.1 Single-objective Bayesian-optimization and TPE runs\n")
+    w("Declared in the frozen protocol (section 3): the four single-objective runs produce")
+    w("single-objective optima, not fronts, so they are reported on their own endpoints only,")
+    w("labelled as single-objective runs, and enter neither the front-indicator tables nor either")
+    w("reference. Computed after the campaign from stored outputs by")
+    w("`scripts/single_objective_endpoints.py`. Each run used the comparator budget of "
+      f"{logical_budget_plan(2)['comparator_budget']} real")
+    w("evaluations per replication. The endpoint is the best value of the run's own objective")
+    w("($f_{\\text{quality}}$ or $f_{\\text{cost}}$, both minimized) among its real evaluations.")
+    w("For context only, the last column gives the median best value of the same objective in")
+    w("each replication's CORE reference (88 design rows and 200 anchor-search rows), to which no")
+    w("compared method contributes; that comparison was not")
+    w("pre-specified, is descriptive and carries no test.\n")
+    w("| dataset | run | objective | best value: median (interquartile range) "
+      "| CORE best value: median |")
+    w("|---|---|---|---:|---:|")
+    for ds in DATASETS:
+        for key, label, obj in runs:
+            v = so[ds][key]
+            w(f"| {DISP[ds]} | {label} | $f_{{\\text{{{obj}}}}}$ | {v['best_median']:+.3f} "
+              f"({v['best_q1']:+.3f} to {v['best_q3']:+.3f}) | {v['core_best_median']:+.3f} |")
+    nuj = json.loads((A/"nsga2_unmatched_table.json").read_text())
+    nu, nud = nuj["datasets"], nuj["diagnostics"]
+    w("\n### S13.2 Unmatched NSGA-II run\n")
+    w("Declared in `protocol/NSGA2_DECISION.md` (section 5): the unmatched run, ten times the")
+    w("matched budget on one replication per dataset, asks only whether a weak matched result is")
+    w("explained by budget starvation. It is not an efficiency comparison, no claim about any arm")
+    w("is made relative to it, and it is reported in its own table with the generation count")
+    w("stated. Computed after the campaign from stored outputs by `scripts/nsga2_unmatched_table.py`,")
+    w("which scores the stored rows of the run against that replication's CORE reference with the")
+    w("frozen indicator code.\n")
+    w("| dataset | replication | real evaluations | population | generations "
+      "| CORE-relative HV ratio, unmatched | matched NSGA-II, same replication "
+      "| non-dominated rows (distinct points) |")
+    w("|---|---:|---:|---:|---:|---:|---:|---:|")
+    for ds in DATASETS:
+        v = nu[ds]
+        w(f"| {DISP[ds]} | {v['replication']} | {v['logical_evaluations']:,} | {v['population']} | "
+          f"{v['generations']} | {v['core_hv_ratio']:.4f} | {v['matched_core_hv_ratio']:.4f} | "
+          f"{v['n_front']} ({nud[ds]['n_front_distinct_objective_vectors']}) |")
+    w("\nThe unmatched budget is ten times the realized matched budget, 3,840 real evaluations")
+    w("(ten times 384), as fixed in `protocol/NSGA2_DECISION.md` (section 5) and executed by the")
+    w("runner; the protocol's general section states 3,860 (ten times 386). Non-dominated rows")
+    w("count every non-dominated stored row, so repeated configurations of the converged")
+    w("population are counted separately; the distinct points are in parentheses. Spambase's CORE")
+    w("front has only three points in this replication, so its normalization box is narrow and")
+    w("the hypervolume ratio is unbounded above (S15); its magnitude is not comparable with the")
+    w("other datasets'.\n")
 
     w("## S14. Holdout confirmation\n")
     w("| dataset | arm | internal | holdout | median paired drop |"); w("|---|---|---:|---:|---:|")

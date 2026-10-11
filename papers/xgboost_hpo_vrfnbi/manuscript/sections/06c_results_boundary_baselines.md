@@ -62,10 +62,14 @@ arm ran at every replication whatever the gate said, so its pass rate is a resul
 than a filter, and the primary comparisons are additionally reported conditioned on gate
 status (Supplement S11).
 
-Over the confirmatory campaign the composite-quality gate passed in **8 of 30**
-replications on MAGIC and **9 of 30** on Spambase, and in **0 of 30** on both Adult and
-Bank Marketing. The cost gate passed 30/30, 30/30, 22/30 and 27/30 respectively
-(Supplement S11).
+Over the confirmatory campaign the composite-quality gate passed in 8 of 30
+replications on MAGIC and 9 of 30 on Spambase, and in 0 of 30 on both Adult and
+Bank Marketing. The cost gate, on the complexity objective that leaf count dominates, passed
+30/30, 30/30, 22/30 and 27/30 respectively (Supplement S11). Every failure, on either
+objective, was on the rank criterion alone: external $R^2$ ranged from 0.574 to 0.962 and
+met its cut-off in all 240 unit-by-objective cells, while the composite-quality Spearman
+$\rho$ had medians of 0.854, 0.891, 0.867 and 0.855 on MAGIC, Spambase, Adult and Bank
+Marketing.
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
 composite-quality surrogate failed the frozen criterion in every replication — and they
@@ -161,3 +165,25 @@ never designed to rank arms, so the ordering of these differences is not interpr
 a smaller drop is not evidence that an arm is better. Every primary claim in this study
 is about the returned front under the frozen conditions, not about the
 generalization of a single deployed configuration.
+
+### 6.10 Declared analyses computed after the campaign
+
+Seven analyses that the frozen protocol declared were computed after the campaign from stored
+outputs, without new evaluations; Section 8.7 gives their status and the post hoc choices each
+required, and none of them enters the primary family. Under the pre-declared equal weighting of the
+two quality factors, the returned non-dominated sets differed from the variance-weighted ones in 9
+to 23 of 30 replications, more than the 20% threshold of the frozen protocol on every dataset and
+for every arm, so the conclusions are conditional on that weighting; every identifying contrast
+kept its direction (Supplement S4.5). When measured mean per-fold time replaced the leaf-count cost
+axis, the winning arm changed in 9, 17, 16 and 14 of 30 replications on MAGIC, Spambase, Adult and
+Bank Marketing; the geometry contrast stayed positive on every dataset, though smaller on Adult and
+Bank Marketing, and the anchor-provenance contrast changed sign on Adult (median $+0.0696$, NBI-R
+ahead in 18 of 30), where under the leaf-count cost it was a non-detection (Supplement S4.7). Over
+all 120 units, raw total leaf count tracked measured time at a median per-unit Spearman correlation
+of 0.87 to 0.96 (Supplement S4.6). Under the post hoc optimal matching, factor models refitted on
+each replication's own design rows matched the frozen models at a Tucker congruence of at least
+0.895 on MAGIC, Spambase and Adult and of 0.751 at worst on Bank Marketing, where 10 of 30
+replications fell below the conventional equivalence level of 0.95; the greedy matching recorded by
+the runner, which does not resolve factor sign, gives lower values (Supplement S4.4). The
+single-objective Bayesian-optimization and TPE endpoints and the unmatched NSGA-II run are context
+only and enter no comparison (Supplement S13).

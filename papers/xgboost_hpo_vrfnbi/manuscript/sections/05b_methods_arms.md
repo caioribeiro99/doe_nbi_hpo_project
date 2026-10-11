@@ -52,14 +52,20 @@ distribute their targets; it follows from $\Phi$, which is recorded per replicat
 a diagnostic in Section 6.4.1 is post hoc.
 
 Three diagnostics are recorded because this geometry can fail quietly. Every subproblem records
-`success` and its equality residual and the certified fraction is published per arm, since an
-infeasible subproblem still returns a plausible-looking iterate. Because the two integer hyperparameters are rounded at
-evaluation time while the constraint is certified at a continuous point, each subproblem also reports
-the objective displacement induced by rounding and is re-solved with those dimensions fixed. And
+the solver's success flag and its equality residual, and the certified fraction is published per
+arm, since an infeasible subproblem still returns a plausible-looking iterate. Because the two
+integer hyperparameters are rounded at evaluation time while the constraint is certified at a
+continuous point, each subproblem also records the objective displacement induced by rounding,
+$\lVert F(x_{\text{cont}}) - F(x_{\text{round}}) \rVert$ on the fitted surfaces (Supplement S12.2).
+The frozen protocol also required each subproblem to be solved again with those dimensions fixed at
+their rounded values, to certify the point actually evaluated; that second solve was not
+implemented, so the certified fraction refers to the continuous solution only (Section 8.7). And
 because a backward-eliminated quadratic is often minimized on a box corner, two anchors can coincide
-and leave $\Phi$ rank-deficient; anchor vectors, rank and condition number are recorded, and a
-rank-deficient replication is excluded with the count published. Standalone cost 186; `WS-S` $\to$
-`NBI-S` changes the scalarization geometry and nothing else (Figure 1).
+and leave $\Phi$ rank-deficient; $\Phi$, its rank and condition number and an anchor-coincidence flag
+are recorded, and under the frozen protocol a rank-deficient replication is excluded from the
+geometry contrasts with the count published. None occurred: $\Phi$ had rank 2 and no anchors
+coincided in all 240 NBI-S and NBI-R arm-units. Standalone cost 186; WS-S $\to$ NBI-S changes the
+scalarization geometry and nothing else (Figure 1).
 
 ### 5.11 NBI-R — NBI with empirical-real anchors
 
@@ -84,11 +90,13 @@ failures in 9 h 46 min.
 
 ### 5.12 Controls and baselines
 
-The **anchor-injection control** rescores `NBI-S`'s own real-revalidated set augmented with the same
-empirical anchors `NBI-R` receives, changing nothing else. That set is a superset of `NBI-S`'s, so
-its effect on the indicator is non-negative by construction; it separates the part of any `NBI-S`
-$\to$ `NBI-R` gap attributable to anchor set composition from the part attributable to the relocated
-payoff matrix and CHIM.
+The *anchor-injection control* rescores NBI-S's own real-revalidated set augmented with the same
+empirical anchors NBI-R receives, changing nothing else. That set is a superset of NBI-S's, so
+its effect on the indicator is non-negative by construction. It was frozen on the premise that NBI-R
+returns its own anchors at the vertex weights; in execution NBI-R returned none of its 240 empirical
+anchors, because its targets are built from real measurements while its equality constraint is
+imposed on the fitted surfaces (Section 5.11). The control therefore bounds what including those
+anchors alone adds to NBI-S's set rather than decomposing the observed NBI-S $\to$ NBI-R gap.
 
 The comparator budget was fixed before the confirmatory campaign as the maximum standalone cost
 over arms, NBI-R's 386 real evaluations; the rule dates from protocol v1 and its value from protocol

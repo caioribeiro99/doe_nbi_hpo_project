@@ -53,28 +53,48 @@ by an empirical artifact whose composition would change under a different anchor
 (Section 6.6). That is consistent with its boundary designation and does not confirm the boundary
 mechanism, and Section 8.5 explains why it is not evidence about front geometry either.
 
-**The CHIM association is not causal.** The anchor-injection control and the CHIM extent
-ratios locate the `NBI-S` → `NBI-R` deficit with the relocated payoff matrix rather than with
-anchor point-set composition, but the CHIM link is an association across 30 replications
-within a dataset. It is positive on Adult, Bank Marketing and Spambase and **absent on MAGIC**
-($\rho = -0.11$), which is the dataset where the injection control is itself nonzero. No
-intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis
-(Figure 4).
+**The CHIM association is post hoc and not causal.** The CHIM-extent diagnostic was defined after
+the confirmatory results were known (Section 6.4.1), and its link to the NBI-S → NBI-R deficit is an
+association across 30 replications within a dataset: clear on Adult and Bank Marketing, weak on
+Spambase and absent on MAGIC ($\rho = -0.11$), where the injection control is itself nonzero. The
+anchor-injection control cannot apportion the deficit either, because NBI-R never returned its own
+empirical anchors (Section 5.12); it bounds only what adding them to NBI-S's set changes. No
+intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis (Figure 4).
 
 ### 8.5 Known weaknesses in the frozen protocol
 
 **Screening criterion 1 is weaker than what it replaced.** Its original estimator was
-withdrawn when the factor algebra producing it was retracted, and the replacement — raw
-standardized quality badness against the raw leaf-count response — cannot fail a dataset whose
-raw metrics trade off while its latent composite does not. The panel is screened for objective
+withdrawn when the factor algebra producing it was retracted, and the replacement (raw
+standardized quality badness against the raw leaf-count response) cannot fail a dataset whose
+raw metrics trade off while its latent composite does not, which is the configuration the
+corrected factor model produces on Spambase and Adult. The panel is screened for objective
 conflict by a measurement that few candidates would fail. This is carried forward as a
 limitation rather than repaired.
 
+**The quality composite is a latent construct that depends on the 0.5 threshold.** It tracks
+different things on different datasets (Sections 5.4 and 5.5; Supplement S4.2). On MAGIC it tracks
+all six quality responses. On Spambase, Adult and Bank Marketing its leading quality factor is a
+recall-versus-specificity axis at 0.5: across the fitting rows lower composite values go with
+higher recall and lower specificity, a configuration at least as good on all six quality responses
+can receive the worse composite value (Supplement S4.3), and on Adult and Bank Marketing the fitting
+rows that predict no positive case receive the worst values, so the composite depends on where
+predicted probabilities fall relative to 0.5, not only on how well cases are ranked. On Spambase it
+agrees only weakly with equal-weight raw quality on the fitting rows (Spearman 0.243, against 0.835
+to 0.929 elsewhere), and the protocol's orientation check used design configurations only; in a post
+hoc check over the configurations random search drew uniformly from the box it is negatively aligned
+in all 30 replications (median $-0.39$; Supplement S4.3), so the Spambase result cannot be read as
+evidence about front geometry. Every method is scored by the same frozen composite, so the contrasts
+remain valid comparisons within one objective space, with magnitudes in that space; a returned front
+reads as a quality-versus-complexity trade-off on MAGIC, with qualification on Adult and Bank
+Marketing, and not on Spambase. The arms were not run on a quality objective without the 0.5
+threshold, which would be a separate experiment, and metrics at other thresholds cannot be
+recomputed from the stored fold means, which keep no per-fold predicted probabilities.
+
 **The surrogate failed its own gate in most replications.** The composite-quality gate passed
 in 8/30 replications on MAGIC and 9/30 on Spambase, and in 0/30 on Adult and Bank Marketing.
-The gate is diagnostic, not adaptive, and the geometry effect is Holm-significant on both
-zero-pass datasets — but the study measures relative front-construction geometry and says
-nothing about absolute surrogate trustworthiness.
+The gate is diagnostic, not adaptive: no replication was removed, so the Adult and Bank Marketing
+geometry effects come entirely from failing replications (Section 6.7), and the study measures
+relative front-construction geometry, not absolute surrogate trustworthiness (Section 7.8).
 
 **Undefined spacing.** Schott spacing requires at least two gaps. It is undefined on
 single-point fronts, giving 140 non-finite cells across the 70 method-by-reference blocks whose

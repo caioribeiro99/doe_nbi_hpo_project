@@ -70,19 +70,22 @@ panel's one reference disagreement on Adult's anchor contrast, Holm-significant 
 ($-0.0535$, Holm $p = 0.0174$) and not under CORE, its bootstrap interval spanning zero under
 both references.
 
-### 7.5 CHIM contraction is the associated mechanism, and only that
+### 7.5 CHIM contraction is a post hoc association, and only that
 
 The deficit is not attributable to solver failure. Over the 240 arm-units the
 certified fraction has median 1.000 with two exceptions (0.900, 0.950), the
 per-unit maximum equality residual has median $6.6\times10^{-10}$ against a
 campaign maximum of $6.9\times10^{-1}$ on one unit, and both arms return 20
-distinct realized configurations throughout. Comparable, not identical.
+distinct realized configurations in 239 of 240 arm-units. Comparable, not identical.
 
-This is an association across 30 replications within a dataset, not a demonstrated cause:
-the within-dataset Spearman between contraction and deficit is $+0.683$ on Adult, $+0.678$
-on Bank Marketing and $+0.320$ on Spambase — and $-0.111$ on MAGIC, where it is absent.
-Nor does the injection control prove the negative is entirely geometric: the control set
-is a superset of NBI-S's, so its effect cannot be negative.
+The CHIM contraction of Section 6.4.1 is a post hoc association across 30 replications
+within a dataset, not a demonstrated cause: it is clear on Adult and Bank Marketing
+(within-dataset Spearman between contraction and deficit $+0.683$ and $+0.678$), weak on
+Spambase ($+0.320$) and absent on MAGIC ($-0.111$). Nor does the injection control prove the
+negative is entirely geometric: the control set is a superset of NBI-S's, so its effect
+cannot be negative, and because NBI-R returned none of its own empirical anchors
+(Section 5.12) it bounds what adding those anchors to NBI-S's set does rather than
+decomposing the gap.
 
 ### 7.6 Specification: a non-detection at $R = 30$
 
