@@ -150,4 +150,4 @@ although their rounding displacement is summarized in Supplement S12.2; and the 
 demonstration (item 3 of section 11 of the frozen protocol). Two declared summaries are not tabulated: the Wilson
 intervals of the win fractions in the descriptive triple (section 10 of the frozen protocol), whose
 role the 21-of-30 direction rule takes (Section 5.15), and the intervals declared for the secondary
-indicators, which Supplement S10 reports as medians.
+indicators, reported only as medians in Supplement S10.

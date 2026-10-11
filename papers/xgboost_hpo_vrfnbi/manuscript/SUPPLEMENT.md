@@ -19,20 +19,24 @@ Protocol tag `xgboost-hpo-protocol-v3`. Results tag
 | `v0.1.0-dissertation` | `67d9fe5` | the historical implementation this study reconstructs |
 | `xgboost-hpo-protocol-v1` | `355c290` | the specification frozen before the pilot |
 | `xgboost-hpo-protocol-v2` | `c50c380` | the confirmatory protocol after pilot Stage A |
-| `xgboost-hpo-protocol-v3` | `9b15ba7` | the final frozen protocol, before any comparative result |
+| `xgboost-hpo-protocol-v3` | `9b15ba7` | the final frozen protocol, before the confirmatory campaign |
 | `xgboost-hpo-confirmatory-results-v1` | `a4f20ed` | the first adversarially verified analysis |
 
-The protocol tag records what was specified **before** any comparative result
-existed; the results tag records the first verified analysis. Neither was moved.
+The protocol tag records what was specified before the confirmatory campaign began;
+the results tag records the first verified analysis. Neither was moved.
 
 ## S2. Amendment chronology
 
-The protocol carries **23 numbered amendments**, each recording what caused it
-and whether any arm result had been observed when it was made. None had. The ledger
-also records two process failures found by review rather than by the author, four
-engineering defects caught by a pre-freeze smoke run, and the corrections made to
-two claims after independent verification refuted the author's version. It is
-reproduced in full in `PROTOCOL_AMENDMENTS.md`.
+The protocol carries 23 numbered amendments, each recording what caused it
+and whether any arm result had been observed when it was made; the ledger records
+that none had. It also records two process failures found by review rather than by the
+author, and four engineering defects caught by pre-freeze smoke runs. The last of these
+runs, on 2026-09-14, completed one full Spambase unit, every arm and the metrics stage,
+before amendments 21 (primary reference) and 22 (Spambase's role) and before the v3 tag;
+the ledger records that only its execution and accounting were inspected, and its
+outputs are not archived. The ledger is reproduced in full in `PROTOCOL_AMENDMENTS.md`.
+The corrections made after the campaign to two claims from the analysis are recorded in
+`analysis/verified_claims.json`, not in the ledger.
 
 ## S3. Hyperparameter space
 
@@ -65,15 +69,254 @@ All seven enter the design in coded units on $[-1, 1]$; integers are cast by
 
 | dataset | fitting sample | audit rows used | quality weights | Kaiser | $\lambda_3/\lambda_4$ |
 |---|---:|---:|---|---:|---:|
-| MAGIC | 88 design rows | 0 | 0.5556, 0.4444 | 2 | 2.93 |
-| Spambase | 88 design rows | 0 | 0.7749, 0.2251 | 2 | 2.10 |
-| Adult | 88 design rows | 0 | 0.5470, 0.4530 | 1 | 1.34 |
-| Bank Marketing | 88 design rows | 0 | 0.5875, 0.4125 | 1 | 1.06 |
+| MAGIC | 88 pilot design rows | 0 | 0.5556, 0.4444 | 2 | 2.93 |
+| Spambase | 88 pilot design rows | 0 | 0.7749, 0.2251 | 2 | 2.10 |
+| Adult | 88 pilot design rows | 0 | 0.5470, 0.4530 | 1 | 1.34 |
+| Bank Marketing | 88 pilot design rows | 0 | 0.5875, 0.4125 | 1 | 1.06 |
 
 One model per dataset, fitted on the 88 design rows only and applied to all 30
-replications. The 78-point audit-only external construction is excluded from the
-fit (amendment 23): 64 of its 78 coded points are identical to the external
-validation set and the rest are the same axial runs.
+replications. The fitting rows are the pre-campaign pilot (Stage A) evaluations of the
+design: stratified, shuffled five-fold cross-validation on the 80% training part of one
+stratified 80/20 partition per dataset (seed 20260913), the partition of the S5
+screening, drawn separately from the 30 confirmatory partitions. Each replication
+re-evaluates the same 88 configurations on its own partition and maps them through the
+frozen model. Because the pilot partition is a separate draw, its training part
+shares rows with every confirmatory holdout: a holdout is unseen within its replication,
+not by the pilot that fixed the objective definition. The 78-point audit-only external
+construction is excluded from the fit (amendment 23): 64 of its 78 coded points are
+identical to the external validation set and the rest are the same axial runs.
+
+Eigenvalues of the correlation matrix of the seven standardized responses $Z$ on the 88
+fitting rows; the cumulative percentage of the total variance of $Z$ carried by the first
+$k$ components, $100 \sum_{j \le k} \lambda_j / 7$; and the percentage of the variance of
+the transformed leaf count that the first $k$ components reproduce. Varimax redistributes
+the $k = 3$ total among the rotated factors without changing it. The frozen model is
+applied unchanged to every replication, so these values are the same in every
+replication. They are descriptive: the component count is fixed at three for every
+dataset and was not chosen by them. From `analysis/factor_dimensionality.json`, written
+by `scripts/factor_dimensionality.py` after the campaign from the committed pre-campaign
+reference models.
+
+| dataset | $\lambda_1$ | $\lambda_2$ | $\lambda_3$ | $\lambda_4$ | cumulative % of variance, $k = 1$ / 2 / 3 | leaf-count variance reproduced, %, $k = 2$ / 3 |
+|---|---:|---:|---:|---:|---:|---:|
+| MAGIC | 3.988 | 1.659 | 0.891 | 0.304 | 57.0 / 80.7 / 93.4 | 17.6 / 98.8 |
+| Spambase | 4.455 | 1.092 | 0.865 | 0.412 | 63.6 / 79.2 / 91.6 | 68.2 / 84.0 |
+| Adult | 4.775 | 0.851 | 0.701 | 0.522 | 68.2 / 80.4 / 90.4 | 78.3 / 98.1 |
+| Bank Marketing | 4.664 | 0.853 | 0.625 | 0.588 | 66.6 / 78.8 / 87.7 | 75.3 / 89.1 |
+
+### S4.2 Rotated loadings and objective coefficients
+
+For each frozen model: the oriented rotated loadings $\Lambda_R$ of the seven
+canonicalized (minimization-oriented) responses on the leading quality factor (the one with
+the larger quality weight in S4.1), the second quality factor and the cost factor; the
+correlation of each response with $f_{\text{quality}}$; and the coefficients of the two
+objectives on the standardized responses $Z$ (`Leaves_Mean` after its $\log(1 + \cdot)$
+transform). A loading is the Pearson correlation of a response with a factor score on the
+88 fitting rows, so in the loading and correlation columns a positive entry means that the
+response tends to worsen as the score rises on those rows. The frozen model is applied
+unchanged to every other evaluation, where these correlations are not guaranteed to hold
+(S4.3). In the coefficient columns a positive entry means that, with the other responses
+held fixed, a worse value of that response raises the objective. The responses do not vary
+one at a time, so a coefficient describes the fixed linear map, not an effect of that
+response, and a coefficient and the loadings can differ in sign. Accuracy is, fold by fold,
+the prevalence-weighted mean of recall and specificity, so the coefficients on those three
+are not separately interpretable. Neither quality factor names the same quantity on two
+datasets. The coefficients are read from `analysis/factor_dimensionality.json`.
+
+| dataset | response | leading quality factor | second quality factor | cost factor | correlation with $f_{\text{quality}}$ | $f_{\text{quality}}$ coefficient | $f_{\text{cost}}$ coefficient |
+|---|---|---:|---:|---:|---:|---:|---:|
+| MAGIC | `Accuracy_Mean` | +0.862 | -0.433 | -0.196 | +0.402 | +0.115 | -0.015 |
+| MAGIC | `Precision_Mean` | -0.047 | +0.965 | +0.024 | +0.566 | +0.279 | -0.128 |
+| MAGIC | `Recall_Mean` | +0.750 | -0.614 | -0.200 | +0.202 | +0.028 | -0.008 |
+| MAGIC | `Specificity_Mean` | -0.167 | +0.955 | +0.145 | +0.466 | +0.243 | -0.015 |
+| MAGIC | `RocAuc_Mean` | +0.933 | -0.018 | -0.161 | +0.717 | +0.262 | -0.030 |
+| MAGIC | `LogLoss_Mean` | +0.898 | +0.049 | +0.061 | +0.732 | +0.275 | +0.192 |
+| MAGIC | `Leaves_Mean` | -0.133 | +0.115 | +0.978 | -0.032 | +0.011 | +1.006 |
+| Spambase | `Accuracy_Mean` | +0.894 | +0.179 | -0.348 | +0.909 | +0.195 | -0.005 |
+| Spambase | `Precision_Mean` | +0.108 | +0.988 | -0.094 | +0.379 | +0.175 | +0.119 |
+| Spambase | `Recall_Mean` | +0.917 | +0.166 | -0.311 | +0.927 | +0.209 | +0.031 |
+| Spambase | `Specificity_Mean` | -0.922 | +0.004 | -0.145 | -0.884 | -0.302 | -0.393 |
+| Spambase | `RocAuc_Mean` | +0.584 | +0.051 | -0.709 | +0.575 | -0.012 | -0.426 |
+| Spambase | `LogLoss_Mean` | +0.885 | +0.055 | -0.392 | +0.865 | +0.159 | -0.066 |
+| Spambase | `Leaves_Mean` | -0.129 | -0.134 | +0.898 | -0.161 | +0.178 | +0.706 |
+| Adult | `Accuracy_Mean` | +0.776 | +0.585 | -0.180 | +0.971 | +0.189 | +0.132 |
+| Adult | `Precision_Mean` | +0.582 | +0.473 | -0.134 | +0.750 | +0.146 | +0.104 |
+| Adult | `Recall_Mean` | +0.861 | +0.444 | -0.216 | +0.947 | +0.182 | +0.099 |
+| Adult | `Specificity_Mean` | -0.928 | -0.124 | +0.262 | -0.794 | -0.147 | -0.026 |
+| Adult | `RocAuc_Mean` | +0.301 | +0.791 | -0.434 | +0.737 | +0.052 | -0.290 |
+| Adult | `LogLoss_Mean` | +0.282 | +0.935 | -0.021 | +0.813 | +0.165 | +0.197 |
+| Adult | `Leaves_Mean` | -0.242 | -0.130 | +0.951 | -0.269 | +0.165 | +0.992 |
+| Bank Marketing | `Accuracy_Mean` | +0.731 | +0.607 | -0.235 | +0.947 | +0.209 | +0.138 |
+| Bank Marketing | `Precision_Mean` | +0.636 | +0.426 | -0.015 | +0.766 | +0.232 | +0.328 |
+| Bank Marketing | `Recall_Mean` | +0.866 | +0.343 | -0.316 | +0.906 | +0.196 | +0.080 |
+| Bank Marketing | `Specificity_Mean` | -0.894 | -0.121 | +0.349 | -0.801 | -0.170 | -0.030 |
+| Bank Marketing | `RocAuc_Mean` | +0.349 | +0.595 | -0.614 | +0.627 | -0.029 | -0.480 |
+| Bank Marketing | `LogLoss_Mean` | +0.225 | +0.943 | -0.091 | +0.726 | +0.139 | +0.105 |
+| Bank Marketing | `Leaves_Mean` | -0.298 | -0.078 | +0.893 | -0.288 | +0.189 | +0.883 |
+
+| dataset | role-block mean, leading / second quality factor | `Leaves_Mean` on the cost factor | Spearman of $f_{\text{quality}}$ with equal-weight quality badness, fitting rows |
+|---|---:|---:|---:|
+| MAGIC | +0.538 / +0.150 | +0.978 | +0.929 |
+| Spambase | +0.411 / +0.240 | +0.898 | +0.243 |
+| Adult | +0.312 / +0.517 | +0.951 | +0.835 |
+| Bank Marketing | +0.319 / +0.466 | +0.893 | +0.896 |
+
+The sign rule (Section 5.5) makes the two role-block means and the `Leaves_Mean` loading
+positive; it does not make every loading in a role block positive. The last column is the
+frozen orientation check of amendment 19 on the fitting rows; S4.3 evaluates it beyond them.
+
+At the 0.5 threshold, 0 (MAGIC), 1 (Spambase), 13 (Adult) and 16 (Bank Marketing) of the 88 fitting rows predict no positive case in any fold, so their recall and
+precision are 0 and their specificity 1. All of them are among the 16 factorial
+design rows with `learning_rate` 0.01 and `n_estimators` 50 (Section 5.4).
+
+### S4.3 The quality composite beyond its fitting sample (post hoc)
+
+Computed after the campaign by `scripts/composite_beyond_fitting_rows.py` from stored
+evaluations, with the frozen models; it changes no frozen number and fed no arm. Alignment
+is the frozen orientation check of amendment 19: the Spearman correlation of
+$f_{\text{quality}}$ with the equal-weight mean of the six standardized canonicalized quality
+responses, which must be positive. Before the campaign it was evaluated on the 88-row fitting
+sample, and each replication recomputed it on its own design rows. Here it is also evaluated
+on the 386 configurations that the random-search baseline drew uniformly from the
+coded decision box in each replication. A reversal is a pair of configurations in which one
+is at least as good on all six quality responses and strictly better on one, but receives
+the larger (worse) $f_{\text{quality}}$; random-search pairs are formed within replications
+and pooled.
+
+| dataset | alignment, fitting sample | alignment, design rows (range over replications) | alignment, random-search rows: median (range) | replications with negative alignment | reversals, fitting sample (pairs) | reversal rate, random-search rows |
+|---|---:|---:|---:|---:|---:|---:|
+| MAGIC | +0.929 | +0.889 to +0.945 | +0.941 (+0.903 to +0.979) | 0/30 | 0/905 | <0.001 |
+| Spambase | +0.243 | +0.188 to +0.310 | -0.387 (-0.540 to -0.182) | 30/30 | 1,045/1,311 | 0.751 |
+| Adult | +0.835 | +0.809 to +0.850 | +0.562 (+0.461 to +0.639) | 0/30 | 150/615 | 0.262 |
+| Bank Marketing | +0.896 | +0.873 to +0.916 | +0.694 (+0.602 to +0.761) | 0/30 | 149/421 | 0.146 |
+
+### S4.4 Per-replication refit: Tucker congruence
+
+Declared in the frozen protocol (section 7.2; amendment 14) and computed after the campaign
+from stored outputs by `scripts/tucker_congruence_refit.py`. In each replication the factor
+model refitted on that replication's own 88 design rows is compared with the frozen model by
+the Tucker congruence of matched loading columns; the refit is never applied. The runner
+recorded congruences under a greedy column matching that does not resolve factor sign, so a
+negative value there can be an artifact of the matching. The optimal-assignment matching
+beside it is post hoc: columns are matched by maximal total absolute congruence and each
+matched column is oriented before its congruence is computed. A congruence of 0.95 or more
+is conventionally read as equivalence, and 0.85 to 0.95 as fair similarity.
+
+| dataset | greedy, as recorded: minimum absolute congruence | greedy: replications with a negative congruence | optimal (post hoc): minimum congruence | below 0.95 | below 0.85 | cost factor recovered |
+|---|---:|---:|---:|---:|---:|---:|
+| MAGIC | 0.895 | 0 of 30 | 0.895 | 6 of 30 | 0 of 30 | 30 of 30 |
+| Spambase | 0.918 | 0 of 30 | 0.918 | 2 of 30 | 0 of 30 | 30 of 30 |
+| Adult | 0.948 | 0 of 30 | 0.948 | 1 of 30 | 0 of 30 | 30 of 30 |
+| Bank Marketing | 0.351 | 4 of 30 | 0.751 | 10 of 30 | 4 of 30 | 30 of 30 |
+
+### S4.5 Front-level weighting sensitivity
+
+Declared in the frozen protocol (section 11, item 1) and computed after the campaign from
+stored outputs by `scripts/weighting_sensitivity_fronts.py`. The protocol asks how often
+variance weighting and equal weighting of the two quality factors disagree about the
+returned front. Two fronts differ if their non-dominated sets differ by at least one member
+after deduplication at the evaluation tolerance, and if they differ in more than 20% of
+replications on a dataset, the conclusions for that dataset are reported as conditional on
+the weighting, in the abstract as well. The protocol did not fix how the equal-weight fronts
+are obtained or which arms the rule counts. Post hoc, each arm's stored revalidated
+candidates, and the CORE reference, are rescored with the equal-weight composite (no arm was
+re-solved), configurations with identical stored evaluations count as one member, and the
+rule is counted as met on a dataset if it is met for any of the four
+arms. The design-row rank agreement of the two composites (Spearman 0.987 to 0.991,
+Section 5.5) is a different estimand.
+
+| dataset | HISTORICAL-WS: fronts differ | WS-S: fronts differ | NBI-S: fronts differ | NBI-R: fronts differ | more than 20% for any arm |
+|---|---:|---:|---:|---:|---|
+| MAGIC | 13 of 30 | 9 of 30 | 19 of 30 | 14 of 30 | yes |
+| Spambase | 14 of 30 | 15 of 30 | 23 of 30 | 14 of 30 | yes |
+| Adult | 13 of 30 | 17 of 30 | 14 of 30 | 18 of 30 | yes |
+| Bank Marketing | 16 of 30 | 14 of 30 | 16 of 30 | 21 of 30 | yes |
+
+The three identifying contrasts under the equal-weight composite, against the rescored
+CORE reference: median paired difference in the hypervolume ratio (second minus first),
+with W/T/L; descriptive and untested.
+
+| dataset | contrast | median difference | W/T/L |
+|---|---|---:|---:|
+| MAGIC | HISTORICAL-WS $\rightarrow$ WS-S | +0.0000 | 14/3/13 |
+| MAGIC | WS-S $\rightarrow$ NBI-S | +0.0395 | 27/0/3 |
+| MAGIC | NBI-S $\rightarrow$ NBI-R | -0.0776 | 1/0/29 |
+| Spambase | HISTORICAL-WS $\rightarrow$ WS-S | +0.0000 | 16/6/8 |
+| Spambase | WS-S $\rightarrow$ NBI-S | +0.0223 | 16/2/12 |
+| Spambase | NBI-S $\rightarrow$ NBI-R | -0.5934 | 5/1/24 |
+| Adult | HISTORICAL-WS $\rightarrow$ WS-S | -0.0012 | 6/2/22 |
+| Adult | WS-S $\rightarrow$ NBI-S | +0.2543 | 30/0/0 |
+| Adult | NBI-S $\rightarrow$ NBI-R | -0.0266 | 12/0/18 |
+| Bank Marketing | HISTORICAL-WS $\rightarrow$ WS-S | +0.0000 | 9/7/14 |
+| Bank Marketing | WS-S $\rightarrow$ NBI-S | +0.3205 | 27/0/3 |
+| Bank Marketing | NBI-S $\rightarrow$ NBI-R | -0.4389 | 7/0/23 |
+
+### S4.6 Leaf count and measured time
+
+Declared in the frozen protocol (`protocol/OBJECTIVE_DEFINITIONS.md`, section 9, and
+`protocol/COST_OBJECTIVE_CLAIM_BOUNDARY.md`) and computed after the campaign from stored
+outputs by `scripts/leaf_time_association.py`: the association between the leaf-count
+objective and measured mean per-fold time over all 120 units. Before the campaign, raw total
+leaf count tracked measured per-fold time at Spearman 0.86 on 22 of the 88
+MAGIC design configurations, and two timings of one configuration differed by a median 1.3%
+(`audits/cost_objective_selection.json`). Campaign timings were taken with several worker
+processes running in parallel (S17), so they carry load-dependent noise. The association is
+reported as measured; a weaker association is a finding about the proxy and changes no
+objective. Each cell is the median over units of the per-unit Spearman correlation, with
+its range. Post hoc choices: all evaluations are every cross-validated fit stored for the
+unit, excluding holdout fits and the unmatched NSGA-II run, which lies outside the unit;
+design rows are the 79 distinct design configurations, because the ten replicated centre
+points were fitted once.
+
+| dataset | units | all evaluations: raw leaf count | all evaluations: $f_{\text{cost}}$ | design rows: raw leaf count | design rows: $f_{\text{cost}}$ |
+|---|---:|---:|---:|---:|---:|
+| MAGIC | 30 | 0.933 (0.919 to 0.943) | 0.917 (0.899 to 0.930) | 0.907 (0.897 to 0.915) | 0.896 (0.886 to 0.904) |
+| Spambase | 30 | 0.957 (0.953 to 0.961) | 0.919 (0.896 to 0.926) | 0.935 (0.920 to 0.941) | 0.820 (0.772 to 0.852) |
+| Adult | 30 | 0.871 (0.844 to 0.885) | 0.852 (0.822 to 0.871) | 0.870 (0.864 to 0.876) | 0.795 (0.779 to 0.825) |
+| Bank Marketing | 30 | 0.878 (0.847 to 0.895) | 0.851 (0.825 to 0.872) | 0.894 (0.887 to 0.903) | 0.729 (0.644 to 0.757) |
+
+### S4.7 Cost-definition sensitivity
+
+Declared in the frozen protocol (section 11, item 4): whether the primary cost objective and
+measured time disagree about the winning arm, reported as a frequency over replications.
+Computed after the campaign from stored outputs by `scripts/cost_definition_sensitivity.py`.
+The protocol did not fix the operationalization. Post hoc, the winning arm is the one of
+HISTORICAL-WS, WS-S, NBI-S and NBI-R with the largest CORE-relative hypervolume ratio; under
+the time definition the cost axis of every candidate and of the CORE reference is the
+measured mean per-fold time, with the quality objective unchanged. No arm was re-run, and the
+timing noise of S4.6 applies. The time axis is in seconds, untransformed, and arms whose
+ratios agree to within $10^{-12}$ share the win (listed as tied).
+
+| dataset | replications in which the winning arm differs | winners, leaf-count cost | winners, time cost |
+|---|---:|---|---|
+| MAGIC | 9 of 30 | NBI-S 24, WS-S 4, HISTORICAL-WS 1, NBI-R 1 | NBI-S 17, NBI-R 6, WS-S 5, HISTORICAL-WS 2 |
+| Spambase | 17 of 30 | NBI-S 14, WS-S 6, HISTORICAL-WS 3, NBI-R 3, HISTORICAL-WS/WS-S (tied) 2, HISTORICAL-WS/WS-S/NBI-S (tied) 2 | NBI-S 15, NBI-R 5, HISTORICAL-WS 4, WS-S 3, HISTORICAL-WS/WS-S/NBI-S/NBI-R (tied) 2, HISTORICAL-WS/WS-S (tied) 1 |
+| Adult | 16 of 30 | NBI-S 19, NBI-R 11 | NBI-R 16, NBI-S 8, HISTORICAL-WS 4, WS-S 2 |
+| Bank Marketing | 14 of 30 | NBI-S 17, NBI-R 7, HISTORICAL-WS 3, WS-S 2, HISTORICAL-WS/WS-S (tied) 1 | NBI-S 15, WS-S 7, HISTORICAL-WS 4, NBI-R 3, HISTORICAL-WS/WS-S/NBI-S/NBI-R (tied) 1 |
+
+The three identifying contrasts under both cost definitions: median paired difference in
+the CORE-relative hypervolume ratio (second minus first), with W/T/L, ties being differences
+within $10^{-12}$; descriptive and untested. Under the leaf-count definition the values are
+those of the primary analysis; with its exact-zero tie rule Spambase HISTORICAL-WS
+$\rightarrow$ WS-S reads 16/7/7 rather than 16/8/6, one replication differing by
+$9.7 \times 10^{-15}$. Under measured time the geometry contrast stays positive on every
+dataset, smaller on Adult and Bank Marketing, and the anchor-provenance contrast changes
+sign on Adult.
+
+| dataset | contrast | leaf-count cost: median (W/T/L) | time cost: median (W/T/L) |
+|---|---|---:|---:|
+| MAGIC | HISTORICAL-WS $\rightarrow$ WS-S | +0.0000 (14/3/13) | -0.0000 (14/0/16) |
+| MAGIC | WS-S $\rightarrow$ NBI-S | +0.0374 (26/0/4) | +0.0555 (23/0/7) |
+| MAGIC | NBI-S $\rightarrow$ NBI-R | -0.0741 (2/0/28) | -0.0249 (7/0/23) |
+| Spambase | HISTORICAL-WS $\rightarrow$ WS-S | +0.0018 (16/8/6) | +0.0060 (15/6/9) |
+| Spambase | WS-S $\rightarrow$ NBI-S | +0.0500 (18/2/10) | +0.1875 (21/2/7) |
+| Spambase | NBI-S $\rightarrow$ NBI-R | -0.6932 (5/0/25) | -0.9574 (7/3/20) |
+| Adult | HISTORICAL-WS $\rightarrow$ WS-S | -0.0006 (9/4/17) | -0.0010 (13/2/15) |
+| Adult | WS-S $\rightarrow$ NBI-S | +0.2549 (30/0/0) | +0.1195 (22/0/8) |
+| Adult | NBI-S $\rightarrow$ NBI-R | -0.0192 (11/0/19) | +0.0696 (18/0/12) |
+| Bank Marketing | HISTORICAL-WS $\rightarrow$ WS-S | +0.0000 (8/8/14) | +0.0030 (16/4/10) |
+| Bank Marketing | WS-S $\rightarrow$ NBI-S | +0.2281 (24/0/6) | +0.0616 (19/1/10) |
+| Bank Marketing | NBI-S $\rightarrow$ NBI-R | -0.4093 (7/0/23) | -0.4004 (5/1/24) |
 
 ## S5. Panel screening and dataset roles
 
@@ -85,18 +328,35 @@ validation set and the rest are the same axial runs.
 | Bank Marketing | -0.4100 | 6 / 0.1983 | 0.8700 | 4355.5× | `primary_geometry_confirmatory` |
 
 Roles were assigned from these pre-campaign measurements and never revised from
-an optimizer outcome.
+an optimizer outcome. They were measured on one partition per dataset, the pilot
+Stage A partition (seed 20260913), whose design-row evaluations are also the fitting
+sample of the frozen factor models (S4.1); it is not one of the 30 confirmatory
+partitions. Spambase was retained as a boundary geometry control by a pre-campaign
+amendment adopted after its criterion-2 failure was known (amendment 22): the replacement
+rule frozen at protocol v1, before the pilot, required a dataset failing criterion 1 or 2
+to be replaced from the registry, and retaining Spambase departs from that rule.
+
+Every confirmatory replication evaluates the same 88 design rows on its own partition. The
+number of those rows that are non-dominated under the frozen objectives is summarized below
+as a post-campaign description; it changes no role.
+
+| dataset | non-dominated design rows, screening partition | confirmatory partitions: median | minimum | partitions with exactly two |
+|---|---:|---:|---:|---:|
+| MAGIC | 7 | 9 | 6 | 0 of 30 |
+| Spambase | 2 | 3 | 2 | 9 of 30 |
+| Adult | 6 | 6 | 4 | 0 of 30 |
+| Bank Marketing | 6 | 5 | 3 | 0 of 30 |
 
 ## S6. Method and control registry
 
 | identifier | kind | runner stage | standalone budget | revalidated | isolates |
 |---|---|---|---|---|---|
-| `HISTORICAL-WS-asrun` | arm | `historical_ws_asrun` | 108 | yes | the dissertation's pipeline reproduced bit-faithfully by calling the frozen v0.1.0-dissertation solver: maximization orientation, uncoded natural-unit surfaces, observed-extrema normalization, asymmetric 20-point grid with no pure-quality vertex, and no gate. Reproduced, not repaired. |
+| `HISTORICAL-WS-asrun` | arm | `historical_ws_asrun` | 108 | yes | the frozen v0.1.0-dissertation solver, called unmodified, with the archived maximization orientation, observed-extrema normalization and asymmetric grid with no pure-quality vertex (20 points at the solver's default step), and no gate; its uncoded natural-unit surfaces follow the archived specification but are fitted by this study's code to this study's objectives. Reproduced, not repaired. |
 | `HISTORICAL-WS` | arm | `historical_ws` | 186 | yes | the same weighted sum, solver, symmetric grid and surrogates as WS-S, differing ONLY in the normalization reference. WS-S to HISTORICAL-WS is therefore a single-factor contrast on normalization. |
 | `WS-S` | arm | `ws_s` | 186 | yes | weighted-sum scalarization over the surrogate payoff reference. The geometry baseline for the primary contrast. |
 | `NBI-S` | arm | `nbi_s` | 186 | yes | Normal Boundary Intersection on the same surrogates and the same surrogate reference as WS-S. WS-S to NBI-S isolates front-construction geometry. |
 | `NBI-R` | arm | `nbi_r` | 386 | yes | NBI with anchors and payoff matrix from direct search on the REAL objectives. NBI-S to NBI-R isolates anchor and payoff provenance. |
-| `ANCHOR-INJECTION-CONTROL` | control | `anchor_injection_control` | — | yes | NBI-S's own revalidated candidate set augmented with the same empirical anchors NBI-R receives, changing nothing else. Separates the part of any NBI-S to NBI-R gap that is set composition from the part that is relocated geometry. Costs no new real evaluations. |
+| `ANCHOR-INJECTION-CONTROL` | control | `anchor_injection_control` | — | yes | NBI-S's own revalidated candidate set augmented with the same empirical anchors NBI-R receives, changing nothing else. It measures the indicator gain from adding those anchors alone to NBI-S's set; it was frozen to separate the set-composition part of the NBI-S to NBI-R gap from the relocated-geometry part, a reading that holds only if NBI-R returns its own anchors. Costs no new real evaluations. |
 | `GRID` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, which is matched to the most expensive arm (NBI-R) and not pairwise to each arm |
 | `RANDOM` | baseline | `direct_baselines` | — | n/a | direct-search comparator at the frozen 386-evaluation comparator budget, matched to the most expensive arm and not pairwise to each arm |
 | `BAYES-QUALITY` | baseline | `direct_baselines` | — | n/a | single-objective Bayesian optimization on quality, at the frozen comparator budget; excluded from front indicators and from the AUGMENTED reference |
@@ -145,7 +405,7 @@ Of which 83 audit-only and 3,090 solution-producing.
 | unmatched NSGA-II, outside the unit | 15,360 |
 | **campaign total** | **396,120** |
 | of which audit-only | 9,960 |
-| unique physical fits | 377,316 |
+| unique physical evaluations | 377,316 |
 
 **The campaign total already contains the unmatched NSGA-II charge**, inside the
 four replication-0 ledgers. Adding it again gives 411,480 and is wrong.
@@ -159,11 +419,13 @@ four replication-0 ledgers. Adding it again gives 411,480 and is wrong.
 | WS-S | 186 |
 | NBI-S | 186 |
 | NBI-R | 386 |
-| each direct-search comparator | 386 |
+| each direct-search comparator except NSGA-II | 386 |
+| NSGA-II, matched (population 32, 12 generations) | 384 |
 
-The comparator budget is the **maximum over arms** (NBI-R). A direct-search
-comparator therefore receives about twice the real evaluations WS-S and NBI-S
-require standalone, and any comparison against them must say so.
+The comparator budget is the maximum over arms (NBI-R). NSGA-II's frozen population and
+generation count give 384 real evaluations, 2 fewer than that budget. A
+direct-search comparator therefore receives about twice the real evaluations WS-S and
+NBI-S require standalone, and any comparison against them must say so.
 
 ## S8. Randomness
 
@@ -200,9 +462,14 @@ All 3,840 campaign streams are distinct and stable across processes and
 | Spambase | WS-S -> NBI-S | +0.0500 | [-0.0043, +0.4369] | 18/2/10 | +0.41 | 0.1175 | 0.6550 |
 | Spambase | NBI-S -> NBI-R | -0.6932 | [-0.9839, -0.5217] | 5/0/25 | -0.78 | 0.0005664 | 0.2763 |
 
-The Nadeau–Bengio column is the pre-declared corrected resampled $t$, at an
-inflation of $\sqrt{8.5} = 2.9155$. It is a sensitivity, not the primary test,
-and is reported in full including where it is adverse to the finding.
+The Holm $p$ column is the secondary test: a two-sided Wilcoxon signed-rank test,
+Holm-adjusted within each dataset family (Spambase forms its own family). The
+descriptive triple on the CORE reference (median $\Delta$ with its 95% percentile
+bootstrap interval, W/T/L and rank-biserial) is the primary evidence; the AUGMENTED
+reference is a pre-declared sensitivity. The Nadeau–Bengio column is the pre-declared
+corrected resampled $t$, at an inflation of $\sqrt{8.5} = 2.9155$, not adjusted for
+multiplicity. It is a sensitivity, not the study's significance test, and is reported in
+full including where it is adverse to the finding.
 
 ### S9.2 AUGMENTED reference (mandatory sensitivity)
 
@@ -221,9 +488,30 @@ and is reported in full including where it is adverse to the finding.
 | Spambase | WS-S -> NBI-S | +0.0503 | [+0.0000, +0.2079] | 19/2/9 | +0.33 | 0.1283 | 0.6531 |
 | Spambase | NBI-S -> NBI-R | -0.3464 | [-0.4880, -0.2553] | 4/1/25 | -0.84 | 0.0002382 | 0.0658 |
 
-The Nadeau–Bengio column is the pre-declared corrected resampled $t$, at an
-inflation of $\sqrt{8.5} = 2.9155$. It is a sensitivity, not the primary test,
-and is reported in full including where it is adverse to the finding.
+The Holm $p$ column is the secondary test: a two-sided Wilcoxon signed-rank test,
+Holm-adjusted within each dataset family (Spambase forms its own family). The
+descriptive triple on the CORE reference (median $\Delta$ with its 95% percentile
+bootstrap interval, W/T/L and rank-biserial) is the primary evidence; the AUGMENTED
+reference is a pre-declared sensitivity. The Nadeau–Bengio column is the pre-declared
+corrected resampled $t$, at an inflation of $\sqrt{8.5} = 2.9155$, not adjusted for
+multiplicity. It is a sensitivity, not the study's significance test, and is reported in
+full including where it is adverse to the finding.
+
+Self-grading share of the AUGMENTED front, which the frozen protocol requires beside
+every AUGMENTED contrast; each contrast above compares two of the methods tabulated here.
+The share is the fraction of the AUGMENTED reference's non-dominated points contributed
+by the points a method is scored on (an arm's revalidated candidates, a comparator's
+evaluations), median over the 30 replications, from
+`analysis/indicators_long.csv`. A front point contributed by more than one method counts
+once for each of them. The anchor-injection control contributes no candidates of its own
+to the reference.
+
+| dataset | HISTORICAL-WS-asrun | HISTORICAL-WS | WS-S | NBI-S | NBI-R | GRID | RANDOM | NSGA2-MATCHED |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| MAGIC | 0.000 | 0.055 | 0.058 | 0.104 | 0.080 | 0.182 | 0.020 | 0.335 |
+| Spambase | 0.000 | 0.036 | 0.080 | 0.200 | 0.000 | 0.121 | 0.000 | 0.000 |
+| Adult | 0.000 | 0.070 | 0.069 | 0.135 | 0.132 | 0.212 | 0.000 | 0.180 |
+| Bank Marketing | 0.000 | 0.093 | 0.059 | 0.121 | 0.018 | 0.204 | 0.000 | 0.214 |
 
 ## S10. Secondary indicators
 
@@ -283,11 +571,33 @@ those units are excluded from spacing summaries rather than propagated.
 The gate is diagnostic, never adaptive: every arm ran at every replication
 whatever the gate said.
 
+Every primary contrast by composite-quality gate status, from
+`analysis/indicators_long.csv`: median paired difference (second minus first) in
+the CORE-relative hypervolume ratio, with W/T/L, descriptive and untested. The cost
+gate passed in every MAGIC and Spambase replication, so these are also the strata of
+the joint gate. No Adult or Bank Marketing replication passed, so for those datasets
+the failing stratum is the whole sample of S9.1; n/a marks an empty stratum.
+
+| dataset | contrast | gate passed: n, median difference, W/T/L | gate failed: n, median difference, W/T/L |
+|---|---|---|---|
+| MAGIC | HISTORICAL-WS -> WS-S | 8, -0.0031, 2/1/5 | 22, +0.0018, 12/2/8 |
+| MAGIC | WS-S -> NBI-S | 8, +0.1173, 8/0/0 | 22, +0.0165, 18/0/4 |
+| MAGIC | NBI-S -> NBI-R | 8, -0.0577, 1/0/7 | 22, -0.0901, 1/0/21 |
+| Spambase (boundary) | HISTORICAL-WS -> WS-S | 9, +0.0000, 3/4/2 | 21, +0.0173, 13/3/5 |
+| Spambase (boundary) | WS-S -> NBI-S | 9, +0.0000, 4/1/4 | 21, +0.0641, 14/1/6 |
+| Spambase (boundary) | NBI-S -> NBI-R | 9, -0.5238, 3/0/6 | 21, -0.8770, 2/0/19 |
+| Adult | HISTORICAL-WS -> WS-S | 0, n/a, n/a | 30, -0.0006, 9/4/17 |
+| Adult | WS-S -> NBI-S | 0, n/a, n/a | 30, +0.2549, 30/0/0 |
+| Adult | NBI-S -> NBI-R | 0, n/a, n/a | 30, -0.0192, 11/0/19 |
+| Bank Marketing | HISTORICAL-WS -> WS-S | 0, n/a, n/a | 30, +0.0000, 8/8/14 |
+| Bank Marketing | WS-S -> NBI-S | 0, n/a, n/a | 30, +0.2281, 24/0/6 |
+| Bank Marketing | NBI-S -> NBI-R | 0, n/a, n/a | 30, -0.4093, 7/0/23 |
+
 ## S12. Controls
 
 ### S12.1 Anchor-injection control
 
-| dataset | injection effect | full NBI-S→NBI-R gap | CHIM extent ratio |
+| dataset | injection effect | full NBI-S→NBI-R gap | CHIM extent ratio (post hoc) |
 |---|---:|---:|---:|
 | MAGIC | +0.0133 | -0.0741 | 0.811 |
 | Spambase | +0.0000 | -0.6932 | 0.370 |
@@ -295,25 +605,33 @@ whatever the gate said.
 | Bank Marketing | +0.0000 | -0.4093 | 0.272 |
 
 The control set is a superset of NBI-S's, so its effect is non-negative by
-construction. Within-dataset Spearman between the per-replication CHIM extent
-ratio and the hypervolume gap: MAGIC -0.11, Spambase +0.32, Adult +0.68, Bank Marketing +0.68. Association, not cause, and absent on MAGIC.
+construction. The CHIM extent ratio is post hoc: it was first computed after the
+confirmatory results, from the recorded payoff matrices, and is not part of the frozen
+protocol. Within-dataset Spearman between the per-replication CHIM extent ratio and the
+hypervolume gap: MAGIC -0.11, Spambase +0.32, Adult +0.68, Bank Marketing +0.68. A post hoc association, not a cause: clear on Adult and Bank Marketing, weak on
+Spambase and absent on MAGIC.
 
 ### S12.2 Solver health, NBI-S against NBI-R
 
-| dataset | certified (S/R) | max equality residual (S/R) | distinct configs (S/R) |
-|---|---|---|---|
-| MAGIC | 1.000 / 1.000 | 8.6e-10 / 9.3e-10 | 20 / 20 |
-| Spambase | 1.000 / 1.000 | 5.9e-10 / 5.8e-10 | 20 / 20 |
-| Adult | 1.000 / 1.000 | 4.4e-10 / 5.6e-10 | 20 / 20 |
-| Bank Marketing | 1.000 / 1.000 | 6.1e-10 / 6.8e-10 | 20 / 20 |
+| dataset | certified (S/R) | max equality residual (S/R) | max rounding displacement (S/R) | distinct configs (S/R) |
+|---|---|---|---|---|
+| MAGIC | 1.000 / 1.000 | 8.6e-10 / 9.3e-10 | 2.8e-02 / 5.2e-03 | 20 / 20 |
+| Spambase | 1.000 / 1.000 | 5.9e-10 / 5.8e-10 | 1.7e-03 / 1.7e-12 | 20 / 20 |
+| Adult | 1.000 / 1.000 | 4.4e-10 / 5.6e-10 | 2.7e-02 / 8.3e-04 | 20 / 20 |
+| Bank Marketing | 1.000 / 1.000 | 6.1e-10 / 6.8e-10 | 8.2e-03 / 9.5e-04 | 20 / 20 |
 
 Solver behaviour was comparable between `NBI-S` and `NBI-R` and does not explain
 the deficit. Across the 240 arm-units the certified fraction had median 1.000,
 with two exceptions at 0.900 and 0.950; the per-unit maximum equality residual had
 median 6.6e-10, against a campaign maximum of 6.9e-1 on a single MAGIC `NBI-S`
-unit; and both arms returned 20 distinct realized configurations in every unit.
+unit; and both arms returned 20 distinct realized configurations in 239 of the
+240 arm-units, with 19 in that same MAGIC `NBI-S` unit. The table entries are
+per-dataset medians of per-unit values; the rounding-displacement column is, per unit,
+the largest objective displacement induced by rounding on the fitted surfaces.
 Solver behaviour is therefore comparable, but not identical, and the deficit is
-not solver failure, rounding or candidate collapse.
+not solver failure or candidate collapse. The protocol's fixed-integer re-solve was not
+implemented (Section 8.7), so the rounded points actually evaluated carry no equality
+certificate.
 
 ### S12.3 Historical reconstruction
 
@@ -334,8 +652,67 @@ not solver failure, rounding or candidate collapse.
 | Bank Marketing | 1.0625 | 0.3190 | 0.9674 | 0.6010 | 0.9979 | 10/30 |
 
 The unmatched NSGA-II run receives ten times the matched budget on one
-replication per dataset and is a **context baseline**: no fairness claim attaches
+replication per dataset and is a context baseline: no fairness claim attaches
 to it and it enters no budget-matched comparison and neither reference.
+
+### S13.1 Single-objective Bayesian-optimization and TPE runs
+
+Declared in the frozen protocol (section 3): the four single-objective runs produce
+single-objective optima, not fronts, so they are reported on their own endpoints only,
+labelled as single-objective runs, and enter neither the front-indicator tables nor either
+reference. Computed after the campaign from stored outputs by
+`scripts/single_objective_endpoints.py`. Each run used the comparator budget of 386 real
+evaluations per replication. The endpoint is the best value of the run's own objective
+($f_{\text{quality}}$ or $f_{\text{cost}}$, both minimized) among its real evaluations.
+For context only, the last column gives the median best value of the same objective in
+each replication's CORE reference (88 design rows and 200 anchor-search rows), to which no
+compared method contributes; that comparison was not
+pre-specified, is descriptive and carries no test.
+
+| dataset | run | objective | best value: median (interquartile range) | CORE best value: median |
+|---|---|---|---:|---:|
+| MAGIC | BAYES-QUALITY | $f_{\text{quality}}$ | -0.810 (-0.826 to -0.798) | -0.735 |
+| MAGIC | BAYES-COST | $f_{\text{cost}}$ | -1.800 (-1.847 to -1.785) | -2.052 |
+| MAGIC | TPE-QUALITY | $f_{\text{quality}}$ | -0.805 (-0.822 to -0.791) | -0.735 |
+| MAGIC | TPE-COST | $f_{\text{cost}}$ | -1.794 (-1.850 to -1.751) | -2.052 |
+| Spambase | BAYES-QUALITY | $f_{\text{quality}}$ | -0.855 (-0.872 to -0.819) | -0.845 |
+| Spambase | BAYES-COST | $f_{\text{cost}}$ | -2.586 (-2.710 to -2.363) | -3.028 |
+| Spambase | TPE-QUALITY | $f_{\text{quality}}$ | -0.816 (-0.848 to -0.768) | -0.845 |
+| Spambase | TPE-COST | $f_{\text{cost}}$ | -2.310 (-2.515 to -2.170) | -3.028 |
+| Adult | BAYES-QUALITY | $f_{\text{quality}}$ | -0.707 (-0.712 to -0.700) | -0.683 |
+| Adult | BAYES-COST | $f_{\text{cost}}$ | -2.237 (-2.310 to -2.188) | -2.387 |
+| Adult | TPE-QUALITY | $f_{\text{quality}}$ | -0.706 (-0.713 to -0.700) | -0.683 |
+| Adult | TPE-COST | $f_{\text{cost}}$ | -2.163 (-2.238 to -2.010) | -2.387 |
+| Bank Marketing | BAYES-QUALITY | $f_{\text{quality}}$ | -0.930 (-0.946 to -0.910) | -0.887 |
+| Bank Marketing | BAYES-COST | $f_{\text{cost}}$ | -2.583 (-2.639 to -2.457) | -2.516 |
+| Bank Marketing | TPE-QUALITY | $f_{\text{quality}}$ | -0.919 (-0.934 to -0.909) | -0.887 |
+| Bank Marketing | TPE-COST | $f_{\text{cost}}$ | -2.402 (-2.530 to -2.207) | -2.516 |
+
+### S13.2 Unmatched NSGA-II run
+
+Declared in `protocol/NSGA2_DECISION.md` (section 5): the unmatched run, ten times the
+matched budget on one replication per dataset, asks only whether a weak matched result is
+explained by budget starvation. It is not an efficiency comparison, no claim about any arm
+is made relative to it, and it is reported in its own table with the generation count
+stated. Computed after the campaign from stored outputs by `scripts/nsga2_unmatched_table.py`,
+which scores the stored rows of the run against that replication's CORE reference with the
+frozen indicator code.
+
+| dataset | replication | real evaluations | population | generations | CORE-relative HV ratio, unmatched | matched NSGA-II, same replication | non-dominated rows (distinct points) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| MAGIC | 0 | 3,840 | 32 | 120 | 1.0269 | 0.9357 | 186 (105) |
+| Spambase | 0 | 3,840 | 32 | 120 | 6.4459 | 0.0937 | 1091 (403) |
+| Adult | 0 | 3,840 | 32 | 120 | 1.4053 | 0.8060 | 176 (108) |
+| Bank Marketing | 0 | 3,840 | 32 | 120 | 2.0001 | 0.7862 | 177 (72) |
+
+The unmatched budget is ten times the realized matched budget, 3,840 real evaluations
+(ten times 384), as fixed in `protocol/NSGA2_DECISION.md` (section 5) and executed by the
+runner; the protocol's general section states 3,860 (ten times 386). Non-dominated rows
+count every non-dominated stored row, so repeated configurations of the converged
+population are counted separately; the distinct points are in parentheses. Spambase's CORE
+front has only three points in this replication, so its normalization box is narrow and
+the hypervolume ratio is unbounded above (S15); its magnitude is not comparable with the
+other datasets'.
 
 ## S14. Holdout confirmation
 
@@ -385,14 +762,15 @@ improved on that finite reference.
 The manuscript's headline numerical claims, each with its estimand, source
 artifact, verification status, allowed wording and prohibited stronger wording,
 are in `CONFIRMATORY_CLAIMS_AND_EVIDENCE.md`. Two are recorded in corrected form
-because independent verification refuted the author's version.
+because a post-campaign recomputation from the raw unit artifacts refuted the
+author's version.
 
 ## S17. Reproducibility manifest
 
 | item | value |
 |---|---|
 | manuscript source commit | `eeac042339b671b882a4c47d0fac2665f9e169e3` |
-| final package tag | `paper2-manuscript-v5` |
+| final package tag | `paper2-manuscript-v6` |
 | relationship | the package commit adds only this provenance metadata and the compiled PDFs; no manuscript text, analysis artifact or number differs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |

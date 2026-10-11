@@ -29,6 +29,7 @@ A = PAPER / "analysis"
 
 # Structural constants of the design, not results. Each is checkable in the protocol.
 ALLOWED_STRUCTURAL = {
+    "512",  # candidate draws per BO/TPE step: src/doe_xgb/campaign/baselines.py:102 and :112
     # design and panel
     "88", "78", "166", "288", "200", "120", "30", "20", "7", "4", "3", "2", "1", "0",
     "64", "14", "10", "5", "6", "8", "9", "12", "15", "16", "18", "19", "21", "22",
