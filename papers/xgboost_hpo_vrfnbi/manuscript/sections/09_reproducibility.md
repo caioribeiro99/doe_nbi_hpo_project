@@ -65,7 +65,7 @@ The campaign is driven by `scripts/xgb_hpo_campaign.py` (`plan`, `dry-run`, `run
 `build_claims_map.py`, which reads every headline figure from a committed artifact at generation
 time. Audit artifacts rebuild under `--check`, comparing against the committed versions without
 writing. Parts of the campaign, analysis and audit code were written with AI coding assistance,
-recorded as co-authorship in the commit history (Anthropic's Claude: Claude Opus 4.7 and
+recorded as co-authorship in the commit history (Anthropic Claude: Claude Opus 4.7 and
 Claude Opus 5, used through Claude Code, named as co-author on all 66 commits made for this
 study to its code, analysis scripts and tests).
 

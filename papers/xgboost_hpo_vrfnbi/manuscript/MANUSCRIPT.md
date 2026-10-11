@@ -1780,7 +1780,7 @@ The campaign is driven by `scripts/xgb_hpo_campaign.py` (`plan`, `dry-run`, `run
 `build_claims_map.py`, which reads every headline figure from a committed artifact at generation
 time. Audit artifacts rebuild under `--check`, comparing against the committed versions without
 writing. Parts of the campaign, analysis and audit code were written with AI coding assistance,
-recorded as co-authorship in the commit history (Anthropic's Claude: Claude Opus 4.7 and
+recorded as co-authorship in the commit history (Anthropic Claude: Claude Opus 4.7 and
 Claude Opus 5, used through Claude Code, named as co-author on all 66 commits made for this
 study to its code, analysis scripts and tests).
 
@@ -1912,7 +1912,7 @@ be represented, and no author is credited with a contribution the work did not i
 
 ## Declaration of generative AI and AI-assisted technologies in the manuscript preparation process
 
-During the preparation of this work, the authors used Anthropic's Claude (Claude Opus 4.7 and Claude Opus 5, through Claude Code) and OpenAI's ChatGPT in order to assist with manuscript drafting, restructuring, language refinement, consistency checking and editorial review; the collation and checking of references; writing and revising the research and analysis code; and the pre-campaign adversarial reviews of the protocol and the post-campaign verification of the results. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
+During the preparation of this work, the authors used Anthropic Claude (Claude Opus 4.7 and Claude Opus 5, through Claude Code) and OpenAI ChatGPT in order to assist with manuscript drafting, restructuring, language refinement, consistency checking and editorial review; the collation and checking of references; writing and revising the research and analysis code; and the pre-campaign adversarial reviews of the protocol and the post-campaign verification of the results. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
 
 The study's computational methods are described in Section 5, and every reported result derives from the committed, version-controlled artifacts listed in Section 9.
 

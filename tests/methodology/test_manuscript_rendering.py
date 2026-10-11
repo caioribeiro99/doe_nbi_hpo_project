@@ -27,6 +27,7 @@ SOURCES = ("MANUSCRIPT.md", "SUPPLEMENT.md")
 # set renders as an error box in the PDF, which a text-level check cannot see.
 SUPPORTED = {
     r"\Phi", r"\Lambda", r"\alpha", r"\beta", r"\lambda", r"\rho", r"\sigma", r"\mu",
+    r"\Delta", r"\ell", r"\nu", r"\tag",  # MathJax 3 base and ams packages (revision R1)
     r"\epsilon", r"\phi", r"\top", r"\times", r"\cdot", r"\pm", r"\sum", r"\sqrt",
     r"\frac", r"\max", r"\min", r"\log", r"\ge", r"\geq", r"\le", r"\leq", r"\neq",
     r"\approx", r"\to", r"\rightarrow", r"\leftarrow", r"\in", r"\hat", r"\bar",

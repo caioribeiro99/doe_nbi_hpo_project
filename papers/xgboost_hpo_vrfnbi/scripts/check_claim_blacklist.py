@@ -123,6 +123,25 @@ BLACKLIST: list[tuple[int, str, str]] = [
          r"\b(?:fails?|failed|not\s+met)\b",
      "a gate outcome becomes a finding of this study only after the confirmatory "
      "campaign; before it, gate outcomes are screening evidence"),
+    # Revision R1 (coauthor review, 2026-10-11): wording the corrected manuscript retires.
+    (30, r"\bdirect[\s-]+search\s+(?:methods?\s+)?led\b",
+     "the paired-median lead belongs to the coarse grid, not to direct search as a class"),
+    (30, r"\bpays?\s+for\s+itself\b",
+     "no efficiency claim: the grid received 386 real evaluations against 186"),
+    (30, r"\bbefore\s+any\s+(?:comparative\s+)?results?\s+existed\b",
+     "the protocol was frozen before the confirmatory campaign, after pilots and a smoke unit"),
+    (30, r"\bprospectively\s+identified\b",
+     "Spambase's role was assigned before the confirmatory campaign, after its screening"),
+    (30, r"\bgeometry-positive\b",
+     "undefined label; write 'the three datasets that passed the pre-campaign front-geometry screen'"),
+    (30, r"\bbit-faithful\w*\b",
+     "the archived solver is called unmodified with surfaces fitted by this study's code"),
+    (30, r"\bindependent\s+verifier\b",
+     "the verification passes were run with the AI assistance stated in the declaration"),
+    (30, r"\breported\s+with\s+intervals\b",
+     "the declared intervals of the secondary indicators are not tabulated (Section 8.7)"),
+    (30, r"\bevaluation-matched\b",
+     "the companion study's NSGA-II baseline was not evaluation-matched"),
 ]
 
 
@@ -203,9 +222,26 @@ def main() -> int:
         raw = raw.replace(k, v)
     text = re.sub(r"\s+", " ", raw)
 
+    # Items of the R1 revision (30) bind the manuscript and package surfaces only. The frozen
+    # protocol and the dated workspace records predate the corrections and are corrected by
+    # dated errata instead of edits; they also use some of these words legitimately (the
+    # dissertation's own fairness rule is "evaluation-matched").
+    R1_SCOPE = ("manuscript/", "submission/", "CONFIRMATORY_CLAIMS_AND_EVIDENCE.md")
+    markers = [(m.start(), m.group(1)) for m in re.finditer(r"<<<FILE (\S+)>>>", text)]
+
+    def file_at(pos: int) -> str:
+        name = ""
+        for start, f in markers:
+            if start > pos:
+                break
+            name = f
+        return name
+
     hits = []
     for item, pattern, why in BLACKLIST:
         for m in re.finditer(pattern, text, re.I):
+            if item == 30 and markers and not file_at(m.start()).startswith(R1_SCOPE):
+                continue
             ctx = text[max(0, m.start() - 100):m.end() + 100]
             run_up = text[max(0, m.start() - 60):m.start()]
             if HEDGE.search(run_up):

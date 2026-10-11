@@ -11,6 +11,7 @@ re-run by tests/methodology/test_asoc_package.py, not taken on trust from this c
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import subprocess
 import sys
@@ -19,6 +20,10 @@ REPO = pathlib.Path(__file__).resolve().parents[3]
 PAPER = "papers/xgboost_hpo_vrfnbi"
 TAG = "paper2-manuscript-v6"     # the revision tag; keep tests/methodology/test_asoc_package.py:20 in step
 OUT = REPO / PAPER / "submission"
+# Release builds read the manuscript at TAG. Until that tag exists (it is created only after author
+# sign-off), a DRAFT package can be generated from another committed ref, normally the revision
+# branch head, by setting ASOC_PACKAGE_SOURCE_REF; the manifest then says so and names the commit.
+SOURCE_REF = os.environ.get("ASOC_PACKAGE_SOURCE_REF", TAG)
 
 MARK = "**AUTHOR INPUT REQUIRED**"
 CONFIRM = "**AUTHOR CONFIRMATION REQUIRED**"
@@ -113,7 +118,7 @@ HIGHLIGHTS = [
 
 
 def at_tag(rel: str) -> str:
-    return subprocess.run(["git", "show", f"{TAG}:{PAPER}/{rel}"], cwd=REPO,
+    return subprocess.run(["git", "show", f"{SOURCE_REF}:{PAPER}/{rel}"], cwd=REPO,
                           capture_output=True, text=True, check=True).stdout
 
 
@@ -347,6 +352,11 @@ Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
               "with a separate figure-captions file; supplement as supplementary material; graphical "
               "abstract, highlights, title page, vitae and cover letter as separate files. The "
               "manuscript PDF is a review copy only.")
+    if SOURCE_REF != TAG:
+        sha = subprocess.run(["git", "rev-parse", "--short=12", SOURCE_REF], cwd=REPO,
+                             capture_output=True, text=True, check=True).stdout.strip()
+        mf.append(f"\n**DRAFT**: generated from commit `{sha}` ({SOURCE_REF}), not from `{TAG}`, which does "
+                  "not exist yet; regenerate from the tag before upload.")
     if missing:
         mf.append("\n**NOT READY FOR UPLOAD**: missing " + "; ".join(missing) + ".")
     (OUT / "ASOC_PACKAGE_MANIFEST.md").write_text("\n".join(mf))
