@@ -56,7 +56,7 @@ and none is visible in the aggregate fit statistics such studies conventionally 
 
 We decompose the framework. Because the ensemble output is linear in the weights and base-model probabilities can be
 cached, evaluating a weight vector on the true objectives costs one matrix--vector product ($0.4$ to
-$2.1$~milliseconds here) --- cheap enough to run the \emph{same} NBI three times per replication, changing only where
+$2.1$~milliseconds here), cheap enough to run the \emph{same} NBI three times per replication, changing only where
 objectives and anchors come from.
 
 \begin{itemize}
@@ -64,13 +64,13 @@ objectives and anchors come from.
 our control.
 \item \textbf{NBI-B} optimizes the same surfaces with anchors from the real single-objective optima; A versus B
 isolates \emph{anchor misplacement}.
-\item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives --- a
+\item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives: a
 metamodel-free NBI in the published sense of \citet{gellerich2023doenbi}, whose subproblems are physical experiments;
 B versus C isolates residual \emph{interior surrogate error}.
 \end{itemize}
 
 All three arms fit their surfaces once from a fixed design and then optimize. This is the \emph{sequential} form of
-surrogate-assisted optimization \citep{tabatabaei2015survey} --- one-shot, with no infill --- and it is the form the
+surrogate-assisted optimization \citep{tabatabaei2015survey}: one-shot, with no infill. It is the form the
 lineage above uses; nothing here tests model-managed, infill-based surrogate-assisted optimizers such as ParEGO,
 MOEA/D-EGO or SMS-EGO \citep{knowles2006parego,zhang2010moeadego,ponweiser2008smsego}, which evaluate new points on
 the true objectives inside the search loop and exist precisely to repair the kind of surrogate error diagnosed here.
@@ -83,8 +83,8 @@ true objectives before any indicator; an empirical Pareto reference whose sample
 replication contains no output of the compared methods and is checked for convergence, then augmented with every
 candidate set for scoring; and an untouched holdout never used for fitting, weighting, thresholding or selection.
 
-Four public binary tabular datasets --- customer-transaction prediction (Santander), insurance-claim processing (BNP
-Paribas Cardif), auto-insurance claim prediction (Porto Seguro) and consumer-credit default (UCI credit) --- are
+Four public binary tabular datasets, namely customer-transaction prediction (Santander), insurance-claim processing (BNP
+Paribas Cardif), auto-insurance claim prediction (Porto Seguro) and consumer-credit default (UCI credit), are
 partitioned 30 times each, giving 120 replications with recorded seeds. The four prediction tasks differ, but all four
 come from financial-services applications, so any cross-dataset statement is made within a single application domain.
 Because partitions of one dataset overlap heavily, we treat the replication distribution as partition sensitivity, not

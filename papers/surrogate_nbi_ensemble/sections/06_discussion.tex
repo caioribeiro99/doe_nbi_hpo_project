@@ -61,10 +61,10 @@ diagnosing it.
 
 Two of the three objectives behave as the framework's engineering origins assume: log-loss is convex and smooth in
 $\wvec$, and the Brier score is exactly quadratic in $\wvec$, so its surface reproduces it at $\rext = 1.000$ in all
-120 replications --- an algebraic identity that checks the fitting code, not evidence about adequacy. The ROC-AUC is
+120 replications, an algebraic identity that checks the fitting code, not evidence about adequacy. The ROC-AUC is
 not: a rank statistic, constant wherever the induced ordering does not change and kinked between orderings, which a
 low-order polynomial smooths across instead of representing. Hence the Santander ROC-AUC surface reaches a Spearman
-correlation of $0.830$ with a negative external $R^2$ --- ordering broadly right, values wrong.
+correlation of $0.830$ with a negative external $R^2$: ordering broadly right, values wrong.
 
 For the leading pair on three of the four datasets, the resulting bias is over-prediction
 (\cref{sec:results:coefficients}): a quadratic fitted over an edge with one weak endpoint absorbs that curvature into
@@ -134,7 +134,7 @@ several paired conclusions reverse, including the anchor effect on UCI credit.
 
 The mechanism is that a linear cost gives no incentive to zero a component: a weight of $0.01$ on a model costing
 $200$~ms adds $2$~ms under the relaxation and $200$~ms in deployment. Methods optimizing the relaxation drift into the
-interior and miss the cheap low-support solutions --- pure vertices and two-model faces --- that the unoptimized
+interior and miss the cheap low-support solutions (pure vertices and two-model faces) that the unoptimized
 66-run design contains by construction.
 
 Whether a relaxation and the support it induces agree has been examined in one related setting, and the answer went
@@ -150,7 +150,7 @@ real objective.
 
 Smoothness of the response in the mixture components is not enough for the pipeline to transfer: on these four
 datasets surface adequacy had to be measured on unseen compositions, not identified in advance (\cref{sec:disc:smooth}).
-Where the ROC-AUC surface is adequate too --- UCI credit, which passes in $30/30$ --- the cheap route is competitive:
+Where the ROC-AUC surface is adequate too (UCI credit, which passes in $30/30$), the cheap route is competitive:
 random scalarization on those externally validated surfaces is statistically indistinguishable from the
 metamodel-free arm (mean $\Delta\hv = +0.0015$ with bootstrap interval $[-0.003, 0.007]$, better in $16/30$;
 indicator levels in supplementary Section~S4). Surrogate-assisted NBI with real anchors is not, but that

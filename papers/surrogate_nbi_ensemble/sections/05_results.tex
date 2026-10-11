@@ -5,7 +5,7 @@ Results are organized by research question, with per-claim provenance in the sup
 the weighted cost of \cref{eq:weightedcost} unless stated otherwise.
 
 One fact frames the rest: weighting helps, but modestly. The log-loss optimum improves out-of-fold ROC-AUC over the
-best single model by $0.0037$, $0.0056$, $0.0060$ and $0.0007$ --- one to two orders of magnitude more than the
+best single model by $0.0037$, $0.0056$, $0.0060$ and $0.0007$, one to two orders of magnitude more than the
 differences between the multiobjective methods studied here.
 
 \subsection{RQ1: Accuracy of the Scheff\'e surfaces}
@@ -26,9 +26,9 @@ Within Santander the two responses fall on opposite sides of the gate.}
 Surrogate adequacy depends on dataset and response alike (\cref{tab:gate}, \cref{fig:gate}). The ROC-AUC surface
 passes the gate in $0/30$ partitions on Santander, $5/30$ on BNP Paribas, $16/30$ on Porto Seguro and $30/30$ on UCI
 credit; the log-loss surface passes in $30/30$, $3/30$, $12/30$ and $30/30$. Santander is sharpest: on the same
-partition its log-loss surface is essentially exact while its ROC-AUC surface has \emph{negative} external $\rext$ ---
-worse than predicting the mean --- even though its external rank correlation is a respectable $0.830$. Porto Seguro
-sits on the threshold for both responses and 30 partitions do not resolve it either way --- a property of the problem,
+partition its log-loss surface is essentially exact while its ROC-AUC surface has \emph{negative} external $\rext$
+(worse than predicting the mean) even though its external rank correlation is a respectable $0.830$. Porto Seguro
+sits on the threshold for both responses and 30 partitions do not resolve it either way: a property of the problem,
 not a sample-size deficiency.
 
 The failures are misspecification, not extrapolation: the design contains all five vertices, so every validation
@@ -232,7 +232,7 @@ contains no output of the compared methods, the $\igdp$ comparison reverses (NBI
 hypervolume direction is
 unchanged ($24/30$) (supplementary Section~S5). We therefore withdraw the earlier reading of this as a genuine
 hypervolume/$\igdp$ trade-off between the arms and record it as reference-dependent. The large UCI credit gap is not a
-surrogate-accuracy effect --- those surfaces pass the gate in every partition --- but a convergence effect of NBI-B,
+surrogate-accuracy effect (those surfaces pass the gate in every partition) but a convergence effect of NBI-B,
 which certifies a median of 29 of its 66 subproblems while indicators use converged candidates only; retaining its
 unconverged iterates preserves the direction ($30/30$) but cuts the mean gap from $+0.277$ to $+0.108$ (supplementary
 Section~S7). Neither observation supports a claim that interior surrogate error dominates once anchors are right.
@@ -321,8 +321,8 @@ contributes nothing, is reported alongside; it gives the same answer.
 
 This also settles what the surrogate-only comparison could not: whether NBI's lost spacing advantage reflects the
 objective geometry or the CHIM construction. NSGA-II's crowding-distance selection produces markedly more evenly
-spaced revalidated fronts on every dataset --- median spacing coefficient of variation $0.74$, $0.62$, $0.60$ and
-$0.65$ against NBI-C's $2.28$, $0.88$, $1.56$ and $1.92$ --- so even spacing here is attainable and CHIM-based
+spaced revalidated fronts on every dataset (median spacing coefficient of variation $0.74$, $0.62$, $0.60$ and
+$0.65$ against NBI-C's $2.28$, $0.88$, $1.56$ and $1.92$), so even spacing here is attainable and CHIM-based
 construction does not deliver it. Scored post hoc under the support cost, which NSGA-II never optimized, the advantage
 largely transfers (supplementary Section~S13), most strongly on BNP Paribas; the one reversal is Santander $\igdp$, where
 NBI-C is marginally closer in 17 of 30 partitions.
@@ -339,7 +339,7 @@ leads at an equal number of weight-vector evaluations was not tested.
 \label{sec:results:conflict}
 
 In objective space the conflict between discrimination and calibration is almost degenerate: the direct ROC-AUC
-optimum exceeds the SLSQP log-loss optimum by $0.00068$, $0.00080$, $0.00006$ and $0.00034$ ROC-AUC --- 5 to 100 times
+optimum exceeds the SLSQP log-loss optimum by $0.00068$, $0.00080$, $0.00006$ and $0.00034$ ROC-AUC, 5 to 100 times
 less than the gain from ensembling at all. Two qualifications prevent the stronger statement that the problems are the
 same: the optima differ in weight space, the Porto Seguro pair practically coinciding (supplementary Section~S9), and
 Santander pays $0.0032$ of log-loss for its $0.00068$ of ROC-AUC, so the practitioner gets a different \emph{model}
@@ -375,7 +375,7 @@ step cost when the normalization box's cost range excludes the $k$-nearest-neigh
 BNP Paribas partitions whose support-cost box is narrow (supplementary Section~S9).
 
 One earlier reading did not survive scrutiny and we correct it here: the apparent bimodality of NBI-C's BNP Paribas
-support hypervolume is a per-replication normalization artifact, not a regime --- the normalization box rescales the
+support hypervolume is a per-replication normalization artifact, not a regime. The normalization box rescales the
 cost axis tenfold between two groups of partitions, NBI-C's fronts are the same in both, and under a common bound the
 split disappears (supplementary Section~S9). We therefore claim only the qualitative statement: NBI sets optimized on
 the linear cost omit the cheapest supports the raw design contains, and the penalty's size depends on the chosen cost
@@ -393,8 +393,8 @@ partitions on Santander, $15/30$ on BNP Paribas, $23/30$ on Porto Seguro and $30
 added partitions reproduce this pattern (supplementary Section~S10). The BNP Paribas figure measures how close the
 four candidates are, not a failure of selection: their median out-of-fold gap is $0.0005$ against a holdout noise
 standard deviation of about $0.0012$, and when the two disagree the holdout regret is at most $0.0022$ ROC-AUC. These
-rates are specific to the selection rule and cost definition --- under the support cost they become $28$, $28$, $17$
-and $16$ of 30 --- and are not dataset properties.
+rates are specific to the selection rule and cost definition (under the support cost they become $28$, $28$, $17$
+and $16$ of 30) and are not dataset properties.
 
 \subsection{RQ9: Did the first ten replications suffice?}
 \label{sec:results:r30}

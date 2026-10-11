@@ -63,8 +63,8 @@ inner fold assignment, the model random states, the Dirichlet validation composi
 the direct AUC search ($+3000$, $+4000$), the empirical reference ($+5000$ onwards), the comparators ($+12000$),
 quality scoring ($+13000$) and NSGA-II ($+770000$). The seed policy, the full seed map, the configuration history and the resolved library
 versions are in \texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak manifests/\allowbreak benchmark\_manifest.json}; per-dataset
-provenance --- source, acquisition command, the expected row, feature and positive-class-prevalence values, and the
-SHA-256 checksum of the file actually used --- is in the corresponding
+provenance (source, acquisition command, the expected row, feature and positive-class-prevalence values, and the
+SHA-256 checksum of the file actually used) is in the corresponding
 \texttt{*\_dataset\_manifest.json}.
 
 The statistical analysis plan is \texttt{STATISTICAL\_ANALYSIS\_R30.md}, first committed in \texttt{cf462b4} after
@@ -352,7 +352,7 @@ single-objective holdout accuracy at the selected point: Santander NBI-B minus N
 better in 15 of 30 partitions, with holdout log-loss worse in 16 of 30; UCI credit NBI-C minus NBI-B is $-0.0119$,
 better in 6 of 30, with log-loss worse in 24 of 30. Both selected points are also materially cheaper, by $0.97$ and
 $2.84$~ms per 1{,}000 rows. The two contrasts in which the selected point does improve are BNP Paribas NBI-B minus
-NBI-A ($+0.0029$, better in 28 of 30) and Santander NBI-C minus NBI-B ($+0.0016$, better in 26 of 30) --- the
+NBI-A ($+0.0029$, better in 28 of 30) and Santander NBI-C minus NBI-B ($+0.0016$, better in 26 of 30), the
 contrasts with the smaller indicator effects.
 
 \paragraph{How much there is to win at all.} The gain of the log-loss optimum over the best single model on the
