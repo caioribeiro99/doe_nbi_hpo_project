@@ -6,8 +6,11 @@ sources drift apart. This rebuilds it from one command so the tagged submission 
 the repository agree by construction.
 
 Produces, under submission_eaai/:
-    manuscript.pdf              compiled main text
+    manuscript.pdf              compiled main text (elsarticle, identified)
+    manuscript_anonymized.pdf   the same text for double-anonymized review (author details on title_page.pdf)
+    title_page.pdf              title page: authors, affiliations, ORCID iDs, funding, acknowledgements
     supplementary.pdf           compiled supplementary material
+    supplementary_anonymized.pdf  the supplement without the author line
     main.tex, sections/, tables/, figures/, references.bib
     supplementary/              supplementary source tree
     highlights.txt, cover_letter.md and the editorial declarations
@@ -73,16 +76,27 @@ def main() -> int:
 
     if not args.skip_compile:
         main_pdf = compile_pdf(HERE / "main.tex")
+        anon_pdf = compile_pdf(HERE / "main_anonymized.tex")
+        title_pdf = compile_pdf(HERE / "title_page.tex")
         supp_pdf = compile_pdf(HERE / "supplementary" / "supplementary.tex")
+        supp_anon_pdf = compile_pdf(HERE / "supplementary" / "supplementary_anonymized.tex")
     else:
         main_pdf, supp_pdf = BUILD / "main.pdf", BUILD / "supplementary.pdf"
+        anon_pdf, title_pdf = BUILD / "main_anonymized.pdf", BUILD / "title_page.pdf"
+        supp_anon_pdf = BUILD / "supplementary_anonymized.pdf"
 
     shutil.copy2(main_pdf, OUT / "manuscript.pdf")
     shutil.copy2(supp_pdf, OUT / "supplementary.pdf")
+    # Double-anonymized review (EAAI): anonymized copies and a separate title page.
+    shutil.copy2(anon_pdf, OUT / "manuscript_anonymized.pdf")
+    shutil.copy2(title_pdf, OUT / "title_page.pdf")
+    shutil.copy2(supp_anon_pdf, OUT / "supplementary_anonymized.pdf")
     print(f"  manuscript.pdf    {(OUT / 'manuscript.pdf').stat().st_size / 1024:,.0f} KiB")
     print(f"  supplementary.pdf {(OUT / 'supplementary.pdf').stat().st_size / 1024:,.0f} KiB")
 
     shutil.copy2(HERE / "main.tex", OUT / "main.tex")
+    shutil.copy2(HERE / "main_anonymized.tex", OUT / "main_anonymized.tex")
+    shutil.copy2(HERE / "title_page.tex", OUT / "title_page.tex")
     shutil.copy2(HERE / "references.bib", OUT / "references.bib")
     n_sec = sync_dir(HERE / "sections", OUT / "sections", (".tex",))
     # .csv alongside .tex: the per-replication edge-condition data and the derived
@@ -94,6 +108,7 @@ def main() -> int:
     sup_out = OUT / "supplementary"
     sup_out.mkdir(exist_ok=True)
     shutil.copy2(HERE / "supplementary" / "supplementary.tex", sup_out / "supplementary.tex")
+    shutil.copy2(HERE / "supplementary" / "supplementary_anonymized.tex", sup_out / "supplementary_anonymized.tex")
     s_tab = sync_dir(HERE / "supplementary" / "tables", sup_out / "tables", (".tex",))
     s_fig = sync_dir(HERE / "supplementary" / "figures", sup_out / "figures", (".pdf", ".png"))
     print(f"  supplementary source: {s_tab} tables, {s_fig} figures")

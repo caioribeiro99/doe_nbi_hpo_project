@@ -1,20 +1,16 @@
-Choosing soft-voting ensemble weights is a mixture experiment on a simplex, already addressed by an established
-mixture-design, response-surface and Normal Boundary Intersection pipeline. The artificial-intelligence contribution
-here is not that pipeline but a diagnosis of when it can be trusted; the engineering application is the design of
-weighted classifier ensembles under a measured deployment cost. Three arms, defined by the source of the objectives and
-the source of the anchors, run over four public binary tabular datasets $\times$ 30 overlapping partitions, paired by
-partition, behind controls the framework lacks: a pre-specified external reliability gate; revalidation of
-every candidate on the real objectives; an empirical reference whose sampled core contains no output of the
-compared methods; and an untouched holdout. Surrogate adequacy is dataset- and metric-dependent: surfaces for the
-area under the receiver operating characteristic curve (ROC-AUC) pass the gate in 0, 5, 16 and 30 of 30 partitions,
-and log-loss surfaces in 30, 3, 12 and 30. Under the continuous cost the arms optimize, replacing surrogate anchors
-with real ones improves both primary endpoints in all 30 partitions of the two datasets whose ROC-AUC surfaces almost
-never pass the gate, and in 23 to 24 of 30 elsewhere (significant after correction only on Santander). On those two
-datasets, anchor misplacement has the largest observed effect among failures attributable to the surrogate pipeline,
-and a control attributes most of that effect to the injected extreme solutions rather than to the relocated
-construction. The gate detects unusable surfaces but not misplaced anchors. Continuous and step deployment costs
-disagree about the winning candidate set in 8 to 24 of 30 partitions and about the direction of the anchor effect on
-one dataset, and the non-dominated sorting genetic algorithm NSGA-II, given about twice the metamodel-free arm's
-weight-vector evaluations, beats that arm.
-The diagnosis concerns one-shot pipelines without infill, and four datasets give a pattern rather than a tested
-claim.
+Choosing soft-voting ensemble weights is a mixture experiment already addressed by an established mixture-design,
+response-surface and Normal Boundary Intersection pipeline. The artificial-intelligence contribution is a diagnosis
+of when that pipeline can be trusted, not a new method; the engineering application is designing weighted classifier
+ensembles under a measured deployment cost. Three arms differing in objective and anchor sources ran on 30
+overlapping, paired partitions of four public financial-services datasets, with controls the framework lacks: a
+reliability gate fixed beforehand, real-objective revalidation, a reference whose sampled core contains no output of
+the compared methods, and an untouched holdout. Gate passes ranged from 0 to 30 of 30 partitions by dataset and
+metric. Under the continuous cost the arms optimize, real anchors beat surrogate ones on both primary endpoints in
+every partition of the two datasets whose surfaces for the area under the receiver operating characteristic curve
+almost never passed, and in 23--24 of 30 elsewhere (significant after correction only on Santander). On those two
+datasets anchor misplacement was the largest observed failure; a control traced most of it to injected extreme
+solutions. The gate detected unusable surfaces but not misplaced anchors. Continuous and step deployment costs
+disagreed on the winning candidate set in 8--24 of 30 partitions and on the anchor effect's direction on one dataset.
+The non-dominated sorting genetic algorithm II (NSGA-II), given about twice the metamodel-free arm's weight-vector
+evaluations, outperformed it. The diagnosis concerns one-shot pipelines without infill; four datasets establish a
+pattern, not a general rule.
