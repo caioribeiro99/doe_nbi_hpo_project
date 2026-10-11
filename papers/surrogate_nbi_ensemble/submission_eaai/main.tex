@@ -1,13 +1,16 @@
-% When Does Surrogate-Assisted Multiobjective Ensemble Weighting Work?
-% Manuscript source. Build with:  tectonic main.tex   (or pdflatex twice + bibtex)
+% When Is Surrogate-Assisted Multiobjective Ensemble Weighting Trustworthy?
+% Manuscript source in Elsevier's elsarticle class (single column, author-year references).
+% Build with:  tectonic main.tex             (identified manuscript)
+%              tectonic main_anonymized.tex  (copy for double-anonymized review; author details on title_page.tex)
 % Figures are produced by build_assets.py from the frozen R=30 artifacts (tag pco213-postwork-r30).
-\documentclass[11pt,a4paper]{article}
+\providecommand{\ifanon}[2]{#2}% #1: text of the anonymized review copy; #2: text of the identified manuscript
+\documentclass[preprint,11pt,authoryear]{elsarticle}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{lmodern}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[a4paper,margin=2.5cm]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -16,18 +19,21 @@
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
 \usepackage[capitalise,noabbrev]{cleveref}
-\usepackage[round]{natbib}
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{caption}
-% lightweight ORCID marker: prints the iD next to the author name
-\newcommand{\orcidlink}[1]{\href{https://orcid.org/#1}{\scriptsize\textsuperscript{iD}}}
 
 % absorb the last few points of overfull in justified paragraphs
 \setlength{\emergencystretch}{1.5em}
 \captionsetup{font=small,labelfont=bf}
 \graphicspath{{figures/}}
-\bibliographystyle{plainnat}
+\bibliographystyle{elsarticle-harv}
+\journal{Engineering Applications of Artificial Intelligence}
+% first-page footer without the compile date (the class default overruns the text width with this journal name)
+\makeatletter
+\def\ps@pprintTitle{\let\@oddhead\@empty\let\@evenhead\@empty
+  \def\@oddfoot{\footnotesize\itshape Preprint submitted to \@journal\hfill}\let\@evenfoot\@oddfoot}
+\makeatother
 
 \newcommand{\wvec}{\mathbf{w}}
 \newcommand{\simplex}{\Delta^{M-1}}
@@ -35,34 +41,35 @@
 \newcommand{\hv}{\mathrm{HV}}
 \newcommand{\rext}{R^{2}_{\mathrm{ext}}}
 
-\title{\bfseries When Is Surrogate-Assisted Multiobjective Ensemble Weighting Trustworthy?\\[0.3em]
-\large A Replicated Study of Mixture Designs, Scheff\'e Surfaces and Normal Boundary Intersection
-on the Classifier-Weight Simplex}
+\begin{document}
 
-\author{%
-Caio Tertuliano Ribeiro\thanks{Corresponding author: \texttt{caio.tertu@hotmail.com}}\orcidlink{0009-0006-7748-1449}$^{a,b}$,\enskip
-Matheus Costa Pereira\orcidlink{0009-0007-2011-9235}$^{b}$,\enskip
-Anderson Paulo de Paiva\orcidlink{0000-0002-8199-411X}$^{b}$ \\[0.5em]
-\small $^{a}$Manufacturing Optimization and Innovation Technology Center (NOMATI), Itajub\'a, MG, Brazil\\
-\small $^{b}$Institute of Industrial Engineering and Management (IEPG), Universidade Federal de Itajub\'a,\\
-\small Av.\ BPS 1303, Itajub\'a, MG, 37500-903, Brazil\\[0.35em]
-\footnotesize ORCID: C.~T.\ Ribeiro 0009-0006-7748-1449;\, M.~C.\ Pereira 0009-0007-2011-9235;\\
-\footnotesize A.~P.\ de Paiva 0000-0002-8199-411X
+\begin{frontmatter}
+\title{When Is Surrogate-Assisted Multiobjective Ensemble Weighting Trustworthy? A Replicated Study of Mixture
+Designs, Scheff\'e Surfaces and Normal Boundary Intersection on the Classifier-Weight Simplex\tnoteref{abbrev}}
+\tnotetext[abbrev]{Abbreviations: CHIM, convex hull of individual minima; DoE, design of experiments; NBI, Normal
+Boundary Intersection; NSGA-II, non-dominated sorting genetic algorithm II; ROC-AUC, area under the receiver operating
+characteristic curve; RSM, response surface methodology.}
+\ifanon{}{%
+\author[a,b]{Caio Tertuliano Ribeiro\corref{cor1}}
+\ead{caio.tertu@hotmail.com}
+\author[b]{Matheus Costa Pereira}
+\author[b]{Anderson Paulo de Paiva}
+\cortext[cor1]{Corresponding author.}
+\affiliation[a]{organization={Manufacturing Optimization and Innovation Technology Center (NOMATI)},
+  city={Itajub\'a}, state={MG}, country={Brazil}}
+\affiliation[b]{organization={Institute of Industrial Engineering and Management (IEPG), Universidade Federal de
+  Itajub\'a}, addressline={Av.\ BPS 1303}, postcode={37500-903}, city={Itajub\'a}, state={MG}, country={Brazil}}
 }
 
-\date{}
-
-\begin{document}
-\maketitle
-
 \begin{abstract}
-\sloppy
 \input{sections/00_abstract}
 \end{abstract}
 
-\noindent\textbf{Keywords:} ensemble weighting; mixture design of experiments; Scheff\'e canonical polynomials;
-response surface methodology; normal boundary intersection; surrogate-assisted multiobjective optimization;
-inference cost; replicated evaluation.
+\begin{keyword}
+ensemble weighting \sep mixture design of experiments \sep response surface methodology \sep normal boundary
+intersection \sep surrogate-assisted multiobjective optimization \sep inference cost
+\end{keyword}
+\end{frontmatter}
 
 \input{sections/01_introduction}
 \input{sections/02_related_work}
@@ -76,6 +83,7 @@ inference cost; replicated evaluation.
 \section*{Reproducibility statement}
 \input{sections/09_reproducibility}
 
+\ifanon{\noindent Funding and acknowledgements are given on the separate title page.}{%
 \section*{Funding}
 This work was supported by the Funda\c{c}\~ao de Amparo \`a Pesquisa do Estado de Minas Gerais (FAPEMIG) through
 project BPD-01045-22, and by the Coordena\c{c}\~ao de Aperfei\c{c}oamento de Pessoal de N\'ivel Superior (CAPES),
@@ -86,7 +94,16 @@ the study, in the analysis or interpretation of the data, or in the decision to 
 
 \section*{Acknowledgements}
 The authors thank the Universidade Federal de Itajub\'a for institutional support. The computational study was
-executed on a single workstation; no external compute allocation was used.
+executed on a single computer; no external compute allocation was used.
+}
+
+\section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
+During the preparation of this work, the authors used Anthropic Claude (Claude Opus 5, through Claude Code) and
+OpenAI ChatGPT in order to assist with drafting, restructuring and editing the text, language refinement,
+consistency checking of the text against the stored results, collation and checking of the references, and the
+AI-run pre-submission review of the manuscript and its verification. After using these tools, the authors reviewed
+and edited the content as needed and take full responsibility for the content of the published article. The use of
+AI assistance in writing the analysis code is stated in the Reproducibility statement.
 
 \bibliography{references}
 

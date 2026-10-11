@@ -1,80 +1,57 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We transferred an established DoE--RSM--NBI framework from engineering and forecasting to classifier ensemble weighting,
-and asked not whether it produces a Pareto front but when that front can be believed. Answering that required three arms
-defined by two methodological factors --- the source of the objectives and the source of the anchors --- revalidation on
-the true out-of-fold objectives, an empirical reference whose sampled core is constructed independently of the
-surrogate and of every candidate method, and 4 datasets $\times$ 30 partitions.
+We transferred an established DoE--RSM--NBI framework from multiobjective engineering optimization and forecasting to
+the design of weighted classifier ensembles under a measured deployment cost, and asked when its Pareto front can be
+believed. Three NBI arms, defined by the source of the objectives and the source of the anchors, were compared over
+four public binary tabular datasets $\times$ 30 partitions, with every candidate revalidated on the true out-of-fold
+objectives and scored against an empirical reference. The main findings, each limited to one-shot pipelines without
+infill, one fixed zoo of five classifiers and four datasets from one application domain, are the following.
+\begin{itemize}
+\item Surrogate adequacy depends on the dataset and the metric and must be measured on unseen compositions. ROC-AUC
+surfaces passed the external reliability gate in 0, 5, 16 and 30 of 30 partitions on Santander, BNP Paribas, Porto
+Seguro and UCI credit, and log-loss surfaces in 30, 3, 12 and 30; smoothness of the response in the weights does not
+explain the difference on its own.
+\item On Santander and BNP Paribas, anchor misplacement had the largest observed effect among failures attributable to
+the surrogate pipeline. Under the continuous cost the arms optimize, real anchors improved both primary endpoints in
+all 30 partitions of these two datasets, in 23 to 24 of 30 on Porto Seguro and in 24 of 30 on UCI credit, although
+the improvement is significant after the Nadeau--Bengio correction and Holm adjustment only on Santander. On
+Santander and BNP Paribas most of the hypervolume gain comes from returning the real single-objective optima rather
+than from the relocated construction, and removing the metamodel once the anchors are right adds far less than the
+anchors there, about as much on Porto Seguro and three times as much on UCI credit, where a subproblem-convergence
+effect of the real-anchored surrogate arm (NBI-B) rather than surrogate error dominates; this ordering is an
+observation, not a tested claim.
+\item The gate screens surface accuracy, not anchor placement. On BNP Paribas, surrogate-anchored NBI (NBI-A)
+collapses in exactly the seven partitions where the parsimony rule selects a quadratic ROC-AUC surface, which it does
+when that surface fits unseen compositions better, and these partitions pass the ROC-AUC gate more often than the rest
+(3 of 7 against 2 of 23); the gate therefore needs an accompanying anchor check.
+\item The classical synergism criterion $\beta_{ij} > |\beta_i - \beta_j|$ holds for the leading classifier pair in
+every partition of all four datasets, yet the real 50/50 blend beats its better member on only one of them, so a large
+interaction coefficient must be confirmed on the real objective before it is read as complementarity.
+\item The continuous cost the methods optimize and the step cost deployment pays disagree about the hypervolume-best of
+six candidate sets in 8 to 24 of 30 partitions, and several paired conclusions, including the UCI credit anchor
+effect, reverse between them. Sets optimized on the linear relaxation omit the cheapest supports that the unoptimized
+design contains, at a penalty whose size depends on the cost range that sets the normalization box.
+\item On the same three real objectives, NSGA-II approximated the front better than metamodel-free NBI (NBI-C) in all
+eight dataset--endpoint comparisons, five of them significant after correction, and gave more evenly spaced
+revalidated fronts. It used about twice NBI-C's weight-vector evaluations and about 2.2 times its wall clock (NSGA-II
+runs executed eight at a time), and whether it also leads at an equal number of weight-vector evaluations was not
+tested. Its returned sets are larger, which mechanically favours it on both endpoints, so its small margins should be
+read as an upper bound on its advantage. This is one untuned configuration on four datasets from one domain, not a
+general recommendation; it bounds what the NBI pipeline is worth, not the diagnosis of when it can be trusted.
+\end{itemize}
 
-The framework is neither uniformly safe nor uniformly unsafe: its behaviour is governed by three properties of the
-problem, not by anything about the optimizer.
-
-\emph{Model class.} Surrogate adequacy is a property of the dataset \emph{and} the metric and cannot be assumed from
-in-sample fit: ROC-AUC surfaces pass an external reliability gate in 0, 5, 16 and 30 of 30 partitions, log-loss
-surfaces in 30, 3, 12 and 30. Smoothness in the weights is one contributing factor and not the whole explanation. It
-accounts for Santander, where the rank statistic never passes the gate and has negative external $R^{2}$ despite a
-rank correlation of $0.83$ while the convex log-loss passes in every partition; it does not account for BNP Paribas,
-where the smooth objective does \emph{worse} than the rank statistic (3 of 30 against 5 of 30, median external
-$R^{2}$ of $-0.180$ against $+0.118$) with the worst relative external fit in the study, or for Porto Seguro, where
-the two are effectively tied. These data establish that adequacy varies and must be measured on unseen compositions,
-not what makes a dataset--metric pair fittable.
-
-\emph{Geometry.} Among failures attributable to the surrogate pipeline, anchor misplacement had the largest observed
-effect. Replacing surrogate anchors with real single-objective optima improved both primary endpoints in all 30
-partitions of Santander and BNP Paribas, whose ROC-AUC surfaces pass the gate in 0 and 5 of 30, in 23 to 24 of 30 on
-Porto Seguro, which passes in 16 of 30, and in 24 of 30 on UCI credit, which passes in all 30. That substitution
-changes four things at once, and a control that injects only the three real optima into the surrogate-anchored arm
-shows how the effect divides: the injected points alone close a median 80\% of the hypervolume gap on Santander and
-90\% on BNP Paribas, but 49\% on Porto Seguro and 1\% on UCI credit. On the two datasets with the largest raw effect
-most of what is measured is therefore the returned extreme solutions. The relocated construction --- NBI takes its
-utopia point, normalization and search directions from the payoff matrix, so an anchor error moves the whole frame
-while an interior error perturbs single subproblems --- is the cleanest reading on UCI credit and is positive but
-small elsewhere. Removing the metamodel altogether, once the anchors are right, adds far less than the anchors did on
-Santander and BNP Paribas, about the same on Porto Seguro, and three times as much on UCI credit, where a
-subproblem-convergence effect of the surrogate-anchored arm rather than surrogate error dominates: solver geometry can
-dominate where the surrogate is excellent. With four datasets, one tie and one reversal, that ordering is an
-observation and not a tested claim. The first-order fix is in any case the cheapest available: make sure the real
-single-objective optima a practitioner already computes reach the returned set.
-
-\emph{Diagnosis.} An external gate on surface quality is worth its 100 extra evaluations and separates usable from
-unusable surfaces, but it does not predict anchor failure, and on one dataset the two properties diverge: the partitions
-where surrogate-anchored NBI collapses are exactly those where the parsimony rule selects a surface that fits held-out
-compositions better and passes the gate more often. Surface accuracy and argmax accuracy are different properties, and
-only the second governs NBI; the gate should therefore be paired with an anchor check --- simply the difference between
-our two surrogate arms.
-
-Two further results are practical. The classical synergism criterion $\beta_{ij} > |\beta_i - \beta_j|$ is satisfied by
-the fitted surfaces for the leading classifier pair in every partition of all four datasets, yet the real 50/50 blend
-beats its better member on only one of them, and across all pairs the surface over-predicts blending gains twenty times
-and under-predicts none: on these ensembles a large interaction coefficient is a statement about the fit, not evidence
-of complementarity, so a candidate pair must be confirmed on the real objective. Separately, the continuous cost a
-differentiable method can optimize and the step cost deployment pays disagree about which of six candidate sets
-attains the best hypervolume in 10, 23 to 24, 8 and 20 of 30 partitions across the four datasets (the single-objective
-references are excluded from that pool), and several conclusions reverse between them. The size of the penalty depends
-on the cost range that sets the normalization box, so what we claim is the qualitative statement: sets optimized on
-the linear relaxation omit the cheapest supports the unoptimized design already contains. Any cost claim must name
-which cost it means, and weight cleaning is necessary --- an inert weight just above the activity threshold produced a
-spurious 250~ms difference in our own analysis before we caught it.
-
-Tripling the replications from 10 to 30 changed no directional conclusion: it converted three undecided findings into
-quantified ones, exposed two apparent phenomena as artifacts and supplied intervals. We report this because it is
-evidence about how much replication such a study needs: ten partitions appear to identify the conclusions, while thirty
-are needed to defend their magnitudes.
-
-One external check bounds the framework's standing: NSGA-II, given the same three objectives and the same number of real
-objective evaluations per replication, produced a better approximation than the metamodel-free arm on all four datasets
-and both endpoints, by small but consistent margins, and markedly more evenly spaced revalidated fronts. Where
-evaluations are cheap enough to run either, that is the better choice, and the distributed representation NBI is
-classically credited with is attainable here by a different construction. It does not disturb the diagnosis above ---
-NSGA-II is not part of the pipeline being diagnosed --- but it settles what that pipeline is worth against the
-conventional alternative.
-
-What we carry forward is not a method but a set of controls: validate the surface on compositions it has not seen;
-compare each surrogate argmax against the real optimum and prefer the real one; revalidate every candidate on the true
-objective before scoring; build a reference whose sampled core is constructed independently of the surrogate and of
-every candidate method; and state which cost is being paid. Each is cheap relative to the pipeline it protects, and
-each changed a conclusion that would otherwise have been reported. The framework remains a good \emph{description} of the ensemble-weight simplex: its coefficients are
-stable to a few percent across thirty resamplings, and they say something interpretable about which components are weak.
-Whether it is also a good \emph{optimizer} there depends on conditions that can now be stated in advance and checked
-cheaply.
+What we carry forward is therefore a set of controls rather than a method: validate the surface on compositions it
+has not seen; compare each surrogate-derived anchor with the optimum computed directly on the out-of-fold objective
+and make sure the latter reaches the returned set; revalidate every candidate on the out-of-fold objectives before
+scoring; build a reference whose sampled core contains no output of the compared methods; and state which cost is
+being paid. Each changed a conclusion that would otherwise have been reported, and the anchor check is not free
+(\cref{tab:compute}). The response surfaces remain a reproducible description of the ensemble-weight simplex: their
+four largest interaction coefficients keep their sign across all thirty resamplings, the coefficient of variation of
+the largest one lies between 0.007 and 0.17 across the eight dataset--metric surfaces, and they say something
+interpretable about which components are weak. Reproducibility is not accuracy, however, and their fitted values
+deserve trust only where a surface has been validated on compositions it has not seen; whether they are also a sound
+optimization substrate must be checked on each problem with these controls. Replication mattered: the first ten
+partitions gave the direction of every primary effect that is statistically established at $R = 30$, but left the
+Porto Seguro and UCI credit anchor effect undecided ($6/10$ and $5/10$ on hypervolume), which only thirty partitions
+showed to be consistent in direction.

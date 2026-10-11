@@ -20,6 +20,7 @@ Usage:  python build_submission.py [--skip-compile]
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -27,7 +28,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "submission_eaai"
-BUILD = Path("/tmp/texout")
+BUILD = Path(os.environ.get("PAPER1_BUILD_DIR", "/tmp/texout"))  # compile output directory
 
 # Editorial documents that live only in the submission package and are edited by hand.
 DECLARATIONS = [
@@ -54,6 +55,28 @@ def compile_pdf(tex: Path) -> Path:
     return BUILD / (tex.stem + ".pdf")
 
 
+# A printed bibliography must not carry the notes of the reference check (F11-R12): those
+# notes belong to the verification record, not to the published reference list.
+BBL_FORBIDDEN = ("not verified", "not confirmed", "fetched", "cached", "bot-blocked", "commonly cited as",
+                 "arXiv comment states", "Crossref", "OpenAlex", "Preprint;")
+
+
+def check_bibliography(tex: Path) -> None:
+    """Compile once more keeping the .bbl and abort if it prints any verification note."""
+    keep = BUILD / "bbl_check"
+    keep.mkdir(parents=True, exist_ok=True)
+    r = subprocess.run(["tectonic", "--keep-intermediates", "-o", str(keep), tex.name],
+                       cwd=tex.parent, capture_output=True, text=True)
+    bbl = keep / (tex.stem + ".bbl")
+    if r.returncode != 0 or not bbl.exists():
+        raise SystemExit(f"bibliography check could not compile {tex}")
+    text = bbl.read_text(errors="replace")
+    hits = [w for w in BBL_FORBIDDEN if w in text]
+    if hits:
+        raise SystemExit(f"{tex.name}: the compiled bibliography prints verification notes: {hits}")
+    print(f"  {tex.name}: bibliography clean ({text.count('bibitem')} entries)")
+
+
 def sync_dir(src: Path, dst: Path, suffixes: tuple[str, ...]) -> int:
     """Mirror src into dst for the given suffixes, deleting files src no longer has."""
     dst.mkdir(parents=True, exist_ok=True)
@@ -72,10 +95,12 @@ def main() -> int:
     args = ap.parse_args()
 
     OUT.mkdir(exist_ok=True)
+    BUILD.mkdir(parents=True, exist_ok=True)
     print("building submission_eaai/")
 
     if not args.skip_compile:
         main_pdf = compile_pdf(HERE / "main.tex")
+        check_bibliography(HERE / "main.tex")
         anon_pdf = compile_pdf(HERE / "main_anonymized.tex")
         title_pdf = compile_pdf(HERE / "title_page.tex")
         supp_pdf = compile_pdf(HERE / "supplementary" / "supplementary.tex")

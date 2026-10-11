@@ -1,7 +1,9 @@
 \begin{table*}[t]
 \centering
-\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 8 worker threads)
-and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own.
+\caption{Standalone cost of each NBI variant: mean wall-clock seconds per partition (Apple M4 Max, 14 cores)
+and mean real out-of-fold objective evaluations, charging every arm for everything it needs to run on its own
+(design, gate and ROC-AUC-search entries count evaluated compositions; NBI-C's solve counts each ROC-AUC and each
+log-loss computation, two per weight-vector evaluation).
 NBI-A is charged the 66-run design, the 100 gate compositions and the Scheff\'e fit (``design\,+\,fit''), since its
 anchors are the optima of the fitted surfaces; NBI-B is charged the same \emph{plus} the single-objective reference
 stage, which is where its real anchors come from and which is dominated by the direct ROC-AUC search over
@@ -11,7 +13,7 @@ the standalone wall clock of NBI-A, and the standalone premium of NBI-C over NBI
 (Santander, BNP Paribas, Porto Seguro, UCI credit), not the solver-stage ratio. Charging the whole reference stage to
 NBI-B and NBI-C is an upper bound, since that stage also computes references the arms do not consume, and the SLSQP
 log-loss anchor's evaluations are not separately instrumented. Not charged to any arm: the shared out-of-fold stage
-(335, 86, 69, 11~s) and the study's own instrumentation --- empirical reference, quality scoring and
+(335, 86, 69, 11~s) and the study's own instrumentation, namely the empirical reference, quality scoring and
 comparators (270, 154, 302, 74~s). ``Success'' is the mean fraction of the 66 subproblems that terminated
 successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule of \cref{sec:method:nbi}).
 Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}, \texttt{references.json} and

@@ -1,7 +1,7 @@
 # Response to the internal pre-submission review
 
 Before submission the manuscript was put through a three-reviewer adversarial simulation run with AI agents
-(Anthropic's Claude, used through Claude Code): a multiobjective-optimization
+(Anthropic Claude, used through Claude Code): a multiobjective-optimization
 specialist, a machine-learning evaluation specialist and an associate editor assessing novelty and scope. Each was
 instructed to check claims against the underlying CSVs rather than the prose, and to recommend rejection if
 warranted. A fourth AI agent verified every criticism against the artifacts before triage. The full record,

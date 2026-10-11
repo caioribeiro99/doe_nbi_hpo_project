@@ -150,3 +150,24 @@ Quality Technology would find that specific contribution novel, at the cost of a
    not assembled.
 
 None of these requires touching the frozen experiment.
+
+---
+
+## Recheck of the guide for revision R1 (2026-10-11)
+
+The ScienceDirect Guide for Authors returns HTTP 403 to automated retrieval, and the newest public archive capture
+dates from 2024-02-18. The rules below were confirmed on 2026-10-11 from the search-engine index of the official guide
+page, and agree with the repository's EAAI audit of 2026-09-18
+(`submission/paper2-journal:papers/xgboost_hpo_vrfnbi/submission/EAAI_COMPLIANCE_AUDIT.md`). Re-read the live page at
+upload.
+
+| Rule | Status in revision R1 |
+|---|---|
+| Abstract at most 250 words; purpose, procedures, main findings, conclusions; states the AI contribution and the engineering application | 248 words (whitespace tokens of `sections/00_abstract.tex`); both statements in its second sentence |
+| No undefined acronym in the title or abstract | The abstract defines NSGA-II and uses no other acronym; the title has none |
+| Unavoidable abbreviations also defined in a first-page footnote | Title footnote in `main.tex` (CHIM, DoE, NBI, NSGA-II, ROC-AUC, RSM) |
+| At most 6 keywords | 6 (decision C3) |
+| Highlights: 3 to 5, at most 85 characters each, separate file | 5 highlights, 75 to 82 characters (`submission_eaai/highlights.txt`) |
+| Single-column format; at most 50 pages | elsarticle `preprint`, single column; page count recorded by `build_submission.py` |
+| Double-anonymized review | `main_anonymized.tex` and `supplementary/supplementary_anonymized.tex` omit author names, affiliations, funding, acknowledgements, the repository name and two self-references; `title_page.tex` carries them |
+| Generative-AI declaration before the references, titled "Declaration of generative AI and AI-assisted technologies in the manuscript preparation process" | Present in `main.tex`; AI-assisted research code stated in the Reproducibility statement; each author's attestation is still required |

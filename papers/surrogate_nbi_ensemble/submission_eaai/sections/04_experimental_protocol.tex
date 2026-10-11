@@ -1,9 +1,15 @@
 \section{Experimental protocol}
 \label{sec:protocol}
 
-The protocol was fixed before the replicated study and was not changed after any result was observed; the extension
-from 10 to 30 replications reused it without modification, and \cref{sec:results:r30} reports what that extension
-changed.
+The computational protocol (partitions and seeds, base models, design, surfaces and gate thresholds, optimizers and
+scoring) was committed to version control before the replicated study was launched with the planned ten
+replications per dataset. Its only change during execution was a solver-robustness fix after a crash in
+replication~0; the replication-0 stages completed before the fix were kept, and the part of the change that can be
+checked on the stored surfaces moves no stored solution by more than $10^{-10}$ in any weight (supplementary Section~S1). After the ten-replication
+analysis had been completed and reported, the study was extended to 30 replications, reusing the computational
+protocol without modification, and \cref{sec:results:r30} reports what that extension changed. The NSGA-II baseline
+(\cref{sec:results:nsga2}) was added after the 30-replication analysis, with its configuration committed before its
+first run.
 
 \subsection{Datasets}
 \label{sec:protocol:data}
@@ -26,30 +32,44 @@ The ensemble contains $M = 5$ deliberately heterogeneous learners with fixed hyp
 search: $\ell_2$-regularized logistic regression; Gaussian naive Bayes; $k$-nearest neighbours with $k = 100$; a
 random forest with 200 trees and a minimum of 20 samples per leaf; and gradient-boosted trees (XGBoost, 400 rounds,
 depth 6, learning rate 0.1, subsample and column subsample 0.8) \citep{chen2016xgboost}. The first four are the
-\texttt{scikit-learn} implementations \citep{pedregosa2011scikit}. The zoo spans the accuracy--cost--calibration space
-rather than forming a competitive stack: it deliberately includes a member strong in ranking but poorly calibrated
-(Gaussian naive Bayes) and one accurate but two orders of magnitude more expensive at inference time ($k$-nearest
-neighbours). Preprocessing --- imputation, standardization and encoding, detailed per model in the supplement --- is
-fitted inside each training fold and never on validation data.
+\texttt{scikit-learn} implementations \citep{pedregosa2011scikit}. These values were committed to the project code on
+2026-07-06, before the replicated study, and were not changed afterwards; Gaussian naive Bayes uses the library
+defaults, as do the inverse regularization strength of logistic regression ($C = 1$) and the XGBoost depth. The zoo
+spans the accuracy--cost--calibration space rather than forming a competitive stack: Gaussian naive Bayes is the best
+member out of fold on Santander but has the worst log-loss on the other three datasets, and $k$-nearest neighbours,
+the weakest member by ROC-AUC on Santander and Porto Seguro, costs more at inference time than the other four
+combined (supplementary Section~S2; implications in \cref{sec:limitations}). Preprocessing (imputation,
+standardization and encoding, detailed per model in supplementary Section~S1) is fitted inside each training fold and
+never on validation data.
 
 Each replication splits the dataset by a stratified 80/20 partition into a training part and an untouched holdout.
 Within the training part, stratified 5-fold cross-validation produces out-of-fold probability estimates $\mathbf{P}$
 for all five models; these are the only quantities the design, the surfaces, the optimizers and the selection rules
 ever see. Each model is then refitted once on the whole training part to produce holdout probabilities $\mathbf{Q}$,
-used exclusively for the confirmation analysis of \cref{sec:results:holdout}. Because \cref{eq:ensemble} is linear in
+used exclusively for the confirmation analysis of \cref{sec:results:holdout}. Every entry of $\mathbf{P}$ and
+$\mathbf{Q}$ is clipped to $[10^{-3}, 1-10^{-3}]$, a constant fixed before the study and never changed: $k$-nearest
+neighbours with $k = 100$ outputs exact zeros and ones, which can make the log-loss infinite at its vertex, and
+clipping the components rather than the blend keeps \cref{eq:ensemble} linear in $\wvec$. Because \cref{eq:ensemble} is linear in
 $\wvec$, evaluating any weight vector costs one matrix--vector product, which is what makes an empirical reference of
 $10^{5}$ points and a metamodel-free NBI arm affordable.
 
-Inference cost $c_i$ is measured, not assumed: per model and replication, the median of five timed
-\texttt{predict\_proba} calls on a fixed 10{,}000-row batch, including preprocessing, in milliseconds per 1{,}000 rows.
+Inference cost $c_i$ is measured, not assumed: per model and replication, the median wall-clock time of five
+consecutive \texttt{predict\_proba} calls of the refitted model, including preprocessing, in milliseconds per
+1{,}000 rows. One batch of holdout rows, drawn with the replication seed, is shared by the five models (10{,}000 rows;
+the whole 6{,}000-row holdout on UCI credit). The models are timed one after another in a fixed, non-randomized order
+(logistic regression, Gaussian naive Bayes, $k$-nearest neighbours, random forest, XGBoost), each right after its own
+refit, an untimed holdout prediction and an untimed warm-up call on the batch. Three of them ($k$-nearest neighbours,
+the random forest and XGBoost) are set to use all 14 cores (\texttt{n\_jobs}~$=-1$); the code and the launch script
+set no other parallel option or thread limit for the timed calls.
 
 \subsection{Replication, seeds and the statistical unit}
 \label{sec:protocol:replication}
 
 The entire pipeline, from the outer partition through scoring, is executed $R = 30$ times per dataset, giving 120
 replications, with the outer partition, the inner folds and every stochastic component seeded by
-$\text{20260904} + r$ for replication $r$. All seeds are persisted in the manifest, and the checkpointed runner of
-\cref{sec:repro} recomputes any stage exactly.
+$\text{20260904} + r$ for replication $r$. All seeds are persisted in the manifest, and the checkpointed runner
+described in the Reproducibility statement recomputes any stage exactly, except that re-running the out-of-fold stage
+re-measures the wall-clock costs $c_i$ and therefore changes every result that depends on them.
 
 The statistical unit is \textbf{one outer partition of one dataset}. Because all methods are evaluated on the same
 partition, every comparison is \emph{paired}. Two consequences constrain the analysis throughout.
@@ -66,22 +86,31 @@ experiments'' is made anywhere in this paper.
 \subsection{Statistical analysis}
 \label{sec:protocol:stats}
 
-The primary comparisons were fixed before the replicated benchmark and committed to version control: NBI-B versus
-NBI-A, NBI-C versus NBI-B, NBI-C versus random scalarization, and NBI-C versus the random Dirichlet sample. The
+The statistical analysis plan (supplementary Section~S1) designates four primary comparisons. NBI-B versus NBI-A and
+NBI-C versus NBI-B address RQ4 and RQ5. NBI-C versus random scalarization and NBI-C versus the random Dirichlet sample
+compare NBI-C, as specified and not at equal budget, with the two cheap alternatives of \cref{sec:method:refs}: the
+first comparison is confounded with the objective source and the second is a floor check. The plan was committed to
+version control after the first ten replications had been run and analysed, minutes after the extension to 30
+replications was launched and before any of its partitions had been completed, so it is prospective only for
+partitions 10--29. The paired contrasts coded before the benchmark produced its first output were descriptive and
+compared both cheap alternatives with NBI-B rather than NBI-C; \cref{sec:results:metamodelfree} reports both
+pairings. The
 primary endpoints are $\igdp$ and the hypervolume ratio, computed on the revalidated \emph{out-of-fold objectives of
-the 80\% training part} --- the only quantities the design, the surfaces, the optimizers and the selection rules ever
-see (\cref{sec:protocol:models}) --- against the empirical reference of the same replication, under the weighted cost
-that the optimizers actually minimized; the support-cost repetition is a pre-specified sensitivity analysis. The
+the 80\% training part} (the only quantities the design, the surfaces, the optimizers and the selection rules ever
+see; \cref{sec:protocol:models}) against the empirical reference of the same replication, under the weighted cost
+that the optimizers actually minimized; the support-cost repetition is a sensitivity analysis. The
 untouched 20\% holdout enters no primary endpoint: it is used only for the confirmation analysis of
 \cref{sec:results:holdout}. All other indicators are descriptive.
 
-Paired differences are signed so that $\Delta > 0$ always favours the second-named method:
+Paired differences are signed so that $\Delta > 0$ always favours the first-named (new) method:
 $\Delta\hv = \hv_{\text{new}} - \hv_{\text{ref}}$ and
 $\Delta\igdp = \igdp_{\text{ref}} - \igdp_{\text{new}}$. For each dataset $\times$ comparison $\times$ endpoint we
 report the mean and median with percentile-bootstrap 95\% intervals (10{,}000 resamples, fixed seed), the quartiles
 and range \citep{efron1993bootstrap}, the win/tie/loss counts with a tie tolerance of $10^{-4}$, the win fraction
 with a Wilson 95\% interval \citep{wilson1927probable}, and the matched-pairs rank-biserial correlation
-\citep{kerby2014simple} as a distribution-free effect size.
+\citep{kerby2014simple} as a distribution-free effect size. These and all other replication-level intervals in this
+paper treat the replications of a dataset as independent observations: they describe partition sensitivity within
+that dataset, carry no correction for partition overlap and do not by themselves establish significance.
 
 An ordinary paired $t$-test on resampled partitions is anticonservative, so the primary test is the Nadeau--Bengio
 corrected resampled $t$-test \citep{nadeau2003inference}: with $J = 30$ paired differences $d_j$,
@@ -94,8 +123,8 @@ on $J - 1$ degrees of freedom. The correction inflates the variance by a factor 
 $(1/30 + 0.25)/(1/30) \approx 8.5$, multiplying standard errors by about 2.9 relative to the naive test. One caveat
 attaches to $\rho$ and we state it plainly: the heuristic $\rho = n_{\text{test}}/n_{\text{train}}$ was derived for a
 statistic measured on the held-out portion of each resample, whereas both primary endpoints here are measured on the
-training part, whose rows two replications share to the extent computed above. The value $\rho = 0.25$ is therefore a
-lower bound on the dependence between replications and the corrected test is, if anything, still anticonservative;
+training part, whose rows two replications share to the extent computed above. The value $\rho = 0.25$ therefore likely
+understates the dependence between replications and the corrected test is, if anything, still anticonservative;
 every significance statement below should be read as holding \emph{at} $\rho = 0.25$, with the effect consistency
 that does not depend on $\rho$ reported alongside it. Within each
 dataset the eight primary tests form one family and receive a Holm correction \citep{holm1979simple}; no correction
@@ -104,5 +133,5 @@ is applied across datasets, because datasets are not pooled. A Wilcoxon signed-r
 
 Where a paired-difference distribution is visibly bimodal or heavy-tailed, the mean-based test is uninformative by
 construction and we say so, reporting the median with its bootstrap interval, the win fraction with its Wilson
-interval and the rank-biserial correlation as the evidence instead. Throughout, effect consistency takes precedence
+interval and the rank-biserial correlation as descriptive evidence of consistency instead. Throughout, effect consistency takes precedence
 over $p$-values. Frequencies over replications are reported with Wilson and Jeffreys 95\% intervals \citep{brown2001interval}.

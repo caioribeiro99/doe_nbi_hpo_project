@@ -1,8 +1,7 @@
 \section{Related work}
 \label{sec:related}
 
-Per-paper narration of the works cited here is in the supplementary literature review; this section keeps what bears
-on a novelty claim.
+This section keeps only what bears on a novelty claim.
 
 \subsection{Classifier ensemble weighting}
 \label{sec:rel:weighting}
@@ -21,14 +20,14 @@ over as an experimental region, and essentially all of this work is single-objec
 
 Multiobjective ensemble learning divides by decision variable: the \emph{members}
 \citep{abbass2003pareto,chandra2006ensemble,jin2008pareto}; a \emph{subset}
-\citep{dossantos2008dynamic,qian2015pareto}; or --- the family relevant here --- \emph{continuous combination
+\citep{dossantos2008dynamic,qian2015pareto}; or (the family relevant here) \emph{continuous combination
 weights} under conflicting criteria, optimized by metaheuristics
 \citep{ekbal2011multiobjective,ekbal2013combining,bandyopadhyay2008amosa,onan2016multiobjective,rezaei2019multi,zhao2018multiobjective,vrugt2006multi,galvan2026simultaneous}
 and surveyed in \citet{ribeiro2020ensemble}.
 
 This family is therefore \emph{not} new, and we do not claim it. Absent from this cluster is any designed experiment
-and fitted response surface over the weight simplex, any classical scalarization method such as NBI, and --- with the
-partial exception of the sparsity term in \citet{zhao2018multiobjective} --- any treatment of deployment cost as an
+and fitted response surface over the weight simplex, any classical scalarization method such as NBI, and, with the
+partial exception of the sparsity term in \citet{zhao2018multiobjective}, any treatment of deployment cost as an
 objective. Fronts are rarely replicated over resampled partitions with corrected inference
 \citep{demsar2006statistical}.
 
@@ -71,10 +70,10 @@ over the weight simplex. \citet{mendes2016portfolio_mde} and \citet{leal2022port
 proportions with mixture designs; \citet{bacci2019nbi_mixture} builds a simplex lattice over time-series
 forecast-combination weights, fits Scheffé models to factor scores of residual accuracy metrics and applies NBI to
 those models; \citet{paula2019gatuning} crosses a mixture design over objective weights with genetic-algorithm
-hyperparameters. \citet{pereira2025hybrid}, of which the present first author is a co-author, extends the framework
+hyperparameters. \citet{pereira2025hybrid}\ifanon{}{, of which the present first author is a co-author,} extends the framework
 with a mixture-design post-Pareto stage in which Scheffé polynomials of a generalized distance and of the entropy of
 the weights are themselves optimized by a second NBI. Its anchors, like those of the rest of this literature, are the
-individual optima of the surrogate surfaces --- the configuration we label NBI-A. The first author's master's
+individual optima of the surrogate surfaces: the configuration we label NBI-A. \ifanon{A master's}{The first author's master's}
 dissertation \citep{ribeiro2026dissertation} applies the same framework to hyperparameter optimization.
 
 Most directly, \citet{moreira2021ann_ensemble_mde} determine neural-network ensemble weights by a mixture design, and
@@ -95,33 +94,34 @@ The broader surrogate-assisted literature \citep{jin2011surrogate,tabatabaei2015
 answers the risk that a surrogate misleads with \emph{model management}, and that answer is \emph{iterative}: ParEGO,
 MOEA/D-EGO, SMS-EGO and K-RVEA \citep{knowles2006parego,zhang2010moeadego,ponweiser2008smsego,chugh2018krvea} refit on
 true-objective infill inside the search loop, so a false surrogate optimum is corrected later. The pipeline studied
-here is that taxonomy's other member: the \emph{sequential} framework \citep{tabatabaei2015survey} --- fit the
-surrogate once from a fixed design, then optimize it, with no infill --- identified there as most exposed to surrogate
+here is that taxonomy's other member: the \emph{sequential} framework (fit the
+surrogate once from a fixed design, then optimize it, with no infill; \citealp{tabatabaei2015survey}) identified there as most exposed to surrogate
 error. That is what the lineage of
 \cref{sec:rel:lineage} does and what we replicate, so our diagnosis is a diagnosis of \emph{one-shot, no-infill}
 surrogate pipelines. It is not a test of model-managed, infill-based surrogate-assisted
 optimizers and must not be read as one: by the standards of that literature the exposure of the surrogate-anchored arm
-is anticipated rather than surprising, and our real-anchor arm is best understood as a single targeted correction ---
-one model-management step applied to the anchors alone --- rather than as adaptive infill.
+is anticipated rather than surprising, and our real-anchor arm is best understood as a single targeted correction
+(one model-management step applied to the anchors alone) rather than as adaptive infill.
 
 Extreme-point reliability has been studied, but on the other side of the surrogate divide.
-\citet{isermann1988payoff} showed computationally that payoff-table minima built from individual optima can differ
-substantially from the true minimum criterion values over the efficient set; nadir and front-range mis-estimation
+\citet{isermann1988payoff} showed computationally that the worst criterion values in a payoff table built from
+individual optima can differ substantially from the true worst values over the efficient set; nadir and front-range
+mis-estimation
 degrades performance across MOEAs \citep{deb2010nadir,he2021normalization}; and \citet{herrmann2026nonextreme} treat
 the \emph{choice} of individual minima as a design decision, replacing extreme with non-extreme minima to refine the
 utopia--nadir hyperbox.
 That misplaced anchors damage a scalarization is therefore established, and we claim neither
-the mechanism nor its direction as a discovery. In all of that work the error arises from degeneracy or search
-difficulty on the \emph{true} objectives; a metamodel is never the culprit. The normalized normal constraint
-\citep{messac2003normalized}, introduced partly to make anchor-based normalization better behaved, is the
-textbook remedy for the pathology we report; our protocol was frozen with NBI as the front generator, so we do not
-evaluate it here and record it as the most direct methodological follow-up.
+the mechanism nor its direction as a discovery. In all of that work the extreme points are computed or estimated on the
+\emph{true} objectives; none of it concerns anchor error introduced by a metamodel. The normalized normal constraint
+method \citep{messac2003normalized} derives its normalization and its constraints from the individual minima, as NBI
+does, so on fitted surfaces it too would take its anchors from the surrogate; our protocol was frozen with NBI as the
+front generator, so we do not evaluate whether the effect we report carries over to it.
 
-What we did not find is a study computing a CHIM method's anchors both ways on one problem and comparing the
-resulting fronts --- the surrogate \emph{provenance} of the anchor error, and the controlled contrast, rather than the
-fact that anchors matter. The closest external analogue we located is the NBI-A pattern itself:
-\citet{abolghasemian2022haulage} runs a modified NBI on regression metamodels validated by fit statistics alone,
-its Pareto solutions never re-evaluated on the simulation (supplementary literature review). At the other
+To the best of our literature search, no prior study computes a CHIM method's anchors both from a fitted surrogate
+and from the true objectives on the same problem and compares the resulting fronts; the gap concerns the surrogate
+\emph{provenance} of the anchor error and that controlled contrast, not whether anchors matter. The closest external
+analogue we located is the NBI-A pattern itself: \citet{abolghasemian2022haulage} runs a modified NBI on regression
+metamodels validated by fit statistics alone, and reports no re-evaluation of its Pareto solutions on the simulation. At the other
 extreme, \citet{gellerich2023doenbi} derive the experimental plan from the NBI subproblems themselves and evaluate each
 subproblem by physical test, with no metamodel anywhere and anchors that are real experimental optima. A metamodel-free
 NBI is thus published prior art and the idea of our NBI-C arm is not claimed as new; because that study has no
@@ -138,21 +138,21 @@ as \emph{per-example adaptive execution}
 scalarized training objective \citep{xu2012greedy,zhang2011sparse}; automated machine-learning systems expose
 inference-time constraints during ensemble construction
 \citep{erickson2020autogluon,feurer2022autosklearn,borchert2022paretoselect}. For post-hoc ensembles over cached
-tabular predictions --- our own setting --- \citet{maier2024hardware} already return a Pareto front of accurate and
+tabular predictions (our own setting), \citet{maier2024hardware} already return a Pareto front of accurate and
 efficient ensembles with inference time in the objective vector over 83 tabular classification datasets, and
 \citet{maier2026hapens} extend that line, name the objective \emph{deployment cost} and report memory usage as their
 most effective cost metric. Inference cost as an objective of a post-hoc weighted ensemble is therefore prior art, and
 we claim no part of it.
 
 The distinction we need falls between these categories. That the accounting itself can reorder a comparison is
-already known: \citet{wang2022committees} place two cost accountings side by side --- every member executed, versus
-early exit --- and show that which committee looks best changes with the accounting. Their contrast, however, is
+already known: \citet{wang2022committees} place two cost accountings side by side (every member executed, versus
+early exit) and show that which committee looks best changes with the accounting. Their contrast, however, is
 between ensemble and cascade \emph{architectures}, not between two cost functions applied to one and the same weight
 vector. Narrowed to that resolution, to the best of our literature search no prior work contrasts the step cost a
 deployed support pays with the continuous relaxation the optimizers minimize \emph{for one weight vector of one
 weighted soft-voting ensemble}, and reports that the two disagree about which method wins. Where a related question
-has been settled it went the other way: for budgeted learning with feature re-use, the support-cost programme is
-provably solved by its linear relaxation \citep{nan2015budgeted}. Our setting does not
+has been settled it went the other way: for budgeted learning with feature re-use, a support-cost programme is
+provably solved by its linear relaxation \citep{nan2016pruning}. Our setting does not
 inherit that guarantee, and \cref{sec:results:cost} shows the two definitions disagreeing.
 
 \subsection{The gap}
@@ -169,9 +169,9 @@ literature search, is an evaluation of whether this pipeline can be trusted once
 to classifiers: no external validation of the mixture surrogate on unseen compositions, no computation of the anchors
 both ways on one problem so that surrogate-derived and real anchors can be contrasted, no metamodel-free arm run
 alongside the surrogate arms as a control, no revalidation of candidates on the true objectives against an
-empirical reference with a method-independent core, no replicated partition study of the whole pipeline, and no
+empirical reference whose sampled core contains no output of the compared methods, no replicated partition study of the whole pipeline, and no
 contrast, for one and the same weight vector, between the cost that is optimized and the cost that is paid.
 
 The gap is therefore not a missing method. It is the absence of the controls that would tell a practitioner when the
-existing method's output can be believed --- which is what this paper supplies, for the one-shot, no-infill form of
+existing method's output can be believed, which is what this paper supplies, for the one-shot, no-infill form of
 the pipeline described above.

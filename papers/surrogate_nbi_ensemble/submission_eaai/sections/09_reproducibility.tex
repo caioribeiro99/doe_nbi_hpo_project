@@ -1,31 +1,39 @@
 \label{sec:repro}
 
 \paragraph{Code and frozen states.} Code, manifests, aggregated tables, statistics and figures are in the repository
-\texttt{caioribeiro99/doe\_nbi\_hpo\_project}. Two annotated tags freeze the study: \texttt{pco213\-postwork\-r10}
-the ten-replication analysis and \texttt{pco213\-postwork\-r30} (commit \texttt{b3ed050}) the
-thirty-replication analysis reported here, the source of every number in this paper (\cref{sec:results:r30} compares
-the two tags); the manuscript, figures and tables are on the branch \texttt{paper/\allowbreak surrogate\-nbi\-ensemble\-weighting}, cut from that tag. A single checkpointed ten-stage runner drives the benchmark and
+\ifanon{[repository name withheld for anonymized review]}{\texttt{caioribeiro99/doe\_nbi\_hpo\_project}}. Two annotated tags freeze the study: \texttt{pco213-\allowbreak postwork-\allowbreak r10}
+the ten-replication analysis and \texttt{pco213-\allowbreak postwork-\allowbreak r30} (commit \texttt{b3ed050}) the
+thirty-replication analysis reported here (\cref{sec:results:r30} compares the two tags). The manuscript, figures and
+tables are on the branch \texttt{paper/\allowbreak surrogate-\allowbreak nbi-\allowbreak ensemble-\allowbreak weighting}, cut from that tag, together with the results computed after it from the stored outputs of the
+thirty-replication run, among them the NSGA-II baseline, the anchor-injection control and the blend test of
+\cref{tab:edge}. A single checkpointed ten-stage runner drives the benchmark and
 resumes an interrupted run without recomputation; its stages, the resumption planner, the aggregation and statistics
-scripts and the coverage of the library's 83 unit tests are in supplementary Section~S1.
+scripts and the coverage of the library's 83 unit tests are in supplementary Section~S1. The commit history records
+that the library, the benchmark runner and the analysis and asset-building scripts were developed with the assistance
+of Anthropic Claude models (Claude Fable 5, Claude Fable 5.1 and Claude Opus 5) used through Claude Code; the
+library's behaviour is checked by those unit tests.
 
 \paragraph{Determinism and environment.} Every stochastic component is seeded as $\text{20260904} + r$ for
 replication $r$; the offsets, the seed map, the configuration history and the resolved library versions are in the
 master manifest (supplementary Section~S1). The environment is Python 3.11.15 with NumPy 2.4.6 \citep{harris2020numpy}, pandas 3.0.5,
 SciPy 1.17.1 \citep{virtanen2020scipy}, scikit-learn 1.9.0 \citep{pedregosa2011scikit}, statsmodels 0.15.0 and
-XGBoost 3.2.0 \citep{chen2016xgboost}, on macOS (Apple M4 Max, arm64), with eight worker threads. Execution provenance --- stage time and the fit, design, subproblem and objective-evaluation counts --- is in
-supplementary Section~S1. Two stages were retried, both in the first ten replications; none in the extension.
+XGBoost 3.2.0 \citep{chen2016xgboost}, on macOS (Apple M4 Max, 14 cores, arm64). Base-model inference is timed under the thread setting of \cref{sec:protocol:models}, the batched weight evaluations of the empirical-reference stage use eight worker threads, and the NSGA-II runs, except for one pilot run, were executed eight at a time as concurrent processes. Execution provenance (stage time and the fit, design, subproblem and objective-evaluation counts) is in
+supplementary Section~S1. Two stages were retried, both in replication 0 after the solver fix described there; none in the extension.
 
 \paragraph{Data availability and redistribution limits.} The raw datasets are not redistributed: the UCI
 default-of-credit-card-clients data are downloadable from the UCI Machine Learning Repository, while the three Kaggle
 datasets are subject to competition rules and must be obtained from Kaggle by the user. Per-dataset manifests record
-the provenance --- source, acquisition command, expected invariants and the SHA-256 checksum of the file actually
-used --- so an independent copy can be verified byte-for-byte (supplementary Section~S1). Where a competition
-endpoint was unavailable the file came from a public mirror validated against those invariants, and the manifests
-record which source was used. Competition test labels are never used. Porto Seguro was subsampled to 200{,}000 rows
+the provenance (source, acquisition command, expected invariants and the SHA-256 checksum of the file actually
+used), so a copy of the same file can be verified byte-for-byte (supplementary Section~S1). All three Kaggle training
+files were obtained from public mirror datasets hosted on Kaggle and validated against those invariants; the
+manifests name each mirror. Competition test labels are never used. Porto Seguro was subsampled to 200{,}000 rows
 by a stratified draw with the recorded seed. The per-replication raw artifacts total about 829~MB and are
-deliberately not version-controlled, but are fully reconstructible from the seeds and the runner.
+deliberately not version-controlled, but are reconstructible from the seeds and the runner, except for the
+wall-clock costs $c_i$, which are re-measured on each run, and the results that depend on them; the measured costs
+are committed in \texttt{tables/inference\_costs.csv}.
 
 \paragraph{What a replication requires.} Reproducing the aggregate results from the published tables and statistics
 requires only the repository; from raw data it requires the four datasets, the pinned environment and approximately 81
-hours of single-workstation compute, or proportionally less for a subset of datasets or replications, since the
-runner is resumable and parameterized by dataset and replication count.
+hours of single-workstation compute for the benchmark plus about 15.5 hours, with eight concurrent processes, for the
+NSGA-II baseline, or proportionally less for a subset of datasets or replications, since the benchmark runner is
+resumable and parameterized by dataset and replication count.
