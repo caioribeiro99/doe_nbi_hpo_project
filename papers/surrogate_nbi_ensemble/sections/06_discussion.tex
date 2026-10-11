@@ -7,7 +7,7 @@ value only on some dataset--metric pairs, and an unreliable \emph{optimization s
 Paribas the dominant error is not inside the surface but in the points that build the geometry of the search
 (\cref{sec:results:metamodelfree}).
 
-\subsection{Why anchors dominate}
+\subsection{Why anchor errors are global}
 \label{sec:disc:anchors}
 
 NBI derives its whole search geometry from the payoff matrix, so every subproblem in \cref{eq:nbi} is posed relative
@@ -27,11 +27,10 @@ practical recommendation of \cref{sec:results:anchors} stands: make sure the rea
 returned set.
 
 How much the surrogate still costs once the anchors are right is dataset-dependent, and no single ordering covers the
-four: removing the metamodel entirely adds far less than real anchors did on two datasets, the same on a third and
-three times as much on the fourth --- and on that third dataset the median and the mean disagree
-(\cref{sec:results:metamodelfree}; supplementary Section~S5). Two clean cases, one
-tie and one reversal over four datasets make that an observation rather than a tested claim, and because B versus C also changes the solver acceptance rule
-(\cref{sec:method:nbi}), the \emph{ratio} of the two effects is weaker evidence than either effect on its own.
+four: removing the metamodel entirely adds far less than real anchors did on two datasets, about the same on a third,
+where the median and the mean disagree, and three times as much on the fourth (\cref{sec:results:metamodelfree}). Over
+four datasets, and with the solver confound of \cref{sec:method:nbi}, that is an observation rather than a tested
+claim.
 
 BNP Paribas shows how the anchors go wrong in the first place: where the parsimony rule selects a quadratic ROC-AUC
 surface, the surrogate maximum sits at an interior mixture instead of the gradient-boosting vertex, so the CHIM is
@@ -176,8 +175,3 @@ fronts. They do not support the converse either: on these four datasets a better
 reliably buy a better selected solution, and the two contrasts where the pick does improve are the ones with the
 smaller indicator effects. Any statement that out-of-fold selection transfers must therefore be read as within-method
 and in level, not as evidence that better fronts give better picks.
-
-What we would carry forward is not a method but a checklist: external validation on unseen compositions, an argmax
-check against the real optimum, revalidation on the true objective before scoring, a reference whose sampled core is
-constructed independently of the surrogate and of every candidate method, and an explicit statement of which cost is
-paid. Each of them changed a conclusion that would otherwise have been reported.

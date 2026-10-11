@@ -464,7 +464,7 @@ measure. Sources: \texttt{statistics/reliability\_gate\_r30.csv}, \texttt{tables
 \small
 \begin{tabular}{llllll r r r}
 \toprule
-Dataset & Response & Selected order (count) & Pass & Wilson 95\% & Median $\rext$ [95\% CI] & Median $\rho$ & RMSE$_{\mathrm{ext}}$ & Range \\
+Dataset & Response & Selected order (count) & Pass & Wilson 95\% & Median $\rext$ [95\% CI] & Median $\rho_{\mathrm{ext}}$ & RMSE$_{\mathrm{ext}}$ & Range \\
 \midrule
 """ + body + r"""
 \bottomrule
@@ -545,7 +545,7 @@ def tab04_r10_r30():
     body = "\n".join(rows)
     tex = r"""\begin{table*}[t]
 \centering
-\caption{Robustness from $R = 10$ to $R = 30$: mean hypervolume ratio and IGD$^+$ (weighted cost) of each NBI variant estimated from partitions 0--9 (the frozen $R = 10$ study, tag \texttt{pco213-postwork-r10}) and from all 30 partitions, with the $R = 30$ bootstrap interval and whether the $R = 10$ estimate lies inside it. Source: \texttt{statistics/r10\_vs\_r30\_stability.csv}.}
+\caption{Nested comparison of $R = 10$ with $R = 30$: mean hypervolume ratio and IGD$^+$ (weighted cost) of each NBI variant estimated from partitions 0--9 (the frozen $R = 10$ study, tag \texttt{pco213-postwork-r10}) and from all 30 partitions, with the $R = 30$ bootstrap interval and whether the $R = 10$ estimate lies inside it. Source: \texttt{statistics/r10\_vs\_r30\_stability.csv}.}
 \label{tab:r10r30}
 \small
 \begin{tabular}{ll rll rll}
@@ -635,7 +635,7 @@ the standalone wall clock of NBI-A, and the standalone premium of NBI-C over NBI
 (Santander, BNP Paribas, Porto Seguro, UCI credit), not the solver-stage ratio. Charging the whole reference stage to
 NBI-B and NBI-C is an upper bound, since that stage also computes references the arms do not consume, and the SLSQP
 log-loss anchor's evaluations are not separately instrumented. Not charged to any arm: the shared out-of-fold stage
-(""" + ", ".join(oof_s) + r"""~s) and the study's own instrumentation --- empirical reference, quality scoring and
+(""" + ", ".join(oof_s) + r"""~s) and the study's own instrumentation, namely the empirical reference, quality scoring and
 comparators (""" + ", ".join(instr_s) + r"""~s). ``Success'' is the mean fraction of the 66 subproblems that terminated
 successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule of \cref{sec:method:nbi}).
 Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}, \texttt{references.json} and
@@ -853,7 +853,7 @@ if __name__ == "__main__":
 
 
 # --------------------------------------------------------------------------------------
-# Table 8: the evaluation-matched NSGA-II baseline (one compact main-text block)
+# Table 8: the external NSGA-II baseline (one compact main-text block)
 # --------------------------------------------------------------------------------------
 NSGA = REP / "nsga2"
 
@@ -960,7 +960,7 @@ if __name__ == "__main__":
 
 # --------------------------------------------------------------------------------------
 # Table 3, main-text version: load-bearing quantities only.
-# Mean, rank-biserial, Wilcoxon and the two floor-check comparisons move to the supplement.
+# Mean, rank-biserial, Wilcoxon and the two comparator comparisons (scalarization; Dirichlet floor check) move to the supplement.
 # --------------------------------------------------------------------------------------
 def tab03_main_compact():
     e = pd.read_csv(REP / "statistics" / "paired_primary_effects.csv")

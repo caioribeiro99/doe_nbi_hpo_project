@@ -443,6 +443,11 @@ anchors also moves the utopia point, rescales both normalization axes, reorients
 returned candidates (Section~\ref{sec:s12}).
 \item \textbf{The compute premium was quoted from solver stages only.} Charged standalone, so that each arm carries
 the stages it depends on, the NBI-C premium over NBI-B is 2.3--6.2$\times$, not 3--73$\times$.
+\item \textbf{The NSGA-II baseline was described as matched to NBI-C in real objective evaluations.} Its budget was
+set to NBI-C's count of real objective evaluations, which records each ROC-AUC and each log-loss computation
+separately, two per weight-vector evaluation, whereas NSGA-II counts weight-vector evaluations; NSGA-II therefore
+performed twice as many weight-vector evaluations as NBI-C's solve, and its $2.2\times$ wall clock is close to that
+ratio rather than a consequence of batching (Section~\ref{sec:s13}).
 \end{enumerate}
 
 \end{document}

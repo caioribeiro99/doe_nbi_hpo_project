@@ -21,7 +21,7 @@ tabular binary datasets.
 \textbf{We therefore claim no part of that construction:} mixture design over combination weights, a Scheffé surrogate
 over the simplex, and NBI on that surrogate are established prior work, individually and for classifier ensembles.
 What is not established is whether the construction stays \emph{trustworthy} once the problem becomes genuinely
-multiobjective --- this paper's question.
+multiobjective. That is the question this paper addresses.
 
 \subsection{Why the transfer is not routine}
 
@@ -35,7 +35,7 @@ measured on unseen compositions rather than assumed.
 
 Second, \emph{the decision variables are the mixture}. When the simplex holds scalarization weights, as in the lineage
 above, NBI's anchors are optima of the surrogate in another space; when it holds the decision variables themselves,
-the anchors are feasible-region points --- often vertices --- so an anchor error displaces the geometry in which every
+the anchors are feasible-region points (often vertices), so an anchor error displaces the geometry in which every
 subproblem is posed. NBI derives its whole search geometry from the payoff matrix of individual optima
 \citep{das1998nbi}, so errors there propagate globally. That misplaced anchors damage the construction is established:
 the worst criterion values read off a payoff table can differ substantially from the true worst values over the
@@ -49,7 +49,7 @@ one with none costs nothing, so deployment cost is not proportional to a weight.
 objectives can only optimize a continuous relaxation, with no guarantee that it and the quantity actually paid agree
 about which solution is best.
 
-Each breaks a different part of the pipeline --- the model class, the search geometry, the objective definition ---
+Each can break a different part of the pipeline (the model class, the search geometry, the objective definition),
 and none is visible in the aggregate fit statistics such studies conventionally report.
 
 \subsection{Approach}

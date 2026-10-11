@@ -19,10 +19,11 @@ machine-learning metrics. Green: introduced in this study.}
 Let $M$ probabilistic base classifiers produce estimates $p_1(x),\dots,p_M(x) \in [0,1]$ for a sample $x$. A
 weighted soft-voting ensemble predicts
 \begin{equation}
-p_{\wvec}(x) \;=\; \sum_{i=1}^{M} w_i\, p_i(x) \;=\; \mathbf{P}\wvec ,
+p_{\wvec}(x) \;=\; \sum_{i=1}^{M} w_i\, p_i(x) ,
 \label{eq:ensemble}
 \end{equation}
-where $\mathbf{P} \in [0,1]^{n \times M}$ collects the base-model probabilities for $n$ samples. For
+so that, for $n$ samples, the vector of ensemble probabilities is $\mathbf{P}\wvec$, where
+$\mathbf{P} \in [0,1]^{n \times M}$ collects the base-model probabilities. For
 $p_{\wvec}(x)$ to remain a probability for every input, the weights must satisfy
 \begin{equation}
 w_i \ge 0 \quad (i = 1,\dots,M), \qquad \sum_{i=1}^{M} w_i = 1 ,
@@ -164,8 +165,8 @@ whereas NBI-A and NBI-B optimize smooth polynomials and require full certificati
 quadratic programming \citep[SLSQP;][]{kraft1988software}, as implemented in SciPy \citep{virtanen2020scipy}. This asymmetry follows from
 the objective, not from tuning, and it bounds the causal reading. A versus B is not a single-factor contrast:
 replacing the anchors simultaneously moves the utopia point, rescales both normalization axes through the payoff
-matrix, reorients the CHIM and every quasi-normal direction, and---because the three vertex values of $\beta$ return
-their anchor directly---substitutes three returned candidates. \Cref{sec:results:anchors} separates the last of these
+matrix, reorients the CHIM and every quasi-normal direction, and, because the three vertex values of $\beta$ return
+their anchor directly, substitutes three returned candidates. \Cref{sec:results:anchors} separates the last of these
 from the rest. B versus C tests removal of
 \emph{surrogate error in the interior} once real anchors are supplied, but is not a perfectly identical numerical
 experiment, because changing the objective from a smooth polynomial to a piecewise-constant rank statistic
@@ -203,8 +204,8 @@ simplex lattice, all vertices and edges, and a 40-cap $\varepsilon$-constraint s
 and filtered to the non-dominated set. An independent sample of $2\times10^{4}$ points checks convergence: if it
 displaces more than 5\% of the front, the reference is enlarged and rechecked, up to three rounds (per-dataset
 convergence diagnostics in supplementary Section~S8). This sampled core
-contains no output of the five methods compared in this study --- NBI-A, NBI-B, NBI-C, random weighted scalarization
-and NSGA-II. It is not, however, free of optimization output: it carries the 40 $\varepsilon$-constraint solutions and
+contains no output of the five methods compared in this study (NBI-A, NBI-B, NBI-C, random weighted scalarization
+and NSGA-II). It is not, however, free of optimization output: it carries the 40 $\varepsilon$-constraint solutions and
 the seven single-objective references of \cref{sec:method:refs}, among them the real ROC-AUC and log-loss optima that
 NBI-B and NBI-C receive as anchors and the two Scheff\'e-surface optima that NBI-A receives. On Santander the
 $\varepsilon$-constraint sweep supplies a median of 38 of the roughly 135 core-front points and the single-objective

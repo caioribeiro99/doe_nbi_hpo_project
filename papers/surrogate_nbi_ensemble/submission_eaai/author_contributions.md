@@ -61,7 +61,8 @@ Writing – review & editing.
 Derived from evidence in this project and its lineage rather than copied from the predecessor.
 
 - The first author executed the study: the entire benchmark, the statistical analysis, the NSGA-II baseline and the
-  manuscript are his work in this repository, which is authored under his GitHub account throughout.
+  manuscript are his work in this repository, committed under his GitHub account throughout, with the AI assistance
+  declared in the manuscript.
 - M. C. Pereira is the first author of the methodological predecessor (Pereira et al., 2025) from which the
   DoE–RSM–NBI construction studied here is taken, and is acknowledged in the first author's dissertation as a
   constant research partner. Conceptualization and methodology are therefore attributable; software and formal

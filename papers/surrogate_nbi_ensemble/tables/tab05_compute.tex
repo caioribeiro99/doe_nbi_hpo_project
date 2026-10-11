@@ -13,7 +13,7 @@ the standalone wall clock of NBI-A, and the standalone premium of NBI-C over NBI
 (Santander, BNP Paribas, Porto Seguro, UCI credit), not the solver-stage ratio. Charging the whole reference stage to
 NBI-B and NBI-C is an upper bound, since that stage also computes references the arms do not consume, and the SLSQP
 log-loss anchor's evaluations are not separately instrumented. Not charged to any arm: the shared out-of-fold stage
-(335, 86, 69, 11~s) and the study's own instrumentation --- empirical reference, quality scoring and
+(335, 86, 69, 11~s) and the study's own instrumentation, namely the empirical reference, quality scoring and
 comparators (270, 154, 302, 74~s). ``Success'' is the mean fraction of the 66 subproblems that terminated
 successfully (A/B: SLSQP-certified; C: equality-feasible under the lenient rule of \cref{sec:method:nbi}).
 Source: \texttt{tables/stage\_times.csv}, \texttt{tables/nbi\_runs.csv}, \texttt{references.json} and
