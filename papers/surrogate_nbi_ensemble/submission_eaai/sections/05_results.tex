@@ -138,7 +138,8 @@ reverse two small $\igdp$ readings, discussed in \cref{sec:results:metamodelfree
 \centering
 \includegraphics[width=\textwidth]{fig04_paired_deltas.pdf}
 \caption{Paired differences on the two primary endpoints, one point per outer partition, red bar at the median; the
-IGD$^+$ axis is symmetric-logarithmic. The BNP Paribas NBI-B $-$ NBI-A distribution is visibly bimodal: small positive
+IGD$^+$ axis is symmetric-logarithmic. Comparisons: B $-$ A, NBI-B $-$ NBI-A; C $-$ B, NBI-C $-$ NBI-B; C $-$ S,
+NBI-C $-$ random scalarization. The BNP Paribas NBI-B $-$ NBI-A distribution is visibly bimodal: small positive
 differences plus a tail of seven partitions where NBI-A collapses.}
 \label{fig:paired}
 \end{figure}
@@ -177,10 +178,14 @@ residual, which is the part attributable to the relocated geometry, has median $
 $+0.091$ hypervolume respectively over all 30 partitions.
 
 This materially qualifies the headline. On Santander and BNP Paribas the mechanism is mostly the returned extreme
-points, not the CHIM; on UCI credit it is almost entirely the CHIM; Porto Seguro is intermediate. The practical
-recommendation is unchanged and if anything simpler: compute the real single-objective optima and make sure they
-reach the returned set, whether by re-anchoring or by adding them. The causal story, however, must be stated at this
-resolution rather than as ``relocating the CHIM repairs the front''.
+points, not the CHIM; on UCI credit it is almost entirely the CHIM; Porto Seguro is intermediate. For the setting
+studied here, one-shot weighting of this fixed ensemble without infill, where a real evaluation is one
+matrix--vector product plus a sort and the direct search for the real optima is affordable (\cref{tab:compute}),
+the practical implication is unchanged and if anything simpler: compute the real single-objective optima and make
+sure they reach the returned set, whether by re-anchoring or by adding them. This is not a recommendation for
+surrogate-assisted multiobjective optimization in general: where each real evaluation is expensive, the cost of
+finding the real optima has to be weighed against the gain (\cref{sec:disc:compute}). The causal story, however,
+must be stated at this resolution rather than as ``relocating the CHIM repairs the front''.
 
 \paragraph{What goes wrong when anchors come from the surrogate.} NBI-A's BNP Paribas hypervolume ratio collapses in
 seven of thirty partitions, exactly those in which the parsimony rule selects the \emph{quadratic} ROC-AUC order

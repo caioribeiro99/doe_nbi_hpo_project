@@ -23,8 +23,9 @@ BNP Paribas, where real anchors win in every partition and Santander carries the
 most of the hypervolume gain comes from those returned optima; the relocated-CHIM effect, though positive in all 30
 partitions of both, is small. On UCI credit the relocated CHIM accounts for almost the whole gain, and Porto Seguro is
 intermediate. The mechanism therefore survives at a smaller size than the raw A-to-B contrast suggests, and the
-practical recommendation of \cref{sec:results:anchors} stands: make sure the real single-objective optima reach the
-returned set.
+implication drawn in \cref{sec:results:anchors} stands within its scope: in one-shot ensemble weighting with
+affordable real evaluations, make sure the real single-objective optima reach the returned set. Whether the same
+holds when real evaluations are expensive is a question of cost, taken up in \cref{sec:disc:compute}.
 
 How much the surrogate still costs once the anchors are right is dataset-dependent, and no single ordering covers the
 four: removing the metamodel entirely adds far less than real anchors did on two datasets, about the same on a third,

@@ -69,6 +69,11 @@ def main() -> int:
 
     # S3 Scheffe
     so = pd.read_csv(T / "scheffe_orders.csv")
+    # "reliable" is recorded only for the selected order (empty otherwise), so pandas reads it
+    # as an object column, and summing a group whose one recorded value is True returns the
+    # boolean True instead of the count 1. Count the True values explicitly; the source CSV
+    # and the gate outcome are unchanged.
+    so = so.assign(reliable=so["reliable"].eq(True).astype(int))
     made.append(longtab(so.groupby(["dataset", "response", "order"]).agg(
         n=("rep", "count"), selected=("selected", "sum"), reliable=("reliable", "sum"),
         r2_train=("r2_train", "mean"), r2_external=("r2_external", "mean"),

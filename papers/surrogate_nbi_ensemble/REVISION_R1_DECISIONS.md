@@ -61,3 +61,16 @@ re-read on the live page at upload.
 - The frozen reports, statistical plan, analysis configuration and NSGA-II report are not edited; the NSGA-II
   budget-unit error is recorded in the new file
   `reports/pco213_postwork_benchmark/nsga2/NSGA2_BASELINE_ERRATUM.md`.
+
+## Presentation QA patch (QA2, 2026-10-12)
+
+Requested by the corresponding author after a page-by-page inspection of the review PDFs; presentation and scope
+wording only, no analysis, artifact or reported result changes.
+
+- Figure 3 (surrogate validation) is a 2 x 2 grid, so that the panel titles no longer collide; Figure 5 (paired
+  differences) uses the short comparison labels B − A, C − B and C − S, defined in its caption. The plotted
+  points, lines, limits and scales are unchanged; only the automatic tick positions of Figure 3 differ.
+- Supplementary Table S4 prints the reliable count 1 where the aggregation had printed the boolean True (an
+  object-typed column summed over one recorded value); the source CSV is unchanged and every other count is equal.
+- The anchor recommendation of Section 5.3, and its repetition in Section 6.1, are confined to the studied setting:
+  one-shot weighting of this ensemble without infill, with affordable real evaluations.

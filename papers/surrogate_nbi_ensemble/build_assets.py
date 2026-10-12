@@ -137,8 +137,9 @@ def fig01_pipeline():
 def fig02_surrogate_validation():
     panels = [("uci_credit", 0, "roc_auc", "ROC-AUC"), ("santander", 0, "roc_auc", "ROC-AUC"),
               ("santander", 0, "log_loss", "log-loss"), ("bnp", 7, "roc_auc", "ROC-AUC")]
-    fig, axes = plt.subplots(1, 4, figsize=(7.2, 2.3))
-    fig.subplots_adjust(wspace=0.5)
+    fig, axes = plt.subplots(2, 2, figsize=(7.2, 5.6))
+    fig.subplots_adjust(wspace=0.28, hspace=0.62)
+    axes = axes.ravel()
     for ax, (ds, rep, resp, rl) in zip(axes, panels):
         d = EXP / ds / f"rep_{rep:02d}"
         s = json.load(open(d / "scheffe.json"))[resp]
@@ -155,11 +156,13 @@ def fig02_surrogate_validation():
         r2 = o["external"]["r2_external"]
         rho = o["spearman_external"]
         gate = "pass" if s["reliable"] else "fail"
-        ax.set_title(f"{DSHORT[ds]}, {rl}, partition {rep}\n{order}: $R^2_{{ext}}$ = {r2:.2f}, ρ = {rho:.2f}\ngate {gate}", fontsize=6.8)
+        ax.set_title(f"{DLABEL[ds]}, {rl}, partition {rep}\n"
+                     f"{order.replace('_', ' ')} order: $R^2_{{\\mathrm{{ext}}}}$ = {r2:.2f}, ρ = {rho:.2f}; gate {gate}",
+                     fontsize=8)
         ax.set_xlabel(f"observed {rl}")
-        if ax is axes[0]:
+        if ax in (axes[0], axes[2]):
             ax.set_ylabel("Scheffé prediction")
-        ax.tick_params(labelsize=6.5)
+        ax.tick_params(labelsize=7)
     save(fig, "fig02_surrogate_validation")
 
 
@@ -204,8 +207,9 @@ def fig03_fronts():
 def fig04_paired():
     q = pd.read_csv(REP / "tables" / "pareto_quality.csv")
     q = q[q.cost == "weighted"]
-    comps = [("nbi_B", "nbi_A", "NBI-B − NBI-A"), ("nbi_C", "nbi_B", "NBI-C − NBI-B"),
-             ("nbi_C", "ws_random_scalarization", "NBI-C − Scal.")]
+    # short comparison labels, defined in the caption; the full names crowded the shared axes
+    comps = [("nbi_B", "nbi_A", "B − A"), ("nbi_C", "nbi_B", "C − B"),
+             ("nbi_C", "ws_random_scalarization", "C − S")]
     fig, axes = plt.subplots(2, 4, figsize=(7.2, 3.9), sharey="row", sharex="col")
     fig.subplots_adjust(hspace=0.12, wspace=0.12)
     rng = np.random.default_rng(0)
@@ -226,7 +230,7 @@ def fig04_paired():
             ax.axhline(0, color="#777777", lw=0.6, ls="--")
             ax.set_xticks(range(len(comps)))
             if i == 1:
-                ax.set_xticklabels([c[2] for c in comps], rotation=25, ha="right", fontsize=6.5)
+                ax.set_xticklabels([c[2] for c in comps], fontsize=7)
             else:
                 ax.set_title(DLABEL[ds])
             if j == 0:

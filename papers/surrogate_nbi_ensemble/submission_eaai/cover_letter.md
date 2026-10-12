@@ -66,9 +66,9 @@ remaining co-authors of that paper and of Rocha et al. (2025, *IEEE Access*) not
 
 | File | Content |
 |---|---|
-| `manuscript.pdf` | Main text, single column, 44 pages including references |
+| `manuscript.pdf` | Main text, single column, 45 pages including references |
 | `supplementary.pdf` | Supplementary material, 41 pages, Sections S1-S14, 22 tables and 19 figures |
-| `manuscript_anonymized.pdf` | The main text for double-anonymized review, 43 pages: no author names, affiliations, funding, acknowledgements or repository name |
+| `manuscript_anonymized.pdf` | The main text for double-anonymized review, 44 pages: no author names, affiliations, funding, acknowledgements or repository name |
 | `title_page.pdf` | Title page: authors, affiliations, ORCID identifiers, corresponding author, funding, acknowledgements and competing interests |
 | `supplementary_anonymized.pdf` | The supplementary material without the author line |
 | `highlights.txt` | Highlights |
