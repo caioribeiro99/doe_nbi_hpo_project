@@ -209,7 +209,7 @@ def fig04_paired():
     q = q[q.cost == "weighted"]
     # short comparison labels, defined in the caption; the full names crowded the shared axes
     comps = [("nbi_B", "nbi_A", "B − A"), ("nbi_C", "nbi_B", "C − B"),
-             ("nbi_C", "ws_random_scalarization", "C − S")]
+             ("nbi_C", "ws_random_scalarization", "C − Scal.")]
     fig, axes = plt.subplots(2, 4, figsize=(7.2, 3.9), sharey="row", sharex="col")
     fig.subplots_adjust(hspace=0.12, wspace=0.12)
     rng = np.random.default_rng(0)

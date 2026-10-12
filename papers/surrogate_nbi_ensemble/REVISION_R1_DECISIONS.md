@@ -68,9 +68,12 @@ Requested by the corresponding author after a page-by-page inspection of the rev
 wording only, no analysis, artifact or reported result changes.
 
 - Figure 3 (surrogate validation) is a 2 x 2 grid, so that the panel titles no longer collide; Figure 5 (paired
-  differences) uses the short comparison labels B − A, C − B and C − S, defined in its caption. The plotted
+  differences) uses the short comparison labels B − A, C − B and C − Scal., defined in its caption. The plotted
   points, lines, limits and scales are unchanged; only the automatic tick positions of Figure 3 differ.
 - Supplementary Table S4 prints the reliable count 1 where the aggregation had printed the boolean True (an
   object-typed column summed over one recorded value); the source CSV is unchanged and every other count is equal.
 - The anchor recommendation of Section 5.3, and its repetition in Section 6.1, are confined to the studied setting:
-  one-shot weighting of this ensemble without infill, with affordable real evaluations.
+  one-shot weighting of this ensemble without infill, with affordable real evaluations. The cost-conditional advice
+  of Section 6.5 is made only for the cheap regime studied, the expensive regime being stated as untested, and the
+  Conclusion notes that the anchor check was affordable here because a real evaluation is cheap.
+- The cover letter carries the rebuilt page counts (manuscript 45, anonymized copy 44).

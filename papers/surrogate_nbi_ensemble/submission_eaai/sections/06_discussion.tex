@@ -110,9 +110,9 @@ on UCI credit the smallest premium buys the largest gain, while on Santander the
 NBI-C's affordability is specific to this problem: one evaluation is a matrix--vector product plus a sort, which
 takes milliseconds here. Where each evaluation needs a model refit the ordering reverses and the surrogate is the only
 viable route, which is the regime the framework was designed for. The recommendation is therefore conditional on
-evaluation cost:
-cheap evaluations should be used directly, at least for the anchors; expensive ones argue for an externally validated
-surrogate, anchored on whatever real evaluations are affordable.
+evaluation cost, and it is made only for the cheap regime studied here: there, real evaluations should be used
+directly, at least for the anchors. The expensive regime was not studied; for it the argument suggests, without
+having tested it, an externally validated surrogate anchored on whatever real evaluations are affordable.
 
 \subsection{Response surfaces as descriptions rather than optimizers}
 \label{sec:disc:description}
