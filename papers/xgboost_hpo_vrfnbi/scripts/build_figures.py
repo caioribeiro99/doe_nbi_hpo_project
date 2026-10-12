@@ -127,6 +127,7 @@ def fig_reference_sensitivity():
     """CORE primary against AUGMENTED sensitivity, all 12 cells."""
     prim = json.loads((A/"primary_analysis.json").read_text())
     fig, ax = plt.subplots(figsize=(4.4, 3.4))
+    extent = []
     for blk in ("primary_family", "boundary_control"):
         for ds in prim[blk]["core"]:
             for rc, ra in zip(prim[blk]["core"][ds], prim[blk]["augmented"][ds]):
@@ -134,14 +135,17 @@ def fig_reference_sensitivity():
                 col = "#b03030" if sig[0] != sig[1] else "#1b6ca8"
                 ax.scatter(rc["median_diff"], ra["median_diff"], s=34, c=col,
                            edgecolors="k", linewidths=0.4, zorder=3)
-    lim = 0.55
+                extent += [abs(rc["median_diff"]), abs(ra["median_diff"])]
+    # The limits follow the data, so that every one of the twelve cells is on the plot; a fixed
+    # +/-0.55 had clipped the Spambase anchor-provenance cell out of view.
+    lim = float(np.ceil(1.1 * max(extent) / 0.05) * 0.05)
     ax.plot([-lim, lim], [-lim, lim], color="#999", lw=0.8, ls="--", zorder=1)
     ax.axhline(0, color="#ccc", lw=0.6); ax.axvline(0, color="#ccc", lw=0.6)
     ax.set_xlabel("median Δ, CORE reference (primary)", fontsize=8)
     ax.set_ylabel("median Δ, AUGMENTED (sensitivity)", fontsize=8)
     ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.tick_params(labelsize=7)
-    ax.text(-0.5, 0.45, "red = the one cell whose\nsignificance differs", fontsize=6.5,
-            color="#b03030", va="top")
+    ax.text(0.04, 0.96, "red = the one cell whose\nsignificance differs", fontsize=6.5,
+            color="#b03030", va="top", transform=ax.transAxes)
     save(fig, "fig4_reference_sensitivity", 4)
 
 

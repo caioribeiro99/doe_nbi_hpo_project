@@ -736,8 +736,8 @@ def main() -> int:
     else:
         w(f"| package tag | not yet created; planned name {package_tag}, to be created after the "
           "authors' approval |")
-        w("| relationship | planned: the commit to be tagged will add only this provenance "
-          "metadata and the compiled PDFs to the source commit above |")
+        w("| relationship | planned: the commit to be tagged will differ from its manuscript "
+          "source commit only by provenance metadata and compiled outputs |")
     w("| protocol tag | `xgboost-hpo-protocol-v3` |")
     w("| results tag | `xgboost-hpo-confirmatory-results-v1` |")
     w(f"| datasets | {', '.join(DISP[d] for d in DATASETS)} |")

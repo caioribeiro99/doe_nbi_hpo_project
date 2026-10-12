@@ -77,6 +77,9 @@ provenance wording only, no analysis, artifact or reported result changes.
   ones). The introduction's contribution list cites Section 6.4 instead of the anchor figure, so that no figure is
   cited before Figure 1. `build_latex.py` now fails if the first-citation order and the numbering differ.
 - Figure 6: both legends sit above their axes, with the space reserved, so that no bar is covered.
+- Figure 4 (reference sensitivity): the axis limits follow the data. The fixed +/-0.55 had clipped the Spambase
+  anchor-provenance cell (CORE -0.6932, AUGMENTED -0.3464) out of view, so the chart showed eleven of the twelve
+  cells its caption describes; the plotted values are unchanged.
 - The supplement is a review draft until the authors approve it: S17 names `paper2-manuscript-v6` as the planned
   tag, not yet created. The release build sets `PAPER2_PACKAGE_RELEASE=paper2-manuscript-v6`, which restores the
   final-package wording that `audit_package_tag.py` checks at the tag.

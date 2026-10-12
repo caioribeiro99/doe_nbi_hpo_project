@@ -776,7 +776,7 @@ author's version.
 |---|---|
 | manuscript source commit | `d4842c70503b42f6431d77d36da82470009a1711` |
 | package tag | not yet created; planned name `paper2-manuscript-v6`, to be created after the authors' approval |
-| relationship | planned: the commit to be tagged will add only this provenance metadata and the compiled PDFs to the source commit above |
+| relationship | planned: the commit to be tagged will differ from its manuscript source commit only by provenance metadata and compiled outputs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |
 | datasets | MAGIC, Spambase, Adult, Bank Marketing |
