@@ -5,13 +5,17 @@ Everything here is read from a committed artifact at generation time. Nothing is
 transcribed, so the supplement cannot drift from the evidence it documents.
 """
 from __future__ import annotations
-import json, pathlib, subprocess, sys
+import json, os, pathlib, subprocess, sys
 import numpy as np, pandas as pd
 
 REPO = pathlib.Path(__file__).resolve().parents[3]
 
 # The tag this package is destined for. Verified against the repository below.
 PACKAGE_TAG = "paper2-manuscript-v6"  # forward reference; the tag is created only after author sign-off
+# Until the authors approve the package the supplement is a review draft, and it must not
+# present the planned tag as the package's tag. The release build, run once after sign-off on
+# the commit that will be tagged, sets PAPER2_PACKAGE_RELEASE to the tag name.
+RELEASE = os.environ.get("PAPER2_PACKAGE_RELEASE") == PACKAGE_TAG
 sys.path.insert(0, str(REPO / "src"))
 PAPER = REPO / "papers" / "xgboost_hpo_vrfnbi"
 A = PAPER / "analysis"
@@ -55,13 +59,21 @@ def main() -> int:
     # that. audit_package_tag.py closes the loop after the tag is created, checking that
     # the tag resolves to a commit whose supplement names that same tag.
     package_tag = f"`{PACKAGE_TAG}`"
+    if not RELEASE and PACKAGE_TAG in tags:
+        raise SystemExit(f"{PACKAGE_TAG} exists, so the draft wording 'not yet created' would be false; "
+                         "regenerate with PAPER2_PACKAGE_RELEASE set to the tag")
     src = pathlib.Path(REPO/"papers"/"xgboost_hpo_vrfnbi"/"manuscript"/"SOURCE_COMMIT")
     source_commit = src.read_text().strip() if src.exists() else head
     w(f"**Manuscript source commit** `{source_commit[:12]}`: the state of the")
     w("manuscript and analysis sources from which this supplement was generated.")
-    w("The final package commit and tag are recorded in S17; they differ from the")
-    w("source commit by the metadata-only step that records this provenance, and no")
-    w("byte identity between the two is claimed.\n")
+    if RELEASE:
+        w("The final package commit and tag are recorded in S17; they differ from the")
+        w("source commit by the metadata-only step that records this provenance, and no")
+        w("byte identity between the two is claimed.\n")
+    else:
+        w("This is a review draft. No package tag has been created: S17 names the tag")
+        w("planned for the released package, which will be created only after the authors")
+        w("approve it.\n")
     w("Protocol tag `xgboost-hpo-protocol-v3`. Results tag")
     w("`xgboost-hpo-confirmatory-results-v1`.\n")
 
@@ -717,9 +729,15 @@ def main() -> int:
     w("## S17. Reproducibility manifest\n")
     w("| item | value |"); w("|---|---|")
     w(f"| manuscript source commit | `{source_commit}` |")
-    w(f"| final package tag | {package_tag} |")
-    w("| relationship | the package commit adds only this provenance metadata and the "
-      "compiled PDFs; no manuscript text, analysis artifact or number differs |")
+    if RELEASE:
+        w(f"| final package tag | {package_tag} |")
+        w("| relationship | the package commit adds only this provenance metadata and the "
+          "compiled PDFs; no manuscript text, analysis artifact or number differs |")
+    else:
+        w(f"| package tag | not yet created; planned name {package_tag}, to be created after the "
+          "authors' approval |")
+        w("| relationship | planned: the commit to be tagged will add only this provenance "
+          "metadata and the compiled PDFs to the source commit above |")
     w("| protocol tag | `xgboost-hpo-protocol-v3` |")
     w("| results tag | `xgboost-hpo-confirmatory-results-v1` |")
     w(f"| datasets | {', '.join(DISP[d] for d in DATASETS)} |")

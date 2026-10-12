@@ -158,7 +158,7 @@ $R = 30$ rather than as an absence of effect.
    the geometry effect.
 5. A mechanistic reading of the negative contrast (a prospectively frozen anchor-injection
    control together with a post hoc measurement of the contraction of the CHIM segment),
-   reported as an association within datasets, not as a demonstrated cause (Figure 4).
+   reported as an association within datasets, not as a demonstrated cause (Section 6.4).
 
 
 ## 2. Related work and methodological lineage
@@ -1191,14 +1191,14 @@ per-replication extent ratio and the per-replication hypervolume gap are +0.683 
 Bank Marketing, +0.320 on Spambase and −0.111 on MAGIC. This is a post hoc association measured
 across 30 replications within a dataset, clear on Adult and Bank Marketing, weak on Spambase and
 absent on MAGIC; it is not a demonstrated cause of the deficit, and it is not presented as one
-(Figure 4).
+(Figure 3).
 
 ### 6.5 Reference sensitivity
 
 Every dataset-by-contrast conclusion was recomputed under both the primary
 method-independent CORE reference and the mandatory AUGMENTED sensitivity reference.
 Eleven of the twelve conclusions agree in direction and in significance, and no cell
-anywhere flips direction (Figure 5). The single disagreement is Adult's anchor-provenance
+anywhere flips direction (Figure 4). The single disagreement is Adult's anchor-provenance
 contrast: under CORE the median is −0.0192 with Holm $p$ = 0.1607, non-significant;
 under AUGMENTED the median is −0.0535 with Holm $p$ = 0.0174, significant. The sign is
 negative under both references, so the disagreement is one of resolution, not of
@@ -1237,7 +1237,7 @@ losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.43
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is 1.7706 on Spambase against
 0.0594 on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
-(Figure 3).
+(Figure 5).
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
 $R = 30$, not a demonstration that the effect is absent. It is consistent with the
@@ -1628,7 +1628,7 @@ association across 30 replications within a dataset: clear on Adult and Bank Mar
 Spambase and absent on MAGIC ($\rho = -0.11$), where the injection control is itself nonzero. The
 anchor-injection control cannot apportion the deficit either, because NBI-R never returned its own
 empirical anchors (Section 5.12); it bounds only what adding them to NBI-S's set changes. No
-intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis (Figure 4).
+intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis (Figure 3).
 
 ### 8.5 Known weaknesses in the frozen protocol
 
@@ -2028,22 +2028,22 @@ CORE-relative hypervolume ratio, NBI-S minus WS-S, sorted within each dataset, $
 CORE reference. Blue favours NBI-S. The dashed line is the median. Note that the
 vertical scales differ by dataset.
 
-**Figure 3. Dispersion across the panel.** The same paired differences as Figure 2,
-shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
-which is why its contrast does not resolve at $R = 30$ despite a numerically larger point
-estimate.
-
-**Figure 4. Anchor provenance and the associated geometry.** Left: the full
+**Figure 3. Anchor provenance and the associated geometry.** Left: the full
 NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which inserts
 NBI-R's empirical anchors into NBI-S's set and changes nothing else. Right (post hoc): the
 CHIM extent under empirical anchors relative to surrogate-derived anchors, as a per-dataset
 median. The juxtaposition is a post hoc association, not a demonstrated cause: clear on Adult
 and Bank Marketing, weak on Spambase and absent on MAGIC.
 
-**Figure 5. Reference sensitivity.** Median paired difference under the CORE reference
+**Figure 4. Reference sensitivity.** Median paired difference under the CORE reference
 (primary, horizontal) against the AUGMENTED reference (mandatory sensitivity,
 vertical), for all twelve dataset-by-contrast cells. Red marks the single cell whose
 significance differs between references; no cell changes direction.
+
+**Figure 5. Dispersion across the panel.** The same paired differences as Figure 2,
+shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
+which is why its contrast does not resolve at $R = 30$ despite a numerically larger point
+estimate.
 
 **Figure 6. Surrogate-gate regime and baselines.** Left: per-dataset pass rates of the
 frozen external reliability criterion over $R = 30$; the gate is diagnostic and filters

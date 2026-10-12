@@ -10,22 +10,22 @@ CORE-relative hypervolume ratio, NBI-S minus WS-S, sorted within each dataset, $
 CORE reference. Blue favours NBI-S. The dashed line is the median. Note that the
 vertical scales differ by dataset.
 
-**Figure 3. Dispersion across the panel.** The same paired differences as Figure 2,
-shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
-which is why its contrast does not resolve at $R = 30$ despite a numerically larger point
-estimate.
-
-**Figure 4. Anchor provenance and the associated geometry.** Left: the full
+**Figure 3. Anchor provenance and the associated geometry.** Left: the full
 NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which inserts
 NBI-R's empirical anchors into NBI-S's set and changes nothing else. Right (post hoc): the
 CHIM extent under empirical anchors relative to surrogate-derived anchors, as a per-dataset
 median. The juxtaposition is a post hoc association, not a demonstrated cause: clear on Adult
 and Bank Marketing, weak on Spambase and absent on MAGIC.
 
-**Figure 5. Reference sensitivity.** Median paired difference under the CORE reference
+**Figure 4. Reference sensitivity.** Median paired difference under the CORE reference
 (primary, horizontal) against the AUGMENTED reference (mandatory sensitivity,
 vertical), for all twelve dataset-by-contrast cells. Red marks the single cell whose
 significance differs between references; no cell changes direction.
+
+**Figure 5. Dispersion across the panel.** The same paired differences as Figure 2,
+shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,
+which is why its contrast does not resolve at $R = 30$ despite a numerically larger point
+estimate.
 
 **Figure 6. Surrogate-gate regime and baselines.** Left: per-dataset pass rates of the
 frozen external reliability criterion over $R = 30$; the gate is diagnostic and filters

@@ -19,7 +19,7 @@ losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.43
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is 1.7706 on Spambase against
 0.0594 on MAGIC, roughly thirty times larger, over a range $-5.2874$ to $+5.7457$
-(Figure 3).
+(Figure 5).
 
 The interpretation is therefore narrow. This is a failure to resolve the contrast at
 $R = 30$, not a demonstration that the effect is absent. It is consistent with the

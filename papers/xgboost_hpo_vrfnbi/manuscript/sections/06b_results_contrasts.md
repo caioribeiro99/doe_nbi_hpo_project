@@ -158,14 +158,14 @@ per-replication extent ratio and the per-replication hypervolume gap are +0.683 
 Bank Marketing, +0.320 on Spambase and −0.111 on MAGIC. This is a post hoc association measured
 across 30 replications within a dataset, clear on Adult and Bank Marketing, weak on Spambase and
 absent on MAGIC; it is not a demonstrated cause of the deficit, and it is not presented as one
-(Figure 4).
+(Figure 3).
 
 ### 6.5 Reference sensitivity
 
 Every dataset-by-contrast conclusion was recomputed under both the primary
 method-independent CORE reference and the mandatory AUGMENTED sensitivity reference.
 Eleven of the twelve conclusions agree in direction and in significance, and no cell
-anywhere flips direction (Figure 5). The single disagreement is Adult's anchor-provenance
+anywhere flips direction (Figure 4). The single disagreement is Adult's anchor-provenance
 contrast: under CORE the median is −0.0192 with Holm $p$ = 0.1607, non-significant;
 under AUGMENTED the median is −0.0535 with Holm $p$ = 0.0174, significant. The sign is
 negative under both references, so the disagreement is one of resolution, not of

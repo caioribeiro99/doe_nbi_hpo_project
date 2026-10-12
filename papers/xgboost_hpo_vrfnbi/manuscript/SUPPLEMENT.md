@@ -5,9 +5,9 @@ Every table in this document is generated from a committed artifact by
 
 **Manuscript source commit** `0ae9669f5c0b`: the state of the
 manuscript and analysis sources from which this supplement was generated.
-The final package commit and tag are recorded in S17; they differ from the
-source commit by the metadata-only step that records this provenance, and no
-byte identity between the two is claimed.
+This is a review draft. No package tag has been created: S17 names the tag
+planned for the released package, which will be created only after the authors
+approve it.
 
 Protocol tag `xgboost-hpo-protocol-v3`. Results tag
 `xgboost-hpo-confirmatory-results-v1`.
@@ -775,8 +775,8 @@ author's version.
 | item | value |
 |---|---|
 | manuscript source commit | `0ae9669f5c0b81ecfdf1a72f68f1eef8a49c16f9` |
-| final package tag | `paper2-manuscript-v6` |
-| relationship | the package commit adds only this provenance metadata and the compiled PDFs; no manuscript text, analysis artifact or number differs |
+| package tag | not yet created; planned name `paper2-manuscript-v6`, to be created after the authors' approval |
+| relationship | planned: the commit to be tagged will add only this provenance metadata and the compiled PDFs to the source commit above |
 | protocol tag | `xgboost-hpo-protocol-v3` |
 | results tag | `xgboost-hpo-confirmatory-results-v1` |
 | datasets | MAGIC, Spambase, Adult, Bank Marketing |

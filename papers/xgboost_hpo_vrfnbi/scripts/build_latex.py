@@ -222,7 +222,16 @@ def main() -> int:
     counters = [0, 0, 0]
     tables_seen = 0
     used = set()
-    figs_placed: set[int] = set()
+    figs_placed: list[int] = []
+
+    def place_figures(text: str) -> None:
+        """Emit each figure after the block that first cites it, in the order of citation."""
+        for m in re.finditer(r"\bFigure~?\s*(\d+)\b", text):
+            n = int(m.group(1))
+            if n in fig_caps and n not in figs_placed:
+                figs_placed.append(n)
+                tex.append(figure_tex(n, fig_caps[n]))
+
     mode = "front"
     k = 0
     while k < len(body):
@@ -290,18 +299,20 @@ def main() -> int:
         elif b[0] == "list":
             env = "enumerate" if b[1] else "itemize"
             tex.append(f"\\begin{{{env}}}\n" + "\n".join(r"\item " + inline(x) for x in b[2]) + f"\n\\end{{{env}}}")
+            place_figures(" ".join(b[2]))
         elif b[0] == "p":
             if mode == "refs":
                 tex.append(r"\noindent\hangindent=1.5em\hangafter=1 " + inline(b[1]) + r"\par\smallskip")
             else:
                 tex.append(inline(b[1]))
-                for n in sorted(fig_caps):
-                    if n not in figs_placed and re.search(rf"\bFigure~?\s*{n}\b", b[1]):
-                        figs_placed.add(n)
-                        tex.append(figure_tex(n, fig_caps[n]))
+                place_figures(b[1])
         k += 1
-    for n in sorted(set(fig_caps) - figs_placed):
-        tex.append(figure_tex(n, fig_caps[n]))
+    # LaTeX numbers the floats in the order they are placed, while the text and the captions
+    # file carry fixed numbers. The two agree only if the figures are numbered in the order of
+    # their first citation, which the journal also requires; anything else is a build error.
+    if figs_placed != sorted(fig_caps):
+        raise SystemExit(f"figures are first cited in the order {figs_placed}, not 1..{len(fig_caps)}: "
+                         "renumber the figures, their captions and the Figure_N files to match")
     tex = [t for t in tex if t != "%CAPTION"]
 
     OUT.mkdir(parents=True, exist_ok=True)

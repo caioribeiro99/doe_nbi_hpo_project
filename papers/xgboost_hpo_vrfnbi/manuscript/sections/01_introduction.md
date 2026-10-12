@@ -128,4 +128,4 @@ $R = 30$ rather than as an absence of effect.
    the geometry effect.
 5. A mechanistic reading of the negative contrast (a prospectively frozen anchor-injection
    control together with a post hoc measurement of the contraction of the CHIM segment),
-   reported as an association within datasets, not as a demonstrated cause (Figure 4).
+   reported as an association within datasets, not as a demonstrated cause (Section 6.4).

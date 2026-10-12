@@ -65,3 +65,18 @@ is corrected accordingly. Re-read the live page at upload.
 - Tables are numbered in order of appearance: the Section 3 table is Table 1 and the hyperparameter table Table 2.
 - The ASOC package files (`submission/ASOC_*.md`) are generated from the committed manuscript; until the v6 tag exists
   they are regenerated from the revision branch head as a draft (`ASOC_PACKAGE_SOURCE_REF`), never by hand.
+
+## Presentation QA patch (QA2, 2026-10-12)
+
+Requested by the corresponding author after a page-by-page inspection of the review PDFs; presentation and
+provenance wording only, no analysis, artifact or reported result changes.
+
+- Figures are numbered in the order of their first citation, which is also the order in which the LaTeX build places
+  them: anchor provenance is Figure 3, reference sensitivity Figure 4 and boundary dispersion Figure 5 (previously
+  4, 5 and 3, which the LaTeX build printed under the placement numbers 3, 4 and 5 while the text cited the old
+  ones). The introduction's contribution list cites Section 6.4 instead of the anchor figure, so that no figure is
+  cited before Figure 1. `build_latex.py` now fails if the first-citation order and the numbering differ.
+- Figure 6: both legends sit above their axes, with the space reserved, so that no bar is covered.
+- The supplement is a review draft until the authors approve it: S17 names `paper2-manuscript-v6` as the planned
+  tag, not yet created. The release build sets `PAPER2_PACKAGE_RELEASE=paper2-manuscript-v6`, which restores the
+  final-package wording that `audit_package_tag.py` checks at the tag.

@@ -94,7 +94,7 @@ def fig_boundary_dispersion():
                         PRIMARY + ("spambase",)], fontsize=7)
     ax.set_ylabel("WS-S → NBI-S\nΔ CORE-relative HV", fontsize=8)
     ax.tick_params(labelsize=7)
-    save(fig, "fig3_boundary_dispersion", 3)
+    save(fig, "fig5_boundary_dispersion", 5)
 
 
 def fig_anchor_and_chim():
@@ -120,7 +120,7 @@ def fig_anchor_and_chim():
                                          fontsize=7, rotation=20, ha="right")
     a2.set_ylabel("CHIM extent, NBI-R / NBI-S", fontsize=8); a2.set_ylim(0, 1.15)
     a2.tick_params(labelsize=7)
-    save(fig, "fig4_anchor_provenance", 4)
+    save(fig, "fig3_anchor_provenance", 3)
 
 
 def fig_reference_sensitivity():
@@ -142,13 +142,14 @@ def fig_reference_sensitivity():
     ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.tick_params(labelsize=7)
     ax.text(-0.5, 0.45, "red = the one cell whose\nsignificance differs", fontsize=6.5,
             color="#b03030", va="top")
-    save(fig, "fig5_reference_sensitivity", 5)
+    save(fig, "fig4_reference_sensitivity", 4)
 
 
 def fig_gate_and_baselines():
     """Surrogate-gate regime, and the frozen-budget grid baseline."""
     sec = json.loads((A/"secondary_analysis.json").read_text())
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.2, 2.6))
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.2, 3.0))
+    fig.subplots_adjust(wspace=0.3)
     ds_all = PRIMARY + ("spambase",); x = np.arange(len(ds_all))
     q = [sec["gate_regimes"][d]["quality_pass_rate"] for d in ds_all]
     c = [sec["gate_regimes"][d]["cost_pass_rate"] for d in ds_all]
@@ -157,7 +158,9 @@ def fig_gate_and_baselines():
     a1.set_xticks(x); a1.set_xticklabels([DISP[d].split(" (")[0] for d in ds_all],
                                          fontsize=7, rotation=20, ha="right")
     a1.set_ylabel("gate pass rate over R = 30", fontsize=8); a1.set_ylim(0, 1.05)
-    a1.legend(fontsize=6.5, frameon=False); a1.tick_params(labelsize=7)
+    # legends sit above the axes so that no bar is covered
+    a1.legend(fontsize=6.5, frameon=False, ncol=2, loc="lower center", bbox_to_anchor=(0.5, 1.02))
+    a1.tick_params(labelsize=7)
     ents = ("WS-S", "NBI-S", "NBI-R", "GRID", "NSGA2-MATCHED")
     w = 0.16
     for i, e in enumerate(ents):
@@ -169,14 +172,21 @@ def fig_gate_and_baselines():
     a2.set_xticks(x); a2.set_xticklabels([DISP[d].split(" (")[0] for d in ds_all],
                                          fontsize=7, rotation=20, ha="right")
     a2.set_ylabel("median CORE-relative HV", fontsize=8)
-    a2.legend(fontsize=6, frameon=False, ncol=2); a2.tick_params(labelsize=7)
+    a2.legend(fontsize=6.5, frameon=False, ncol=3, loc="lower center", bbox_to_anchor=(0.5, 1.02),
+              columnspacing=1.2, handlelength=1.5)
+    a2.tick_params(labelsize=7)
     save(fig, "fig6_gate_and_baselines", 6)
 
 
 def main() -> int:
     FIG.mkdir(parents=True, exist_ok=True)
-    for f in (fig_arm_lattice, fig_primary_effects, fig_boundary_dispersion,
-              fig_anchor_and_chim, fig_reference_sensitivity, fig_gate_and_baselines):
+    # Figures are numbered in the order the text first cites them. A renumbering leaves the old
+    # numbered files behind, and a stale fig<N>_*.png or Figure_<N>.pdf would then be picked up
+    # under the wrong number, so every numbered output is removed before the rebuild.
+    for old in list(FIG.glob("fig[0-9]_*.png")) + list(FIG.glob("Figure_*.pdf")):
+        old.unlink()
+    for f in (fig_arm_lattice, fig_primary_effects, fig_anchor_and_chim,
+              fig_reference_sensitivity, fig_boundary_dispersion, fig_gate_and_baselines):
         f(); print(f"  built {f.__name__}")
     print(f"\nwrote {len(list(FIG.glob('*.png')))} PNG and {len(list(FIG.glob('Figure_*.pdf')))} vector figures to {FIG}")
     return 0

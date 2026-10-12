@@ -16,6 +16,8 @@ import sys
 REPO = pathlib.Path(__file__).resolve().parents[3]
 SUP = "papers/xgboost_hpo_vrfnbi/manuscript/SUPPLEMENT.md"
 TAG_ROW = re.compile(r"\|\s*final package tag\s*\|\s*`([^`]+)`")
+# A review draft names the tag as planned, not as its own (build_supplement.py, RELEASE).
+PLANNED_ROW = re.compile(r"\|\s*package tag\s*\|\s*not yet created; planned name\s*`([^`]+)`")
 
 
 def git(*args: str) -> tuple[int, str]:
@@ -24,7 +26,18 @@ def git(*args: str) -> tuple[int, str]:
 
 
 def main() -> int:
-    named = TAG_ROW.search((REPO / SUP).read_text())
+    working = (REPO / SUP).read_text()
+    named = TAG_ROW.search(working)
+    planned = PLANNED_ROW.search(working)
+    if not named and planned:
+        tag = planned.group(1)
+        print(f"  working supplement is a review draft; planned tag {tag}")
+        code, _ = git("rev-parse", "--verify", "--quiet", tag + "^{commit}")
+        if code == 0:
+            print(f"FAIL: {tag} exists but the working supplement still calls it planned")
+            return 1
+        print("PENDING: the tag is not created; run again after the release build and the tag")
+        return 0
     if not named:
         print("FAIL: the working supplement states no package tag")
         return 1

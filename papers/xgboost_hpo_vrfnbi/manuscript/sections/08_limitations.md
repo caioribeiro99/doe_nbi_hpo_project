@@ -56,7 +56,7 @@ association across 30 replications within a dataset: clear on Adult and Bank Mar
 Spambase and absent on MAGIC ($\rho = -0.11$), where the injection control is itself nonzero. The
 anchor-injection control cannot apportion the deficit either, because NBI-R never returned its own
 empirical anchors (Section 5.12); it bounds only what adding them to NBI-S's set changes. No
-intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis (Figure 4).
+intervention manipulated CHIM extent directly, so the mechanism remains a hypothesis (Figure 3).
 
 ### 8.5 Known weaknesses in the frozen protocol
 
