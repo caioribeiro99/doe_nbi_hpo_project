@@ -3,7 +3,7 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-**Manuscript source commit** `d4842c70503b`: the state of the
+**Manuscript source commit** `aa76abc334c5`: the state of the
 manuscript and analysis sources from which this supplement was generated.
 This is a review draft. No package tag has been created: S17 names the tag
 planned for the released package, which will be created only after the authors
@@ -774,7 +774,7 @@ author's version.
 
 | item | value |
 |---|---|
-| manuscript source commit | `d4842c70503b42f6431d77d36da82470009a1711` |
+| manuscript source commit | `aa76abc334c54a718cad60c6680dc339ff3bbced` |
 | package tag | not yet created; planned name `paper2-manuscript-v6`, to be created after the authors' approval |
 | relationship | planned: the commit to be tagged will differ from its manuscript source commit only by provenance metadata and compiled outputs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
