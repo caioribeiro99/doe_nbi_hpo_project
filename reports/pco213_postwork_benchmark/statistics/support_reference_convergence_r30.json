@@ -1,0 +1,86 @@
+{
+ "provenance": "post hoc (coauthor review R2); frozen reference samples only",
+ "definition": {
+  "structured_rows": 564,
+  "first_round_random_rows": 100000,
+  "heldout_check_rows": 20000,
+  "prefix_fractions": [
+   0.1,
+   0.25,
+   0.5,
+   0.75,
+   1.0
+  ],
+  "tolerance": 0.05
+ },
+ "summary": [
+  {
+   "dataset": "santander",
+   "weighted_heldout_met": 26,
+   "support_heldout_met": 7,
+   "weighted_heldout_median": 0.0157,
+   "support_heldout_median": 0.0789,
+   "weighted_heldout_max": 0.0763,
+   "support_heldout_max": 0.2222,
+   "weighted_prefix_median": 0.1118,
+   "support_prefix_median": 0.1319,
+   "weighted_prefix_max": 0.2449,
+   "support_prefix_max": 0.3611,
+   "support_stored_front_size_median": 40.0,
+   "weighted_stored_front_size_median": 135.0,
+   "recorded_weighted_independent_check_met": 29,
+   "weighted_prefix_vs_recorded_max_abs_diff": 0.0013
+  },
+  {
+   "dataset": "bnp",
+   "weighted_heldout_met": 27,
+   "support_heldout_met": 10,
+   "weighted_heldout_median": 0.0199,
+   "support_heldout_median": 0.0656,
+   "weighted_heldout_max": 0.0992,
+   "support_heldout_max": 0.1842,
+   "weighted_prefix_median": 0.0993,
+   "support_prefix_median": 0.1603,
+   "weighted_prefix_max": 0.2584,
+   "support_prefix_max": 0.4286,
+   "support_stored_front_size_median": 39.0,
+   "weighted_stored_front_size_median": 119.5,
+   "recorded_weighted_independent_check_met": 30,
+   "weighted_prefix_vs_recorded_max_abs_diff": 0.0
+  },
+  {
+   "dataset": "porto",
+   "weighted_heldout_met": 22,
+   "support_heldout_met": 12,
+   "weighted_heldout_median": 0.0248,
+   "support_heldout_median": 0.0667,
+   "weighted_heldout_max": 0.1011,
+   "support_heldout_max": 0.4545,
+   "weighted_prefix_median": 0.1358,
+   "support_prefix_median": 0.1548,
+   "weighted_prefix_max": 0.26,
+   "support_prefix_max": 0.7692,
+   "support_stored_front_size_median": 14.0,
+   "weighted_stored_front_size_median": 93.5,
+   "recorded_weighted_independent_check_met": 29,
+   "weighted_prefix_vs_recorded_max_abs_diff": 0.002
+  },
+  {
+   "dataset": "uci_credit",
+   "weighted_heldout_met": 9,
+   "support_heldout_met": 6,
+   "weighted_heldout_median": 0.06,
+   "support_heldout_median": 0.0803,
+   "weighted_heldout_max": 0.0904,
+   "support_heldout_max": 0.1977,
+   "weighted_prefix_median": 0.1032,
+   "support_prefix_median": 0.1333,
+   "weighted_prefix_max": 0.1569,
+   "support_prefix_max": 0.2542,
+   "support_stored_front_size_median": 87.0,
+   "weighted_stored_front_size_median": 481.0,
+   "recorded_weighted_independent_check_met": 30,
+   "weighted_prefix_vs_recorded_max_abs_diff": 0.0
+  }
+ ]
+}

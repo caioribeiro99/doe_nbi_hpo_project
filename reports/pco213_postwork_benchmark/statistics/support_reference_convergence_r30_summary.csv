@@ -1,0 +1,5 @@
+dataset,weighted_heldout_met,support_heldout_met,weighted_heldout_median,support_heldout_median,weighted_heldout_max,support_heldout_max,weighted_prefix_median,support_prefix_median,weighted_prefix_max,support_prefix_max,support_stored_front_size_median,weighted_stored_front_size_median,recorded_weighted_independent_check_met,weighted_prefix_vs_recorded_max_abs_diff
+santander,26,7,0.0157,0.0789,0.0763,0.2222,0.1118,0.1319,0.2449,0.3611,40.0,135.0,29,0.0013
+bnp,27,10,0.0199,0.0656,0.0992,0.1842,0.0993,0.1603,0.2584,0.4286,39.0,119.5,30,0.0
+porto,22,12,0.0248,0.0667,0.1011,0.4545,0.1358,0.1548,0.26,0.7692,14.0,93.5,29,0.002
+uci_credit,9,6,0.06,0.0803,0.0904,0.1977,0.1032,0.1333,0.1569,0.2542,87.0,481.0,30,0.0

@@ -38,6 +38,7 @@ Inputs (frozen, read-only):
 Outputs:
   reports/pco213_postwork_benchmark/statistics/support_reference_convergence_r30.csv
   reports/pco213_postwork_benchmark/statistics/support_reference_convergence_r30.json
+  reports/pco213_postwork_benchmark/statistics/support_reference_convergence_r30_summary.csv
 
 Reads stored outputs only; runs no learner, optimizer, surrogate fit or composition
 evaluation.
@@ -131,6 +132,7 @@ def main() -> None:
         })
     OUT.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT / "support_reference_convergence_r30.csv", index=False)
+    pd.DataFrame(summary).to_csv(OUT / "support_reference_convergence_r30_summary.csv", index=False)
     (OUT / "support_reference_convergence_r30.json").write_text(json.dumps({
         "provenance": "post hoc (coauthor review R2); frozen reference samples only",
         "definition": {"structured_rows": N_STRUCT, "first_round_random_rows": N_FIRST,
