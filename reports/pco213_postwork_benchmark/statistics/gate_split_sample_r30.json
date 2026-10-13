@@ -1,0 +1,183 @@
+{
+ "provenance": "post hoc (coauthor review R2); stored records only",
+ "definition": {
+  "n_splits": 200,
+  "seed": 20261013,
+  "strata": [
+   60,
+   40
+  ],
+  "half": [
+   30,
+   20
+  ],
+  "parsimony_tolerance": 0.1,
+  "gate": {
+   "r2_min": 0.5,
+   "rho_min": 0.9
+  },
+  "reproduced_stored_stage": true
+ },
+ "summary": [
+  {
+   "dataset": "santander",
+   "response": "roc_auc",
+   "recorded_passes": 0,
+   "expected_passes_same_half": 0.12,
+   "expected_passes_cross_half": 0.01,
+   "optimism_same_minus_cross": 0.11,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 0.733
+  },
+  {
+   "dataset": "santander",
+   "response": "log_loss",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 0.965
+  },
+  {
+   "dataset": "santander",
+   "response": "brier",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 1.0
+  },
+  {
+   "dataset": "santander",
+   "response": "pr_auc",
+   "recorded_passes": 0,
+   "expected_passes_same_half": 0.01,
+   "expected_passes_cross_half": 0.0,
+   "optimism_same_minus_cross": 0.01,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 0.802
+  },
+  {
+   "dataset": "bnp",
+   "response": "roc_auc",
+   "recorded_passes": 5,
+   "expected_passes_same_half": 5.78,
+   "expected_passes_cross_half": 4.23,
+   "optimism_same_minus_cross": 1.56,
+   "replications_majority_verdict_differs": 1,
+   "median_order_agreement": 0.751
+  },
+  {
+   "dataset": "bnp",
+   "response": "log_loss",
+   "recorded_passes": 3,
+   "expected_passes_same_half": 3.55,
+   "expected_passes_cross_half": 2.1,
+   "optimism_same_minus_cross": 1.45,
+   "replications_majority_verdict_differs": 3,
+   "median_order_agreement": 0.759
+  },
+  {
+   "dataset": "bnp",
+   "response": "brier",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 1.0
+  },
+  {
+   "dataset": "bnp",
+   "response": "pr_auc",
+   "recorded_passes": 13,
+   "expected_passes_same_half": 15.14,
+   "expected_passes_cross_half": 14.32,
+   "optimism_same_minus_cross": 0.82,
+   "replications_majority_verdict_differs": 1,
+   "median_order_agreement": 0.835
+  },
+  {
+   "dataset": "porto",
+   "response": "roc_auc",
+   "recorded_passes": 16,
+   "expected_passes_same_half": 14.97,
+   "expected_passes_cross_half": 11.7,
+   "optimism_same_minus_cross": 3.27,
+   "replications_majority_verdict_differs": 6,
+   "median_order_agreement": 0.688
+  },
+  {
+   "dataset": "porto",
+   "response": "log_loss",
+   "recorded_passes": 12,
+   "expected_passes_same_half": 11.12,
+   "expected_passes_cross_half": 7.2,
+   "optimism_same_minus_cross": 3.92,
+   "replications_majority_verdict_differs": 3,
+   "median_order_agreement": 0.711
+  },
+  {
+   "dataset": "porto",
+   "response": "brier",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 1.0
+  },
+  {
+   "dataset": "porto",
+   "response": "pr_auc",
+   "recorded_passes": 27,
+   "expected_passes_same_half": 24.83,
+   "expected_passes_cross_half": 23.98,
+   "optimism_same_minus_cross": 0.85,
+   "replications_majority_verdict_differs": 3,
+   "median_order_agreement": 0.934
+  },
+  {
+   "dataset": "uci_credit",
+   "response": "roc_auc",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 0.846
+  },
+  {
+   "dataset": "uci_credit",
+   "response": "log_loss",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 0.877
+  },
+  {
+   "dataset": "uci_credit",
+   "response": "brier",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 30.0,
+   "expected_passes_cross_half": 30.0,
+   "optimism_same_minus_cross": 0.0,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 1.0
+  },
+  {
+   "dataset": "uci_credit",
+   "response": "pr_auc",
+   "recorded_passes": 30,
+   "expected_passes_same_half": 29.94,
+   "expected_passes_cross_half": 29.74,
+   "optimism_same_minus_cross": 0.2,
+   "replications_majority_verdict_differs": 0,
+   "median_order_agreement": 0.968
+  }
+ ]
+}
