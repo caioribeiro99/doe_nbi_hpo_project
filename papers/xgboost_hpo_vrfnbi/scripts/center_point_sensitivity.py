@@ -43,6 +43,12 @@ factor model replaces nothing and rescores nothing: it is compared with the froz
 one as a measurement definition. Neither alternative is an analysis the protocol
 declared; both are post hoc diagnostics.
 
+Descriptive additions. ``surrogate_chim_descriptive`` (the surrogate CHIM extent under
+both fits and the extent ratio of Figure 3) and ``multistart_seed_control_88`` (the
+88-row surfaces minimized again from a different set of multistart points) were added
+after the first run, to size and locate the anchor changes that run found; neither
+enters the classification.
+
 Comparison criteria. Declared in ``CRITERIA`` below and committed before the script
 was first run on the campaign records; ``classify`` applies them mechanically. The
 reference scale is the objective unit: both objectives are factor scores
@@ -216,6 +222,9 @@ def evaluation_set(external: pd.DataFrame, design79: pd.DataFrame) -> np.ndarray
     return np.vstack([to_coded(external), to_coded(design79), U])
 
 
+SEED_CONTROL_OFFSET = 7919   # any fixed offset; the control only needs a different start set
+
+
 def anchors_of(fits, seed: int) -> dict:
     anchors, chim = surrogate_reference([make_surrogate(t, b) for t, b in fits],
                                         nbi_config(seed))
@@ -324,6 +333,35 @@ def compare_unit(ds: str, rep: int, fm: FrozenFactorModel) -> dict:
         hist[name] = {"n_terms_88": len(n88), "n_terms_79": len(n79),
                       "terms_identical": set(n88) == set(n79),
                       "term_symmetric_difference": len(set(n88) ^ set(n79))}
+    # Descriptive, added after the first run; it does not enter ``classify``. The CHIM
+    # extent ||Phi_1 - Phi_2|| of each surrogate reference, and the extent ratio of
+    # Figure 3 (NBI-R's stored empirical extent over NBI-S's surrogate extent) under
+    # both fits. NBI-R's payoff comes from real measurements and is unchanged.
+    phi88 = an88["F_star"] - an88["utopia"][:, None]
+    phi79 = an79["F_star"] - an79["utopia"][:, None]
+    phi_r = np.asarray(json.loads((unit / "nbi_r.json").read_text())["diagnostics"]["payoff_matrix"])
+    ext88 = float(np.linalg.norm(phi88[:, 0] - phi88[:, 1]))
+    ext79 = float(np.linalg.norm(phi79[:, 0] - phi79[:, 1]))
+    ext_r = float(np.linalg.norm(phi_r[:, 0] - phi_r[:, 1]))
+    chim = {"payoff_88": phi88.tolist(), "payoff_79": phi79.tolist(),
+            "chim_extent_88": ext88, "chim_extent_79": ext79,
+            "chim_extent_ratio_79_over_88": ext79 / ext88,
+            "nbi_r_over_nbi_s_extent_88": ext_r / ext88,
+            "nbi_r_over_nbi_s_extent_79": ext_r / ext79}
+    # Descriptive control, added after the first run; not in ``classify``. The SAME
+    # 88-row surfaces, minimized from a different set of multistart points. If the
+    # anchors move as often under this as under the 79-row refit, the movement is a
+    # property of the surfaces' flat optima, not of the centre-row weighting.
+    an88b = anchors_of(fits88, seed + SEED_CONTROL_OFFSET)
+    seed_control = {}
+    for j, name in enumerate(OBJECTIVES):
+        dist_b = float(np.linalg.norm(an88["x_star"][j] - an88b["x_star"][j]))
+        pay_b = float(np.abs(an88["F_star"][:, j] - an88b["F_star"][:, j]).max())
+        seed_control[name] = {
+            "anchor_distance_frac_diagonal": dist_b / DIAGONAL,
+            "payoff_column_max_abs_change": pay_b,
+            "anchor_changed": (dist_b / DIAGONAL > T["anchor_distance_frac_max"]
+                               or pay_b > T["payoff_change_max"])}
     nhat_angle = float(np.degrees(np.arccos(np.clip(
         an88["n_hat"] @ an79["n_hat"]
         / (np.linalg.norm(an88["n_hat"]) * np.linalg.norm(an79["n_hat"])), -1.0, 1.0))))
@@ -332,6 +370,8 @@ def compare_unit(ds: str, rep: int, fm: FrozenFactorModel) -> dict:
             "objectives": per_obj,
             "utopia_88": an88["utopia"].tolist(), "utopia_79": an79["utopia"].tolist(),
             "quasi_normal_angle_degrees": nhat_angle,
+            "surrogate_chim_descriptive": chim,
+            "multistart_seed_control_88": seed_control,
             "historical_uncoded_terms": hist}
 
 
@@ -482,11 +522,35 @@ def summarize(units: list[dict]) -> dict:
             "full_quadratic_condition_79_max": float(max(r["fit_79"]["full_quadratic_condition_number"] for r in rs)),
             "full_quadratic_rank_min_79": int(min(r["fit_79"]["full_quadratic_rank"] for r in rs)),
         }
-    s["quasi_normal_angle_degrees_max"] = float(max(u["quasi_normal_angle_degrees"] for u in units))
+    ang = np.array([u["quasi_normal_angle_degrees"] for u in units])
+    s["quasi_normal_angle_degrees_median"] = float(np.median(ang))
+    s["quasi_normal_angle_degrees_max"] = float(ang.max())
+    s["quasi_normal_angle_over_5_degrees"] = int((ang > 5.0).sum())
+    ch = [u["surrogate_chim_descriptive"] for u in units]
+    er = np.array([c["chim_extent_ratio_79_over_88"] for c in ch])
+    r88 = np.array([c["nbi_r_over_nbi_s_extent_88"] for c in ch])
+    r79 = np.array([c["nbi_r_over_nbi_s_extent_79"] for c in ch])
+    s["surrogate_chim_extent_ratio_79_over_88"] = {
+        "median": float(np.median(er)), "min": float(er.min()), "max": float(er.max()),
+        "outside_0.9_to_1.1": int(((er < 0.9) | (er > 1.1)).sum())}
+    s["multistart_seed_control_anchor_changed"] = {
+        o: int(sum(u["multistart_seed_control_88"][o]["anchor_changed"] for u in units))
+        for o in OBJECTIVES}
+    s["figure3_extent_ratio_median_88"] = float(np.median(r88))
+    s["figure3_extent_ratio_median_79"] = float(np.median(r79))
+    s["figure3_extent_ratio_range_79"] = [float(r79.min()), float(r79.max())]
     s["historical_uncoded_terms_identical"] = {
         o: int(sum(u["historical_uncoded_terms"][o]["terms_identical"] for u in units))
         for o in OBJECTIVES}
     return s
+
+
+def _plain(o):
+    if isinstance(o, (np.integer, np.bool_)):
+        return o.item()
+    if isinstance(o, np.floating):
+        return float(o)
+    raise TypeError(type(o).__name__)
 
 
 def main() -> None:
@@ -520,7 +584,7 @@ def main() -> None:
         }
         print(ds, cls)
     result["overall_class"] = worst
-    OUT.write_text(json.dumps(result, indent=1) + "\n")
+    OUT.write_text(json.dumps(result, indent=1, default=_plain) + "\n")
     print("overall", worst, "->", OUT.relative_to(REPO))
 
 
