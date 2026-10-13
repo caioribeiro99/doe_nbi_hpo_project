@@ -71,9 +71,10 @@ def main() -> int:
         w("source commit by the metadata-only step that records this provenance, and no")
         w("byte identity between the two is claimed.\n")
     else:
-        w("This is a review draft. No package tag has been created: S17 names the tag")
-        w("planned for the released package, which will be created only after the authors")
-        w("approve it.\n")
+        w("This is a coauthor-review draft. The code, protocol and results it reports are")
+        w("identified by the existing tags of S1; only the tag of the manuscript package itself")
+        w("is still to be created, after the authors approve the text, and S17 names it as")
+        w("planned.\n")
     w("Protocol tag `xgboost-hpo-protocol-v3`. Results tag")
     w("`xgboost-hpo-confirmatory-results-v1`.\n")
 
@@ -154,8 +155,12 @@ def main() -> int:
     w("screening, drawn separately from the 30 confirmatory partitions. Each replication")
     w("re-evaluates the same 88 configurations on its own partition and maps them through the")
     w("frozen model. Because the pilot partition is a separate draw, its training part")
-    w("shares rows with every confirmatory holdout: a holdout is unseen within its replication,")
-    w("not by the pilot that fixed the objective definition. The 78-point audit-only external")
+    w("shares rows with every replication-level holdout, roughly four in five of them as two")
+    w("independent 80/20 draws imply. A replication-level holdout is unseen by arm training and")
+    w("selection within its replication; it is not external to the frozen objective mapping,")
+    w("which was fitted on 88 cross-validated metric summaries computed on the pilot's training")
+    w("part. That overlap is with the measurement definition, not with any model scored on the")
+    w("holdout: no model trained on a replication's own rows sees its holdout. The 78-point audit-only external")
     w("construction is excluded from the fit (amendment 23): 64 of its 78 coded points are")
     w("identical to the external validation set and the rest are the same axial runs.\n")
     # Dimensionality diagnostics (OBJECTIVE_DEFINITIONS.md section 8): descriptive only, and
@@ -425,7 +430,10 @@ def main() -> int:
     w("partitions. Spambase was retained as a boundary geometry control by a pre-campaign")
     w("amendment adopted after its criterion-2 failure was known (amendment 22): the replacement")
     w("rule frozen at protocol v1, before the pilot, required a dataset failing criterion 1 or 2")
-    w("to be replaced from the registry, and retaining Spambase departs from that rule.\n")
+    w("to be replaced from the registry, and retaining Spambase departs from that rule. Its")
+    w("boundary-control result is therefore conditional on that screen and that amendment, not a")
+    w("prospective test of a hypothesis about the dataset; likewise the primary panel's results")
+    w("are conditional on a screen made on one pilot partition.\n")
     w("Every confirmatory replication evaluates the same 88 design rows on its own partition. The")
     w("number of those rows that are non-dominated under the frozen objectives is summarized below")
     w("as a post-campaign description; it changes no role.\n")
@@ -475,6 +483,33 @@ def main() -> int:
     w(f"generation count give {nb['evaluations']} real evaluations, {nb['shortfall_against_comparator_budget']} fewer than that budget. A")
     w("direct-search comparator therefore receives about twice the real evaluations WS-S and")
     w("NBI-S require standalone, and any comparison against them must say so.\n")
+
+    # S7.2: the grid stopped at the arms' budget, from its stored evaluation stream (R2).
+    gp = json.loads((A/"grid_budget_prefix.json").read_text())["datasets"]
+    w("### S7.2 The grid at 186 evaluations (retrospective, post hoc)\n")
+    w("The grid's stored rows are in evaluation order, and the frozen code fixes that order:")
+    w("the 128-point two-level corner mesh first, then seeded uniform padding. In every unit the")
+    w("first 186 stored rows are exactly the grid the frozen code builds at a budget of 186 with")
+    w("the same seed, so they measure, with the campaign's own evaluations, the grid the protocol")
+    w("would have run at WS-S's and NBI-S's standalone budget. They are scored with the frozen")
+    w("indicator code against each unit's stored CORE front, after the full 386 rows have been")
+    w("rescored and found equal to the stored values and Table 5 reproduced. No grid point was")
+    w("evaluated (`scripts/grid_budget_prefix.py`, `analysis/grid_budget_prefix.json`).\n")
+    w("| dataset | grid evaluations | GRID median | median NBI-S − GRID | 95% interval | NBI-S / GRID wins |")
+    w("|---|---:|---:|---:|---|---:|")
+    for ds in DATASETS:
+        for b in ("386", "186"):
+            r = gp[ds]["by_budget"][b]
+            w(f"| {DISP[ds]} | {b} | {r['grid_median_hv_ratio']:.4f} | "
+              f"{r['median_diff_nbi_s_minus_grid']:+.4f} | [{r['median_diff_ci95'][0]:+.4f}, "
+              f"{r['median_diff_ci95'][1]:+.4f}] | {r['nbi_s_wins']} / {r['grid_wins']} |")
+    w("\nStopped at 186 evaluations the grid keeps its lead: its wins against NBI-S are unchanged")
+    w("on Spambase, Adult and Bank Marketing and stay at 30 of 30 on MAGIC, so the frozen 21-of-30")
+    w("direction rule is met on MAGIC and Adult at either budget. Almost all of the grid's")
+    w("advantage comes from its first 186 points. Those include the 64 corners that re-measure")
+    w("design configurations inside CORE at both budgets, a larger share at 186 (34%) than at 386")
+    w("(17%); this is reported, not corrected. The prefix is not a budget-matched comparator arm:")
+    w("the arms were not re-run, and the budget rule of Section 8.2 is unchanged.\n")
 
     w("## S8. Randomness\n")
     w(f"Seeds derive from BLAKE2b over the namespace `{SEED_NAMESPACE}` and the tuple")
@@ -745,8 +780,105 @@ def main() -> int:
     w(f"| primary endpoint | {PRIMARY_INDICATOR} against the "
       f"{PRIMARY_REFERENCE.upper()} reference |")
     w("| campaign runtime | 9 h 46 min, 14 workers × 1 thread |")
-    w("\nRaw datasets and evaluation caches are deliberately unversioned; the design, the")
-    w("frozen factor models, every analysis artifact and every script are committed.\n")
+    w("\nWhat is public and what is not. The repository's code, protocol, amendment ledger, the")
+    w("design with its SHA-256, the frozen factor models, every per-unit indicator and mechanism")
+    w("table, every analysis artifact and every script are committed under the tags of S1. The")
+    w("four datasets are not redistributed: they are public UCI and OpenML mirrors under CC BY 4.0,")
+    w("obtained independently and checked against the recorded SHA-256 on acquisition. The per-unit")
+    w("experiment tree is not versioned and is not yet deposited: 120 unit directories of stage")
+    w("checkpoints and one SQLite evaluation cache each, about 0.8 GB, holding configurations,")
+    w("seeds and evaluated responses but no data rows. Every aggregate statistic in the paper can")
+    w("be recomputed from the committed per-unit tables; regenerating those tables, and the")
+    w("post-campaign diagnostics that read stored rows (Section 8.7, S7.2, S18), needs that tree,")
+    w("and re-running a unit needs the datasets, the code at the protocol tag and the seeds of S8.")
+    w("Exact reproduction across platforms or linear-algebra backends was not tested (Section 9.4).\n")
+
+    # S18: the centre-point sensitivity (coauthor review R2), from its committed artifact.
+    cp = json.loads((A/"center_point_sensitivity.json").read_text())
+    _and = lambda xs: ", ".join(xs[:-1]) + " and " + xs[-1]  # noqa: E731
+    cpd = cp["datasets"]
+    w("## S18. Centre-point sensitivity: 88 design rows against 79 distinct configurations (post hoc)\n")
+    w("The design's ten centre rows are one configuration. In every confirmatory unit the")
+    w("evaluation cache computed it once and served it nine times (88 design requests, 79")
+    w("distinct keys); in the Stage A pilot that fixed the factor models the ten were executed")
+    w("separately and returned identical values of all seven responses, only the measured time")
+    w("differing. They therefore carry no pure-error information, yet the 88-row fits weight the")
+    w("centre tenfold and count all 88 rows in the elimination's $t$-tests (Section 5.6), and the")
+    w("factor models weight it tenfold in their means, standard deviations and components.\n")
+    w("The diagnostic (`scripts/center_point_sensitivity.py`, `analysis/center_point_sensitivity.json`)")
+    w("uses stored responses only. It first reproduces every stored 88-row surrogate fit (terms")
+    w("and coefficients), every stored external-audit score and gate decision and every stored")
+    w("surrogate anchor exactly; it then refits the same procedure on the 79 distinct")
+    w("configurations, keeping one centre row, with the frozen factor model and both objectives")
+    w("unchanged; and, separately, it refits each dataset's factor model on the 79 distinct pilot")
+    w("configurations. No learner was trained, no candidate evaluated and no arm re-run; anchors")
+    w("were minimized on the polynomial surfaces with the frozen multistart. The comparison")
+    w("criteria and the classification rule were committed before the first run on the campaign")
+    w("records and are stored in the artifact.\n")
+    w("| dataset | objective | terms identical | within 2 terms | prediction-stable | residual df, 88 → 79 "
+      "| gate passes, 88 → 79 | anchor moved, refit | anchor moved, restart only |")
+    w("|---|---|---:|---:|---:|---|---|---:|---:|")
+    for ds in DATASETS:
+        c, sm = cpd[ds]["counts"], cpd[ds]["summary"]
+        for o in ("quality", "cost"):
+            r88, r79 = sm[o]["residual_dof_88_range"], sm[o]["residual_dof_79_range"]
+            w(f"| {DISP[ds]} | {o} | {c[o]['terms_identical']}/30 | {c[o]['term_stable']}/30 | "
+              f"{c[o]['prediction_stable']}/30 | {r88[0]}–{r88[1]} → {r79[0]}–{r79[1]} | "
+              f"{c[o]['gate_pass_88']} → {c[o]['gate_pass_79']} | {c[o]['anchor_changed']}/30 | "
+              f"{sm['multistart_seed_control_anchor_changed'][o]}/30 |")
+    w("\nPrediction-stable: root-mean-square difference between the two surfaces over the 78 audit")
+    w("points, the 79 design points and 4,096 uniform points of the coded box at most a quarter of")
+    w("the 88-row surface's external RMSE, with Spearman at least 0.99 between the two prediction")
+    w("sets. Anchor moved: the objective's surrogate minimizer moves by more than 10% of the coded")
+    w("box diagonal or a payoff entry changes by more than 0.10 objective units. Restart only: the")
+    w("same anchor criterion between the stored anchors and the unchanged 88-row surfaces minimized")
+    w("from a different set of multistart points.\n")
+    w("| dataset | min Tucker congruence | roles and orientation | quality weights, frozen → 79 rows "
+      "| min Spearman, frozen vs 79-row objectives | Kaiser count |")
+    w("|---|---:|---|---|---:|---|")
+    for ds in DATASETS:
+        f = cpd[ds]["factor_model"]
+        same = "same" if (f["cost_factor_same"] and f["cost_orientation_same"]
+                          and f["quality_orientation_same"]) else "changed"
+        wf = ", ".join(f"{x:.3f}" for x in f["quality_weights_frozen"])
+        wa = ", ".join(f"{x:.3f}" for x in f["quality_weights_alternative"])
+        w(f"| {DISP[ds]} | {f['min_abs_tucker']:.4f} | {same} | {wf} → {wa} | "
+          f"{f['min_objective_spearman']:.4f} | {f['kaiser_frozen']} → {f['kaiser_alternative']} |")
+    ang = {ds: cpd[ds]["summary"]["quasi_normal_angle_degrees_max"] for ds in DATASETS}
+    f88 = {ds: cpd[ds]["summary"]["figure3_extent_ratio_median_88"] for ds in DATASETS}
+    f79 = {ds: cpd[ds]["summary"]["figure3_extent_ratio_median_79"] for ds in DATASETS}
+    flat = {ds: cpd[ds]["summary"]["multistart_seed_control_changed_on_flat_minimum"]["quality"]
+            for ds in DATASETS}
+    moved = {ds: cpd[ds]["summary"]["multistart_seed_control_anchor_changed"]["quality"]
+             for ds in DATASETS}
+    w("\nThe factor models do not move: every factor keeps its role and orientation, congruence is")
+    w("at least 0.999, and the two objective definitions rank the pilot configurations and the")
+    w("pooled audit rows almost identically. The surfaces change little in what they predict but")
+    w("often in which terms they keep, and at a given number of terms the residual degrees of freedom")
+    w("of the elimination are nine fewer. Gate decisions change most for MAGIC's quality surface")
+    w("(8 → 1 passes) and Bank Marketing's cost surface (27 → 23); the composite-quality gate stays")
+    w("at 0 of 30 on Adult and Bank Marketing. The surrogate anchors move often, and for the quality")
+    w("objective much of that movement does not need the centre rows. Minimizing the unchanged")
+    w("88-row quality surfaces from other starting points moves the quality anchor in "
+      + _and([str(moved[ds]) for ds in DATASETS]) + " of 30 replications on " + _and([DISP[ds] for ds in DATASETS])
+      + ", and in " + f"{sum(flat.values())} of {sum(moved.values())}"
+      + " of those cases to a point within 0.01 of the same minimum: the")
+    w("quality surfaces have flat sets of equally good minima, the mechanism stated in Section 5.6,")
+    w("and the frozen seeded multistart picks one of them. The cost anchor moves under a restart in")
+    w("at most 7 of 30 replications, so its movement under the refit is mainly a centre-row effect.")
+    w("Under the refit NBI-S's quasi-normal direction moves by at most "
+      + _and([f"{ang[ds]:.1f}" for ds in DATASETS]) + " degrees, and the per-dataset medians of the")
+    w("CHIM-extent ratio (main text, Figure 3) change from " + _and([f"{f88[ds]:.3f}" for ds in DATASETS]) + " to "
+      + _and([f"{f79[ds]:.3f}" for ds in DATASETS]) + ", in the same dataset order.\n")
+    w(f"Under the pre-declared rule the sensitivity is classified **{cp['overall_class'].upper()}** on every")
+    w("dataset, by the anchor criterion alone (anchors move in more than 15 of 30 replications for")
+    w("at least one objective); the factor and gate criteria stay below that level. The diagnostic")
+    w("does not show whether any primary contrast changes: that would need the surrogate-based arms")
+    w("re-run on the alternative surfaces, or with a rule that chooses among equally good minima,")
+    w("and their candidates revalidated with new learner fits, which was not done. The confirmatory")
+    w("results are those of the frozen 88-row specification and of its seeded minimizer, and the")
+    w("claims that rest on the surrogate payoff geometry are qualified in Sections 6.4.1, 7.5 and")
+    w("8.5. The alternative fits replace nothing and rescore nothing.\n")
 
     OUT.write_text("\n".join(L) + "\n")
     print(f"wrote {OUT} ({len(' '.join(L).split()):,} words, "

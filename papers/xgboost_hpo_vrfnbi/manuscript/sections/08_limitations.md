@@ -33,7 +33,10 @@ on all four datasets, a lead that met the frozen 21-of-30 direction rule on MAGI
 bootstrap interval also excluded zero on Bank Marketing (Section 6.8). The budget rule dates from
 protocol v1 (2026-09-13), before any arm was implemented, and its value of 386 from protocol v2;
 neither is revised now; the study can say neither what the surrogate-assisted arms would do at parity nor
-that the grid is more efficient. A budget-matched-per-arm comparison was not run.
+that the grid is more efficient. A budget-matched-per-arm comparison was not run; the one retrospective
+check available, the grid stopped at its first 186 stored evaluations, kept the grid's lead on every
+dataset (Supplement S7.2), but that bounds the grid at the arms' budget and says nothing about the arms
+at the comparators' 386.
 
 ### 8.3 The reference is finite
 
@@ -87,6 +90,23 @@ Marketing, and not on Spambase. The arms were not run on a quality objective wit
 threshold, which would be a separate experiment, and metrics at other thresholds cannot be
 recomputed from the stored fold means, which keep no per-fold predicted probabilities.
 
+**The surrogate anchors are not uniquely determined.** Where an eliminated hyperparameter leaves a
+surface flat, its minimizer is a set rather than a point, and the frozen seeded multistart picks one
+member of it (Section 5.6). A post hoc diagnostic from stored responses (Supplement S18) measured how
+much this matters. Restarting that minimizer from other points on the unchanged surfaces moved the
+quality anchor beyond a tolerance declared before the diagnostic in 9 to 28 of 30 replications, almost
+always to an equally good minimum, and refitting the surfaces on the 79 distinct design
+configurations instead of the 88 rows, whose ten centre rows are one evaluation repeated, moved the
+quality anchor in 18 to 23 and the cost anchor in 9 to 16 of 30. By the classification rule declared
+before that diagnostic, this is a high-impact sensitivity on every dataset; the factor models and the
+surfaces' predictions barely moved. The surrogate payoff matrix that WS-S, NBI-S and the anchor
+contrast consume therefore carries a component set by the minimizer's starting points. Every
+confirmatory contrast is a valid paired comparison under the frozen specification, which fixed those
+starting points, but how the contrasts would behave with the 79-row surfaces, or with a rule that
+chooses among equally good minima, was not tested: that would require re-running the surrogate-based
+arms and revalidating their candidates with new learner fits. The post hoc CHIM-contraction
+association of Section 6.4.1 rests directly on this geometry and is not interpreted further.
+
 **The surrogate failed its own gate in most replications.** The composite-quality gate passed
 in 8/30 replications on MAGIC and 9/30 on Spambase, and in 0/30 on Adult and Bank Marketing.
 The gate is diagnostic, not adaptive: no replication was removed, so the Adult and Bank Marketing
@@ -125,11 +145,12 @@ and cost-definition comparisons, reading the 20% rule as met when any arm's fron
 context beside the Bayesian-optimization and TPE endpoints, and the form of the secondary
 significance test (Section 5.15). The eigenvalues and variance explained in Supplement S4.1 are
 those of each dataset's frozen model, which every replication applies; the per-replication refits
-stored none. Five analyses added after the confirmatory results are post hoc: the CHIM-extent
+stored none. Seven analyses added after the confirmatory results are post hoc: the CHIM-extent
 diagnostic (Section 6.4.1), the composite's behaviour beyond its fitting rows (Supplement S4.3),
 the signed-rank check of the joint non-dominated fraction (Section 6.3.1), the signed-rank test of
-the grid baseline against NBI-S (Table 5) and the breakdown of gate failures by criterion
-(Section 6.7). Three declared items were
+the grid baseline against NBI-S (Table 5), the breakdown of gate failures by criterion
+(Section 6.7) and, in response to coauthor review, the centre-point refit of the surfaces and factor
+models (Supplement S18) and the grid stopped at 186 evaluations (Supplement S7.2). Three declared items were
 not executed: the sensitivity of the WS-S → NBI-S contrast to using each objective's worst value
 over the box as the far end of the WS-S normalization box (Section 5.9), which would need new real
 evaluations; the fixed-integer re-solve of each NBI subproblem required by section 9 of the frozen

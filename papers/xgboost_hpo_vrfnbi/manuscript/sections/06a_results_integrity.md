@@ -59,7 +59,7 @@ primary dataset (Table 3).
 | Adult | -0.0006 | [-0.0033, +0.0000] | 9/4/17 | 0.2087 |
 | Bank Marketing | +0.0000 | [-0.0088, +0.0000] | 8/8/14 | 0.3896 |
 
-**Table 3.** The historical specification contrast, HISTORICAL-WS $\rightarrow$ WS-S, CORE reference, $R=30$.
+**Table 3.** The historical specification contrast, HISTORICAL-WS $\rightarrow$ WS-S, CORE reference, $R=30$. Holm $p$: the secondary, post hoc signed-rank test of Table 4.
 
 This is a non-detection at $R = 30$, not a demonstration of no effect: exact ties occur in 3, 4
 and 8 of the 30 replications on MAGIC, Adult and Bank Marketing, and the frozen design resolves only

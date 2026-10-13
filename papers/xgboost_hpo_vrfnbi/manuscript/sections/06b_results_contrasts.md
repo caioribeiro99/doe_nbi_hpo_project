@@ -16,8 +16,11 @@ front-geometry screen on the design rows (Section 5.1). The medians are +0.0374 
 26/0/4, 30/0/0 and 24/0/6; the percentile bootstrap intervals on the median are
 $[+0.0144, +0.0687]$, $[+0.1740, +0.5614]$ and $[+0.1670, +0.4741]$, none of them
 spanning zero; and the matched-pairs rank-biserial correlation is $+0.92$, $+1.00$ and
-$+0.88$. The secondary tests are Holm-significant within every primary dataset
-($p = 9.42\times10^{-7}$, $5.59\times10^{-9}$ and $9.72\times10^{-6}$). The geometry effect is the
+$+0.88$. The secondary signed-rank tests, whose form was chosen when the confirmatory results were
+available and which are therefore post hoc (Section 5.15), are Holm-significant within every primary
+dataset ($p = 9.42\times10^{-7}$, $5.59\times10^{-9}$ and $9.72\times10^{-6}$); the pre-declared corrected
+test reaches $0.05$ on Adult only (Section 6.3.2), so these are not three prospectively confirmed
+effects. The geometry effect is the
 main positive result of the study, and its scope is exactly these datasets, this
 surrogate architecture, two objectives and this budget. It is not a claim that NBI
 recovers a true Pareto front: the endpoint is a ratio against CORE, a finite
@@ -28,7 +31,7 @@ ratio above 1 means only that the candidate set improved on that finite referenc
 Two qualifications belong in the same breath as the result. First, the geometry
 advantage did not require a surrogate that passed the study's own external reliability
 criterion: on Adult and Bank Marketing the composite-quality gate passed in 0 of 30
-replications, and the geometry effect is Holm-significant on both. The gate was
+replications, and the geometry effect is Holm-significant on both under the post hoc signed-rank test. The gate was
 diagnostic rather than adaptive (every arm ran at every replication regardless of its
 outcome), and absolute surrogate trustworthiness and relative front-construction
 geometry are different questions, of which this study answers only the second. Second,
@@ -59,7 +62,7 @@ baseline, and the budget rule behind it, in full.
 | | Adult | −0.0192 | [−0.1610, +0.0299] | 11/0/19 | −0.37 | 0.1607 |
 | | Bank Marketing | **−0.4093** | [−0.5821, −0.2059] | 7/0/23 | −0.82 | 4.73e−05 |
 
-**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, differences formed as (second − first), $R=30$; positive values favour the second arm. Bootstrap interval: 95% percentile bootstrap interval of the median difference; medians in bold are those whose interval excludes zero. Win/tie/loss: replications won, tied and lost by the second arm. Rank-biserial: matched-pairs rank-biserial correlation. Holm $p$: $p$-value of the secondary two-sided Wilcoxon signed-rank test, Holm-corrected within dataset over the three contrasts; the descriptive statistics are primary (Section 5.15). Rank-biserial and the test exclude zero differences.
+**Table 4.** The primary family: three contrasts per dataset on the CORE-relative hypervolume ratio, differences formed as (second − first), $R=30$; positive values favour the second arm. Bootstrap interval: 95% percentile bootstrap interval of the median difference; medians in bold are those whose interval excludes zero. Win/tie/loss: replications won, tied and lost by the second arm. Rank-biserial: matched-pairs rank-biserial correlation. Holm $p$: $p$-value of the secondary, post hoc two-sided Wilcoxon signed-rank test, whose form was first recorded with the confirmatory results, Holm-corrected within dataset over the three contrasts; the descriptive statistics are primary (Section 5.15). Rank-biserial and the test exclude zero differences.
 
 Spambase is shown for completeness and is excluded from the primary inferential family,
 having failed the screen and been retained as a boundary control (Section 5.1); it is treated in
@@ -158,7 +161,14 @@ per-replication extent ratio and the per-replication hypervolume gap are +0.683 
 Bank Marketing, +0.320 on Spambase and −0.111 on MAGIC. This is a post hoc association measured
 across 30 replications within a dataset, clear on Adult and Bank Marketing, weak on Spambase and
 absent on MAGIC; it is not a demonstrated cause of the deficit, and it is not presented as one
-(Figure 3).
+(Figure 3). It also rests on a quantity that the fitted surfaces do not pin down: the surrogate payoff
+matrix inherits an arbitrary coordinate wherever a surface is flat (Section 5.6), and in a post hoc
+check the surrogate anchors moved beyond a pre-declared tolerance in more than half of the
+replications when the frozen minimizer was merely restarted from other points or the surfaces were
+refitted on the 79 distinct design configurations (Supplement S18). The per-dataset medians of the
+extent ratio barely change under that refit, except on Spambase (0.370 to 0.273), but the
+per-replication ratios on which the association rests do, so the association is not interpreted
+further.
 
 ### 6.5 Reference sensitivity
 
@@ -172,7 +182,7 @@ negative under both references, so the disagreement is one of resolution, not of
 direction. Because each reference also sets its own normalization box, and with it the
 hypervolume reference point in objective units (Section 5.14), the disagreement cannot be
 attributed to reference membership alone. Under AUGMENTED that cell is significant only on the
-secondary test: the
+secondary, post hoc test: the
 primary descriptive triple remains equivocal, with the bootstrap interval on the median
 spanning zero.
 

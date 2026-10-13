@@ -2,7 +2,9 @@
 
 ### 9.1 Version tags
 
-Five tags separate what was specified from what was measured (Supplement S1). `v0.1.0-dissertation`
+The code, protocol, analysis artifacts and these tags are in the public repository
+`https://github.com/caioribeiro99/doe_nbi_hpo_project`. Five tags separate what was specified from
+what was measured (Supplement S1). `v0.1.0-dissertation`
 (`67d9fe5`) is the archived historical implementation; it is read and executed as archived, never
 edited. `xgboost-hpo-protocol-v1` froze the specification before the
 measurement-validation pilot, `-v2` incorporated the pilot, and `-v3` (`9b15ba7`) is the
@@ -69,11 +71,14 @@ recorded as co-authorship in the commit history (Anthropic Claude: Claude Opus 4
 Claude Opus 5, used through Claude Code, named as co-author on all 66 commits made for this
 study to its code, analysis scripts and tests).
 
-Raw datasets and heavy evaluation caches are deliberately unversioned. The four panel datasets are
-UCI or OpenML mirrors, obtainable independently and checksum-verified on acquisition; the 88-run
-face-centred central composite design is versioned with its SHA-256. The per-unit experiment tree,
-including one SQLite evaluation cache per unit, is not committed. Committed instead are the frozen
-code, the protocol, the amendment ledger, the per-unit indicator and NBI mechanism tables and the
-analysis artifacts, so every reported quantity traces to a committed artifact without re-running the
-campaign. Regenerating the per-unit tables, and the post-campaign computations listed in
-Section 8.7, needs the uncommitted per-unit tree.
+Four kinds of material are distinguished. Public and commit-pinned: the frozen code, the protocol,
+the amendment ledger, the 88-run face-centred central composite design with its SHA-256, the
+frozen factor models, the per-unit indicator and NBI mechanism tables and every analysis artifact,
+under the tags above. Obtainable independently: the four panel datasets, UCI or OpenML mirrors under
+CC BY 4.0 that are not redistributed here and are checksum-verified on acquisition. Unversioned and
+not yet deposited: the per-unit experiment tree of 120 stage-checkpoint directories with one SQLite
+evaluation cache each, about 0.8 GB, holding configurations, seeds and evaluated responses but no
+data rows (Supplement S17). Every reported aggregate traces to a committed artifact without
+re-running the campaign; regenerating the per-unit tables, and the post-campaign computations
+listed in Section 8.7, needs the unversioned tree, and exact re-execution across platforms is
+untested, as stated above.

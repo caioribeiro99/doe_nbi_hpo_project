@@ -76,7 +76,7 @@ front-geometry screen on the design rows (Section 5.1), canonical NBI constructi
 higher CORE-relative hypervolume than specification-matched weighted scalarization: median
 paired differences of $+0.0374$ on MAGIC (26/30 replications), $+0.2549$ on Adult (30/30) and
 $+0.2281$ on Bank Marketing (24/30). Every bootstrap interval on the median difference excludes
-zero, and the secondary signed-rank test is Holm-significant within every one of the three
+zero, and the secondary signed-rank test, a post hoc choice (Section 5.15), is Holm-significant within every one of the three
 datasets (Table 4); under the pre-declared Nadeau–Bengio sensitivity the contrast reaches
 unadjusted $p < 0.05$ on Adult only (Section 6.3.2). The geometry effect is the main positive
 result, and its scope is these datasets, this surrogate architecture, two objectives and this

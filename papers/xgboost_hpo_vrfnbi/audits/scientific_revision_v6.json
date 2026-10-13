@@ -139,8 +139,8 @@
    },
    "0": {
     "before": 28,
-    "after": 29,
-    "reason": "01_introduction.md +1: P2-S-11; 02_related_work.md -1: P2-L-01; 05a_methods_design.md +3: P2-M-08; 05b_methods_arms.md -1: P2-A-08; 06b_results_contrasts.md -1: P2-A-38"
+    "after": 30,
+    "reason": "01_introduction.md +1: P2-S-11; 02_related_work.md -1: P2-L-01; 05a_methods_design.md +3: P2-M-08; 05b_methods_arms.md -1: P2-A-08; 06b_results_contrasts.md -1: P2-A-38; R2 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10"
    },
    "0.000": {
     "before": 1,
@@ -174,8 +174,8 @@
    },
    "0.05": {
     "before": 12,
-    "after": 23,
-    "reason": "00_title_abstract.md +2: P2-S-02, P2-IMPL-02; 01_introduction.md +2: P2-S-10, P2-S-09; 03_historical_reconstruction.md +1: P2-L-16; 05b_methods_arms.md +1: P2-A-18; 06b_results_contrasts.md +1: P2-A-32; 06c_results_boundary_baselines.md +1: P2-B-10; 07_discussion.md +1: P2-B-21; 10_conclusion.md +2: P2-S-15"
+    "after": 25,
+    "reason": "00_title_abstract.md +2: P2-S-02, P2-IMPL-02; 01_introduction.md +2: P2-S-10, P2-S-09; 03_historical_reconstruction.md +1: P2-L-16; 05b_methods_arms.md +1: P2-A-18; 06b_results_contrasts.md +1: P2-A-32; 06c_results_boundary_baselines.md +1: P2-B-10; 07_discussion.md +1: P2-B-21; 10_conclusion.md +2: P2-S-15; R2 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07; 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14"
    },
    "0.0594": {
     "before": 3,
@@ -197,6 +197,11 @@
     "after": 1,
     "reason": "08_limitations.md +1: P2-T-08"
    },
+   "0.273": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07"
+   },
    "0.28": {
     "before": 0,
     "after": 1,
@@ -206,6 +211,11 @@
     "before": 0,
     "after": 1,
     "reason": "06b_results_contrasts.md +1: P2-A-30"
+   },
+   "0.370": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07"
    },
    "0.5": {
     "before": 3,
@@ -226,6 +236,11 @@
     "before": 0,
     "after": 1,
     "reason": "05a_methods_design.md +1: P2-M-08"
+   },
+   "0.8": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 09_reproducibility.md +1: P2-R2-18"
    },
    "0.82": {
     "before": 1,
@@ -379,13 +394,18 @@
    },
    "10": {
     "before": 10,
-    "after": 15,
-    "reason": "01_introduction.md +1: P2-S-11; 05a_methods_design.md +2: P2-M-16, P2-M-14; 06c_results_boundary_baselines.md +1: P2-IMPL-01; 08_limitations.md +1: P2-T-10"
+    "after": 16,
+    "reason": "01_introduction.md +1: P2-S-11; 05a_methods_design.md +2: P2-M-16, P2-M-14; 06c_results_boundary_baselines.md +1: P2-IMPL-01; 08_limitations.md +1: P2-T-10; R2 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10"
    },
    "100": {
     "before": 0,
     "after": 1,
     "reason": "05b_methods_arms.md +1: P2-A-11"
+   },
+   "12": {
+    "before": 6,
+    "after": 7,
+    "reason": "R2 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10"
    },
    "12.7": {
     "before": 0,
@@ -394,8 +414,8 @@
    },
    "120": {
     "before": 10,
-    "after": 12,
-    "reason": "05a_methods_design.md +1: P2-M-13; 06c_results_boundary_baselines.md +1: P2-IMPL-01"
+    "after": 13,
+    "reason": "05a_methods_design.md +1: P2-M-13; 06c_results_boundary_baselines.md +1: P2-IMPL-01; R2 09_reproducibility.md +1: P2-R2-18"
    },
    "123456789": {
     "before": 0,
@@ -424,18 +444,23 @@
    },
    "16": {
     "before": 1,
-    "after": 3,
-    "reason": "05a_methods_design.md +1: P2-M-08; 06c_results_boundary_baselines.md +1: P2-IMPL-01"
+    "after": 4,
+    "reason": "05a_methods_design.md +1: P2-M-08; 06c_results_boundary_baselines.md +1: P2-IMPL-01; R2 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
    },
    "17": {
     "before": 2,
-    "after": 3,
-    "reason": "06c_results_boundary_baselines.md +1: P2-IMPL-01"
+    "after": 4,
+    "reason": "06c_results_boundary_baselines.md +1: P2-IMPL-01; R2 10_conclusion.md +1: P2-R2-19"
    },
    "18": {
     "before": 4,
-    "after": 8,
-    "reason": "06b_results_contrasts.md +1: P2-A-29; 06c_results_boundary_baselines.md +2: P2-B-07, P2-IMPL-01; 07_discussion.md +1: P2-B-21"
+    "after": 9,
+    "reason": "06b_results_contrasts.md +1: P2-A-29; 06c_results_boundary_baselines.md +2: P2-B-07, P2-IMPL-01; 07_discussion.md +1: P2-B-21; R2 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
+   },
+   "186": {
+    "before": 15,
+    "after": 21,
+    "reason": "R2 06c_results_boundary_baselines.md +2: P2-R2-08, P2-R2-09, P2-R2-10; 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14; 08_limitations.md +2: P2-R2-15, P2-R2-16, P2-R2-17; 10_conclusion.md +1: P2-R2-19"
    },
    "19": {
     "before": 2,
@@ -504,8 +529,8 @@
    },
    "23": {
     "before": 4,
-    "after": 5,
-    "reason": "06c_results_boundary_baselines.md +1: P2-IMPL-01"
+    "after": 7,
+    "reason": "06c_results_boundary_baselines.md +1: P2-IMPL-01; R2 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17; 10_conclusion.md +1: P2-R2-19"
    },
    "239": {
     "before": 1,
@@ -537,6 +562,11 @@
     "after": 0,
     "reason": "08_limitations.md -1: P2-T-05"
    },
+   "28": {
+    "before": 2,
+    "after": 3,
+    "reason": "R2 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
+   },
    "3": {
     "before": 22,
     "after": 28,
@@ -564,8 +594,8 @@
    },
    "30": {
     "before": 76,
-    "after": 103,
-    "reason": "00_title_abstract.md -3: P2-S-02, P2-IMPL-02; 01_introduction.md +4: P2-S-11; 05a_methods_design.md +3: P2-M-02, P2-M-15; 05b_methods_arms.md +2: P2-A-18; 06b_results_contrasts.md +3: P2-A-29; 06c_results_boundary_baselines.md +8: P2-B-09, P2-B-07, P2-IMPL-01; 07_discussion.md +3: P2-B-21; 08_limitations.md +4: P2-T-10, P2-T-06, P2-T-04, P2-T-08; 10_conclusion.md +3: P2-S-16"
+    "after": 108,
+    "reason": "00_title_abstract.md -3: P2-S-02, P2-IMPL-02; 01_introduction.md +4: P2-S-11; 05a_methods_design.md +3: P2-M-02, P2-M-15; 05b_methods_arms.md +2: P2-A-18; 06b_results_contrasts.md +3: P2-A-29; 06c_results_boundary_baselines.md +8: P2-B-09, P2-B-07, P2-IMPL-01; 07_discussion.md +3: P2-B-21; 08_limitations.md +4: P2-T-10, P2-T-06, P2-T-04, P2-T-08; 10_conclusion.md +3: P2-S-16; R2 05a_methods_design.md +1: P2-R2-03, P2-R2-04; 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10; 08_limitations.md +2: P2-R2-15, P2-R2-16, P2-R2-17; 10_conclusion.md +1: P2-R2-19"
    },
    "35": {
     "before": 1,
@@ -594,8 +624,8 @@
    },
    "386": {
     "before": 17,
-    "after": 22,
-    "reason": "01_introduction.md +1: P2-S-11; 04_research_questions.md +1: P2-L-28; 06c_results_boundary_baselines.md +1: P2-B-12, P2-B-10, P2-B-07; 08_limitations.md +1: P2-T-04; 10_conclusion.md +1: P2-S-17"
+    "after": 24,
+    "reason": "01_introduction.md +1: P2-S-11; 04_research_questions.md +1: P2-L-28; 06c_results_boundary_baselines.md +1: P2-B-12, P2-B-10, P2-B-07; 08_limitations.md +1: P2-T-04; 10_conclusion.md +1: P2-S-17; R2 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10; 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
    },
    "39.4": {
     "before": 0,
@@ -606,6 +636,16 @@
     "before": 7,
     "after": 5,
     "reason": "00_title_abstract.md -1: P2-IMPL-02; 06a_results_integrity.md -1: P2-A-21"
+   },
+   "4": {
+    "before": 21,
+    "after": 23,
+    "reason": "R2 05a_methods_design.md +1: P2-R2-03, P2-R2-04; 06a_results_integrity.md +1: P2-R2-05"
+   },
+   "4.0": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 09_reproducibility.md +1: P2-R2-18"
    },
    "4.7": {
     "before": 0,
@@ -629,13 +669,13 @@
    },
    "5": {
     "before": 14,
-    "after": 21,
-    "reason": "01_introduction.md +1: P2-S-11; 06c_results_boundary_baselines.md +2: P2-B-11, P2-B-03; 08_limitations.md +1: P2-T-10; 09_reproducibility.md +1: P2-T-16; 11_references_declarations.md +2: P2-L-36"
+    "after": 22,
+    "reason": "01_introduction.md +1: P2-S-11; 06c_results_boundary_baselines.md +2: P2-B-11, P2-B-03; 08_limitations.md +1: P2-T-10; 09_reproducibility.md +1: P2-T-16; 11_references_declarations.md +2: P2-L-36; R2 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10"
    },
    "5.1": {
     "before": 1,
-    "after": 15,
-    "reason": "01_introduction.md +1: P2-S-09; 02_related_work.md +1: P2-L-08; 04_research_questions.md +2: P2-L-25, P2-L-23; 05a_methods_design.md +1: P2-M-15; 05b_methods_arms.md +1: P2-A-18; 06a_results_integrity.md +2: P2-A-23; 06b_results_contrasts.md +2: P2-A-31, P2-A-28; 06c_results_boundary_baselines.md +1: P2-B-01; 07_discussion.md +1: P2-B-16; 11_references_declarations.md +2: P2-L-33"
+    "after": 16,
+    "reason": "01_introduction.md +1: P2-S-09; 02_related_work.md +1: P2-L-08; 04_research_questions.md +2: P2-L-25, P2-L-23; 05a_methods_design.md +1: P2-M-15; 05b_methods_arms.md +1: P2-A-18; 06a_results_integrity.md +2: P2-A-23; 06b_results_contrasts.md +2: P2-A-31, P2-A-28; 06c_results_boundary_baselines.md +1: P2-B-01; 07_discussion.md +1: P2-B-16; 11_references_declarations.md +2: P2-L-33; R2 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14"
    },
    "5.10": {
     "before": 1,
@@ -664,8 +704,8 @@
    },
    "5.15": {
     "before": 2,
-    "after": 9,
-    "reason": "05a_methods_design.md +1: P2-M-15; 06b_results_contrasts.md +3: P2-A-30, P2-A-29, P2-A-27; 06c_results_boundary_baselines.md +1: P2-B-07; 08_limitations.md +2: P2-T-10"
+    "after": 11,
+    "reason": "05a_methods_design.md +1: P2-M-15; 06b_results_contrasts.md +3: P2-A-30, P2-A-29, P2-A-27; 06c_results_boundary_baselines.md +1: P2-B-07; 08_limitations.md +2: P2-T-10; R2 01_introduction.md +1: P2-R2-02; 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07"
    },
    "5.2": {
     "before": 1,
@@ -689,8 +729,8 @@
    },
    "5.6": {
     "before": 1,
-    "after": 3,
-    "reason": "05a_methods_design.md +2: P2-M-05, P2-M-15"
+    "after": 5,
+    "reason": "05a_methods_design.md +2: P2-M-05, P2-M-15; R2 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07; 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
    },
    "5.7": {
     "before": 2,
@@ -729,13 +769,13 @@
    },
    "6.3": {
     "before": 5,
-    "after": 9,
-    "reason": "01_introduction.md +3: P2-S-09, P2-S-08; 05b_methods_arms.md +1: P2-A-41; 06c_results_boundary_baselines.md -1: P2-B-10; 08_limitations.md +1: P2-T-10"
+    "after": 10,
+    "reason": "01_introduction.md +3: P2-S-09, P2-S-08; 05b_methods_arms.md +1: P2-A-41; 06c_results_boundary_baselines.md -1: P2-B-10; 08_limitations.md +1: P2-T-10; R2 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07"
    },
    "6.4": {
     "before": 3,
-    "after": 10,
-    "reason": "04_research_questions.md +1: P2-L-22; 05b_methods_arms.md +1: P2-A-08; 06b_results_contrasts.md +1: P2-A-37; 07_discussion.md +1: P2-B-20; 08_limitations.md +2: P2-T-10, P2-T-07; 01_introduction.md +1: QA2 figure renumbering to the order of first citation (the introduction cites Section 6.4 instead of the anchor figure)"
+    "after": 11,
+    "reason": "04_research_questions.md +1: P2-L-22; 05b_methods_arms.md +1: P2-A-08; 06b_results_contrasts.md +1: P2-A-37; 07_discussion.md +1: P2-B-20; 08_limitations.md +2: P2-T-10, P2-T-07; 01_introduction.md +1: QA2 figure renumbering to the order of first citation (the introduction cites Section 6.4 instead of the anchor figure); R2 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
    },
    "6.5": {
     "before": 1,
@@ -754,8 +794,8 @@
    },
    "6.8": {
     "before": 2,
-    "after": 4,
-    "reason": "07_discussion.md +1: P2-B-21; 08_limitations.md +1: P2-T-04"
+    "after": 5,
+    "reason": "07_discussion.md +1: P2-B-21; 08_limitations.md +1: P2-T-04; R2 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14"
    },
    "6.9": {
     "before": 3,
@@ -771,6 +811,16 @@
     "before": 0,
     "after": 1,
     "reason": "09_reproducibility.md +1: P2-T-16"
+   },
+   "7": {
+    "before": 8,
+    "after": 9,
+    "reason": "R2 05a_methods_design.md +1: P2-R2-03, P2-R2-04"
+   },
+   "7.5": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14"
    },
    "7.8": {
     "before": 1,
@@ -799,8 +849,8 @@
    },
    "79": {
     "before": 0,
-    "after": 1,
-    "reason": "05a_methods_design.md +1: P2-M-16"
+    "after": 6,
+    "reason": "05a_methods_design.md +1: P2-M-16; R2 05a_methods_design.md +1: P2-R2-03, P2-R2-04; 06b_results_contrasts.md +1: P2-R2-06, P2-R2-07; 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14; 08_limitations.md +2: P2-R2-15, P2-R2-16, P2-R2-17"
    },
    "8.1": {
     "before": 1,
@@ -809,8 +859,8 @@
    },
    "8.5": {
     "before": 3,
-    "after": 10,
-    "reason": "04_research_questions.md +1: P2-L-27; 05a_methods_design.md +2: P2-M-08, P2-M-14; 06c_results_boundary_baselines.md +1: P2-B-03; 07_discussion.md +1: P2-B-23; 08_limitations.md +1: P2-T-06; 10_conclusion.md +1: P2-S-17"
+    "after": 14,
+    "reason": "04_research_questions.md +1: P2-L-27; 05a_methods_design.md +2: P2-M-08, P2-M-14; 06c_results_boundary_baselines.md +1: P2-B-03; 07_discussion.md +1: P2-B-23; 08_limitations.md +1: P2-T-06; 10_conclusion.md +1: P2-S-17; R2 05a_methods_design.md +1: P2-R2-03, P2-R2-04; 07_discussion.md +1: P2-R2-11, P2-R2-12, P2-R2-13, P2-R2-14; 10_conclusion.md +1: P2-R2-19; 12_figure_captions.md +1: P2-R2-21"
    },
    "8.6": {
     "before": 1,
@@ -839,13 +889,13 @@
    },
    "88": {
     "before": 18,
-    "after": 34,
-    "reason": "01_introduction.md +1: P2-S-07; 03_historical_reconstruction.md +1: P2-L-16; 05a_methods_design.md +13: P2-M-11, P2-M-02, P2-M-16, P2-M-09, P2-M-08, P2-M-15, P2-M-14, P2-M-13, P2-M-12; 11_references_declarations.md +1: P2-L-33"
+    "after": 36,
+    "reason": "01_introduction.md +1: P2-S-07; 03_historical_reconstruction.md +1: P2-L-16; 05a_methods_design.md +13: P2-M-11, P2-M-02, P2-M-16, P2-M-09, P2-M-08, P2-M-15, P2-M-14, P2-M-13, P2-M-12; 11_references_declarations.md +1: P2-L-33; R2 06c_results_boundary_baselines.md +1: P2-R2-08, P2-R2-09, P2-R2-10; 08_limitations.md +1: P2-R2-15, P2-R2-16, P2-R2-17"
    },
    "9": {
     "before": 13,
-    "after": 17,
-    "reason": "06c_results_boundary_baselines.md +3: P2-B-03, P2-IMPL-01; 11_references_declarations.md +1: P2-L-36"
+    "after": 21,
+    "reason": "06c_results_boundary_baselines.md +3: P2-B-03, P2-IMPL-01; 11_references_declarations.md +1: P2-L-36; R2 08_limitations.md +2: P2-R2-15, P2-R2-16, P2-R2-17; 10_conclusion.md +2: P2-R2-19"
    },
    "9.1": {
     "before": 1,
@@ -861,6 +911,11 @@
     "before": 1,
     "after": 2,
     "reason": "06a_results_integrity.md +1: P2-A-21"
+   },
+   "9.4": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 11_references_declarations.md +1: P2-R2-20"
    },
    "93.4": {
     "before": 0,
@@ -1101,6 +1156,11 @@
     "before": 0,
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
+   },
+   "+0.1511": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
    },
    "+0.159": {
     "before": 0,
@@ -1687,6 +1747,11 @@
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
    },
+   "-0.0182": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
+   },
    "-0.0192": {
     "before": 2,
     "after": 4,
@@ -1696,6 +1761,11 @@
     "before": 0,
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
+   },
+   "-0.0245": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
    },
    "-0.0249": {
     "before": 0,
@@ -1727,15 +1797,40 @@
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
    },
+   "-0.0437": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
    "-0.047": {
     "before": 0,
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
    },
+   "-0.0480": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
+   "-0.0488": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
+   },
+   "-0.0504": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
    "-0.0577": {
     "before": 0,
     "after": 1,
     "reason": "S11 +1: P2-M-30"
+   },
+   "-0.0628": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
    },
    "-0.066": {
     "before": 0,
@@ -1757,6 +1852,16 @@
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
    },
+   "-0.0783": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
+   },
+   "-0.0829": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
    "-0.0901": {
     "before": 0,
     "after": 1,
@@ -1771,6 +1876,11 @@
     "before": 0,
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
+   },
+   "-0.1122": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
    },
    "-0.121": {
     "before": 0,
@@ -1787,6 +1897,11 @@
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
    },
+   "-0.1286": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
+   },
    "-0.129": {
     "before": 0,
     "after": 1,
@@ -1796,6 +1911,11 @@
     "before": 0,
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
+   },
+   "-0.1323": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
    },
    "-0.133": {
     "before": 0,
@@ -1877,6 +1997,16 @@
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
    },
+   "-0.2888": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
+   "-0.2891": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
    "-0.290": {
     "before": 0,
     "after": 1,
@@ -1901,6 +2031,11 @@
     "before": 0,
     "after": 1,
     "reason": "S4.2 +1: P2-M-23"
+   },
+   "-0.3472": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S7 +2: P2-R2-25"
    },
    "-0.348": {
     "before": 0,
@@ -2314,8 +2449,8 @@
    },
    "0": {
     "before": 26,
-    "after": 84,
-    "reason": "S3 +1: P2-M-22; S4.2 +2: P2-M-23; S4.3 +4: P2-M-23; S4.4 +6: P2-M-24; S4.5 +7: P2-M-24; S4.7 +13: P2-M-24; S5 +3: P2-M-25; S11 +18: P2-M-30; S13.2 +4: P2-M-34"
+    "after": 92,
+    "reason": "S3 +1: P2-M-22; S4.2 +2: P2-M-23; S4.3 +4: P2-M-23; S4.4 +6: P2-M-24; S4.5 +7: P2-M-24; S4.7 +13: P2-M-24; S5 +3: P2-M-25; S11 +18: P2-M-30; S13.2 +4: P2-M-34; R2 S7 +2: P2-R2-25; S18 +6: P2-R2-27"
    },
    "0.000": {
     "before": 0,
@@ -2329,8 +2464,8 @@
    },
    "0.01": {
     "before": 1,
-    "after": 2,
-    "reason": "S4.2 +1: P2-M-23"
+    "after": 3,
+    "reason": "S4.2 +1: P2-M-23; R2 S18 +1: P2-R2-27"
    },
    "0.018": {
     "before": 0,
@@ -2387,6 +2522,11 @@
     "after": 1,
     "reason": "S13.2 +1: P2-M-34"
    },
+   "0.10": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.104": {
     "before": 0,
     "after": 1,
@@ -2422,6 +2562,11 @@
     "after": 1,
     "reason": "S9.2 +1: P2-M-28"
    },
+   "0.193": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.200": {
     "before": 0,
     "after": 1,
@@ -2429,8 +2574,8 @@
    },
    "0.204": {
     "before": 1,
-    "after": 2,
-    "reason": "S9.2 +1: P2-M-28"
+    "after": 3,
+    "reason": "S9.2 +1: P2-M-28; R2 S18 +1: P2-R2-27"
    },
    "0.212": {
     "before": 0,
@@ -2442,10 +2587,35 @@
     "after": 1,
     "reason": "S9.2 +1: P2-M-28"
    },
+   "0.224": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.225": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.262": {
     "before": 0,
     "after": 1,
     "reason": "S4.3 +1: P2-M-23"
+   },
+   "0.272": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.273": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.274": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "0.304": {
     "before": 0,
@@ -2462,10 +2632,45 @@
     "after": 1,
     "reason": "S4.4 +1: P2-M-24"
    },
+   "0.370": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.411": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.412": {
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
+   },
+   "0.413": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.444": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.449": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.453": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.456": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "0.5": {
     "before": 0,
@@ -2477,10 +2682,40 @@
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
    },
+   "0.544": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.547": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.551": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.556": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.587": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.588": {
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
+   },
+   "0.589": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "0.625": {
     "before": 0,
@@ -2517,6 +2752,16 @@
     "after": 1,
     "reason": "S4.6 +1: P2-M-24"
    },
+   "0.775": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.776": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.779": {
     "before": 0,
     "after": 1,
@@ -2532,10 +2777,25 @@
     "after": 1,
     "reason": "S4.6 +1: P2-M-24"
    },
+   "0.8": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S17 +1: P2-R2-26"
+   },
    "0.8060": {
     "before": 0,
     "after": 1,
     "reason": "S13.2 +1: P2-M-34"
+   },
+   "0.811": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.815": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "0.820": {
     "before": 0,
@@ -2772,10 +3032,55 @@
     "after": 1,
     "reason": "S4.5 +1: P2-M-24"
    },
+   "0.99": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "0.991": {
     "before": 0,
     "after": 1,
     "reason": "S4.5 +1: P2-M-24"
+   },
+   "0.9959": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.999": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.9990": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
+   },
+   "0.9993": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.9995": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "0.9996": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
+   "0.9998": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
+   },
+   "0.9999": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "09": {
     "before": 0,
@@ -2784,13 +3089,38 @@
    },
    "1": {
     "before": 9,
-    "after": 30,
-    "reason": "S4.1 +1: P2-M-23; S4.2 +3: P2-M-23; S4.4 +1: P2-M-24; S4.5 +3: P2-M-24; S4.7 +7: P2-M-24; S5 +1: P2-M-25; S11 +5: P2-M-30"
+    "after": 37,
+    "reason": "S4.1 +1: P2-M-23; S4.2 +3: P2-M-23; S4.4 +1: P2-M-24; S4.5 +3: P2-M-24; S4.7 +7: P2-M-24; S5 +1: P2-M-25; S11 +5: P2-M-30; R2 S18 +7: P2-R2-27"
+   },
+   "1.0068": {
+    "before": 2,
+    "after": 3,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
+   "1.0192": {
+    "before": 2,
+    "after": 4,
+    "reason": "R2 S7 +2: P2-R2-25"
    },
    "1.0269": {
     "before": 0,
     "after": 1,
     "reason": "S13.2 +1: P2-M-34"
+   },
+   "1.0461": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
+   "1.0476": {
+    "before": 2,
+    "after": 3,
+    "reason": "R2 S7 +1: P2-R2-25"
+   },
+   "1.0625": {
+    "before": 2,
+    "after": 4,
+    "reason": "R2 S7 +2: P2-R2-25"
    },
    "1.092": {
     "before": 0,
@@ -2824,8 +3154,8 @@
    },
    "10": {
     "before": 4,
-    "after": 14,
-    "reason": "S3 +2: P2-M-22; S4.4 +1: P2-M-24; S4.7 +6: P2-M-24; S6 +1: regenerated by build_supplement.py from the committed artifacts"
+    "after": 18,
+    "reason": "S3 +2: P2-M-22; S4.4 +1: P2-M-24; S4.7 +6: P2-M-24; S6 +1: regenerated by build_supplement.py from the committed artifacts; R2 S7 +2: P2-R2-25; S18 +2: P2-R2-27"
    },
    "10.5": {
     "before": 0,
@@ -2864,13 +3194,18 @@
    },
    "12": {
     "before": 2,
-    "after": 8,
-    "reason": "S3 +1: P2-M-22; S4.5 +2: P2-M-24; S4.7 +1: P2-M-24; S7.1 +1: P2-M-27; S11 +1: P2-M-30"
+    "after": 10,
+    "reason": "S3 +1: P2-M-22; S4.5 +2: P2-M-24; S4.7 +1: P2-M-24; S7.1 +1: P2-M-27; S11 +1: P2-M-30; R2 S7 +2: P2-R2-25"
    },
    "120": {
     "before": 2,
-    "after": 7,
-    "reason": "S4.6 +1: P2-M-24; S13.2 +4: P2-M-34"
+    "after": 8,
+    "reason": "S4.6 +1: P2-M-24; S13.2 +4: P2-M-34; R2 S17 +1: P2-R2-26"
+   },
+   "128": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
    },
    "13": {
     "before": 3,
@@ -2884,8 +3219,8 @@
    },
    "14": {
     "before": 6,
-    "after": 22,
-    "reason": "S2 +1: P2-M-21; S4.4 +1: P2-M-24; S4.5 +7: P2-M-24; S4.7 +5: P2-M-24; S11 +2: P2-M-30"
+    "after": 24,
+    "reason": "S2 +1: P2-M-21; S4.4 +1: P2-M-24; S4.5 +7: P2-M-24; S4.7 +5: P2-M-24; S11 +2: P2-M-30; R2 S18 +2: P2-R2-27"
    },
    "149": {
     "before": 0,
@@ -2894,8 +3229,8 @@
    },
    "15": {
     "before": 1,
-    "after": 7,
-    "reason": "S3 +1: P2-M-22; S4.5 +1: P2-M-24; S4.7 +4: P2-M-24"
+    "after": 10,
+    "reason": "S3 +1: P2-M-22; S4.5 +1: P2-M-24; S4.7 +4: P2-M-24; R2 S18 +3: P2-R2-27"
    },
    "150": {
     "before": 0,
@@ -2904,13 +3239,13 @@
    },
    "16": {
     "before": 1,
-    "after": 14,
-    "reason": "S4.2 +2: P2-M-23; S4.5 +4: P2-M-24; S4.7 +7: P2-M-24"
+    "after": 17,
+    "reason": "S4.2 +2: P2-M-23; S4.5 +4: P2-M-24; S4.7 +7: P2-M-24; R2 S18 +3: P2-R2-27"
    },
    "17": {
     "before": 1,
-    "after": 7,
-    "reason": "S4.5 +1: P2-M-24; S4.7 +4: P2-M-24; S11 +1: P2-M-30"
+    "after": 10,
+    "reason": "S4.5 +1: P2-M-24; S4.7 +4: P2-M-24; S11 +1: P2-M-30; R2 S7 +1: P2-R2-25; S18 +2: P2-R2-27"
    },
    "17.6": {
     "before": 0,
@@ -2929,23 +3264,23 @@
    },
    "18": {
     "before": 3,
-    "after": 8,
-    "reason": "S4.5 +2: P2-M-24; S4.7 +2: P2-M-24; S11 +1: P2-M-30"
+    "after": 14,
+    "reason": "S4.5 +2: P2-M-24; S4.7 +2: P2-M-24; S11 +1: P2-M-30; R2 S7 +2: P2-R2-25; S18 +4: P2-R2-27"
    },
    "186": {
     "before": 6,
-    "after": 7,
-    "reason": "S13.2 +1: P2-M-34"
+    "after": 17,
+    "reason": "S13.2 +1: P2-M-34; R2 S7 +10: P2-R2-25"
    },
    "19": {
     "before": 2,
-    "after": 10,
-    "reason": "S4.2 +1: P2-M-23; S4.3 +1: P2-M-23; S4.5 +1: P2-M-24; S4.7 +3: P2-M-24; S11 +2: P2-M-30"
+    "after": 11,
+    "reason": "S4.2 +1: P2-M-23; S4.3 +1: P2-M-23; S4.5 +1: P2-M-24; S4.7 +3: P2-M-24; S11 +2: P2-M-30; R2 S18 +1: P2-R2-27"
    },
    "2": {
     "before": 8,
-    "after": 32,
-    "reason": "S4.1 +2: P2-M-23; S4.4 +1: P2-M-24; S4.5 +2: P2-M-24; S4.7 +10: P2-M-24; S5 +4: P2-M-25; S7.1 +1: P2-M-27; S11 +4: P2-M-30"
+    "after": 37,
+    "reason": "S4.1 +2: P2-M-23; S4.4 +1: P2-M-24; S4.5 +2: P2-M-24; S4.7 +10: P2-M-24; S5 +4: P2-M-25; S7.1 +1: P2-M-27; S11 +4: P2-M-30; R2 S18 +5: P2-R2-27"
    },
    "2.0001": {
     "before": 0,
@@ -2964,8 +3299,8 @@
    },
    "20": {
     "before": 15,
-    "after": 19,
-    "reason": "S4.1 +1: P2-M-23; S4.5 +2: P2-M-24; S4.7 +1: P2-M-24"
+    "after": 23,
+    "reason": "S4.1 +1: P2-M-23; S4.5 +2: P2-M-24; S4.7 +1: P2-M-24; R2 S7 +2: P2-R2-25; S4 +1: P2-R2-23; S18 +1: P2-R2-27"
    },
    "200": {
     "before": 1,
@@ -2984,53 +3319,63 @@
    },
    "21": {
     "before": 0,
-    "after": 7,
-    "reason": "S2 +1: P2-M-21; S4.5 +1: P2-M-24; S4.7 +1: P2-M-24; S11 +4: P2-M-30"
+    "after": 9,
+    "reason": "S2 +1: P2-M-21; S4.5 +1: P2-M-24; S4.7 +1: P2-M-24; S11 +4: P2-M-30; R2 S7 +1: P2-R2-25; S18 +1: P2-R2-27"
    },
    "22": {
     "before": 0,
-    "after": 9,
-    "reason": "S2 +1: P2-M-21; S3 +1: P2-M-22; S4.5 +1: P2-M-24; S4.6 +1: P2-M-24; S4.7 +1: P2-M-24; S5 +1: P2-M-25; S11 +3: P2-M-30"
+    "after": 10,
+    "reason": "S2 +1: P2-M-21; S3 +1: P2-M-22; S4.5 +1: P2-M-24; S4.6 +1: P2-M-24; S4.7 +1: P2-M-24; S5 +1: P2-M-25; S11 +3: P2-M-30; R2 S18 +1: P2-R2-27"
    },
    "23": {
     "before": 4,
-    "after": 10,
-    "reason": "S4.5 +2: P2-M-24; S4.7 +3: P2-M-24; S11 +1: P2-M-30"
+    "after": 14,
+    "reason": "S4.5 +2: P2-M-24; S4.7 +3: P2-M-24; S11 +1: P2-M-30; R2 S18 +4: P2-R2-27"
    },
    "24": {
     "before": 1,
-    "after": 6,
-    "reason": "S4.5 +1: P2-M-24; S4.7 +3: P2-M-24; S11 +1: P2-M-30"
+    "after": 7,
+    "reason": "S4.5 +1: P2-M-24; S4.7 +3: P2-M-24; S11 +1: P2-M-30; R2 S18 +1: P2-R2-27"
    },
    "25": {
     "before": 3,
-    "after": 4,
-    "reason": "S4.7 +1: P2-M-24"
+    "after": 7,
+    "reason": "S4.7 +1: P2-M-24; R2 S7 +2: P2-R2-25; S18 +1: P2-R2-27"
+   },
+   "256": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S17 +2: P2-R2-26"
    },
    "26": {
     "before": 1,
-    "after": 2,
-    "reason": "S4.7 +1: P2-M-24"
+    "after": 6,
+    "reason": "S4.7 +1: P2-M-24; R2 S18 +4: P2-R2-27"
    },
    "27": {
     "before": 2,
-    "after": 4,
-    "reason": "S4.5 +2: P2-M-24"
+    "after": 8,
+    "reason": "S4.5 +2: P2-M-24; R2 S18 +4: P2-R2-27"
    },
    "28": {
     "before": 2,
-    "after": 3,
-    "reason": "S4.7 +1: P2-M-24"
+    "after": 6,
+    "reason": "S4.7 +1: P2-M-24; R2 S18 +3: P2-R2-27"
    },
    "29": {
     "before": 1,
-    "after": 2,
-    "reason": "S4.5 +1: P2-M-24"
+    "after": 6,
+    "reason": "S4.5 +1: P2-M-24; R2 S18 +4: P2-R2-27"
    },
    "3": {
     "before": 4,
-    "after": 23,
-    "reason": "S4.1 +3: P2-M-23; S4.5 +3: P2-M-24; S4.7 +7: P2-M-24; S5 +2: P2-M-25; S11 +3: P2-M-30; S13.1 +1: P2-M-34"
+    "after": 24,
+    "reason": "S4.1 +3: P2-M-23; S4.5 +3: P2-M-24; S4.7 +7: P2-M-24; S5 +2: P2-M-25; S11 +3: P2-M-30; S13.1 +1: P2-M-34; R2 S18 +1: P2-R2-27"
+   },
+   "3.2": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "3.988": {
     "before": 0,
@@ -3039,13 +3384,23 @@
    },
    "30": {
     "before": 13,
-    "after": 78,
-    "reason": "S4.1 +1: P2-M-23; S4.3 +5: P2-M-23; S4.4 +20: P2-M-24; S4.5 +17: P2-M-24; S4.6 +4: P2-M-24; S4.7 +5: P2-M-24; S5 +5: P2-M-25; S9.2 +1: P2-M-28; S11 +7: P2-M-30"
+    "after": 133,
+    "reason": "S4.1 +1: P2-M-23; S4.3 +5: P2-M-23; S4.4 +20: P2-M-24; S4.5 +17: P2-M-24; S4.6 +4: P2-M-24; S4.7 +5: P2-M-24; S5 +5: P2-M-25; S9.2 +1: P2-M-28; S11 +7: P2-M-30; R2 S7 +5: P2-R2-25; S18 +50: P2-R2-27"
    },
    "32": {
     "before": 1,
     "after": 6,
     "reason": "S7.1 +1: P2-M-27; S13.2 +4: P2-M-34"
+   },
+   "32.7": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "34": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 S7 +1: P2-R2-25"
    },
    "384": {
     "before": 3,
@@ -3059,8 +3414,8 @@
    },
    "386": {
     "before": 12,
-    "after": 16,
-    "reason": "S4.3 +1: P2-M-23; S6 +1: regenerated by build_supplement.py from the committed artifacts; S13.1 +1: P2-M-34; S13.2 +1: P2-M-34"
+    "after": 22,
+    "reason": "S4.3 +1: P2-M-23; S6 +1: regenerated by build_supplement.py from the committed artifacts; S13.1 +1: P2-M-34; S13.2 +1: P2-M-34; R2 S7 +6: P2-R2-25"
    },
    "3860": {
     "before": 0,
@@ -3072,10 +3427,20 @@
     "after": 20,
     "reason": "S4.4 +2: P2-M-24; S4.7 +8: P2-M-24; S5 +1: P2-M-25; S11 +5: P2-M-30"
    },
+   "4.0": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S17 +1: P2-R2-26"
+   },
    "4.455": {
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
+   },
+   "4.5": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "4.664": {
     "before": 0,
@@ -3092,15 +3457,25 @@
     "after": 1,
     "reason": "S13.2 +1: P2-M-34"
    },
+   "4096": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "421": {
     "before": 0,
     "after": 1,
     "reason": "S4.3 +1: P2-M-23"
    },
+   "46.3": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "5": {
     "before": 5,
-    "after": 15,
-    "reason": "S4.5 +1: P2-M-24; S4.7 +4: P2-M-24; S5 +1: P2-M-25; S11 +2: P2-M-30; S13.2 +2: P2-M-34"
+    "after": 19,
+    "reason": "S4.5 +1: P2-M-24; S4.7 +4: P2-M-24; S5 +1: P2-M-25; S11 +2: P2-M-30; S13.2 +2: P2-M-34; R2 S7 +3: P2-R2-25; S18 +1: P2-R2-27"
    },
    "5.2e-03": {
     "before": 0,
@@ -3117,6 +3492,11 @@
     "after": 2,
     "reason": "S4.2 +1: P2-M-23; S4.5 +1: P2-M-24"
    },
+   "5.6": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
+   },
    "50": {
     "before": 1,
     "after": 2,
@@ -3129,53 +3509,138 @@
    },
    "6": {
     "before": 3,
-    "after": 19,
-    "reason": "S4.4 +1: P2-M-24; S4.5 +2: P2-M-24; S4.7 +6: P2-M-24; S5 +4: P2-M-25; S11 +3: P2-M-30"
+    "after": 21,
+    "reason": "S4.4 +1: P2-M-24; S4.5 +2: P2-M-24; S4.7 +6: P2-M-24; S5 +4: P2-M-25; S11 +3: P2-M-30; R2 S18 +2: P2-R2-27"
+   },
+   "6.4": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "6.4459": {
     "before": 0,
     "after": 1,
     "reason": "S13.2 +1: P2-M-34"
    },
+   "60": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "61": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "615": {
     "before": 0,
     "after": 1,
     "reason": "S4.3 +1: P2-M-23"
+   },
+   "62": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
    },
    "63.6": {
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
    },
+   "64": {
+    "before": 1,
+    "after": 3,
+    "reason": "R2 S7 +1: P2-R2-25; S18 +1: P2-R2-27"
+   },
+   "65": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "66": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
+   },
    "66.6": {
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
+   },
+   "67": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
+   },
+   "68": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
    },
    "68.2": {
     "before": 0,
     "after": 2,
     "reason": "S4.1 +2: P2-M-23"
    },
+   "69": {
+    "before": 0,
+    "after": 3,
+    "reason": "R2 S18 +3: P2-R2-27"
+   },
    "7": {
     "before": 6,
-    "after": 21,
-    "reason": "S4.1 +1: P2-M-23; S4.5 +2: P2-M-24; S4.7 +9: P2-M-24; S5 +1: P2-M-25; S11 +2: P2-M-30"
+    "after": 24,
+    "reason": "S4.1 +1: P2-M-23; S4.5 +2: P2-M-24; S4.7 +9: P2-M-24; S5 +1: P2-M-25; S11 +2: P2-M-30; R2 S18 +3: P2-R2-27"
    },
    "7.2": {
     "before": 0,
     "after": 1,
     "reason": "S4.4 +1: P2-M-24"
    },
-   "72": {
+   "7.5": {
     "before": 0,
     "after": 1,
-    "reason": "S13.2 +1: P2-M-34"
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "70": {
+    "before": 1,
+    "after": 5,
+    "reason": "R2 S18 +4: P2-R2-27"
+   },
+   "72": {
+    "before": 0,
+    "after": 3,
+    "reason": "S13.2 +1: P2-M-34; R2 S18 +2: P2-R2-27"
+   },
+   "73": {
+    "before": 1,
+    "after": 2,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
+   "75": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
    },
    "75.3": {
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
+   },
+   "76": {
+    "before": 1,
+    "after": 4,
+    "reason": "R2 S18 +3: P2-R2-27"
+   },
+   "77": {
+    "before": 0,
+    "after": 2,
+    "reason": "R2 S18 +2: P2-R2-27"
+   },
+   "78": {
+    "before": 4,
+    "after": 7,
+    "reason": "R2 S18 +3: P2-R2-27"
    },
    "78.3": {
     "before": 0,
@@ -3189,8 +3654,8 @@
    },
    "79": {
     "before": 0,
-    "after": 1,
-    "reason": "S4.6 +1: P2-M-24"
+    "after": 11,
+    "reason": "S4.6 +1: P2-M-24; R2 S18 +10: P2-R2-27"
    },
    "79.2": {
     "before": 0,
@@ -3199,8 +3664,13 @@
    },
    "8": {
     "before": 5,
-    "after": 19,
-    "reason": "S4.5 +1: P2-M-24; S4.7 +6: P2-M-24; S11 +7: P2-M-30"
+    "after": 21,
+    "reason": "S4.5 +1: P2-M-24; S4.7 +6: P2-M-24; S11 +7: P2-M-30; R2 S18 +2: P2-R2-27"
+   },
+   "8.2": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S7 +1: P2-R2-25"
    },
    "8.2e-03": {
     "before": 0,
@@ -3212,15 +3682,20 @@
     "after": 1,
     "reason": "S12.2 +1: P2-M-32, P2-M-33"
    },
+   "8.5": {
+    "before": 2,
+    "after": 3,
+    "reason": "R2 S18 +1: P2-R2-27"
+   },
    "8.7": {
     "before": 0,
-    "after": 1,
-    "reason": "S12.2 +1: P2-M-32, P2-M-33"
+    "after": 2,
+    "reason": "S12.2 +1: P2-M-32, P2-M-33; R2 S17 +1: P2-R2-26"
    },
    "80": {
     "before": 0,
-    "after": 2,
-    "reason": "S4.1 +2: P2-M-23"
+    "after": 4,
+    "reason": "S4.1 +2: P2-M-23; R2 S4 +1: P2-R2-23; S18 +1: P2-R2-27"
    },
    "80.4": {
     "before": 0,
@@ -3231,6 +3706,11 @@
     "before": 0,
     "after": 1,
     "reason": "S4.1 +1: P2-M-23"
+   },
+   "81": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S18 +1: P2-R2-27"
    },
    "84.0": {
     "before": 0,
@@ -3244,8 +3724,8 @@
    },
    "88": {
     "before": 7,
-    "after": 16,
-    "reason": "S4.1 +2: P2-M-23; S4.2 +2: P2-M-23; S4.3 +1: P2-M-23; S4.4 +1: P2-M-24; S4.6 +1: P2-M-24; S5 +1: P2-M-25; S13.1 +1: P2-M-34"
+    "after": 28,
+    "reason": "S4.1 +2: P2-M-23; S4.2 +2: P2-M-23; S4.3 +1: P2-M-23; S4.4 +1: P2-M-24; S4.6 +1: P2-M-24; S5 +1: P2-M-25; S13.1 +1: P2-M-34; R2 S4 +1: P2-R2-23; S18 +11: P2-R2-27"
    },
    "89.1": {
     "before": 0,
@@ -3254,8 +3734,13 @@
    },
    "9": {
     "before": 4,
-    "after": 16,
-    "reason": "S4.5 +2: P2-M-24; S4.6 +1: P2-M-24; S4.7 +3: P2-M-24; S5 +2: P2-M-25; S11 +4: P2-M-30"
+    "after": 20,
+    "reason": "S4.5 +2: P2-M-24; S4.6 +1: P2-M-24; S4.7 +3: P2-M-24; S5 +2: P2-M-25; S11 +4: P2-M-30; R2 S18 +4: P2-R2-27"
+   },
+   "9.4": {
+    "before": 0,
+    "after": 1,
+    "reason": "R2 S17 +1: P2-R2-26"
    },
    "9.5e-04": {
     "before": 0,
@@ -3289,8 +3774,8 @@
    },
    "95": {
     "before": 3,
-    "after": 5,
-    "reason": "S9.1 +1: P2-M-28; S9.2 +1: P2-M-28"
+    "after": 6,
+    "reason": "S9.1 +1: P2-M-28; S9.2 +1: P2-M-28; R2 S7 +1: P2-R2-25"
    },
    "98.1": {
     "before": 0,

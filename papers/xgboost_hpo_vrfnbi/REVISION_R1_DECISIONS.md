@@ -83,3 +83,42 @@ provenance wording only, no analysis, artifact or reported result changes.
 - The supplement is a review draft until the authors approve it: S17 names `paper2-manuscript-v6` as the planned
   tag, not yet created. The release build sets `PAPER2_PACKAGE_RELEASE=paper2-manuscript-v6`, which restores the
   final-package wording that `audit_package_tag.py` checks at the tag.
+
+## Coauthor review R2 (2026-10-13)
+
+A second, short review by the same coauthor. No experiment, rerun, dataset or change to a frozen result; two
+retrospective diagnostics from stored outputs, labelled post hoc, with their definitions committed before the
+first run (centre-point criteria at 933422a). Patch identifiers below are those cited in
+`audits/scientific_revision_v6.json`; every R2 numeric movement there is an addition, none removes or alters an
+existing number.
+
+- Centre points (P2-R2-03, -07, -12, -16, -19, -21, -27). `scripts/center_point_sensitivity.py` reproduces the
+  stored 88-row surrogate stage exactly and refits it on the 79 distinct configurations; it also refits the
+  factor models on the 79 distinct pilot configurations. Premise verified: the ten centre rows are one cached
+  evaluation in every unit (79 computed, 9 served) and ten identical deterministic executions in the pilot. Factor
+  models: unchanged in every respect measured (min Tucker 0.999). Surfaces: predictions nearly unchanged, terms
+  often differ by one or two, gate decisions flip for MAGIC quality (8 -> 1 passes) and Bank Marketing cost
+  (27 -> 23). Surrogate anchors moved beyond the pre-declared tolerance in more than half of the replications
+  on every dataset, so the pre-declared class is HIGH, by the anchor rule alone. A descriptive control, added
+  after the first run and outside the classification, shows that restarting the frozen multistart moves the
+  quality anchor about as often and almost always to an equally good minimum (the flat-direction mechanism
+  already stated in Section 5.6); the cost-anchor movement is mainly a centre-row effect. Handling, as the HIGH
+  rule requires: the frozen protocol and results are untouched; the affected claim, the post hoc CHIM-contraction
+  association, is no longer carried into the Discussion summary or the Conclusion and is qualified in 6.4.1, 7.5
+  and the Figure 3 caption; Section 8.5 states that the surrogate payoff carries a component set by the
+  minimizer's starting points and that the contrasts' behaviour under the alternative specification was not
+  tested; the decision whether to run a new post hoc experiment is left to the authors.
+- Signed-rank status (P2-R2-01, -02, -05, -06, -11, -19). The Wilcoxon signed-rank test is labelled secondary and
+  post hoc wherever its significance is claimed, beside the pre-declared Nadeau-Bengio result (Adult only for the
+  geometry contrast, MAGIC only for the anchor contrast). Abstract kept at 250 words.
+- Grid at the arms' budget (P2-R2-01, -08, -13, -15, -25). `scripts/grid_budget_prefix.py` scores the first 186
+  stored grid evaluations, verified to be the frozen 186-point grid, with the frozen code: the grid's lead and its
+  21-of-30 status are unchanged on every dataset. No grid point evaluated.
+- Holdout (P2-R2-04, -09, -23). "Replication-level holdout" adopted; the overlap with the pilot that fixed the
+  objective mapping is stated as overlap with the measurement definition, not label leakage.
+- Instability and scope (P2-R2-10, -13, -14, -19, -24). 6.10 and the Conclusion distinguish changed candidate sets
+  from contrast directions and keep the Adult reversal under measured time; the recommendation sentence of 7.7 is
+  scoped; Spambase and the primary panel are stated as conditional on a one-partition screen.
+- Availability (P2-R2-18, -20, -22, -26). Public repository named; public, independently obtainable, commit-pinned
+  and unversioned material distinguished; the draft header no longer implies the frozen material is inaccessible;
+  the ASOC statement no longer promises an existing Zenodo archive.

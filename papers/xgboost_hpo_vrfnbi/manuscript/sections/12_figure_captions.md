@@ -15,7 +15,9 @@ NBI-S $\rightarrow$ NBI-R difference beside the anchor-injection control, which 
 NBI-R's empirical anchors into NBI-S's set and changes nothing else. Right (post hoc): the
 CHIM extent under empirical anchors relative to surrogate-derived anchors, as a per-dataset
 median. The juxtaposition is a post hoc association, not a demonstrated cause: clear on Adult
-and Bank Marketing, weak on Spambase and absent on MAGIC.
+and Bank Marketing, weak on Spambase and absent on MAGIC. The surrogate-derived extent is not
+uniquely determined by the fitted surfaces (Section 8.5), so the per-replication ratios behind
+these medians are themselves sensitive.
 
 **Figure 4. Reference sensitivity.** Median paired difference under the CORE reference
 (primary, horizontal) against the AUGMENTED reference (mandatory sensitivity,

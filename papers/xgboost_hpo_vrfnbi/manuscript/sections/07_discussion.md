@@ -19,8 +19,8 @@ conditions, canonical NBI front construction produced higher real-revalidated
 CORE-relative hypervolume than specification-matched weighted scalarization: median paired
 differences of $+0.0374$ on MAGIC, $+0.2549$ on Adult and $+0.2281$ on Bank Marketing,
 favoured in 26/30, 30/30 and 24/30 replications with every bootstrap interval excluding zero,
-rank-biserial $+0.92$, $+1.00$ and $+0.88$, Holm-significant within every primary dataset,
-which is the generalization unit (Table 4).
+rank-biserial $+0.92$, $+1.00$ and $+0.88$, Holm-significant within every primary dataset under
+the post hoc signed-rank test, the dataset being the generalization unit (Table 4).
 
 The scope is part of the claim: two objectives, this surrogate architecture, this budget,
 these three datasets. Nothing licenses "NBI is better than weighted sum" in general. The
@@ -30,7 +30,8 @@ improved on that finite reference.
 
 
 The strength of the geometry evidence depends on which test is read. Under the
-secondary Holm-corrected signed-rank test, the contrast is significant in all
+secondary Holm-corrected signed-rank test, whose form was fixed only when the confirmatory results
+were available and which is therefore post hoc, the contrast is significant in all
 three primary datasets. Under the Nadeau–Bengio correction declared in advance as a
 sensitivity, reported unadjusted, it clears $0.05$ on Adult alone ($p = 0.0148$, against
 0.0860 and 0.0764). We take the descriptive triple as
@@ -61,7 +62,8 @@ CORE on any dataset.
 Holding the NBI formulation fixed and replacing surrogate-derived payoff information with the
 pre-specified empirical-real anchor procedure did not improve the confirmatory fronts.
 Paired medians are $-0.0741$ on MAGIC, $-0.0192$ on Adult and $-0.4093$ on Bank Marketing,
-Holm-significant on MAGIC and Bank Marketing; Adult is a non-detection under CORE with an
+Holm-significant on MAGIC and Bank Marketing under the post hoc signed-rank test, while the
+pre-declared corrected test reaches $0.05$ on MAGIC only; Adult is a non-detection under CORE with an
 interval spanning zero. This carries the same weight here as Section 7.2. Real anchors are the
 expensive, better-grounded option, bought with real evaluations by NBI-R alone, and the
 result went the other way. The sign is negative under CORE and AUGMENTED alike, with the
@@ -80,7 +82,11 @@ distinct realized configurations in 239 of 240 arm-units. Comparable, not identi
 The CHIM contraction of Section 6.4.1 is a post hoc association across 30 replications
 within a dataset, not a demonstrated cause: it is clear on Adult and Bank Marketing
 (within-dataset Spearman between contraction and deficit $+0.683$ and $+0.678$), weak on
-Spambase ($+0.320$) and absent on MAGIC ($-0.111$). Nor does the injection control prove the
+Spambase ($+0.320$) and absent on MAGIC ($-0.111$). The association is also measured against a
+surrogate payoff matrix that the fitted surfaces do not determine uniquely: restarting the frozen
+minimizer from other points, or refitting the surfaces on the 79 distinct design configurations,
+moved the surrogate anchors in more than half of the replications (Section 8.5, Supplement S18). It
+is therefore not carried into the conclusions. Nor does the injection control prove the
 negative is entirely geometric: the control set is a superset of NBI-S's, so its effect
 cannot be negative, and because NBI-R returned none of its own empirical anchors
 (Section 5.12) it bounds what adding those anchors to NBI-S's set does rather than
@@ -114,15 +120,18 @@ This is stated plainly rather than deflected: at the budget this protocol froze 
 confirmatory campaign, on this panel, the coarse grid had the higher paired median against
 NBI-S on all four datasets. The matched-to-the-most-expensive-arm rule bears on how large the
 deficit is; it is not grounds for setting it aside, and is not revised now the result is
-known. The geometry finding says which construction to use *given* that a front is built on a
-surrogate, not that this family was the right instrument here.
+known. Nor is it an artefact of the larger budget: the grid's first 186 evaluations led NBI-S on
+every dataset as well (Section 6.8). The geometry finding says which of the two constructions
+performed better *given* a front built on these surrogates, on the three screened datasets, at two
+objectives and this budget; it is not a recommendation of NBI in general, nor a claim that this
+family was the right instrument here.
 
 ### 7.8 The surrogate-gate regime
 
 The advantage of NBI over weighted scalarization persisted even where the externally
 audited surrogate failed the frozen quality criterion. On Adult and Bank Marketing the
 composite-quality gate passed in 0 of 30 replications and the geometry effect is
-Holm-significant on both, against 8 of 30 on MAGIC and 9 of 30 on Spambase
+Holm-significant on both under the post hoc signed-rank test, against 8 of 30 on MAGIC and 9 of 30 on Spambase
 (Figure 6). The gate was diagnostic: every arm ran at every replication whatever it
 said, so it annotates the evidence instead of selecting it. The inference is narrow:
 absolute surrogate trustworthiness and relative front-construction geometry are different
@@ -143,7 +152,10 @@ it does not say by how much any chosen model improves.
 ### 7.10 What the decomposition does not establish
 
 Spambase was separated from the primary family before the confirmatory campaign because
-screening showed insufficient interior front geometry in its frozen objective space. Its
+screening, on one pre-campaign pilot partition, showed insufficient interior front geometry in its
+frozen objective space; keeping it as a boundary control departed from the frozen replacement rule
+(Section 5.1), so its result is conditional on that screen and is not a prospective test of a
+hypothesis about the dataset. Its
 geometry contrast, a median of $+0.0500$ against MAGIC's Holm-significant $+0.0374$ but with
 roughly thirty times MAGIC's dispersion and an interval spanning zero, did not resolve
 (Section 6.6). That is consistent with the boundary designation; it does not confirm the
@@ -151,11 +163,11 @@ boundary mechanism. Because Spambase's quality composite is negatively rank-corr
 raw quality over configurations drawn uniformly from the decision box (post hoc; Section 8.5,
 Supplement S4.3), the result also cannot be read as evidence about front geometry. Nor is
 Spambase globally null: its
-anchor-provenance contrast is strongly negative and Holm-significant.
+anchor-provenance contrast is strongly negative and Holm-significant under the post hoc signed-rank test.
 
 More broadly: four datasets, two objectives, one surrogate class, one budget rule. Within
 that envelope geometry carries the effect on the three primary datasets and is unresolved on
-the fourth, specification does not, and provenance is unhelpful in a way that a post hoc
-analysis associates with CHIM contraction. Whether those orderings survive three
+the fourth, specification does not, and provenance is unhelpful; the post hoc association with CHIM
+contraction is not offered as its explanation (Section 7.5). Whether those orderings survive three
 objectives, another surrogate class, or a budget at which surrogate assistance is
 competitive with the coarse grid, this design was not built to answer.

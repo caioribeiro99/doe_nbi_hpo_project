@@ -2,8 +2,8 @@
 
 ### 5.1 Datasets and their prospectively assigned roles
 
-Four public binary-classification datasets are used, each obtainable under CC BY 4.0 with a
-published SHA-256. MAGIC Gamma Telescope is the continuity dataset, the one the historical
+Four public binary-classification datasets are used, each obtainable under CC BY 4.0, with a
+SHA-256 checksum recorded in the repository. MAGIC Gamma Telescope is the continuity dataset, the one the historical
 pipeline used; Adult / Census Income contributes scale and mixed types; Bank Marketing
 contributes the strongest class imbalance with independently constructed categorical features; Spambase is
 small and entirely numeric.
@@ -74,7 +74,7 @@ and the axial runs make its squared terms separately estimable.
 One *real evaluation* is one stratified, shuffled, seeded 5-fold cross-validation of one
 configuration on the 80% training part of one outer partition, that is, five XGBoost fits; the only
 exception is the holdout confirmation of Section 5.13, a single fit on that whole training part
-scored on the held-out 20%. Outer partitions are resampled $R = 30$ times per dataset on an 80/20
+scored on the held-out 20%, the *replication-level holdout*. Outer partitions are resampled $R = 30$ times per dataset on an 80/20
 split, and every method sees the same split at a given replication, so comparisons are paired by
 partition.
 
@@ -249,7 +249,12 @@ Each objective is modelled by a full quadratic response surface in *coded* units
 least squares on the 88 design rows only, with backward elimination at $\alpha = 0.05$ and hierarchy
 enforced. Evaluation is deterministic within a replication, so the 10 centre points return identical
 responses and provide no estimate of pure error; the elimination's $t$-tests nonetheless count all
-88 rows, 79 of them distinct, with $88 - p$ residual degrees of freedom for a $p$-term model. The
+88 rows, 79 of them distinct, with $88 - p$ residual degrees of freedom for a $p$-term model. A post hoc
+refit on the 79 distinct configurations, from stored responses only (Supplement S18), left the frozen
+factor models and the surfaces' predictions nearly unchanged, while the selected terms often differed
+by one or two and the gate decision changed in 7 of 30 replications for MAGIC's quality surface and 4
+for Bank Marketing's cost surface; it also moved the surrogate anchors, the subject of the next
+paragraph and of Section 8.5. The
 surfaces are fitted to the objective of Section 5.5, the factor score rather than a raw response, so
 the $\log(1 + \cdot)$ transform of Section 5.4 sits inside the objective and the cost surface is
 fitted on the transformed scale by construction. The same procedure, elimination rule and coded

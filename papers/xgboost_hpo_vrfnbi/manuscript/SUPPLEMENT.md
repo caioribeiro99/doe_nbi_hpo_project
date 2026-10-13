@@ -5,9 +5,10 @@ Every table in this document is generated from a committed artifact by
 
 **Manuscript source commit** `aa76abc334c5`: the state of the
 manuscript and analysis sources from which this supplement was generated.
-This is a review draft. No package tag has been created: S17 names the tag
-planned for the released package, which will be created only after the authors
-approve it.
+This is a coauthor-review draft. The code, protocol and results it reports are
+identified by the existing tags of S1; only the tag of the manuscript package itself
+is still to be created, after the authors approve the text, and S17 names it as
+planned.
 
 Protocol tag `xgboost-hpo-protocol-v3`. Results tag
 `xgboost-hpo-confirmatory-results-v1`.
@@ -84,8 +85,12 @@ stratified 80/20 partition per dataset (seed 20260913), the partition of the S5
 screening, drawn separately from the 30 confirmatory partitions. Each replication
 re-evaluates the same 88 configurations on its own partition and maps them through the
 frozen model. Because the pilot partition is a separate draw, its training part
-shares rows with every confirmatory holdout: a holdout is unseen within its replication,
-not by the pilot that fixed the objective definition. The 78-point audit-only external
+shares rows with every replication-level holdout, roughly four in five of them as two
+independent 80/20 draws imply. A replication-level holdout is unseen by arm training and
+selection within its replication; it is not external to the frozen objective mapping,
+which was fitted on 88 cross-validated metric summaries computed on the pilot's training
+part. That overlap is with the measurement definition, not with any model scored on the
+holdout: no model trained on a replication's own rows sees its holdout. The 78-point audit-only external
 construction is excluded from the fit (amendment 23): 64 of its 78 coded points are
 identical to the external validation set and the rest are the same axial runs.
 
@@ -337,7 +342,10 @@ sample of the frozen factor models (S4.1); it is not one of the 30 confirmatory
 partitions. Spambase was retained as a boundary geometry control by a pre-campaign
 amendment adopted after its criterion-2 failure was known (amendment 22): the replacement
 rule frozen at protocol v1, before the pilot, required a dataset failing criterion 1 or 2
-to be replaced from the registry, and retaining Spambase departs from that rule.
+to be replaced from the registry, and retaining Spambase departs from that rule. Its
+boundary-control result is therefore conditional on that screen and that amendment, not a
+prospective test of a hypothesis about the dataset; likewise the primary panel's results
+are conditional on a screen made on one pilot partition.
 
 Every confirmatory replication evaluates the same 88 design rows on its own partition. The
 number of those rows that are non-dominated under the frozen objectives is summarized below
@@ -431,6 +439,36 @@ The comparator budget is the maximum over arms (NBI-R). NSGA-II's frozen populat
 generation count give 384 real evaluations, 2 fewer than that budget. A
 direct-search comparator therefore receives about twice the real evaluations WS-S and
 NBI-S require standalone, and any comparison against them must say so.
+
+### S7.2 The grid at 186 evaluations (retrospective, post hoc)
+
+The grid's stored rows are in evaluation order, and the frozen code fixes that order:
+the 128-point two-level corner mesh first, then seeded uniform padding. In every unit the
+first 186 stored rows are exactly the grid the frozen code builds at a budget of 186 with
+the same seed, so they measure, with the campaign's own evaluations, the grid the protocol
+would have run at WS-S's and NBI-S's standalone budget. They are scored with the frozen
+indicator code against each unit's stored CORE front, after the full 386 rows have been
+rescored and found equal to the stored values and Table 5 reproduced. No grid point was
+evaluated (`scripts/grid_budget_prefix.py`, `analysis/grid_budget_prefix.json`).
+
+| dataset | grid evaluations | GRID median | median NBI-S − GRID | 95% interval | NBI-S / GRID wins |
+|---|---:|---:|---:|---|---:|
+| MAGIC | 386 | 1.0068 | -0.0628 | [-0.1122, -0.0480] | 0 / 30 |
+| MAGIC | 186 | 0.9996 | -0.0504 | [-0.0829, -0.0437] | 0 / 30 |
+| Spambase | 386 | 1.0192 | -0.1286 | [-0.3472, +0.1511] | 12 / 18 |
+| Spambase | 186 | 1.0192 | -0.1286 | [-0.3472, +0.1511] | 12 / 18 |
+| Adult | 386 | 1.0476 | -0.0488 | [-0.0783, -0.0245] | 5 / 25 |
+| Adult | 186 | 1.0461 | -0.0488 | [-0.0783, -0.0245] | 5 / 25 |
+| Bank Marketing | 386 | 1.0625 | -0.1323 | [-0.2891, -0.0182] | 10 / 20 |
+| Bank Marketing | 186 | 1.0625 | -0.1323 | [-0.2888, -0.0182] | 10 / 20 |
+
+Stopped at 186 evaluations the grid keeps its lead: its wins against NBI-S are unchanged
+on Spambase, Adult and Bank Marketing and stay at 30 of 30 on MAGIC, so the frozen 21-of-30
+direction rule is met on MAGIC and Adult at either budget. Almost all of the grid's
+advantage comes from its first 186 points. Those include the 64 corners that re-measure
+design configurations inside CORE at both budgets, a larger share at 186 (34%) than at 386
+(17%); this is reported, not corrected. The prefix is not a budget-matched comparator arm:
+the arms were not re-run, and the budget rule of Section 8.2 is unchanged.
 
 ## S8. Randomness
 
@@ -784,6 +822,88 @@ author's version.
 | primary endpoint | hv_ratio against the CORE reference |
 | campaign runtime | 9 h 46 min, 14 workers × 1 thread |
 
-Raw datasets and evaluation caches are deliberately unversioned; the design, the
-frozen factor models, every analysis artifact and every script are committed.
+What is public and what is not. The repository's code, protocol, amendment ledger, the
+design with its SHA-256, the frozen factor models, every per-unit indicator and mechanism
+table, every analysis artifact and every script are committed under the tags of S1. The
+four datasets are not redistributed: they are public UCI and OpenML mirrors under CC BY 4.0,
+obtained independently and checked against the recorded SHA-256 on acquisition. The per-unit
+experiment tree is not versioned and is not yet deposited: 120 unit directories of stage
+checkpoints and one SQLite evaluation cache each, about 0.8 GB, holding configurations,
+seeds and evaluated responses but no data rows. Every aggregate statistic in the paper can
+be recomputed from the committed per-unit tables; regenerating those tables, and the
+post-campaign diagnostics that read stored rows (Section 8.7, S7.2, S18), needs that tree,
+and re-running a unit needs the datasets, the code at the protocol tag and the seeds of S8.
+Exact reproduction across platforms or linear-algebra backends was not tested (Section 9.4).
+
+## S18. Centre-point sensitivity: 88 design rows against 79 distinct configurations (post hoc)
+
+The design's ten centre rows are one configuration. In every confirmatory unit the
+evaluation cache computed it once and served it nine times (88 design requests, 79
+distinct keys); in the Stage A pilot that fixed the factor models the ten were executed
+separately and returned identical values of all seven responses, only the measured time
+differing. They therefore carry no pure-error information, yet the 88-row fits weight the
+centre tenfold and count all 88 rows in the elimination's $t$-tests (Section 5.6), and the
+factor models weight it tenfold in their means, standard deviations and components.
+
+The diagnostic (`scripts/center_point_sensitivity.py`, `analysis/center_point_sensitivity.json`)
+uses stored responses only. It first reproduces every stored 88-row surrogate fit (terms
+and coefficients), every stored external-audit score and gate decision and every stored
+surrogate anchor exactly; it then refits the same procedure on the 79 distinct
+configurations, keeping one centre row, with the frozen factor model and both objectives
+unchanged; and, separately, it refits each dataset's factor model on the 79 distinct pilot
+configurations. No learner was trained, no candidate evaluated and no arm re-run; anchors
+were minimized on the polynomial surfaces with the frozen multistart. The comparison
+criteria and the classification rule were committed before the first run on the campaign
+records and are stored in the artifact.
+
+| dataset | objective | terms identical | within 2 terms | prediction-stable | residual df, 88 → 79 | gate passes, 88 → 79 | anchor moved, refit | anchor moved, restart only |
+|---|---|---:|---:|---:|---|---|---:|---:|
+| MAGIC | quality | 10/30 | 25/30 | 18/30 | 70–77 → 62–69 | 8 → 1 | 19/30 | 17/30 |
+| MAGIC | cost | 6/30 | 26/30 | 30/30 | 70–75 → 62–66 | 30 → 30 | 15/30 | 5/30 |
+| Spambase | quality | 14/30 | 26/30 | 24/30 | 69–76 → 61–68 | 9 → 7 | 20/30 | 9/30 |
+| Spambase | cost | 18/30 | 27/30 | 27/30 | 73–78 → 65–70 | 30 → 30 | 15/30 | 7/30 |
+| Adult | quality | 16/30 | 29/30 | 28/30 | 75–78 → 67–69 | 0 → 0 | 18/30 | 26/30 |
+| Adult | cost | 18/30 | 29/30 | 30/30 | 72–76 → 64–67 | 22 → 21 | 9/30 | 0/30 |
+| Bank Marketing | quality | 23/30 | 29/30 | 29/30 | 77–81 → 70–72 | 0 → 0 | 23/30 | 28/30 |
+| Bank Marketing | cost | 6/30 | 16/30 | 14/30 | 66–76 → 60–68 | 27 → 23 | 16/30 | 1/30 |
+
+Prediction-stable: root-mean-square difference between the two surfaces over the 78 audit
+points, the 79 design points and 4,096 uniform points of the coded box at most a quarter of
+the 88-row surface's external RMSE, with Spearman at least 0.99 between the two prediction
+sets. Anchor moved: the objective's surrogate minimizer moves by more than 10% of the coded
+box diagonal or a payoff entry changes by more than 0.10 objective units. Restart only: the
+same anchor criterion between the stored anchors and the unchanged 88-row surfaces minimized
+from a different set of multistart points.
+
+| dataset | min Tucker congruence | roles and orientation | quality weights, frozen → 79 rows | min Spearman, frozen vs 79-row objectives | Kaiser count |
+|---|---:|---|---|---:|---|
+| MAGIC | 0.9998 | same | 0.556, 0.444 → 0.544, 0.456 | 0.9995 | 2 → 2 |
+| Spambase | 0.9999 | same | 0.775, 0.225 → 0.776, 0.224 | 0.9993 | 2 → 2 |
+| Adult | 0.9998 | same | 0.547, 0.453 → 0.551, 0.449 | 0.9990 | 1 → 1 |
+| Bank Marketing | 0.9990 | same | 0.587, 0.413 → 0.589, 0.411 | 0.9959 | 1 → 1 |
+
+The factor models do not move: every factor keeps its role and orientation, congruence is
+at least 0.999, and the two objective definitions rank the pilot configurations and the
+pooled audit rows almost identically. The surfaces change little in what they predict but
+often in which terms they keep, and at a given number of terms the residual degrees of freedom
+of the elimination are nine fewer. Gate decisions change most for MAGIC's quality surface
+(8 → 1 passes) and Bank Marketing's cost surface (27 → 23); the composite-quality gate stays
+at 0 of 30 on Adult and Bank Marketing. The surrogate anchors move often, and for the quality
+objective much of that movement does not need the centre rows. Minimizing the unchanged
+88-row quality surfaces from other starting points moves the quality anchor in 17, 9, 26 and 28 of 30 replications on MAGIC, Spambase, Adult and Bank Marketing, and in 79 of 80 of those cases to a point within 0.01 of the same minimum: the
+quality surfaces have flat sets of equally good minima, the mechanism stated in Section 5.6,
+and the frozen seeded multistart picks one of them. The cost anchor moves under a restart in
+at most 7 of 30 replications, so its movement under the refit is mainly a centre-row effect.
+Under the refit NBI-S's quasi-normal direction moves by at most 46.3, 32.7, 3.2 and 4.5 degrees, and the per-dataset medians of the
+CHIM-extent ratio (main text, Figure 3) change from 0.811, 0.370, 0.204 and 0.272 to 0.815, 0.273, 0.193 and 0.274, in the same dataset order.
+
+Under the pre-declared rule the sensitivity is classified **HIGH** on every
+dataset, by the anchor criterion alone (anchors move in more than 15 of 30 replications for
+at least one objective); the factor and gate criteria stay below that level. The diagnostic
+does not show whether any primary contrast changes: that would need the surrogate-based arms
+re-run on the alternative surfaces, or with a rule that chooses among equally good minima,
+and their candidates revalidated with new learner fits, which was not done. The confirmatory
+results are those of the frozen 88-row specification and of its seeded minimizer, and the
+claims that rest on the surrogate payoff geometry are qualified in Sections 6.4.1, 7.5 and
+8.5. The alternative fits replace nothing and rescore nothing.
 

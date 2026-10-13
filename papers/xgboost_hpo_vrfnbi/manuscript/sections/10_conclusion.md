@@ -13,9 +13,9 @@ the archived scalarization specification and its observed-extrema normalization 
 nothing detectable. Replacing weighted scalarization with canonical Normal Boundary
 Intersection, holding everything else fixed, improved CORE-relative hypervolume on all
 three screened datasets, with 26, 30 and 24 of 30 paired wins, every bootstrap interval on the
-median difference excluding zero and the secondary test Holm-significant within each dataset;
-under the pre-declared Nadeau–Bengio sensitivity the improvement reached unadjusted $p < 0.05$
-on Adult alone. The third mechanism answered in the direction opposite
+median difference excluding zero and the secondary signed-rank test, a post hoc choice,
+Holm-significant within each dataset; under the pre-declared Nadeau–Bengio sensitivity, the only
+test fixed before the results, the improvement reached unadjusted $p < 0.05$ on Adult alone. The third mechanism answered in the direction opposite
 to the one the pipeline's design would suggest: substituting a pre-specified
 empirical-real anchor procedure for surrogate-derived payoff information gave no
 benefit, and degraded the front on two of the three datasets, of which only MAGIC reached
@@ -23,10 +23,11 @@ unadjusted $p < 0.05$ under the Nadeau–Bengio sensitivity. The frozen anchor-i
 control, which adds the empirical anchors to NBI-S's candidates and changes nothing else,
 moved the indicator by approximately zero on three of four datasets and by $+0.0133$ on
 MAGIC; because NBI-R returned none of its empirical anchors, the control bounds what anchor
-inclusion alone adds rather than decomposing the deficit. In a post hoc analysis the payoff
-matrices show a contraction of the convex hull of individual minima that is associated with
-the deficit, clearly on Adult and Bank Marketing, weakly on Spambase and not on MAGIC. Both
-are reported as associations, not as causes.
+inclusion alone adds rather than decomposing the deficit. The comparison is between real anchors
+and the surrogate anchors the frozen minimizer selected; those are not uniquely determined where a
+surface is flat, and they moved under a restart of the minimizer and under a refit without the
+repeated centre rows (Section 8.5), so the result is a property of the frozen surrogate pipeline,
+and the post hoc association of the deficit with CHIM contraction is not offered as its cause.
 
 Two results limit how far the geometry finding should be carried. The advantage is
 specific to hypervolume and IGD$^{+}$; the joint non-dominated fraction shows no detectable
@@ -37,11 +38,16 @@ bootstrap interval also excluded zero on Bank Marketing (20/30 wins), and it was
 Spambase (18/30); the grid also held the higher marginal median on three of the four datasets,
 but not on Spambase. The grid received 386 real evaluations against the 186 that WS-S and NBI-S
 cost standalone. That asymmetry is a property of the frozen comparator rule, not a defence of
-the arms: at the budget this protocol fixed in advance, the grid led.
+the arms: at the budget this protocol fixed in advance, the grid led, and its first 186
+evaluations, the arms' own budget, led as well (post hoc). The returned candidate sets are also
+not stable: the pre-declared alternative quality weighting changed them in 9 to 23 of 30
+replications and measuring cost as time changed the winning arm in 9 to 17, while every
+identifying contrast kept its direction under the alternative weighting and, under measured time,
+the geometry contrast stayed positive and the anchor-provenance contrast reversed on Adult.
 
 What the study establishes is therefore narrower than "NBI is better".
 Within this decision space, this surrogate architecture, two objectives and this budget, and on
-the three screened datasets, front-construction geometry is the mechanism that moved the
+the three datasets that passed a front-geometry screen made on one pre-campaign partition, front-construction geometry is the mechanism that moved the
 returned front; specification did not; and anchor provenance moved it the wrong way. Spambase,
 which failed the pre-campaign front-geometry screen and was retained as a boundary control
 before the confirmatory campaign, did not resolve; because its quality composite is negatively

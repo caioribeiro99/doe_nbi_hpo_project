@@ -38,7 +38,7 @@ motivated the designation is not a fixed property of every replication. The thre
 datasets never showed it: their design-row fronts had at least three points in every
 confirmatory replication (median 9, 6 and 5; minimum 6, 4 and 3 on MAGIC, Adult and Bank
 Marketing; Supplement S5). Second, Spambase is not globally null: its
-anchor-provenance contrast (Section 6.4) is strongly negative and Holm-significant at median
+anchor-provenance contrast (Section 6.4) is strongly negative and, on the post hoc signed-rank test, Holm-significant at median
 $-0.6932$, the largest such deficit in the panel, and its historical reconstruction gap
 is also the panel's largest. Third, all of these results are measured in Spambase's frozen
 objective space, whose quality composite agrees only weakly with equal-weight raw quality on
@@ -73,7 +73,8 @@ Marketing.
 
 Adult and Bank Marketing are consequently regimes in which the externally audited
 composite-quality surrogate failed the frozen criterion in every replication, and they
-also carry the largest geometry effects, +0.2549 and +0.2281, Holm-significant on both.
+also carry the largest geometry effects, +0.2549 and +0.2281, Holm-significant on both under the
+post hoc signed-rank test.
 The relative advantage of NBI front construction over specification-matched weighted
 scalarization therefore persisted where the surrogate did not meet its own external
 standard. Within MAGIC, the only primary-panel dataset with both strata populated (Spambase, the boundary control, also has both, with 9 of 30 passing), the geometry
@@ -143,15 +144,21 @@ surrogate subproblems and coincide with a design corner, if at all, only in some
 Like the budget rule, this construction was fixed before the confirmatory campaign, and
 neither is offered as a reason to set the comparison aside: at the budget and construction
 this protocol froze, the coarse grid had the higher paired median against NBI-S on all four
-datasets.
+datasets. Nor is the lead a product of the larger budget. Stopped at NBI-S's 186 evaluations, the
+first 186 of its stored evaluation stream, which are exactly the grid the frozen code builds at that
+budget, the grid still led on all four datasets, with NBI-S winning 0, 5, 10 and 12 of 30
+replications on MAGIC, Adult, Bank Marketing and Spambase as at 386 (retrospective, post hoc;
+Supplement S7.2).
 
 ### 6.9 Holdout confirmation
 
 Each unit re-measured one candidate per arm: the revalidated candidate nearest, after min–max
 normalization of the two objectives, to the utopia point of that arm's own revalidated set.
 Each selected configuration was refitted on the replication's full training partition and
-scored on a held-out partition whose labels were unavailable within the replication until the
-confirmation stage (on its overlap with the pre-campaign pilot data, see Supplement S4.1), at
+scored on its replication-level holdout, a held-out partition whose labels were unavailable within
+the replication until the confirmation stage. The holdout is not external to the frozen objective
+mapping: about four in five of its rows belong to the pre-campaign pilot's training part, on which
+the 88 metric summaries that fixed that mapping were computed (Supplement S4.1). The stage costs
 5 audit-only real evaluations per unit, charged to the study and to no arm. Across all four
 datasets and all five arms, the median per-replication difference between internal and
 holdout accuracy has magnitude below 0.012 in every one of the 20 dataset-by-arm cells, the
@@ -174,7 +181,9 @@ required, and none of them enters the primary family. Under the pre-declared equ
 two quality factors, the returned non-dominated sets differed from the variance-weighted ones in 9
 to 23 of 30 replications, more than the 20% threshold of the frozen protocol on every dataset and
 for every arm, so the conclusions are conditional on that weighting; every identifying contrast
-kept its direction (Supplement S4.5). When measured mean per-fold time replaced the leaf-count cost
+kept its direction (Supplement S4.5). These are changes in which candidates an arm returns, not in
+the direction of the paired contrasts: the individual returned solutions are not stable to the
+weighting, while the comparisons between arms largely are. When measured mean per-fold time replaced the leaf-count cost
 axis, the winning arm changed in 9, 17, 16 and 14 of 30 replications on MAGIC, Spambase, Adult and
 Bank Marketing; the geometry contrast stayed positive on every dataset, though smaller on Adult and
 Bank Marketing, and the anchor-provenance contrast changed sign on Adult (median $+0.0696$, NBI-R
