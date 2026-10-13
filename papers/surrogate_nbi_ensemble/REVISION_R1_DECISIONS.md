@@ -106,9 +106,9 @@ committed before its first run.
 - Support-cost reference (P1-R2-F). `scripts/pco213_support_reference_convergence.py` computes, from the stored
   reference samples, a held-out-block and a prefix diagnostic for both fronts. The support-cost front met the 5%
   tolerance in 6 to 12 of 30 partitions per dataset against 9 to 27 for the weighted front under the same
-  (pessimistic) definition. The step-cost conclusions are qualified in Results, Limitations, Conclusion and Abstract.
+  held-out definition. The step-cost conclusions are qualified in Results, Limitations, Conclusion and Abstract.
   The S8 table now shows the front sizes it had silently dropped (column-name mismatch).
 - Reproducibility wording. The stale branch name is removed, the cost-file path corrected, the raw artifacts described
   as not deposited (their out-of-fold files carry Kaggle training labels), and the data-availability statement no
   longer says "all derived artifacts" are available.
-- Page counts: manuscript 45, anonymized 45, supplement 44 (24 tables).
+- Page counts: manuscript 46, anonymized 45, supplement 43 (24 tables).

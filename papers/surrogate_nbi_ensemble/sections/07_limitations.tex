@@ -15,7 +15,8 @@ other domains is a natural next step.
 
 \paragraph{The partitions ran in two batches.} Partitions 0--9 and 10--29 ran as two separate batches with the same recorded
 platform and core count, and some indicator levels and anchor win rates differ between them (\cref{sec:results:r30}). A bounded
-check of the existing records (supplementary Section~S11) found no recorded difference that could produce it: the
+check of the existing records (supplementary Section~S11) found no recorded difference between the batches that could produce it, other than the pre-fix
+stages of partition 0 inside the first (supplementary Section~S1): the
 library source code was the same for partitions 1--29, the recorded package versions, platform and core count were
 the same, seeds follow one rule, and the configuration differs only in the replication count and two bookkeeping
 flags. No partition was computed in both batches, so determinism across the batches cannot be tested directly; the
@@ -28,7 +29,7 @@ the 30 partitions of a dataset as exchangeable.
 \paragraph{The gate is not an independent test.} The 100 external compositions of a partition both select the
 Scheff\'e order and judge it (\cref{sec:method:scheffe}), so a gate pass is an optimistic reading of out-of-design
 adequacy. A post hoc split-sample reading of the stored compositions (supplementary Section~S6) leaves the extreme
-verdicts unchanged and lowers intermediate pass counts; no evaluation set independent of order selection was
+verdicts unchanged and, against selecting and judging on the same half, lowers intermediate pass counts; no evaluation set independent of order selection was
 available, so the gate's decision utility is not established here.
 
 \paragraph{Neither NBI contrast is a single-factor experiment.} Replacing the anchors changes four things at once

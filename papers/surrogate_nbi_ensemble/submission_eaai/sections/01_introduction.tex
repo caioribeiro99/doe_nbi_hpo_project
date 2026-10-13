@@ -68,7 +68,8 @@ is the \emph{anchor-provenance intervention}, the joint effect of replacing surr
 \item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives: a
 metamodel-free NBI in the published sense of \citet{gellerich2023doenbi}, whose subproblems are physical experiments;
 B versus C measures the remaining effect of \emph{interior surrogate error}, together with the changes in geometry
-that removing the metamodel brings.
+that removing the metamodel brings and the change of solver acceptance rule and settings that the rank objective
+forces (\cref{sec:method:nbi}).
 \end{itemize}
 
 All three arms fit their surfaces once from a fixed design and then optimize. This is the \emph{sequential} form of
@@ -128,10 +129,12 @@ constructions; the nearest ensemble-weighting precedent \citep{kwon2024ensemble}
 has no anchors or front.
 
 \item \textbf{Evidence that, on two of the four datasets, anchor misplacement has the largest observed effect among
-failures attributable to the surrogate pipeline.} Under the continuous cost the arms optimize, real anchors improve both
+failures attributable to the surrogate pipeline}, measured by the joint effect of replacing surrogate-derived anchor
+information. Under the continuous cost the arms optimize, real anchors improve both
 primary endpoints in 30 of 30 partitions on the two datasets whose ROC-AUC surfaces almost never pass the gate
 (Santander and BNP Paribas), in 23 (IGD$^+$) and 24 (hypervolume) of 30 on Porto Seguro, and in 24 of 30 on UCI
-credit; after correction the improvement is significant only on Santander. Removing the surrogate entirely, once
+credit; at the assumed Nadeau--Bengio $\rho = 0.25$ and after Holm adjustment the improvement is significant only
+on Santander. Removing the surrogate entirely, once
 anchors are correct, adds much less on Santander and BNP Paribas, about as much on Porto Seguro, and three times as
 much on UCI credit, where subproblem convergence rather than surrogate error dominates; the tie and the reversal
 prevent a universal claim.

@@ -27,8 +27,11 @@ Definition (fixed before the first run):
     check = the remaining 20,000 first-round random rows, independent draws from the
     same shuffled mixture. Reported is the fraction of the reference's front that the
     check block displaces. The reference here is smaller than the one actually used
-    (it omits 20,000 random rows and the extension rounds), so this reading is, if
-    anything, pessimistic.
+    (it omits 20,000 random rows and the extension rounds). [Corrected after the run,
+    which it does not affect: the definition first called this reading "if anything,
+    pessimistic"; against the benchmark's own first-round check it is comparable on
+    three datasets and stricter on UCI credit, so only the relative comparison of the
+    two fronts under one definition is relied on.]
   * Reading: met when the displaced fraction is at most 0.05, the frozen tolerance of
     the benchmark's weighted check. No new reference is built and nothing is rescored.
 

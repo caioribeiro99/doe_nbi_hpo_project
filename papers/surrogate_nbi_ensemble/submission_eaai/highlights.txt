@@ -1,5 +1,5 @@
 - Mixture-design response surfaces over classifier-ensemble weights are reproducible
-- Anchor misplacement was the largest surrogate-NBI failure on two of four datasets
+- Replacing surrogate anchors had the largest effect on two of four datasets
 - An external reliability gate detects bad surfaces but not misplaced anchors
 - A large Scheffé interaction can satisfy the synergism criterion yet not hold up
 - NSGA-II with about twice the weight-vector evaluations beats metamodel-free NBI

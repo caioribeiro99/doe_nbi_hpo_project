@@ -11,7 +11,7 @@ Repository: `caioribeiro99/doe_nbi_hpo_project`.
 | Tag | Freezes |
 |---|---|
 | `pco213-postwork-r10` | the ten-replication study, retained as the robustness reference |
-| `pco213-postwork-r30` | the thirty-replication study reported here; the NSGA-II baseline, the anchor-injection control, the edge-condition tables and the standalone compute table were produced after this tag and are committed on the paper branch |
+| `pco213-postwork-r30` | the thirty-replication study reported here; the NSGA-II baseline, the anchor-injection control, the edge-condition tables and the standalone compute table were produced after this tag and are committed in the same repository; the approved manuscript will be tagged |
 | `paper-draft-v1-pre-nsga2` | the manuscript as it stood before the external baseline was run |
 | `paper-submission-v1` | an earlier frozen state of the submission package (not submitted) |
 | `paper-submission-v2` | the frozen submission package before this revision (not submitted) |
@@ -36,6 +36,6 @@ pymoo 0.6.2, on macOS arm64.
 ## Reproduction cost
 
 Reproducing the aggregate results from the published tables requires only the repository. Reproducing from raw data
-requires the four datasets, the pinned environment and roughly 81 hours of single-workstation compute for the main
+requires the four datasets, the recorded environment (versions in the manifest; no lockfile) and roughly 81 hours of single-workstation compute for the main
 study plus 15 hours for the external baseline, or proportionally less for a subset of datasets or replications, since
 both runners are resumable and parameterized by dataset and replication count.

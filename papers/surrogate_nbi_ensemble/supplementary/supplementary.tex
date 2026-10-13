@@ -104,7 +104,7 @@ known cases, the 66-run design, NBI anchor and warm-start behaviour, and the res
 Execution consumed 81.1 hours of stage time (27.5 for the first ten replications, 53.6 for the extension) and
 produced 3{,}600 model fits, 19{,}920 design evaluations, 23{,}760 NBI subproblems, $5.02\times10^{7}$ real
 objective evaluations, $1.55\times10^{7}$ reference points and $4.8\times10^{6}$ direct-AUC-search evaluations, on
-the environment pinned in the main text. Two stages were retried, both in replication~0 and none in the extension. The Porto Seguro
+the environment recorded in the main text. Two stages were retried, both in replication~0 and none in the extension. The Porto Seguro
 comparator stage stopped because the simplex optimizer raised an error when no SLSQP start reported convergence at a
 vertex optimum; the optimizer was changed to compare its starts at their end points renormalized onto the simplex, to
 fall back to the best such point when no start reports convergence, and to evaluate the vertices and the centroid
@@ -260,10 +260,12 @@ the 100 compositions are fixed, and only the compositions used to select and to 
 stratified halves (30 of the 60 Dirichlet$(\mathbf{1})$ and 20 of the 40 Dirichlet$(0.5\cdot\mathbf{1})$
 compositions, seed 20261013) selects the order with the frozen parsimony rule and judges it with the frozen gate on
 the other half, in both directions; selecting and judging on the same half is the control at equal sample size. The
-extreme verdicts do not move: UCI credit passes on every response and partition, Santander's ROC-AUC and PR-AUC
+extreme verdicts do not move: UCI credit keeps a pass verdict in every partition on every response, Santander's ROC-AUC and PR-AUC
 surfaces almost never, and the Brier surfaces always. The intermediate cases are where reuse matters: from same half
-to cross half, the expected passes fall from 15.0 to 11.7 of 30 for Porto Seguro's ROC-AUC surface, from 11.1 to 7.2
-for its log-loss surface, and from 5.8 to 4.2 and 3.6 to 2.1 for BNP Paribas. The recorded gate counts, the selected
+to cross half, the expected passes fall from 14.97 to 11.70 of 30 for Porto Seguro's ROC-AUC surface, from 11.12 to
+7.20 for its log-loss surface, and from 5.78 to 4.23 and from 3.55 to 2.10 for BNP Paribas's ROC-AUC and log-loss
+surfaces; against the recorded counts, which also use all 100 compositions, the cross-half reading is lower in
+these cases and slightly higher for BNP Paribas's PR-AUC surface (14.32 against 13). The recorded gate counts, the selected
 orders and every NBI-A result are unchanged: NBI-A ran on the order selected with all 100 compositions, and its
 result under another order would need a new NBI run, which is not made.
 
@@ -317,18 +319,22 @@ references (Section~\ref{sec:s13}). On the weighted-cost front, 118 of the 120 r
 tolerance and the other two ended at most 6\% displaced (\texttt{tables/\allowbreak reference\_\allowbreak diagnostics.csv});
 the benchmark's check did not cover the support-cost front, and the independent check sample was not stored.
 
-\input{tables/s8_support_convergence}
-
 \paragraph{Support-cost convergence (post hoc).} Table~\ref{tab:s8support} computes, from the stored reference
 samples and with no composition evaluated, the same two diagnostics for both fronts. In place of the unstored
 independent sample, the last 20,000 points of the first-round random part, independent draws from the same shuffled
-mixture, check the front of the structured blocks plus the first 80,000 random points. That reference is smaller
-than the one used, so the reading is pessimistic, as the weighted-cost column shows against the benchmark's own
-check (9 to 27 against 29 to 30 of 30 met). Under identical definitions the support-cost front is clearly less
-converged: it met the 5\% tolerance in 7, 10, 12 and 6 of 30 partitions on Santander, BNP Paribas, Porto Seguro and
-UCI credit, with median displaced shares of 6.6--8.0\% and a worst case of 45\% (5 of 11 points) on one Porto Seguro partition.
+mixture, check the front of the structured blocks plus the first 80,000 random points, a smaller reference than the
+one scored. As a calibration, this check passes the weighted-cost front in 26, 27, 22 and 9 of 30 partitions on
+Santander, BNP Paribas, Porto Seguro and UCI credit, against 26, 25, 21 and 18 for the benchmark's own check at its
+first round, before the extension rounds that took it to 29--30 of 30: comparable on three datasets and stricter on
+UCI credit. On the held-out reading the support-cost front is less converged: it met the 5\% tolerance in 7, 10, 12
+and 6 of 30 partitions, with median displaced shares of 6.6--8.0\% against 1.6--6.0\% for the weighted front and a
+worst case of 45\% (5 of 11 points) on one Porto Seguro partition. The prefix diagnostic on the random part alone
+is not decisive: neither front meets 5\% at its last step in most partitions, the support-front medians are the
+higher, and with fronts this small a count at 5\% carries little information.
 Support-cost fronts are small (median 14 to 87 points), so each displaced point is a large share. The reference was
 not enlarged and nothing was rescored; the main text qualifies the step-cost conclusions accordingly.
+
+\input{tables/s8_support_convergence}
 
 \section{Cost definition and the accuracy--calibration conflict}
 \label{sec:s9}
@@ -417,7 +423,7 @@ $R = 30$, are listed in Section~5.9 of the main text. These batch comparisons we
 plan and are exploratory, and the difference between the batches is unexplained (run conditions in Section~7 of
 the main text); they show how far ten partitions can sit from the next twenty.
 
-\paragraph{Provenance of the two batches (coauthor review R2).} Execution date alone should not change deterministic
+\paragraph{Provenance of the two batches (added in revision; post hoc).} Execution date alone should not change deterministic
 objectives, so one bounded check of the existing records was made; no learner or optimizer was rerun.
 \emph{Invariant:} the library source (\texttt{src/}) is identical for partitions 1--29, which ran under the
 solver-fixed code; the recorded environment block (Python, NumPy, pandas, SciPy, scikit-learn, statsmodels and
@@ -426,7 +432,8 @@ per-replication rule are the same; the configuration differs only in the replica
 compute nothing (\texttt{no\_auto\_reduce}, \texttt{dry\_run}), and the automatic budget reduction never triggered;
 the dataset checksums agree. \emph{Changed:} runner bookkeeping between the batches, which alters no computation;
 the execution order and timing (a pilot pass over partition 0, then blocks by dataset, against blocks by dataset in
-the extension); and the re-measured wall-clock costs, whose batch medians agree within about 4\%. \emph{Not
+the extension); within the first batch, the 32 stages of partition 0 run under the pre-fix commit
+\texttt{c2e37c4} (Section~S1); and the re-measured wall-clock costs, whose batch medians agree within about 4\%. \emph{Not
 recorded:} whether the working tree had uncommitted changes, a dependency lockfile, the linear-algebra backend and
 the versions of joblib and threadpoolctl, thread-related environment variables, power, thermal state and concurrent
 load, and checksums of the per-partition outputs. \emph{Nondeterminism:} no partition was computed in both batches,

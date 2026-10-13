@@ -100,7 +100,9 @@ the 80\% training part} (the only quantities the design, the surfaces, the optim
 see; \cref{sec:protocol:models}) against the empirical reference of the same replication, under the weighted cost
 that the optimizers actually minimized; the support-cost repetition is a sensitivity analysis. The
 untouched 20\% holdout enters no primary endpoint: it is used only for the confirmation analysis of
-\cref{sec:results:holdout}. All other indicators are descriptive.
+\cref{sec:results:holdout}. The primary endpoints therefore measure how well a returned front approximates the
+empirical front on the training part's out-of-fold objectives, not how a front generalizes; only the holdout
+transfer bears on generalization, and it scores one selected solution per set. All other indicators are descriptive.
 
 Paired differences are signed so that $\Delta > 0$ always favours the first-named (new) method:
 $\Delta\hv = \hv_{\text{new}} - \hv_{\text{ref}}$ and

@@ -24,11 +24,12 @@ All three Kaggle training files were obtained from public mirror datasets hosted
 recorded row count, feature count and class prevalence; the SHA-256 checksum identifies the exact file used. The
 manifests name the mirror for each dataset.
 
-## What is openly available
+## What is openly available, and what is not
 
-- Aggregated tables, statistics outputs, manifests and figures: in the repository, versioned.
-- Per-replication raw artifacts (out-of-fold probability matrices, candidate sets, reference samples, NSGA-II
-  populations): approximately 829 MB plus the NSGA-II tree, deliberately not version-controlled, and
+- Openly available: aggregated tables, statistics outputs, manifests and figures, in the repository, versioned.
+- Not deposited at present: per-replication raw artifacts (out-of-fold probability matrices, candidate sets, reference samples, NSGA-II
+  populations): approximately 829 MB plus the NSGA-II tree, not version-controlled (the out-of-fold files carry the Kaggle
+  training labels, so a deposit is bound by the competition rules), and
   reconstructible from the recorded seeds and the runners, except for the wall-clock inference costs, which are
   re-measured on each run, and the cost-dependent results derived from them; the measured costs are committed in
   `reports/pco213_postwork_benchmark/tables/inference_costs.csv`.

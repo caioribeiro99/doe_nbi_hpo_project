@@ -3,15 +3,13 @@ response-surface and Normal Boundary Intersection pipeline. The artificial-intel
 of when that pipeline can be trusted, not a new method; the engineering application is designing weighted classifier
 ensembles under a measured deployment cost. Three arms differing in objective and anchor sources ran on 30
 overlapping, paired partitions of four public financial-services datasets, with controls the framework lacks: a
-reliability gate fixed beforehand, out-of-fold real-objective revalidation, a method-independent reference core, and an
-untouched confirmation holdout. Gate passes ranged from 0/30 to 30/30 by
-dataset and metric. Under the continuous cost the arms optimize, real anchors beat surrogate ones on both primary endpoints in
+reliability gate fixed beforehand, out-of-fold real-objective revalidation, a reference core without the methods' search output,
+and an untouched confirmation holdout. Gate passes ranged from 0/30 to 30/30. Under the optimized continuous cost, real anchors beat surrogate ones on both primary endpoints in
 every partition of the two datasets whose surfaces for the area under the receiver operating characteristic curve
-rarely passed, and in 23--24 of 30 elsewhere (significant after an assumed-dependence correction only on Santander). On those two
-datasets anchor misplacement was the largest observed failure; a control traced most of it to injected extreme
+almost never passed, and in 23--24 of 30 elsewhere (significant after an assumed-dependence correction only on Santander). On those two, anchor misplacement was the largest observed failure; a control traced most of it to injected extreme
 solutions. The gate detected unusable surfaces but not misplaced anchors. Continuous and step deployment costs
-disagreed on the winning candidate set in 8--24 of 30 partitions and on the anchor effect's direction on one dataset,
-the step-cost reference being less converged.
+disagreed on the winning candidate set in 8--24 of 30 partitions and the anchor effect's direction on one dataset,
+a post hoc check finding the step-cost reference less converged.
 The non-dominated sorting genetic algorithm II (NSGA-II), given about twice the metamodel-free arm's weight-vector
 evaluations and returning larger sets, outperformed it. The diagnosis concerns one-shot pipelines without infill; four datasets establish a
 pattern, not a general rule.
