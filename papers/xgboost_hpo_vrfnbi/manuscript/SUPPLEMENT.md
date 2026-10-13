@@ -3,7 +3,7 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-**Manuscript source commit** `aa76abc334c5`: the state of the
+**Manuscript source commit** `8780c72828d8`: the state of the
 manuscript and analysis sources from which this supplement was generated.
 This is a coauthor-review draft in a public repository. The code, protocol, design,
 frozen factor models and confirmatory analysis are pinned by the existing tags of S1;
@@ -18,11 +18,11 @@ Protocol tag `xgboost-hpo-protocol-v3`. Results tag
 
 | tag | commit | what it records |
 |---|---|---|
-| `v0.1.0-dissertation` | `67d9fe5` | the historical implementation this study reconstructs |
-| `xgboost-hpo-protocol-v1` | `355c290` | the specification frozen before the pilot |
-| `xgboost-hpo-protocol-v2` | `c50c380` | the confirmatory protocol after pilot Stage A |
-| `xgboost-hpo-protocol-v3` | `9b15ba7` | the final frozen protocol, before the confirmatory campaign |
-| `xgboost-hpo-confirmatory-results-v1` | `a4f20ed` | the first adversarially verified analysis |
+| `v0.1.0-dissertation` | `67d9fe50` | the historical implementation this study reconstructs |
+| `xgboost-hpo-protocol-v1` | `355c2904` | the specification frozen before the pilot |
+| `xgboost-hpo-protocol-v2` | `c50c380b` | the confirmatory protocol after pilot Stage A |
+| `xgboost-hpo-protocol-v3` | `9b15ba7c` | the final frozen protocol, before the confirmatory campaign |
+| `xgboost-hpo-confirmatory-results-v1` | `a4f20edd` | the first adversarially verified analysis |
 
 The protocol tag records what was specified before the confirmatory campaign began;
 the results tag records the first verified analysis. Neither was moved.
@@ -816,7 +816,7 @@ evaluations (S7.2) and the centre-point sensitivity (S18) are reported only here
 
 | item | value |
 |---|---|
-| manuscript source commit | `aa76abc334c54a718cad60c6680dc339ff3bbced` |
+| manuscript source commit | `8780c72828d8780d0ceb3fc892547670c7b8a560` |
 | package tag | not yet created; planned name `paper2-manuscript-v6`, to be created after the authors' approval |
 | relationship | planned: the commit to be tagged will differ from its manuscript source commit only by provenance metadata and compiled outputs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
