@@ -44,6 +44,7 @@ Inputs (frozen, read-only):
 Outputs:
   reports/pco213_postwork_benchmark/statistics/gate_split_sample_r30.json
   reports/pco213_postwork_benchmark/statistics/gate_split_sample_r30.csv
+  reports/pco213_postwork_benchmark/statistics/gate_split_sample_r30_summary.csv
 
 Reads stored outputs only; runs no learner, optimizer or surrogate fit.
 
@@ -169,6 +170,7 @@ def main() -> None:
         })
     OUT.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT / "gate_split_sample_r30.csv", index=False)
+    pd.DataFrame(summary).to_csv(OUT / "gate_split_sample_r30_summary.csv", index=False)
     (OUT / "gate_split_sample_r30.json").write_text(json.dumps({
         "provenance": "post hoc (coauthor review R2); stored records only",
         "definition": {"n_splits": N_SPLITS, "seed": SEED, "strata": STRATA,

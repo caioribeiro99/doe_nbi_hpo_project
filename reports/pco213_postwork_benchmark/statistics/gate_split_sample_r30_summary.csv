@@ -1,0 +1,17 @@
+dataset,response,recorded_passes,expected_passes_same_half,expected_passes_cross_half,optimism_same_minus_cross,replications_majority_verdict_differs,median_order_agreement
+santander,roc_auc,0,0.12,0.01,0.11,0,0.733
+santander,log_loss,30,30.0,30.0,0.0,0,0.965
+santander,brier,30,30.0,30.0,0.0,0,1.0
+santander,pr_auc,0,0.01,0.0,0.01,0,0.802
+bnp,roc_auc,5,5.78,4.23,1.56,1,0.751
+bnp,log_loss,3,3.55,2.1,1.45,3,0.759
+bnp,brier,30,30.0,30.0,0.0,0,1.0
+bnp,pr_auc,13,15.14,14.32,0.82,1,0.835
+porto,roc_auc,16,14.97,11.7,3.27,6,0.688
+porto,log_loss,12,11.12,7.2,3.92,3,0.711
+porto,brier,30,30.0,30.0,0.0,0,1.0
+porto,pr_auc,27,24.83,23.98,0.85,3,0.934
+uci_credit,roc_auc,30,30.0,30.0,0.0,0,0.846
+uci_credit,log_loss,30,30.0,30.0,0.0,0,0.877
+uci_credit,brier,30,30.0,30.0,0.0,0,1.0
+uci_credit,pr_auc,30,29.94,29.74,0.2,0,0.968
