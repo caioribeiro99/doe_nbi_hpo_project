@@ -297,10 +297,12 @@ Itajubá (UNIFEI), Av. BPS 1303, Pinheirinho, Itajubá, MG 37500-903, Brazil
         ("Technical papers 20-30 pages, at most 50; no file-size limit stated", ARCH,
          "guide capture:131", "v5 PDF 32 pp: within the maximum, above the 20-30 norm; "
          "recount after conversion to the editable source"),
-        ("Abstract stands alone; no word limit stated; essential abbreviations defined at "
-         "first mention and in a first-page footnote", ARCH, "guide capture:264-268, 393",
-         f"{len(abstract.split())}-word abstract (whitespace tokens) defining NBI, NBI-S, CORE "
-         "and AUGMENTED; footnote to be set in the editable source; recheck the live word rule"),
+        ("Abstract stands alone; the archived capture states no word limit, the live guide as "
+         "indexed by search on 2026-10-11 states at most 250 words; essential abbreviations "
+         "defined at first mention and in a first-page footnote", ARCH,
+         "guide capture:264-268, 393; ASOC_REQUIREMENTS.md",
+         f"{len(abstract.split())}-word abstract (whitespace tokens) defining NBI, NBI-S and "
+         "CORE; footnote to be set in the editable source; recheck the live word rule"),
         ("Editable source files; a PDF is not an acceptable source file", ARCH,
          "guide capture:246-247, 252, 511-512",
          "LaTeX in Elsevier's elsarticle template (decision C4); see the manifest"),
