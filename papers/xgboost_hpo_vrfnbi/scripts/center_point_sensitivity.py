@@ -357,7 +357,9 @@ def compare_unit(ds: str, rep: int, fm: FrozenFactorModel) -> dict:
     for j, name in enumerate(OBJECTIVES):
         dist_b = float(np.linalg.norm(an88["x_star"][j] - an88b["x_star"][j]))
         pay_b = float(np.abs(an88["F_star"][:, j] - an88b["F_star"][:, j]).max())
+        f_same = make_surrogate(*fits88[j])
         seed_control[name] = {
+            "anchor_regret_on_88_surface": float(f_same(an88b["x_star"][j]) - f_same(an88["x_star"][j])),
             "anchor_distance_frac_diagonal": dist_b / DIAGONAL,
             "payoff_column_max_abs_change": pay_b,
             "anchor_changed": (dist_b / DIAGONAL > T["anchor_distance_frac_max"]
@@ -533,6 +535,13 @@ def summarize(units: list[dict]) -> dict:
     s["surrogate_chim_extent_ratio_79_over_88"] = {
         "median": float(np.median(er)), "min": float(er.min()), "max": float(er.max()),
         "outside_0.9_to_1.1": int(((er < 0.9) | (er > 1.1)).sum())}
+    s["multistart_seed_control_changed_on_flat_minimum"] = {
+        o: int(sum(u["multistart_seed_control_88"][o]["anchor_changed"]
+                   and abs(u["multistart_seed_control_88"][o]["anchor_regret_on_88_surface"]) <= 0.01
+                   for u in units)) for o in OBJECTIVES}
+    s["multistart_seed_control_found_lower_minimum"] = {
+        o: int(sum(u["multistart_seed_control_88"][o]["anchor_regret_on_88_surface"] < -0.01
+                   for u in units)) for o in OBJECTIVES}
     s["multistart_seed_control_anchor_changed"] = {
         o: int(sum(u["multistart_seed_control_88"][o]["anchor_changed"] for u in units))
         for o in OBJECTIVES}
