@@ -5,10 +5,11 @@ Every table in this document is generated from a committed artifact by
 
 **Manuscript source commit** `aa76abc334c5`: the state of the
 manuscript and analysis sources from which this supplement was generated.
-This is a coauthor-review draft. The code, protocol and results it reports are
-identified by the existing tags of S1; only the tag of the manuscript package itself
-is still to be created, after the authors approve the text, and S17 names it as
-planned.
+This is a coauthor-review draft in a public repository. The code, protocol, design,
+frozen factor models and confirmatory analysis are pinned by the existing tags of S1;
+the later analyses, their scripts and this text are on the revision branch and will be
+pinned by the manuscript-package tag, still to be created after the authors approve the
+text (S17 names it as planned).
 
 Protocol tag `xgboost-hpo-protocol-v3`. Results tag
 `xgboost-hpo-confirmatory-results-v1`.
@@ -806,7 +807,10 @@ The manuscript's headline numerical claims, each with its estimand, source
 artifact, verification status, allowed wording and prohibited stronger wording,
 are in `CONFIRMATORY_CLAIMS_AND_EVIDENCE.md`. Two are recorded in corrected form
 because a post-campaign recomputation from the raw unit artifacts refuted the
-author's version.
+author's version. The ledger predates the coauthor reviews; where its allowed wording
+differs from the manuscript's, as for the post hoc status of the signed-rank tests and the
+CHIM-contraction association, the manuscript's wording supersedes it, and the grid at 186
+evaluations (S7.2) and the centre-point sensitivity (S18) are reported only here.
 
 ## S17. Reproducibility manifest
 
@@ -822,15 +826,18 @@ author's version.
 | primary endpoint | hv_ratio against the CORE reference |
 | campaign runtime | 9 h 46 min, 14 workers × 1 thread |
 
-What is public and what is not. The repository's code, protocol, amendment ledger, the
-design with its SHA-256, the frozen factor models, every per-unit indicator and mechanism
-table, every analysis artifact and every script are committed under the tags of S1. The
+What is public and what is not. The repository is public. Its code, protocol, amendment
+ledger, the design with its SHA-256, the frozen factor models, the per-unit indicator table and
+the confirmatory analysis are pinned by the tags of S1; the per-unit NBI mechanism tables and
+the analyses computed after the campaign or in coauthor review, with their scripts, are on the
+revision branch and will be pinned by the planned manuscript-package tag. The
 four datasets are not redistributed: they are public UCI and OpenML mirrors under CC BY 4.0,
 obtained independently and checked against the recorded SHA-256 on acquisition. The per-unit
 experiment tree is not versioned and is not yet deposited: 120 unit directories of stage
 checkpoints and one SQLite evaluation cache each, about 0.8 GB, holding configurations,
-seeds and evaluated responses but no data rows. Every aggregate statistic in the paper can
-be recomputed from the committed per-unit tables; regenerating those tables, and the
+seeds and evaluated responses but no data rows. Every aggregate in the paper is stored in a
+committed artifact, and those of the primary analysis can be recomputed from the committed
+per-unit tables; regenerating those tables, and the
 post-campaign diagnostics that read stored rows (Section 8.7, S7.2, S18), needs that tree,
 and re-running a unit needs the datasets, the code at the protocol tag and the seeds of S8.
 Exact reproduction across platforms or linear-algebra backends was not tested (Section 9.4).
@@ -884,26 +891,53 @@ from a different set of multistart points.
 
 The factor models do not move: every factor keeps its role and orientation, congruence is
 at least 0.999, and the two objective definitions rank the pilot configurations and the
-pooled audit rows almost identically. The surfaces change little in what they predict but
-often in which terms they keep, and at a given number of terms the residual degrees of freedom
-of the elimination are nine fewer. Gate decisions change most for MAGIC's quality surface
-(8 → 1 passes) and Bank Marketing's cost surface (27 → 23); the composite-quality gate stays
-at 0 of 30 on Adult and Bank Marketing. The surrogate anchors move often, and for the quality
-objective much of that movement does not need the centre rows. Minimizing the unchanged
-88-row quality surfaces from other starting points moves the quality anchor in 17, 9, 26 and 28 of 30 replications on MAGIC, Spambase, Adult and Bank Marketing, and in 79 of 80 of those cases to a point within 0.01 of the same minimum: the
-quality surfaces have flat sets of equally good minima, the mechanism stated in Section 5.6,
-and the frozen seeded multistart picks one of them. The cost anchor moves under a restart in
-at most 7 of 30 replications, so its movement under the refit is mainly a centre-row effect.
-Under the refit NBI-S's quasi-normal direction moves by at most 46.3, 32.7, 3.2 and 4.5 degrees, and the per-dataset medians of the
+pooled audit rows almost identically. The surfaces' predictions meet the pre-declared
+stability criterion for most surfaces but not for MAGIC's quality surface (18 of 30) or Bank
+Marketing's cost surface (14 of 30), whose selected terms also differ by three or more in 14
+of 30 fits; elsewhere the terms differ by at most two in 25 or more of 30. At a given number
+of terms the residual degrees of freedom of the elimination are nine fewer. Gate decisions
+change most for MAGIC's quality surface (8 → 1 passes) and Bank Marketing's cost surface
+(27 → 23), and at most twice elsewhere; the composite-quality gate stays at 0 of 30 on Adult
+and Bank Marketing.
+
+The anchor flags of the refit have three sources, counted below (descriptive, computed after
+the first run had returned the class): the minimizer moved to a point equally good on both
+surfaces (within 0.01 objective units), it moved to a distinct minimum, or it stayed where it
+was and a payoff value changed because the surface did.
+
+| dataset | objective | flagged by the refit | moved, equal minimum | moved, distinct minimum | payoff value only | flagged by a restart alone |
+|---|---|---:|---:|---:|---:|---:|
+| MAGIC | quality | 19/30 | 4 | 13 | 2 | 17/30 |
+| MAGIC | cost | 15/30 | 3 | 5 | 7 | 5/30 |
+| Spambase | quality | 20/30 | 11 | 8 | 1 | 9/30 |
+| Spambase | cost | 15/30 | 10 | 4 | 1 | 7/30 |
+| Adult | quality | 18/30 | 10 | 5 | 3 | 26/30 |
+| Adult | cost | 9/30 | 0 | 0 | 9 | 0/30 |
+| Bank Marketing | quality | 23/30 | 14 | 7 | 2 | 28/30 |
+| Bank Marketing | cost | 16/30 | 1 | 4 | 11 | 1/30 |
+
+The restart check, also added after the first run, minimizes the unchanged 88-row
+surfaces from a different set of multistart points. It moves the quality anchor in 17, 9, 26 and 28 of 30 replications on MAGIC, Spambase, Adult and Bank Marketing, in 79 of 80
+cases to a point within 0.01 of the same minimum: the quality surfaces have flat sets of
+equally good minima, the mechanism stated in Section 5.6, and the frozen seeded multistart
+picks one of them. The check shares the minimizer's deterministic box-centre start, so it
+can only understate that variability, and it cannot produce payoff changes at an unmoved
+anchor. It accounts for much of the refit's quality-anchor movement on Adult and Bank
+Marketing, but not on MAGIC, where the refit moved the quality anchor to a distinct minimum
+in 13 of 30 replications, nor on Spambase, where a restart moved it in only 9.
+The cost anchor never moved on Adult: all its flags are payoff changes at an unchanged
+location, as are most of Bank Marketing's. Under the refit NBI-S's quasi-normal direction
+moves by at most 46.3, 32.7, 3.2 and 4.5 degrees, and the per-dataset medians of the
 CHIM-extent ratio (main text, Figure 3) change from 0.811, 0.370, 0.204 and 0.272 to 0.815, 0.273, 0.193 and 0.274, in the same dataset order.
 
 Under the pre-declared rule the sensitivity is classified **HIGH** on every
-dataset, by the anchor criterion alone (anchors move in more than 15 of 30 replications for
-at least one objective); the factor and gate criteria stay below that level. The diagnostic
-does not show whether any primary contrast changes: that would need the surrogate-based arms
-re-run on the alternative surfaces, or with a rule that chooses among equally good minima,
-and their candidates revalidated with new learner fits, which was not done. The confirmatory
-results are those of the frozen 88-row specification and of its seeded minimizer, and the
-claims that rest on the surrogate payoff geometry are qualified in Sections 6.4.1, 7.5 and
-8.5. The alternative fits replace nothing and rescore nothing.
+dataset, by the anchor criterion alone (anchors flagged in more than 15 of 30 replications for
+at least one objective); the factor and gate criteria stay below their high levels, while the
+prediction and term criteria alone would have made MAGIC, Spambase and Bank Marketing
+moderate. The diagnostic does not show whether any primary contrast changes: that would need
+the surrogate-based arms re-run on the alternative surfaces, or with a rule that chooses among
+equally good minima, and their candidates revalidated with new learner fits, which was not
+done. The confirmatory results are those of the frozen 88-row specification and of its seeded
+minimizer, and the claims that rest on the surrogate payoff geometry are qualified in the
+Abstract and in Sections 6.4, 6.4.1, 7.4, 7.5 and 8.5. The alternative fits replace nothing and rescore nothing.
 

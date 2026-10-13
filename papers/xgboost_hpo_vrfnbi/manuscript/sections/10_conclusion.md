@@ -39,15 +39,16 @@ Spambase (18/30); the grid also held the higher marginal median on three of the 
 but not on Spambase. The grid received 386 real evaluations against the 186 that WS-S and NBI-S
 cost standalone. That asymmetry is a property of the frozen comparator rule, not a defence of
 the arms: at the budget this protocol fixed in advance, the grid led, and its first 186
-evaluations, the arms' own budget, led as well (post hoc). The returned candidate sets are also
-not stable: the pre-declared alternative quality weighting changed them in 9 to 23 of 30
-replications and measuring cost as time changed the winning arm in 9 to 17, while every
+evaluations, the arms' own budget, led as well (post hoc). The returned fronts are also
+not stable: the pre-declared alternative quality weighting changed which returned candidates are
+non-dominated in 9 to 23 of 30 replications and measuring cost as time changed the winning arm in 9 to 17, while every
 identifying contrast kept its direction under the alternative weighting and, under measured time,
 the geometry contrast stayed positive and the anchor-provenance contrast reversed on Adult.
 
 What the study establishes is therefore narrower than "NBI is better".
-Within this decision space, this surrogate architecture, two objectives and this budget, and on
-the three datasets that passed a front-geometry screen made on one pre-campaign partition, front-construction geometry is the mechanism that moved the
+Within this decision space, this surrogate architecture with its frozen, not uniquely determined
+surrogate anchors, two objectives and this budget, and on the three datasets that passed a
+front-geometry screen made on one pre-campaign partition, front-construction geometry is the mechanism that moved the
 returned front; specification did not; and anchor provenance moved it the wrong way. Spambase,
 which failed the pre-campaign front-geometry screen and was retained as a boundary control
 before the confirmatory campaign, did not resolve; because its quality composite is negatively

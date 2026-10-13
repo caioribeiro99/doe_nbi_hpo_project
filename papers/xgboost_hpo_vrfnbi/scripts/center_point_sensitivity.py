@@ -44,10 +44,13 @@ one as a measurement definition. Neither alternative is an analysis the protocol
 declared; both are post hoc diagnostics.
 
 Descriptive additions. ``surrogate_chim_descriptive`` (the surrogate CHIM extent under
-both fits and the extent ratio of Figure 3) and ``multistart_seed_control_88`` (the
-88-row surfaces minimized again from a different set of multistart points) were added
-after the first run, to size and locate the anchor changes that run found; neither
-enters the classification.
+both fits and the extent ratio of Figure 3), ``multistart_seed_control_88`` (the 88-row
+surfaces minimized again from a different set of multistart points; it shares the
+frozen minimizer's deterministic box-centre start, so it can only understate how often
+ties among equal minima are broken differently, and it cannot produce payoff changes at
+an unmoved anchor, since its surface is unchanged) and ``refit_anchor_flag_decomposition``
+were added after the first run had returned its class, to size and locate the anchor
+changes it found; none enters the classification.
 
 Comparison criteria. Declared in ``CRITERIA`` below and committed before the script
 was first run on the campaign records; ``classify`` applies them mechanically. The
@@ -535,6 +538,22 @@ def summarize(units: list[dict]) -> dict:
     s["surrogate_chim_extent_ratio_79_over_88"] = {
         "median": float(np.median(er)), "min": float(er.min()), "max": float(er.max()),
         "outside_0.9_to_1.1": int(((er < 0.9) | (er > 1.1)).sum())}
+    # Descriptive decomposition of the refit's anchor flags (added after the first run;
+    # not in ``classify``): the minimizer's location moved, to a point equally good on
+    # both surfaces (|regret| <= 0.01 on each) or to a distinct minimum; or the location
+    # stayed and only a payoff value changed because the surface did.
+    dec = {}
+    for o in OBJECTIVES:
+        fl = [u["objectives"][o] for u in units if u["objectives"][o]["anchor_changed"]]
+        loc = [r for r in fl if r["anchor_distance_frac_diagonal"] > T["anchor_distance_frac_max"]]
+        eq = [r for r in loc if abs(r["anchor_regret_on_88_surface"]) <= 0.01
+              and abs(r["anchor_regret_on_79_surface"]) <= 0.01]
+        dec[o] = {"flagged": len(fl), "location_moved": len(loc), "equal_minimum": len(eq),
+                  "distinct_minimum": len(loc) - len(eq), "payoff_only": len(fl) - len(loc),
+                  "also_flagged_by_restart": int(sum(
+                      u["objectives"][o]["anchor_changed"] and u["multistart_seed_control_88"][o]["anchor_changed"]
+                      for u in units))}
+    s["refit_anchor_flag_decomposition"] = dec
     s["multistart_seed_control_changed_on_flat_minimum"] = {
         o: int(sum(u["multistart_seed_control_88"][o]["anchor_changed"]
                    and abs(u["multistart_seed_control_88"][o]["anchor_regret_on_88_surface"]) <= 0.01

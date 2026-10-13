@@ -22,7 +22,7 @@ these medians are themselves sensitive.
 **Figure 4. Reference sensitivity.** Median paired difference under the CORE reference
 (primary, horizontal) against the AUGMENTED reference (mandatory sensitivity,
 vertical), for all twelve dataset-by-contrast cells. Red marks the single cell whose
-significance differs between references; no cell changes direction.
+significance under the post hoc signed-rank test differs between references; no cell changes direction.
 
 **Figure 5. Dispersion across the panel.** The same paired differences as Figure 2,
 shown as distributions. The boundary dataset's spread is roughly thirty times MAGIC's,

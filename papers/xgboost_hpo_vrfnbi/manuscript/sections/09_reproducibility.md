@@ -2,8 +2,9 @@
 
 ### 9.1 Version tags
 
-The code, protocol, analysis artifacts and these tags are in the public repository
-`https://github.com/caioribeiro99/doe_nbi_hpo_project`. Five tags separate what was specified from
+The public repository `https://github.com/caioribeiro99/doe_nbi_hpo_project` holds these tags and,
+on its revision branch, the later analyses and this text, which the manuscript-package tag will pin
+when the authors approve it (Supplement S17). Five tags separate what was specified from
 what was measured (Supplement S1). `v0.1.0-dissertation`
 (`67d9fe5`) is the archived historical implementation; it is read and executed as archived, never
 edited. `xgboost-hpo-protocol-v1` froze the specification before the
@@ -67,18 +68,20 @@ The campaign is driven by `scripts/xgb_hpo_campaign.py` (`plan`, `dry-run`, `run
 `build_claims_map.py`, which reads every headline figure from a committed artifact at generation
 time. Audit artifacts rebuild under `--check`, comparing against the committed versions without
 writing. Parts of the campaign, analysis and audit code were written with AI coding assistance,
-recorded as co-authorship in the commit history (Anthropic Claude: Claude Opus 4.7 and
-Claude Opus 5, used through Claude Code, named as co-author on all 66 commits made for this
-study to its code, analysis scripts and tests).
+recorded as co-authorship in the commit history (Anthropic Claude: Claude Opus 4.7,
+Claude Opus 5 and, in the revisions, Claude Opus 5.5, used through Claude Code and named as
+co-author on the commits made for this study to its code, analysis scripts and tests).
 
-Four kinds of material are distinguished. Public and commit-pinned: the frozen code, the protocol,
-the amendment ledger, the 88-run face-centred central composite design with its SHA-256, the
-frozen factor models, the per-unit indicator and NBI mechanism tables and every analysis artifact,
-under the tags above. Obtainable independently: the four panel datasets, UCI or OpenML mirrors under
+Four kinds of material are distinguished. Public and tag-pinned: the frozen code, the protocol, the
+amendment ledger, the 88-run face-centred central composite design with its SHA-256, the frozen
+factor models, the per-unit indicator table and the confirmatory analysis, under the tags above.
+Public on the revision branch, to be pinned by the planned manuscript-package tag: the per-unit NBI
+mechanism tables, the analyses computed after the campaign or in coauthor review, and their
+scripts. Obtainable independently: the four panel datasets, UCI or OpenML mirrors under
 CC BY 4.0 that are not redistributed here and are checksum-verified on acquisition. Unversioned and
 not yet deposited: the per-unit experiment tree of 120 stage-checkpoint directories with one SQLite
 evaluation cache each, about 0.8 GB, holding configurations, seeds and evaluated responses but no
-data rows (Supplement S17). Every reported aggregate traces to a committed artifact without
-re-running the campaign; regenerating the per-unit tables, and the post-campaign computations
+data rows (Supplement S17). Every reported aggregate is stored in a committed artifact, and those of the primary analysis can
+be recomputed from the committed per-unit tables without re-running the campaign; regenerating the per-unit tables, and the post-campaign computations
 listed in Section 8.7, needs the unversioned tree, and exact re-execution across platforms is
 untested, as stated above.

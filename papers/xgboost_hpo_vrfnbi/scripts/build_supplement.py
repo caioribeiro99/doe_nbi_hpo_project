@@ -71,10 +71,11 @@ def main() -> int:
         w("source commit by the metadata-only step that records this provenance, and no")
         w("byte identity between the two is claimed.\n")
     else:
-        w("This is a coauthor-review draft. The code, protocol and results it reports are")
-        w("identified by the existing tags of S1; only the tag of the manuscript package itself")
-        w("is still to be created, after the authors approve the text, and S17 names it as")
-        w("planned.\n")
+        w("This is a coauthor-review draft in a public repository. The code, protocol, design,")
+        w("frozen factor models and confirmatory analysis are pinned by the existing tags of S1;")
+        w("the later analyses, their scripts and this text are on the revision branch and will be")
+        w("pinned by the manuscript-package tag, still to be created after the authors approve the")
+        w("text (S17 names it as planned).\n")
     w("Protocol tag `xgboost-hpo-protocol-v3`. Results tag")
     w("`xgboost-hpo-confirmatory-results-v1`.\n")
 
@@ -759,7 +760,10 @@ def main() -> int:
     w("artifact, verification status, allowed wording and prohibited stronger wording,")
     w("are in `CONFIRMATORY_CLAIMS_AND_EVIDENCE.md`. Two are recorded in corrected form")
     w("because a post-campaign recomputation from the raw unit artifacts refuted the")
-    w("author's version.\n")
+    w("author's version. The ledger predates the coauthor reviews; where its allowed wording")
+    w("differs from the manuscript's, as for the post hoc status of the signed-rank tests and the")
+    w("CHIM-contraction association, the manuscript's wording supersedes it, and the grid at 186")
+    w("evaluations (S7.2) and the centre-point sensitivity (S18) are reported only here.\n")
 
     w("## S17. Reproducibility manifest\n")
     w("| item | value |"); w("|---|---|")
@@ -780,15 +784,18 @@ def main() -> int:
     w(f"| primary endpoint | {PRIMARY_INDICATOR} against the "
       f"{PRIMARY_REFERENCE.upper()} reference |")
     w("| campaign runtime | 9 h 46 min, 14 workers × 1 thread |")
-    w("\nWhat is public and what is not. The repository's code, protocol, amendment ledger, the")
-    w("design with its SHA-256, the frozen factor models, every per-unit indicator and mechanism")
-    w("table, every analysis artifact and every script are committed under the tags of S1. The")
+    w("\nWhat is public and what is not. The repository is public. Its code, protocol, amendment")
+    w("ledger, the design with its SHA-256, the frozen factor models, the per-unit indicator table and")
+    w("the confirmatory analysis are pinned by the tags of S1; the per-unit NBI mechanism tables and")
+    w("the analyses computed after the campaign or in coauthor review, with their scripts, are on the")
+    w("revision branch and will be pinned by the planned manuscript-package tag. The")
     w("four datasets are not redistributed: they are public UCI and OpenML mirrors under CC BY 4.0,")
     w("obtained independently and checked against the recorded SHA-256 on acquisition. The per-unit")
     w("experiment tree is not versioned and is not yet deposited: 120 unit directories of stage")
     w("checkpoints and one SQLite evaluation cache each, about 0.8 GB, holding configurations,")
-    w("seeds and evaluated responses but no data rows. Every aggregate statistic in the paper can")
-    w("be recomputed from the committed per-unit tables; regenerating those tables, and the")
+    w("seeds and evaluated responses but no data rows. Every aggregate in the paper is stored in a")
+    w("committed artifact, and those of the primary analysis can be recomputed from the committed")
+    w("per-unit tables; regenerating those tables, and the")
     w("post-campaign diagnostics that read stored rows (Section 8.7, S7.2, S18), needs that tree,")
     w("and re-running a unit needs the datasets, the code at the protocol tag and the seeds of S8.")
     w("Exact reproduction across platforms or linear-algebra backends was not tested (Section 9.4).\n")
@@ -851,34 +858,56 @@ def main() -> int:
             for ds in DATASETS}
     moved = {ds: cpd[ds]["summary"]["multistart_seed_control_anchor_changed"]["quality"]
              for ds in DATASETS}
+    dec = {ds: cpd[ds]["summary"]["refit_anchor_flag_decomposition"] for ds in DATASETS}
     w("\nThe factor models do not move: every factor keeps its role and orientation, congruence is")
     w("at least 0.999, and the two objective definitions rank the pilot configurations and the")
-    w("pooled audit rows almost identically. The surfaces change little in what they predict but")
-    w("often in which terms they keep, and at a given number of terms the residual degrees of freedom")
-    w("of the elimination are nine fewer. Gate decisions change most for MAGIC's quality surface")
-    w("(8 → 1 passes) and Bank Marketing's cost surface (27 → 23); the composite-quality gate stays")
-    w("at 0 of 30 on Adult and Bank Marketing. The surrogate anchors move often, and for the quality")
-    w("objective much of that movement does not need the centre rows. Minimizing the unchanged")
-    w("88-row quality surfaces from other starting points moves the quality anchor in "
-      + _and([str(moved[ds]) for ds in DATASETS]) + " of 30 replications on " + _and([DISP[ds] for ds in DATASETS])
-      + ", and in " + f"{sum(flat.values())} of {sum(moved.values())}"
-      + " of those cases to a point within 0.01 of the same minimum: the")
-    w("quality surfaces have flat sets of equally good minima, the mechanism stated in Section 5.6,")
-    w("and the frozen seeded multistart picks one of them. The cost anchor moves under a restart in")
-    w("at most 7 of 30 replications, so its movement under the refit is mainly a centre-row effect.")
-    w("Under the refit NBI-S's quasi-normal direction moves by at most "
-      + _and([f"{ang[ds]:.1f}" for ds in DATASETS]) + " degrees, and the per-dataset medians of the")
+    w("pooled audit rows almost identically. The surfaces' predictions meet the pre-declared")
+    w("stability criterion for most surfaces but not for MAGIC's quality surface (18 of 30) or Bank")
+    w("Marketing's cost surface (14 of 30), whose selected terms also differ by three or more in 14")
+    w("of 30 fits; elsewhere the terms differ by at most two in 25 or more of 30. At a given number")
+    w("of terms the residual degrees of freedom of the elimination are nine fewer. Gate decisions")
+    w("change most for MAGIC's quality surface (8 → 1 passes) and Bank Marketing's cost surface")
+    w("(27 → 23), and at most twice elsewhere; the composite-quality gate stays at 0 of 30 on Adult")
+    w("and Bank Marketing.\n")
+    w("The anchor flags of the refit have three sources, counted below (descriptive, computed after")
+    w("the first run had returned the class): the minimizer moved to a point equally good on both")
+    w("surfaces (within 0.01 objective units), it moved to a distinct minimum, or it stayed where it")
+    w("was and a payoff value changed because the surface did.\n")
+    w("| dataset | objective | flagged by the refit | moved, equal minimum | moved, distinct minimum "
+      "| payoff value only | flagged by a restart alone |")
+    w("|---|---|---:|---:|---:|---:|---:|")
+    for ds in DATASETS:
+        for o in ("quality", "cost"):
+            dd = dec[ds][o]
+            w(f"| {DISP[ds]} | {o} | {dd['flagged']}/30 | {dd['equal_minimum']} | "
+              f"{dd['distinct_minimum']} | {dd['payoff_only']} | "
+              f"{cpd[ds]['summary']['multistart_seed_control_anchor_changed'][o]}/30 |")
+    w("\nThe restart check, also added after the first run, minimizes the unchanged 88-row")
+    w("surfaces from a different set of multistart points. It moves the quality anchor in "
+      + _and([str(moved[ds]) for ds in DATASETS]) + " of 30 replications on "
+      + _and([DISP[ds] for ds in DATASETS]) + ", in " + f"{sum(flat.values())} of {sum(moved.values())}")
+    w("cases to a point within 0.01 of the same minimum: the quality surfaces have flat sets of")
+    w("equally good minima, the mechanism stated in Section 5.6, and the frozen seeded multistart")
+    w("picks one of them. The check shares the minimizer's deterministic box-centre start, so it")
+    w("can only understate that variability, and it cannot produce payoff changes at an unmoved")
+    w("anchor. It accounts for much of the refit's quality-anchor movement on Adult and Bank")
+    w("Marketing, but not on MAGIC, where the refit moved the quality anchor to a distinct minimum")
+    w(f"in {dec['magic']['quality']['distinct_minimum']} of 30 replications, nor on Spambase, where a restart moved it in only {moved['spambase']}.")
+    w("The cost anchor never moved on Adult: all its flags are payoff changes at an unchanged")
+    w("location, as are most of Bank Marketing's. Under the refit NBI-S's quasi-normal direction")
+    w("moves by at most " + _and([f"{ang[ds]:.1f}" for ds in DATASETS]) + " degrees, and the per-dataset medians of the")
     w("CHIM-extent ratio (main text, Figure 3) change from " + _and([f"{f88[ds]:.3f}" for ds in DATASETS]) + " to "
       + _and([f"{f79[ds]:.3f}" for ds in DATASETS]) + ", in the same dataset order.\n")
     w(f"Under the pre-declared rule the sensitivity is classified **{cp['overall_class'].upper()}** on every")
-    w("dataset, by the anchor criterion alone (anchors move in more than 15 of 30 replications for")
-    w("at least one objective); the factor and gate criteria stay below that level. The diagnostic")
-    w("does not show whether any primary contrast changes: that would need the surrogate-based arms")
-    w("re-run on the alternative surfaces, or with a rule that chooses among equally good minima,")
-    w("and their candidates revalidated with new learner fits, which was not done. The confirmatory")
-    w("results are those of the frozen 88-row specification and of its seeded minimizer, and the")
-    w("claims that rest on the surrogate payoff geometry are qualified in Sections 6.4.1, 7.5 and")
-    w("8.5. The alternative fits replace nothing and rescore nothing.\n")
+    w("dataset, by the anchor criterion alone (anchors flagged in more than 15 of 30 replications for")
+    w("at least one objective); the factor and gate criteria stay below their high levels, while the")
+    w("prediction and term criteria alone would have made MAGIC, Spambase and Bank Marketing")
+    w("moderate. The diagnostic does not show whether any primary contrast changes: that would need")
+    w("the surrogate-based arms re-run on the alternative surfaces, or with a rule that chooses among")
+    w("equally good minima, and their candidates revalidated with new learner fits, which was not")
+    w("done. The confirmatory results are those of the frozen 88-row specification and of its seeded")
+    w("minimizer, and the claims that rest on the surrogate payoff geometry are qualified in the")
+    w("Abstract and in Sections 6.4, 6.4.1, 7.4, 7.5 and 8.5. The alternative fits replace nothing and rescore nothing.\n")
 
     OUT.write_text("\n".join(L) + "\n")
     print(f"wrote {OUT} ({len(' '.join(L).split()):,} words, "

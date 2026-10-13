@@ -79,8 +79,8 @@ $+0.2281$ on Bank Marketing (24/30). Every bootstrap interval on the median diff
 zero, and the secondary signed-rank test, a post hoc choice (Section 5.15), is Holm-significant within every one of the three
 datasets (Table 4); under the pre-declared Nadeau–Bengio sensitivity the contrast reaches
 unadjusted $p < 0.05$ on Adult only (Section 6.3.2). The geometry effect is the main positive
-result, and its scope is these datasets, this surrogate architecture, two objectives and this
-budget. On Adult and Bank Marketing it was obtained with a composite-quality surrogate that
+result, and its scope is these datasets, this surrogate architecture as frozen (its surrogate
+anchors are not uniquely determined; Section 8.5), two objectives and this budget. On Adult and Bank Marketing it was obtained with a composite-quality surrogate that
 failed the frozen external reliability gate in every replication (Section 6.7). It is also
 indicator-specific: the advantage appears in hypervolume and IGD$^{+}$, while the joint
 non-dominated fraction shows no detectable difference under CORE on any of the four datasets
@@ -91,7 +91,9 @@ surrogate-derived payoff information with the frozen empirical-real anchor proce
 improve the confirmatory NBI fronts: median differences of $-0.0741$ on MAGIC, $-0.0192$ on
 Adult (a non-detection, interval spanning zero) and $-0.4093$ on Bank Marketing. Two of three
 primary datasets degraded; under the Nadeau–Bengio sensitivity the deficit reaches unadjusted
-$p < 0.05$ on MAGIC only. The paid anchor stage bought nothing measurable here.
+$p < 0.05$ on MAGIC only. The paid anchor stage bought nothing measurable here, measured against
+the surrogate anchors the frozen pipeline selected, which the fitted surfaces do not determine
+uniquely (Section 8.5).
 
 **A frozen-budget direct grid baseline led NBI-S at the frozen comparator budget.** The
 median paired difference favoured the direct grid baseline over NBI-S on all four datasets.
@@ -126,6 +128,7 @@ $R = 30$ rather than as an absence of effect.
 4. Negative and scope-limiting results: the negative anchor-provenance contrast, the grid
    baseline that led NBI-S at the frozen comparator budget, and the indicator specificity of
    the geometry effect.
-5. A mechanistic reading of the negative contrast (a prospectively frozen anchor-injection
-   control together with a post hoc measurement of the contraction of the CHIM segment),
-   reported as an association within datasets, not as a demonstrated cause (Section 6.4).
+5. A prospectively frozen anchor-injection control that bounds what including the empirical
+   anchors adds to NBI-S's set (Section 6.4); a post hoc CHIM-contraction association is
+   reported there but, resting on non-unique surrogate anchors, is not interpreted
+   (Section 8.5).

@@ -93,13 +93,17 @@ recomputed from the stored fold means, which keep no per-fold predicted probabil
 **The surrogate anchors are not uniquely determined.** Where an eliminated hyperparameter leaves a
 surface flat, its minimizer is a set rather than a point, and the frozen seeded multistart picks one
 member of it (Section 5.6). A post hoc diagnostic from stored responses (Supplement S18) measured how
-much this matters. Restarting that minimizer from other points on the unchanged surfaces moved the
-quality anchor beyond a tolerance declared before the diagnostic in 9 to 28 of 30 replications, almost
-always to an equally good minimum, and refitting the surfaces on the 79 distinct design
-configurations instead of the 88 rows, whose ten centre rows are one evaluation repeated, moved the
-quality anchor in 18 to 23 and the cost anchor in 9 to 16 of 30. By the classification rule declared
-before that diagnostic, this is a high-impact sensitivity on every dataset; the factor models and the
-surfaces' predictions barely moved. The surrogate payoff matrix that WS-S, NBI-S and the anchor
+much this matters. Refitting the surfaces on the 79 distinct design configurations instead of the 88
+rows, whose ten centre rows are one evaluation repeated, flagged the quality anchor in 18 to 23 and the
+cost anchor in 9 to 16 of 30 replications under a tolerance declared before the refit; by the
+classification rule declared with it, this is a high-impact sensitivity on every dataset, while the
+factor models did not move and most surfaces' predictions met the declared stability criterion. The
+flags have three sources: ties among equally good minima, a different minimum, and changed payoff
+values at an unmoved anchor. A restart check added after that classification, which minimizes the
+unchanged surfaces from other points, moved the quality anchor in 9 to 28 of 30 replications, almost
+always to an equally good minimum, so ties account for much of the movement on Adult and Bank
+Marketing; on MAGIC the refit moved the quality anchor to a distinct minimum in 13 of 30
+replications. The surrogate payoff matrix that WS-S, NBI-S and the anchor
 contrast consume therefore carries a component set by the minimizer's starting points. Every
 confirmatory contrast is a valid paired comparison under the frozen specification, which fixed those
 starting points, but how the contrasts would behave with the 79-row surfaces, or with a rule that
@@ -108,7 +112,9 @@ arms and revalidating their candidates with new learner fits. The post hoc CHIM-
 association of Section 6.4.1 rests directly on this geometry and is not interpreted further.
 
 **The surrogate failed its own gate in most replications.** The composite-quality gate passed
-in 8/30 replications on MAGIC and 9/30 on Spambase, and in 0/30 on Adult and Bank Marketing.
+in 8/30 replications on MAGIC and 9/30 on Spambase, and in 0/30 on Adult and Bank Marketing; MAGIC's
+passes sit at the rank threshold, and a post hoc refit without the repeated centre rows keeps only
+one of them (Supplement S18).
 The gate is diagnostic, not adaptive: no replication was removed, so the Adult and Bank Marketing
 geometry effects come entirely from failing replications (Section 6.7), and the study measures
 relative front-construction geometry, not absolute surrogate trustworthiness (Section 7.8).

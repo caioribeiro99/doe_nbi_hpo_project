@@ -81,14 +81,32 @@ def test_abstract_is_within_the_250_word_rule() -> None:
 
 
 def test_signed_rank_significance_is_labelled_post_hoc_where_it_is_claimed() -> None:
+    """Every sentence that claims signed-rank (Holm) significance says it is post hoc.
+
+    The definition in Section 5.15 is the one exemption, and it must carry the post hoc
+    disclosure itself. Sentence-level, over every section file.
+    """
     abstract = (MAN / "sections" / "00_title_abstract.md").read_text()
     assert "Holm-significant post hoc signed-rank tests" in abstract
     assert "pre-declared Nadeau–Bengio" in abstract
-    conclusion = (MAN / "sections" / "10_conclusion.md").read_text()
-    assert re.search(r"signed-rank test, a post hoc choice", conclusion)
-    for f in ("01_introduction.md", "06b_results_contrasts.md", "07_discussion.md"):
-        s = (MAN / "sections" / f).read_text()
-        for m in re.finditer(r"Holm-significant", s):
-            window = s[max(0, m.start() - 400): m.end() + 400]
-            assert "post hoc" in window or "Table 5" in window or "AUGMENTED" in window, \
-                f"{f}: Holm significance without its post hoc status nearby: {window[300:500]!r}"
+    methods = (MAN / "sections" / "05b_methods_arms.md").read_text()
+    assert "it is reported as post hoc" in methods
+    claim = re.compile(r"Holm-significant|significant only on the|Holm \$p\$ =|Holm \$p = ")
+    bad = []
+    for f in sorted((MAN / "sections").glob("*.md")):
+        if f.name == "05b_methods_arms.md":
+            continue
+        text = re.sub(r"\s+", " ", f.read_text())
+        for sent in re.split(r"(?<=[.;])\s+(?=[A-Z(])", text):
+            if claim.search(sent) and "post hoc" not in sent:
+                bad.append(f"{f.name}: {sent[:160]}")
+    assert not bad, bad
+
+
+def test_centre_point_classify_is_the_one_committed_before_the_first_run() -> None:
+    rel = "papers/xgboost_hpo_vrfnbi/scripts/center_point_sensitivity.py"
+    old = subprocess.run(["git", "show", f"{PRE_RUN_COMMIT}:{rel}"], cwd=PAPER,
+                         capture_output=True, text=True, check=True).stdout
+    new = (PAPER / "scripts" / "center_point_sensitivity.py").read_text()
+    block = lambda s: re.search(r"^def classify\(.*?(?=^def )", s, re.S | re.M).group(0)  # noqa: E731
+    assert block(old) == block(new), "classify() changed after the first run"

@@ -23,15 +23,17 @@ rank-biserial $+0.92$, $+1.00$ and $+0.88$, Holm-significant within every primar
 the post hoc signed-rank test, the dataset being the generalization unit (Table 4).
 
 The scope is part of the claim: two objectives, this surrogate architecture, this budget,
-these three datasets. Nothing licenses "NBI is better than weighted sum" in general. The
+these three datasets, and the frozen surrogate pipeline, whose payoff matrix the fitted surfaces do
+not determine uniquely; how the contrast behaves under another surrogate specification or a rule
+that chooses among equally good minima was not tested (Section 8.5). Nothing licenses "NBI is better than weighted sum" in general. The
 endpoint is a CORE-relative hypervolume ratio against a finite method-independent set of
 288 points, where a value above 1 is expected and means only that the returned set
 improved on that finite reference.
 
 
 The strength of the geometry evidence depends on which test is read. Under the
-secondary Holm-corrected signed-rank test, whose form was fixed only when the confirmatory results
-were available and which is therefore post hoc, the contrast is significant in all
+secondary Holm-corrected signed-rank test, whose form was first recorded with the confirmatory
+results and which is therefore post hoc, the contrast is significant in all
 three primary datasets. Under the Nadeau–Bengio correction declared in advance as a
 sensitivity, reported unadjusted, it clears $0.05$ on Adult alone ($p = 0.0148$, against
 0.0860 and 0.0764). We take the descriptive triple as
@@ -64,7 +66,8 @@ pre-specified empirical-real anchor procedure did not improve the confirmatory f
 Paired medians are $-0.0741$ on MAGIC, $-0.0192$ on Adult and $-0.4093$ on Bank Marketing,
 Holm-significant on MAGIC and Bank Marketing under the post hoc signed-rank test, while the
 pre-declared corrected test reaches $0.05$ on MAGIC only; Adult is a non-detection under CORE with an
-interval spanning zero. This carries the same weight here as Section 7.2. Real anchors are the
+interval spanning zero. The comparison is with the surrogate anchors the frozen pipeline selected,
+which are not uniquely determined by the fitted surfaces (Section 8.5). This carries the same weight here as Section 7.2. Real anchors are the
 expensive, better-grounded option, bought with real evaluations by NBI-R alone, and the
 result went the other way. The sign is negative under CORE and AUGMENTED alike, with the
 panel's one reference disagreement on Adult's anchor contrast, Holm-significant under AUGMENTED
@@ -83,9 +86,10 @@ The CHIM contraction of Section 6.4.1 is a post hoc association across 30 replic
 within a dataset, not a demonstrated cause: it is clear on Adult and Bank Marketing
 (within-dataset Spearman between contraction and deficit $+0.683$ and $+0.678$), weak on
 Spambase ($+0.320$) and absent on MAGIC ($-0.111$). The association is also measured against a
-surrogate payoff matrix that the fitted surfaces do not determine uniquely: restarting the frozen
-minimizer from other points, or refitting the surfaces on the 79 distinct design configurations,
-moved the surrogate anchors in more than half of the replications (Section 8.5, Supplement S18). It
+surrogate payoff matrix that the fitted surfaces do not determine uniquely: refitting the surfaces
+on the 79 distinct design configurations flagged some surrogate anchor in 22 to 25 of 30 replications,
+and restarting the frozen minimizer alone moved the quality anchor in 9 to 28 of 30 (Section 8.5,
+Supplement S18). It
 is therefore not carried into the conclusions. Nor does the injection control prove the
 negative is entirely geometric: the control set is a superset of NBI-S's, so its effect
 cannot be negative, and because NBI-R returned none of its own empirical anchors
@@ -156,7 +160,7 @@ screening, on one pre-campaign pilot partition, showed insufficient interior fro
 frozen objective space; keeping it as a boundary control departed from the frozen replacement rule
 (Section 5.1), so its result is conditional on that screen and is not a prospective test of a
 hypothesis about the dataset. Its
-geometry contrast, a median of $+0.0500$ against MAGIC's Holm-significant $+0.0374$ but with
+geometry contrast, a median of $+0.0500$ against MAGIC's $+0.0374$ (Holm-significant under the post hoc signed-rank test) but with
 roughly thirty times MAGIC's dispersion and an interval spanning zero, did not resolve
 (Section 6.6). That is consistent with the boundary designation; it does not confirm the
 boundary mechanism. Because Spambase's quality composite is negatively rank-correlated with

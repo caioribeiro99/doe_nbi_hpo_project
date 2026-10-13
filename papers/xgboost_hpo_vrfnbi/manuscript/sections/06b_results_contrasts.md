@@ -16,8 +16,8 @@ front-geometry screen on the design rows (Section 5.1). The medians are +0.0374 
 26/0/4, 30/0/0 and 24/0/6; the percentile bootstrap intervals on the median are
 $[+0.0144, +0.0687]$, $[+0.1740, +0.5614]$ and $[+0.1670, +0.4741]$, none of them
 spanning zero; and the matched-pairs rank-biserial correlation is $+0.92$, $+1.00$ and
-$+0.88$. The secondary signed-rank tests, whose form was chosen when the confirmatory results were
-available and which are therefore post hoc (Section 5.15), are Holm-significant within every primary
+$+0.88$. The secondary signed-rank tests, whose form was first recorded with the confirmatory results and
+which are therefore post hoc (Section 5.15), are Holm-significant within every primary
 dataset ($p = 9.42\times10^{-7}$, $5.59\times10^{-9}$ and $9.72\times10^{-6}$); the pre-declared corrected
 test reaches $0.05$ on Adult only (Section 6.3.2), so these are not three prospectively confirmed
 effects. The geometry effect is the
@@ -115,12 +115,14 @@ the objective values at its anchors, that one input moves all three, and with th
 subproblem target; that displacement is the intervention, not a confound. The same input
 also replaces surrogate-predicted payoff values with real measurements while the subproblems
 remain on the fitted surfaces (Section 5.11), and it costs 200 additional real evaluations,
-so the contrast estimates the joint effect of these changes.
+so the contrast estimates the joint effect of these changes. Its NBI-S side is the frozen pipeline's
+surrogate payoff, which the fitted surfaces do not determine uniquely (Section 8.5, Supplement S18):
+the contrast compares empirical-real anchors with the surrogate anchors that pipeline selected.
 
 Replacing surrogate-derived payoff information with the frozen empirical-real anchor
 procedure did not improve the confirmatory NBI fronts, and degraded CORE-relative
 hypervolume on two of the three primary datasets. The medians are −0.0741 on MAGIC
-(2/0/28, $[-0.0957, -0.0482]$, rank-biserial $-0.99$, Holm $p = 2.79\times10^{-8}$), −0.4093 on
+(2/0/28, $[-0.0957, -0.0482]$, rank-biserial $-0.99$, post hoc signed-rank Holm $p = 2.79\times10^{-8}$), −0.4093 on
 Bank Marketing (7/0/23, $[-0.5821, -0.2059]$, rank-biserial $-0.82$, Holm $p = 4.73\times10^{-5}$)
 and −0.0192 on Adult (11/0/19, $[-0.1610, +0.0299]$, rank-biserial $-0.37$, Holm $p$ = 0.1607), the
 last a non-detection under CORE with an interval spanning zero. This negative result carries the
@@ -162,10 +164,10 @@ Bank Marketing, +0.320 on Spambase and −0.111 on MAGIC. This is a post hoc ass
 across 30 replications within a dataset, clear on Adult and Bank Marketing, weak on Spambase and
 absent on MAGIC; it is not a demonstrated cause of the deficit, and it is not presented as one
 (Figure 3). It also rests on a quantity that the fitted surfaces do not pin down: the surrogate payoff
-matrix inherits an arbitrary coordinate wherever a surface is flat (Section 5.6), and in a post hoc
-check the surrogate anchors moved beyond a pre-declared tolerance in more than half of the
-replications when the frozen minimizer was merely restarted from other points or the surfaces were
-refitted on the 79 distinct design configurations (Supplement S18). The per-dataset medians of the
+matrix inherits an arbitrary coordinate wherever a surface is flat (Section 5.6). In a post hoc
+check, refitting the surfaces on the 79 distinct design configurations flagged some surrogate anchor
+in 22 to 25 of 30 replications under a tolerance declared before the refit, and a restart of the
+frozen minimizer alone moved the quality anchor in 9 to 28 of 30 (Supplement S18). The per-dataset medians of the
 extent ratio barely change under that refit, except on Spambase (0.370 to 0.273), but the
 per-replication ratios on which the association rests do, so the association is not interpreted
 further.
@@ -177,7 +179,7 @@ method-independent CORE reference and the mandatory AUGMENTED sensitivity refere
 Eleven of the twelve conclusions agree in direction and in significance, and no cell
 anywhere flips direction (Figure 4). The single disagreement is Adult's anchor-provenance
 contrast: under CORE the median is −0.0192 with Holm $p$ = 0.1607, non-significant;
-under AUGMENTED the median is −0.0535 with Holm $p$ = 0.0174, significant. The sign is
+under AUGMENTED the median is −0.0535 with Holm $p$ = 0.0174, significant on the post hoc signed-rank test. The sign is
 negative under both references, so the disagreement is one of resolution, not of
 direction. Because each reference also sets its own normalization box, and with it the
 hypervolume reference point in objective units (Section 5.14), the disagreement cannot be

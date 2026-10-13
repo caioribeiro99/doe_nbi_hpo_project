@@ -251,10 +251,11 @@ enforced. Evaluation is deterministic within a replication, so the 10 centre poi
 responses and provide no estimate of pure error; the elimination's $t$-tests nonetheless count all
 88 rows, 79 of them distinct, with $88 - p$ residual degrees of freedom for a $p$-term model. A post hoc
 refit on the 79 distinct configurations, from stored responses only (Supplement S18), left the frozen
-factor models and the surfaces' predictions nearly unchanged, while the selected terms often differed
-by one or two and the gate decision changed in 7 of 30 replications for MAGIC's quality surface and 4
-for Bank Marketing's cost surface; it also moved the surrogate anchors, the subject of the next
-paragraph and of Section 8.5. The
+factor models unchanged in every respect measured; the surfaces' predictions met a stability criterion
+declared before the refit except for MAGIC's quality surface (18 of 30 replications) and Bank
+Marketing's cost surface (14 of 30), the selected terms often differed, and the gate decision changed
+most often for those two surfaces (7 and 4 of 30 replications), at most twice elsewhere. The refit
+also moved the surrogate anchors, as discussed below and in Section 8.5. The
 surfaces are fitted to the objective of Section 5.5, the factor score rather than a raw response, so
 the $\log(1 + \cdot)$ transform of Section 5.4 sits inside the objective and the cost surface is
 fitted on the transformed scale by construction. The same procedure, elimination rule and coded

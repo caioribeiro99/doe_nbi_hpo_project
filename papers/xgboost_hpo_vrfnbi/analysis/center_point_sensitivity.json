@@ -124,6 +124,24 @@
      "max": 1.6314512183900944,
      "outside_0.9_to_1.1": 9
     },
+    "refit_anchor_flag_decomposition": {
+     "quality": {
+      "flagged": 19,
+      "location_moved": 17,
+      "equal_minimum": 4,
+      "distinct_minimum": 13,
+      "payoff_only": 2,
+      "also_flagged_by_restart": 11
+     },
+     "cost": {
+      "flagged": 15,
+      "location_moved": 8,
+      "equal_minimum": 3,
+      "distinct_minimum": 5,
+      "payoff_only": 7,
+      "also_flagged_by_restart": 3
+     }
+    },
     "multistart_seed_control_changed_on_flat_minimum": {
      "quality": 16,
      "cost": 3
@@ -9303,6 +9321,24 @@
      "max": 4.357569509659979,
      "outside_0.9_to_1.1": 13
     },
+    "refit_anchor_flag_decomposition": {
+     "quality": {
+      "flagged": 20,
+      "location_moved": 19,
+      "equal_minimum": 11,
+      "distinct_minimum": 8,
+      "payoff_only": 1,
+      "also_flagged_by_restart": 5
+     },
+     "cost": {
+      "flagged": 15,
+      "location_moved": 14,
+      "equal_minimum": 10,
+      "distinct_minimum": 4,
+      "payoff_only": 1,
+      "also_flagged_by_restart": 3
+     }
+    },
     "multistart_seed_control_changed_on_flat_minimum": {
      "quality": 9,
      "cost": 7
@@ -18262,6 +18298,24 @@
      "max": 1.1949589643424812,
      "outside_0.9_to_1.1": 5
     },
+    "refit_anchor_flag_decomposition": {
+     "quality": {
+      "flagged": 18,
+      "location_moved": 15,
+      "equal_minimum": 10,
+      "distinct_minimum": 5,
+      "payoff_only": 3,
+      "also_flagged_by_restart": 16
+     },
+     "cost": {
+      "flagged": 9,
+      "location_moved": 0,
+      "equal_minimum": 0,
+      "distinct_minimum": 0,
+      "payoff_only": 9,
+      "also_flagged_by_restart": 0
+     }
+    },
     "multistart_seed_control_changed_on_flat_minimum": {
      "quality": 26,
      "cost": 0
@@ -27106,6 +27160,24 @@
      "min": 0.6712357092021503,
      "max": 1.5011162846996353,
      "outside_0.9_to_1.1": 13
+    },
+    "refit_anchor_flag_decomposition": {
+     "quality": {
+      "flagged": 23,
+      "location_moved": 21,
+      "equal_minimum": 14,
+      "distinct_minimum": 7,
+      "payoff_only": 2,
+      "also_flagged_by_restart": 22
+     },
+     "cost": {
+      "flagged": 16,
+      "location_moved": 5,
+      "equal_minimum": 1,
+      "distinct_minimum": 4,
+      "payoff_only": 11,
+      "also_flagged_by_restart": 1
+     }
     },
     "multistart_seed_control_changed_on_flat_minimum": {
      "quality": 28,

@@ -29,8 +29,9 @@ result reported here are specific to this study, and no dataset is shared with t
 manuscript. Apart from the bounds restated in Table 2, no figure, table or result is reproduced
 from the dissertation or from the companion manuscript.
 
-**Data and code availability.** The protocol, the frozen factor models, every analysis
-artifact and every script are version-controlled and tagged in a public repository; see Section 9.
+**Data and code availability.** The protocol, the frozen factor models and the confirmatory
+analysis are version-controlled and tagged in a public repository; the later analyses and their
+scripts are on its revision branch, to be tagged with the approved manuscript; see Section 9.
 Raw datasets are public and are retrieved by checksum-verified loaders; the per-unit evaluation
 caches are unversioned and not yet deposited (Section 9.4).
 

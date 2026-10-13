@@ -14,7 +14,7 @@ from the primary family.
 
 On the geometry contrast the boundary dataset did not resolve. The median paired
 difference in CORE-relative hypervolume ratio from WS-S to NBI-S is +0.0500, which
-is numerically larger than MAGIC's Holm-significant +0.0374, with 18 wins, 2 ties and 10
+is numerically larger than MAGIC's +0.0374, Holm-significant under the post hoc signed-rank test, with 18 wins, 2 ties and 10
 losses over 30 replications, a percentile bootstrap interval of $[-0.0043, +0.4369]$
 spanning zero, and Holm $p = 0.1175$. What distinguishes the two datasets is dispersion,
 not location: the per-replication standard deviation is 1.7706 on Spambase against
@@ -79,7 +79,9 @@ The relative advantage of NBI front construction over specification-matched weig
 scalarization therefore persisted where the surrogate did not meet its own external
 standard. Within MAGIC, the only primary-panel dataset with both strata populated (Spambase, the boundary control, also has both, with 9 of 30 passing), the geometry
 difference is positive in each: median +0.1173 with a win fraction of 1.00 across the 8
-gate-passing units, and +0.0165 with 0.82 across the 22 failing units. Both strata are
+gate-passing units, and +0.0165 with 0.82 across the 22 failing units; the passing stratum is
+fragile, shrinking from 8 to 1 replications when the surfaces are refitted on the 79 distinct
+design configurations (post hoc; Supplement S18). Both strata are
 small and are reported descriptively, without a test.
 
 This says nothing about absolute surrogate trustworthiness. Whether a surrogate is
@@ -181,9 +183,10 @@ required, and none of them enters the primary family. Under the pre-declared equ
 two quality factors, the returned non-dominated sets differed from the variance-weighted ones in 9
 to 23 of 30 replications, more than the 20% threshold of the frozen protocol on every dataset and
 for every arm, so the conclusions are conditional on that weighting; every identifying contrast
-kept its direction (Supplement S4.5). These are changes in which candidates an arm returns, not in
-the direction of the paired contrasts: the individual returned solutions are not stable to the
-weighting, while the comparisons between arms largely are. When measured mean per-fold time replaced the leaf-count cost
+kept its direction (Supplement S4.5). These are changes in which of an arm's returned candidates are
+non-dominated, not in the direction of the paired contrasts: the individual solutions on a returned
+front are not stable to the weighting, while the comparisons between arms largely are; what the arms
+would return if optimized under the alternative weighting was not tested. When measured mean per-fold time replaced the leaf-count cost
 axis, the winning arm changed in 9, 17, 16 and 14 of 30 replications on MAGIC, Spambase, Adult and
 Bank Marketing; the geometry contrast stayed positive on every dataset, though smaller on Adult and
 Bank Marketing, and the anchor-provenance contrast changed sign on Adult (median $+0.0696$, NBI-R
