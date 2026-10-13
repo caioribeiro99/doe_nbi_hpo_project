@@ -1,0 +1,169 @@
+{
+ "provenance": "retrospective, post hoc (coauthor review R2): the first 186 of the grid's stored evaluations, scored with the frozen code",
+ "datasets": {
+  "magic": {
+   "nbi_s_median_hv_ratio": 0.9430370989571621,
+   "prefix_is_frozen_186_point_grid": true,
+   "full_grid_rescored_equals_stored": true,
+   "design_rows_reevaluated": {
+    "386": [
+     64
+    ],
+    "186": [
+     64
+    ]
+   },
+   "by_budget": {
+    "386": {
+     "grid_median_hv_ratio": 1.0067713861699206,
+     "median_diff_nbi_s_minus_grid": -0.06276564314885696,
+     "median_diff_ci95": [
+      -0.1122385409590359,
+      -0.048008234423053575
+     ],
+     "nbi_s_wins": 0,
+     "ties": 0,
+     "grid_wins": 30,
+     "grid_meets_21_of_30_rule": true,
+     "wilcoxon_p_raw_post_hoc": 1.862645149230957e-09
+    },
+    "186": {
+     "grid_median_hv_ratio": 0.9996431507656894,
+     "median_diff_nbi_s_minus_grid": -0.05040967732987062,
+     "median_diff_ci95": [
+      -0.08287461834355431,
+      -0.04365113111859137
+     ],
+     "nbi_s_wins": 0,
+     "ties": 0,
+     "grid_wins": 30,
+     "grid_meets_21_of_30_rule": true,
+     "wilcoxon_p_raw_post_hoc": 1.862645149230957e-09
+    }
+   }
+  },
+  "spambase": {
+   "nbi_s_median_hv_ratio": 1.0811910341506035,
+   "prefix_is_frozen_186_point_grid": true,
+   "full_grid_rescored_equals_stored": true,
+   "design_rows_reevaluated": {
+    "386": [
+     64
+    ],
+    "186": [
+     64
+    ]
+   },
+   "by_budget": {
+    "386": {
+     "grid_median_hv_ratio": 1.0192404783055558,
+     "median_diff_nbi_s_minus_grid": -0.1285869264474938,
+     "median_diff_ci95": [
+      -0.3471877011635811,
+      0.1511002303665403
+     ],
+     "nbi_s_wins": 12,
+     "ties": 0,
+     "grid_wins": 18,
+     "grid_meets_21_of_30_rule": false,
+     "wilcoxon_p_raw_post_hoc": 0.8773898625008879
+    },
+    "186": {
+     "grid_median_hv_ratio": 1.0192404783055558,
+     "median_diff_nbi_s_minus_grid": -0.1285869264474938,
+     "median_diff_ci95": [
+      -0.3471877011635811,
+      0.1511002303665403
+     ],
+     "nbi_s_wins": 12,
+     "ties": 0,
+     "grid_wins": 18,
+     "grid_meets_21_of_30_rule": false,
+     "wilcoxon_p_raw_post_hoc": 0.8773898625008879
+    }
+   }
+  },
+  "adult": {
+   "nbi_s_median_hv_ratio": 0.9950936676208005,
+   "prefix_is_frozen_186_point_grid": true,
+   "full_grid_rescored_equals_stored": true,
+   "design_rows_reevaluated": {
+    "386": [
+     64
+    ],
+    "186": [
+     64
+    ]
+   },
+   "by_budget": {
+    "386": {
+     "grid_median_hv_ratio": 1.0475699276497625,
+     "median_diff_nbi_s_minus_grid": -0.04875315293514726,
+     "median_diff_ci95": [
+      -0.07834781181969613,
+      -0.02453860674712227
+     ],
+     "nbi_s_wins": 5,
+     "ties": 0,
+     "grid_wins": 25,
+     "grid_meets_21_of_30_rule": true,
+     "wilcoxon_p_raw_post_hoc": 0.00013739429414272308
+    },
+    "186": {
+     "grid_median_hv_ratio": 1.0461190396014772,
+     "median_diff_nbi_s_minus_grid": -0.04875315293514726,
+     "median_diff_ci95": [
+      -0.07834781181969613,
+      -0.02453860674712227
+     ],
+     "nbi_s_wins": 5,
+     "ties": 0,
+     "grid_wins": 25,
+     "grid_meets_21_of_30_rule": true,
+     "wilcoxon_p_raw_post_hoc": 0.0001528710126876831
+    }
+   }
+  },
+  "bank_marketing": {
+   "nbi_s_median_hv_ratio": 0.997869306784872,
+   "prefix_is_frozen_186_point_grid": true,
+   "full_grid_rescored_equals_stored": true,
+   "design_rows_reevaluated": {
+    "386": [
+     64
+    ],
+    "186": [
+     64
+    ]
+   },
+   "by_budget": {
+    "386": {
+     "grid_median_hv_ratio": 1.062513645527534,
+     "median_diff_nbi_s_minus_grid": -0.1322623232620178,
+     "median_diff_ci95": [
+      -0.28914123134822156,
+      -0.018212171090099982
+     ],
+     "nbi_s_wins": 10,
+     "ties": 0,
+     "grid_wins": 20,
+     "grid_meets_21_of_30_rule": false,
+     "wilcoxon_p_raw_post_hoc": 0.1641840822994709
+    },
+    "186": {
+     "grid_median_hv_ratio": 1.062513645527534,
+     "median_diff_nbi_s_minus_grid": -0.1322623232620178,
+     "median_diff_ci95": [
+      -0.2887625247656986,
+      -0.018212171090099982
+     ],
+     "nbi_s_wins": 10,
+     "ties": 0,
+     "grid_wins": 20,
+     "grid_meets_21_of_30_rule": false,
+     "wilcoxon_p_raw_post_hoc": 0.1641840822994709
+    }
+   }
+  }
+ }
+}
