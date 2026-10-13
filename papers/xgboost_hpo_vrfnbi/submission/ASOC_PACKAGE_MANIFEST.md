@@ -2,12 +2,12 @@
 
 | file | bytes | sha256 (first 32 hex) |
 |---|---|---|
-| `Paper2_MANUSCRIPT_FINAL_v6.pdf` | 1,414,895 | `ddaac00fa9bde4b548fab79282102852` |
-| `Paper2_SUPPLEMENT_FINAL_v6.pdf` | 1,167,643 | `ce7e1e55b8baeb16f4dd4be4c4fff738` |
+| `Paper2_MANUSCRIPT_FINAL_v6.pdf` | 1,414,895 | `84d0a310cba9a280c1acb3cdfb6e6c38` |
+| `Paper2_SUPPLEMENT_FINAL_v6.pdf` | 1,167,701 | `a4b8eddc154360a05bc3e5c46507e1e5` |
 | `ASOC_COVER_LETTER.md` | 3,036 | `3c16986686e4729f2302e9d133eb6986` |
 | `ASOC_DATA_CODE_AVAILABILITY.md` | 2,739 | `e61ef85223e2153c5e1c036ed7ab27f8` |
 | `ASOC_HIGHLIGHTS.md` | 402 | `5a539b2de7656ceca79d11e03f0e1922` |
-| `ASOC_PACKAGE_MANIFEST.md` | 2,179 | `0caa1d195b0f63214285c591ef37285a` |
+| `ASOC_PACKAGE_MANIFEST.md` | 2,179 | `131f108c73ce1f5805bab66f7c29f63c` |
 | `ASOC_REQUIREMENTS.md` | 11,742 | `4287795693ffb0720af74f94e0ba03f6` |
 | `ASOC_SCOPE_AUDIT.md` | 6,908 | `da87a1b40e68338620481956d2d00e0b` |
 | `ASOC_SUBMISSION_CHECKLIST.md` | 4,814 | `31881085d267101af1182decc70eb390` |
@@ -27,4 +27,4 @@
 
 Upload roles: the editable LaTeX source (elsarticle template; .tex with references.bib) as the main document; Figure_1 to Figure_6 as separate vector files with a separate figure-captions file; supplement as supplementary material; graphical abstract, highlights, title page, vitae and cover letter as separate files. The manuscript PDF is a review copy only.
 
-**DRAFT**: generated from commit `4ca7e392d5d1` (HEAD), not from `paper2-manuscript-v6`, which does not exist yet; regenerate from the tag before upload.
+**DRAFT**: generated from commit `64092b32ff8b` (HEAD), not from `paper2-manuscript-v6`, which does not exist yet; regenerate from the tag before upload.
