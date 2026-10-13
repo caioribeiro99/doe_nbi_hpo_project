@@ -250,7 +250,22 @@ establishes significance.
 \label{sec:s6}
 \input{tables/s6_gate}
 \input{tables/s6_gate_conditional}
+\input{tables/s6_gate_split}
 \input{tables/s6_regimes}
+
+\paragraph{Split-sample reading of the gate (post hoc).} Order selection and the gate use the same 100 compositions,
+so a recorded pass is not an independent verdict on the selected order. Table~\ref{tab:s6split} re-reads the gate
+from the stored records alone: the Scheff\'e surfaces are fitted on the design points only, so their predictions at
+the 100 compositions are fixed, and only the compositions used to select and to judge are varied. Each of 200
+stratified halves (30 of the 60 Dirichlet$(\mathbf{1})$ and 20 of the 40 Dirichlet$(0.5\cdot\mathbf{1})$
+compositions, seed 20261013) selects the order with the frozen parsimony rule and judges it with the frozen gate on
+the other half, in both directions; selecting and judging on the same half is the control at equal sample size. The
+extreme verdicts do not move: UCI credit passes on every response and partition, Santander's ROC-AUC and PR-AUC
+surfaces almost never, and the Brier surfaces always. The intermediate cases are where reuse matters: from same half
+to cross half, the expected passes fall from 15.0 to 11.7 of 30 for Porto Seguro's ROC-AUC surface, from 11.1 to 7.2
+for its log-loss surface, and from 5.8 to 4.2 and 3.6 to 2.1 for BNP Paribas. The recorded gate counts, the selected
+orders and every NBI-A result are unchanged: NBI-A ran on the order selected with all 100 compositions, and its
+result under another order would need a new NBI run, which is not made.
 
 \paragraph{The BNP Paribas collapse, in full.} NBI-A's weighted hypervolume ratio splits into 21 partitions at
 0.891--0.928, two intermediate, and seven collapsing to 0.036--0.120: partitions 7, 9, 18, 20, 23, 26 and 27. The
@@ -300,7 +315,20 @@ computed against the augmented reference are partly self-graded, which is why th
 scored against the sample core (selected contrasts in Section~\ref{sec:s5}) and the NSGA-II comparison against both
 references (Section~\ref{sec:s13}). On the weighted-cost front, 118 of the 120 replications met the 5\% displacement
 tolerance and the other two ended at most 6\% displaced (\texttt{tables/\allowbreak reference\_\allowbreak diagnostics.csv});
-the check does not cover the support-cost front.
+the benchmark's check did not cover the support-cost front, and the independent check sample was not stored.
+
+\input{tables/s8_support_convergence}
+
+\paragraph{Support-cost convergence (post hoc).} Table~\ref{tab:s8support} computes, from the stored reference
+samples and with no composition evaluated, the same two diagnostics for both fronts. In place of the unstored
+independent sample, the last 20,000 points of the first-round random part, independent draws from the same shuffled
+mixture, check the front of the structured blocks plus the first 80,000 random points. That reference is smaller
+than the one used, so the reading is pessimistic, as the weighted-cost column shows against the benchmark's own
+check (9 to 27 against 29 to 30 of 30 met). Under identical definitions the support-cost front is clearly less
+converged: it met the 5\% tolerance in 7, 10, 12 and 6 of 30 partitions on Santander, BNP Paribas, Porto Seguro and
+UCI credit, with median displaced shares of 6.6--8.0\% and a worst case of 45\% (5 of 11 points) on one Porto Seguro partition.
+Support-cost fronts are small (median 14 to 87 points), so each displaced point is a large share. The reference was
+not enlarged and nothing was rescored; the main text qualifies the step-cost conclusions accordingly.
 
 \section{Cost definition and the accuracy--calibration conflict}
 \label{sec:s9}
@@ -389,6 +417,23 @@ $R = 30$, are listed in Section~5.9 of the main text. These batch comparisons we
 plan and are exploratory, and the difference between the batches is unexplained (run conditions in Section~7 of
 the main text); they show how far ten partitions can sit from the next twenty.
 
+\paragraph{Provenance of the two batches (coauthor review R2).} Execution date alone should not change deterministic
+objectives, so one bounded check of the existing records was made; no learner or optimizer was rerun.
+\emph{Invariant:} the library source (\texttt{src/}) is identical for partitions 1--29, which ran under the
+solver-fixed code; the recorded environment block (Python, NumPy, pandas, SciPy, scikit-learn, statsmodels and
+XGBoost versions, platform, 14 cores) is identical in the two batch manifests; the base seed 20260904 and its
+per-replication rule are the same; the configuration differs only in the replication count and in two flags that
+compute nothing (\texttt{no\_auto\_reduce}, \texttt{dry\_run}), and the automatic budget reduction never triggered;
+the dataset checksums agree. \emph{Changed:} runner bookkeeping between the batches, which alters no computation;
+the execution order and timing (a pilot pass over partition 0, then blocks by dataset, against blocks by dataset in
+the extension); and the re-measured wall-clock costs, whose batch medians agree within about 4\%. \emph{Not
+recorded:} whether the working tree had uncommitted changes, a dependency lockfile, the linear-algebra backend and
+the versions of joblib and threadpoolctl, thread-related environment variables, power, thermal state and concurrent
+load, and checksums of the per-partition outputs. \emph{Nondeterminism:} no partition was computed in both batches,
+so a direct determinism check across them is impossible; the one recomputation available, the NBI stage of UCI credit
+partition 0 rerun from its stored inputs between the batches, reproduced every stored candidate exactly. The records
+therefore neither explain the difference nor show nondeterminism, and it remains unexplained.
+
 \begin{figure}[htbp]\centering
 \includegraphics[width=\textwidth]{r30_fig03_r10_vs_r30_stability.png}
 \caption{$R = 10$ against $R = 30$ across all metric families.}
@@ -401,7 +446,8 @@ the main text); they show how far ten partitions can sit from the next twenty.
 Because a vertex value of $\beta$ returns its anchor directly, NBI-B's returned set contains the three real
 single-objective optima, which are also points of the empirical reference. Part of the NBI-B advantage is therefore
 the injection of those extreme solutions rather than the relocation of the CHIM. Rescoring NBI-A's own candidate set
-augmented with the same three anchors, and changing nothing else, isolates the two. Source:
+augmented with the same three anchors, and changing nothing else, separates the injection from the rest; the
+residual still bundles the relocated utopia point, normalization and CHIM, which no control here separates. Source:
 \texttt{scripts/\allowbreak pco213\_anchor\_injection\_control.py} and
 \texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak anchor\_injection\_control.csv}.
 

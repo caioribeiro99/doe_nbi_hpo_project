@@ -63,10 +63,12 @@ objectives and anchors come from.
 \item \textbf{NBI-A} optimizes the Scheffé surfaces with anchors from their own optima: the inherited construction and
 our control.
 \item \textbf{NBI-B} optimizes the same surfaces with anchors from the real single-objective optima; A versus B
-isolates \emph{anchor misplacement}.
+is the \emph{anchor-provenance intervention}, the joint effect of replacing surrogate-derived anchor information
+(\cref{sec:method:nbi}).
 \item \textbf{NBI-C} drops the metamodel and runs the same NBI on the exact out-of-fold objectives: a
 metamodel-free NBI in the published sense of \citet{gellerich2023doenbi}, whose subproblems are physical experiments;
-B versus C isolates residual \emph{interior surrogate error}.
+B versus C measures the remaining effect of \emph{interior surrogate error}, together with the changes in geometry
+that removing the metamodel brings.
 \end{itemize}
 
 All three arms fit their surfaces once from a fixed design and then optimize. This is the \emph{sequential} form of

@@ -111,13 +111,16 @@ denote pairs whose blend wins in at least 80\% of partitions; the largest-$\beta
 
 \input{tables/tab03_paired_primary}
 
-Replacing the surrogate-derived anchors with anchors computed from the real single-objective optima, changing nothing
-else, improves both primary endpoints in all 30 partitions on Santander (median $\Delta\hv = +0.196$, median
+Replacing the surrogate-derived anchors with anchors computed from the real single-objective optima, with every
+other input of the pipeline held fixed, improves both primary endpoints in all 30 partitions on Santander (median $\Delta\hv = +0.196$, median
 $\Delta\igdp = +0.125$; Holm-corrected $p = 0.004$ and $0.007$) and in all 30 on BNP Paribas (medians $+0.058$ and
 $+0.0146$). On the other two the improvement is not unanimous and the endpoints differ: Porto Seguro $23/30$
 partitions on $\igdp$ (median $+0.0296$) and $24/30$ on hypervolume (median $+0.076$), UCI credit $24/30$ on $\igdp$
 (median $+0.0499$) and 24 wins with one tie and five losses on hypervolume (median $+0.092$). Bootstrap intervals for
-every median are in \cref{tab:paired} (\cref{fig:paired}, \cref{fig:fronts}).
+every median are in \cref{tab:paired} (\cref{fig:paired}, \cref{fig:fronts}). Because new anchors move the utopia
+point, the normalization, the CHIM and three returned candidates together (\cref{sec:method:nbi}), this is the joint
+effect of the anchor-provenance intervention, not the effect of anchor location alone; ``anchor effect'' below is
+shorthand for that joint effect.
 
 Two readings the win counts invite are not supported by the magnitudes. First, a unanimous count is not a large
 effect: Santander and BNP Paribas are both $30/30$, yet the median hypervolume gain is $+0.196$ on the first and
@@ -369,7 +372,11 @@ NBI sets, optimized on the linear relaxation, do not reach.}
 
 The two cost definitions disagree often enough to change conclusions (\cref{fig:cost}, \cref{tab:holdout_cost}): the
 hypervolume-best method changes between them in 8 to 24 of 30 partitions depending on the dataset (supplementary
-Section~S9). Of the six candidate sets, NBI-C remains best under both on Santander and Porto Seguro ($26/30$ and
+Section~S9). These step-cost readings are scored against a less settled reference: in a post hoc check computed from
+the stored reference samples (supplementary Section~S8), the support-cost front met the 5\% displacement tolerance
+in 6 to 12 of 30 partitions per dataset, against 9 to 27 for the weighted-cost front under the same, deliberately
+pessimistic definition, so part of the disagreement may reflect reference instability rather than the cost
+definition. Of the six candidate sets, NBI-C remains best under both on Santander and Porto Seguro ($26/30$ and
 $20/30$); on UCI credit random
 scalarization takes the support-cost hypervolume in $22/30$, and several paired readings reverse outright
 (\cref{sec:results:anchors}, \cref{sec:results:metamodelfree}).

@@ -12,16 +12,17 @@ infill, one fixed zoo of five classifiers and four datasets from one application
 surfaces passed the external reliability gate in 0, 5, 16 and 30 of 30 partitions on Santander, BNP Paribas, Porto
 Seguro and UCI credit, and log-loss surfaces in 30, 3, 12 and 30; smoothness of the response in the weights does not
 explain the difference on its own.
-\item On Santander and BNP Paribas, anchor misplacement had the largest observed effect among failures attributable to
-the surrogate pipeline. Under the continuous cost the arms optimize, real anchors improved both primary endpoints in
-all 30 partitions of these two datasets, in 23 to 24 of 30 on Porto Seguro and in 24 of 30 on UCI credit, although
-the improvement is significant after the Nadeau--Bengio correction and Holm adjustment only on Santander. On
+\item On Santander and BNP Paribas, anchor misplacement was the largest observed failure attributable to the
+surrogate pipeline, measured by the joint effect of replacing surrogate-derived anchor information. Under the continuous cost the arms optimize, real anchors improved both primary endpoints in
+all 30 partitions of these two datasets, in 23 to 24 of 30 on Porto Seguro and in 24 of 30 on UCI credit, although,
+at the assumed Nadeau--Bengio $\rho = 0.25$ and after Holm adjustment, the improvement is significant only on Santander. On
 Santander and BNP Paribas most of the hypervolume gain comes from returning the real single-objective optima rather
 than from the relocated construction, and removing the metamodel once the anchors are right adds far less than the
 anchors there, about as much on Porto Seguro and three times as much on UCI credit, where a subproblem-convergence
 effect of the real-anchored surrogate arm (NBI-B) rather than surrogate error dominates; this ordering is an
 observation, not a tested claim.
-\item The gate screens surface accuracy, not anchor placement. On BNP Paribas, surrogate-anchored NBI (NBI-A)
+\item The gate screens surface accuracy, on the same compositions that select the surface's order, not anchor
+placement. On BNP Paribas, surrogate-anchored NBI (NBI-A)
 collapses in exactly the seven partitions where the parsimony rule selects a quadratic ROC-AUC surface, which it does
 when that surface fits unseen compositions better, and these partitions pass the ROC-AUC gate more often than the rest
 (3 of 7 against 2 of 23); the gate therefore needs an accompanying anchor check.
@@ -31,9 +32,10 @@ interaction coefficient must be confirmed on the real objective before it is rea
 \item The continuous cost the methods optimize and the step cost deployment pays disagree about the hypervolume-best of
 six candidate sets in 8 to 24 of 30 partitions, and several paired conclusions, including the UCI credit anchor
 effect, reverse between them. Sets optimized on the linear relaxation omit the cheapest supports that the unoptimized
-design contains, at a penalty whose size depends on the cost range that sets the normalization box.
+design contains, at a penalty whose size depends on the cost range that sets the normalization box. The step-cost
+reference was less converged than the weighted-cost one, so part of that disagreement may be reference instability.
 \item On the same three real objectives, NSGA-II approximated the front better than metamodel-free NBI (NBI-C) in all
-eight dataset--endpoint comparisons, five of them significant after correction, and gave more evenly spaced
+eight dataset--endpoint comparisons, five of them significant after correction at the assumed $\rho$, and gave more evenly spaced
 revalidated fronts. It used about twice NBI-C's weight-vector evaluations and about 2.2 times its wall clock (NSGA-II
 runs executed eight at a time), and whether it also leads at an equal number of weight-vector evaluations was not
 tested. Its returned sets are larger, which mechanically favours it on both endpoints, so its small margins should be

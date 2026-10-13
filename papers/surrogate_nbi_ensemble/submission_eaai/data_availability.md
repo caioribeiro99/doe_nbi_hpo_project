@@ -3,8 +3,8 @@
 **Statement for the submission form.** "The datasets analysed are publicly available third-party data and are not
 redistributed by the authors. The repository records, for each dataset, the exact source, the acquisition command,
 the expected row and feature counts, the expected class prevalence and the SHA-256 checksum of the file used, so a
-copy of the same file can be verified byte-for-byte. All derived artifacts, aggregated tables, statistics and
-analysis code are openly available."
+copy of the same file can be verified byte-for-byte. The aggregated tables, statistics, figures and
+analysis code are openly available; the per-replication raw artifacts are not deposited at present."
 
 ## Per-dataset provenance
 

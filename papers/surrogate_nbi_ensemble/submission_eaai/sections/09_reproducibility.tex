@@ -4,8 +4,8 @@
 \ifanon{[repository name withheld for anonymized review]}{\texttt{caioribeiro99/doe\_nbi\_hpo\_project}}. Two annotated tags freeze the study: \texttt{pco213-\allowbreak postwork-\allowbreak r10}
 the ten-replication analysis and \texttt{pco213-\allowbreak postwork-\allowbreak r30} (commit \texttt{b3ed050}) the
 thirty-replication analysis reported here (\cref{sec:results:r30} compares the two tags). The manuscript, figures and
-tables are on the branch \texttt{paper/\allowbreak surrogate-\allowbreak nbi-\allowbreak ensemble-\allowbreak weighting}, cut from that tag, together with the results computed after it from the stored outputs of the
-thirty-replication run, among them the NSGA-II baseline, the anchor-injection control and the blend test of
+tables are versioned in the same repository, on branches cut from that tag, together with the results computed after
+it from the stored outputs of the thirty-replication run, among them the NSGA-II baseline, the anchor-injection control and the blend test of
 \cref{tab:edge}. A single checkpointed ten-stage runner drives the benchmark and
 resumes an interrupted run without recomputation; its stages, the resumption planner, the aggregation and statistics
 scripts and the coverage of the library's 83 unit tests are in supplementary Section~S1. The commit history records
@@ -27,13 +27,16 @@ the provenance (source, acquisition command, expected invariants and the SHA-256
 used), so a copy of the same file can be verified byte-for-byte (supplementary Section~S1). All three Kaggle training
 files were obtained from public mirror datasets hosted on Kaggle and validated against those invariants; the
 manifests name each mirror. Competition test labels are never used. Porto Seguro was subsampled to 200{,}000 rows
-by a stratified draw with the recorded seed. The per-replication raw artifacts total about 829~MB and are
-deliberately not version-controlled, but are reconstructible from the seeds and the runner, except for the
-wall-clock costs $c_i$, which are re-measured on each run, and the results that depend on them; the measured costs
-are committed in \texttt{tables/inference\_costs.csv}.
+by a stratified draw with the recorded seed. The per-replication raw artifacts (out-of-fold probability matrices, candidate sets
+and reference samples) total about 829~MB and are not version-controlled or deposited at present; the out-of-fold
+files also carry the training labels of the Kaggle files, so a deposit is bound by the same redistribution limits.
+They are reconstructible from the seeds and the runner, except for the wall-clock costs $c_i$, which are re-measured
+on each run, and the results that depend on them; the measured costs are committed in
+\texttt{reports/\allowbreak pco213\_postwork\_benchmark/\allowbreak tables/\allowbreak inference\_costs.csv}.
 
 \paragraph{What a replication requires.} Reproducing the aggregate results from the published tables and statistics
-requires only the repository; from raw data it requires the four datasets, the pinned environment and approximately 81
+requires only the repository; from raw data it requires the four datasets, the recorded environment (versions are
+recorded in the manifest; no lockfile was kept) and approximately 81
 hours of single-workstation compute for the benchmark plus about 15.5 hours, with eight concurrent processes, for the
 NSGA-II baseline, or proportionally less for a subset of datasets or replications, since the benchmark runner is
 resumable and parameterized by dataset and replication count.

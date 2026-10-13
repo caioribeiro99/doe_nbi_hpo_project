@@ -77,3 +77,38 @@ wording only, no analysis, artifact or reported result changes.
   of Section 6.5 is made only for the cheap regime studied, the expensive regime being stated as untested, and the
   Conclusion notes that the anchor check was affordable here because a real evaluation is cheap.
 - The cover letter carries the rebuilt page counts (manuscript 45, anonymized copy 44).
+
+## Coauthor review R2 (2026-10-13)
+
+A second, short review by the same coauthor. Bounded scope: no experiment, rerun, new dataset or change to a frozen
+result; two read-only retrospective diagnostics from stored records, both labelled post hoc, each with its definition
+committed before its first run.
+
+- Gate and order selection (P1-R2-A). `scripts/pco213_gate_split_sample.py` re-reads the gate on disjoint halves of
+  the 100 stored compositions (200 stratified halves, both directions; same-half control at equal size). Extreme
+  verdicts are unchanged; intermediate pass counts fall (Porto Seguro ROC-AUC 15.0 to 11.7 of 30, log-loss 11.1 to
+  7.2). The Discussion no longer says the gate "is worth its 100 extra evaluations": it now describes diagnostic
+  separation of extreme cases conditionally on the selected order, not validated decision utility. New Limitations
+  paragraph; supplementary Section S6 and Table S6-split.
+- Dependence correction (P1-R2-B). rho = 0.25 is stated as an assumed correction, not an estimated correlation;
+  the overlap argument says it may understate the dependence, not that it does. Abstract and Conclusion significance
+  statements carry "at the assumed" qualifiers. No rho-sensitivity table was added (author option).
+- Anchor contrast (P1-R2-C). "A versus B isolates anchor misplacement" and "B versus C isolates" are replaced by
+  the anchor-provenance intervention / joint effect wording; "anchor effect" is defined once as shorthand for that
+  joint effect; the injection control "separates" rather than "isolates".
+- Endpoints (P1-R2-D). The Abstract now says out-of-fold real-objective revalidation and a confirmation holdout, and
+  that NSGA-II returned larger sets. The body already stated both; nothing recomputed.
+- Batches (P1-R2-E). One bounded provenance check of the existing records (supplementary Section S11): identical
+  `src/` for partitions 1-29, identical recorded environment block, one seed rule, configuration differing only in
+  the replication count and two flags that compute nothing; no partition computed twice; the one available
+  recomputation (UCI credit partition 0, NBI stage) identical. The difference stays unexplained. "Pinned environment"
+  corrected to "recorded environment (no lockfile)".
+- Support-cost reference (P1-R2-F). `scripts/pco213_support_reference_convergence.py` computes, from the stored
+  reference samples, a held-out-block and a prefix diagnostic for both fronts. The support-cost front met the 5%
+  tolerance in 6 to 12 of 30 partitions per dataset against 9 to 27 for the weighted front under the same
+  (pessimistic) definition. The step-cost conclusions are qualified in Results, Limitations, Conclusion and Abstract.
+  The S8 table now shows the front sizes it had silently dropped (column-name mismatch).
+- Reproducibility wording. The stale branch name is removed, the cost-file path corrected, the raw artifacts described
+  as not deposited (their out-of-fold files carry Kaggle training labels), and the data-availability statement no
+  longer says "all derived artifacts" are available.
+- Page counts: manuscript 45, anonymized 45, supplement 44 (24 tables).

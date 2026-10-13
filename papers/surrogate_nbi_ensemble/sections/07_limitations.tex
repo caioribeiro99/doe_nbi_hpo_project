@@ -14,10 +14,22 @@ simplex and design grow quickly, and every conclusion is scoped to the one-shot,
 other domains is a natural next step.
 
 \paragraph{The partitions ran in two batches.} Partitions 0--9 and 10--29 ran as two separate batches with the same recorded
-platform and core count, and some indicator levels and anchor win rates differ between them (\cref{sec:results:r30}). The
-recorded provenance does not include the machine's power or thermal state, its concurrent load or thread-related
-environment variables during either batch, so we report the difference as exploratory and cannot explain it; every
-interval and test here treats the 30 partitions of a dataset as exchangeable.
+platform and core count, and some indicator levels and anchor win rates differ between them (\cref{sec:results:r30}). A bounded
+check of the existing records (supplementary Section~S11) found no recorded difference that could produce it: the
+library source code was the same for partitions 1--29, the recorded package versions, platform and core count were
+the same, seeds follow one rule, and the configuration differs only in the replication count and two bookkeeping
+flags. No partition was computed in both batches, so determinism across the batches cannot be tested directly; the
+one recomputation available, of the NBI stage of UCI credit partition 0, reproduced its stored candidates exactly.
+The records do not include whether the working tree was clean, the linear-algebra backend, thread-related
+environment variables, or the machine's power, thermal state and concurrent load, so we report the difference as
+exploratory and cannot explain it; execution date alone is not an explanation. Every interval and test here treats
+the 30 partitions of a dataset as exchangeable.
+
+\paragraph{The gate is not an independent test.} The 100 external compositions of a partition both select the
+Scheff\'e order and judge it (\cref{sec:method:scheffe}), so a gate pass is an optimistic reading of out-of-design
+adequacy. A post hoc split-sample reading of the stored compositions (supplementary Section~S6) leaves the extreme
+verdicts unchanged and lowers intermediate pass counts; no evaluation set independent of order selection was
+available, so the gate's decision utility is not established here.
 
 \paragraph{Neither NBI contrast is a single-factor experiment.} Replacing the anchors changes four things at once
 (\cref{sec:method:nbi}). The injection control of \cref{sec:results:anchors} separates the injected extreme points from
@@ -38,7 +50,10 @@ cost and coefficient results hold for a zoo of near-equal members is untested an
 \paragraph{The Pareto reference is empirical.} With no analytical front, all convergence and coverage indicators are
 computed against a sample-based reference of about $10^{5}$ points per replication. Its weighted-cost front met the
 5\% displacement tolerance in 118 of 120 replications and ended at most 6\% displaced in the other two
-(supplementary Section~S8); the convergence check does not cover the support-cost front. The final reference also
+(supplementary Section~S8). The benchmark's check did not cover the support-cost front; a post hoc check from the
+stored samples found that front less converged, meeting the tolerance in 6 to 12 of 30 replications per dataset
+against 9 to 27 for the weighted-cost front under the same definition, so conclusions under the support cost also
+carry reference instability. The final reference also
 contains every candidate set, so methods contributing many points are partly graded against their own output. Those
 points lower every arm's hypervolume ratio rather than inflating it, and can change a hypervolume contrast only
 through the normalization box (\cref{sec:method:normbox}); under $\igdp$ they can favour their own arm. Against the

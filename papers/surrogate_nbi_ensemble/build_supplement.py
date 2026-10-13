@@ -101,6 +101,13 @@ def main() -> int:
         "Reliability gate for all four responses, including the Brier and PR-AUC responses omitted from the main text. The interval columns are the percentile-bootstrap 95\\% interval of the mean external $R^2$, printed beside its median.", "tab:s6gate", cols=["dataset","response","n","pass","p_pass","wilson_lo","wilson_hi","r2_external_median","r2_external_ci95_lo","r2_external_ci95_hi","spearman_median"]))
     made.append(longtab(pd.read_csv(S / "reliability_gate_conditional_gain_r30.csv"), "s6_gate_conditional",
         "Anchor gain split by gate outcome, separately for each gate response. On BNP Paribas the ROC-AUC split restates NBI-A's collapse and must not be read as evidence that real anchors add more when the ROC-AUC surface is reliable.", "tab:s6cond", maxrows=40, cols=["dataset","gate_response","gate_passed","cost","endpoint","comparison","n","mean","median","wins","ties","losses"]))
+    gs = pd.read_csv(S / "gate_split_sample_r30_summary.csv").rename(columns={
+        "recorded_passes": "recorded", "expected_passes_same_half": "same half",
+        "expected_passes_cross_half": "cross half", "optimism_same_minus_cross": "difference",
+        "replications_majority_verdict_differs": "verdicts differing",
+        "median_order_agreement": "order agreement"})
+    made.append(longtab(gs, "s6_gate_split",
+        "Post hoc split-sample reading of the gate (coauthor review R2). Recorded passes use the same 100 compositions to select the order and to judge it; the expected passes are sums over 30 partitions of the pass fraction over 400 half-sample evaluations, with the order selected and judged on the same half (same half) or selected on one half and judged on the other (cross half). Order agreement: share of half-sample selections equal to the recorded order, median over partitions. Difference: same half minus cross half. Verdicts differing: partitions whose cross-half majority verdict differs from the recorded one. Source: \\texttt{scripts/\\allowbreak pco213\\_gate\\_split\\_sample.py}.", "tab:s6split", cols=["dataset","response","recorded","same half","cross half","difference","verdicts differing","order agreement"]))
     made.append(longtab(pd.read_csv(S / "bimodality_regimes_r30.csv"), "s6_regimes",
         "Exploratory regime diagnostics: Sarle's bimodality coefficient and a one- versus two-component Gaussian-mixture BIC difference. No formal multimodality test is claimed.", "tab:s6reg", maxrows=50, cols=["dataset","set","cost","metric","n","mean","median","sd","bimodality_coefficient","gmm_bic_delta"], landscape=True))
 
@@ -110,7 +117,16 @@ def main() -> int:
 
     # S8 reference convergence
     made.append(longtab(pd.read_csv(T / "reference_diagnostics.csv").groupby("dataset").mean(numeric_only=True).round(4).reset_index(),
-        "s8_reference", "Empirical reference construction diagnostics, averaged over 30 partitions.", "tab:s8ref", cols=["dataset","n_points","rounds","displaced_fraction","front_size_weighted","front_size_support"]))
+        "s8_reference", "Empirical reference construction diagnostics, averaged over 30 partitions.", "tab:s8ref", cols=["dataset","n_points","rounds","displaced_fraction","front_weighted_size","front_support_size"]))
+    sc = pd.read_csv(S / "support_reference_convergence_r30_summary.csv").rename(columns={
+        "weighted_heldout_met": "W met", "support_heldout_met": "S met",
+        "weighted_heldout_median": "W median", "support_heldout_median": "S median",
+        "support_heldout_max": "S max", "weighted_prefix_median": "W prefix",
+        "support_prefix_median": "S prefix", "weighted_stored_front_size_median": "W front",
+        "support_stored_front_size_median": "S front",
+        "recorded_weighted_independent_check_met": "W recorded met"})
+    made.append(longtab(sc, "s8_support_convergence",
+        "Post hoc convergence check of both reference fronts from the stored samples (coauthor review R2). Held-out block: share of the front of the structured blocks plus the first 80,000 random points that the remaining 20,000 random points displace; met: partitions at or below the 5\\% tolerance. Prefix: displaced share at the last prefix step (75\\% to 100\\% of the first-round random part). W: weighted-cost front; S: support-cost front; front: median stored front size; W recorded met: partitions meeting the benchmark's own weighted-cost check. Source: \\texttt{scripts/\\allowbreak pco213\\_support\\_reference\\_convergence.py}.", "tab:s8support", cols=["dataset","W met","S met","W median","S median","S max","W prefix","S prefix","W front","S front","W recorded met"]))
 
     # S9 cost and conflict
     made.append(longtab(pd.read_csv(S / "cost_definition_sensitivity_r30.csv"), "s9_cost_sensitivity",

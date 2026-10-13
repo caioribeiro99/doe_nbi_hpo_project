@@ -53,9 +53,15 @@ its maximum at a vertex by
 construction, so the \emph{less} flexible model is accidentally protected while the more flexible one may place an
 interior maximum the data do not support.
 
-Hence a division of labour: the gate is worth its 100 extra evaluations for separating unusable surfaces from
-excellent ones, but only the anchor check that distinguishes NBI-B from NBI-A removes the failure instead of
-diagnosing it.
+Hence a division of labour, with a limit on what the gate establishes. On the compositions available to it, and
+conditionally on an order selected on those same compositions (\cref{sec:method:scheffe}), the gate separated
+extreme cases of global surface adequacy: UCI credit's surfaces passed in every partition and Santander's ROC-AUC
+surface in none. That is diagnostic separation, not validated decision utility. In a post hoc split-sample reading
+(supplementary Section~S6), judging the selected order on half of the compositions that did not select it, rather
+than on the half that did, left those extreme verdicts unchanged but lowered the intermediate pass counts, from an
+expected 15.0 to 11.7 of 30 for Porto Seguro's ROC-AUC surface and from 11.1 to 7.2 for its log-loss surface.
+Whether acting on the gate repays its cost would need an independent evaluation set, which this study did not have.
+Only the anchor check that distinguishes NBI-B from NBI-A removes the failure instead of diagnosing it.
 
 \subsection{Smooth surrogates against a rank statistic}
 \label{sec:disc:smooth}

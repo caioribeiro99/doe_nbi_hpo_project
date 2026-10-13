@@ -53,7 +53,7 @@ under both reference definitions, and markedly more evenly spaced revalidated fr
 bounds what the pipeline is worth relative to one standard optimizer without disturbing the diagnosis of the pipeline
 itself, and we think a reader is better served by knowing it.
 
-The study is reproducible: four annotated Git tags freeze the exact states, every stochastic component is
+The study is reproducible: annotated Git tags freeze the benchmark states (ten and thirty replications), every stochastic component is
 seeded, datasets carry checksums and acquisition commands, the runners are checkpointed and resumable, the library
 has 83 unit tests, and one script regenerates every figure and table from the frozen artifacts.
 
@@ -67,8 +67,8 @@ remaining co-authors of that paper and of Rocha et al. (2025, *IEEE Access*) not
 | File | Content |
 |---|---|
 | `manuscript.pdf` | Main text, single column, 45 pages including references |
-| `supplementary.pdf` | Supplementary material, 41 pages, Sections S1-S14, 22 tables and 19 figures |
-| `manuscript_anonymized.pdf` | The main text for double-anonymized review, 44 pages: no author names, affiliations, funding, acknowledgements or repository name |
+| `supplementary.pdf` | Supplementary material, 44 pages, Sections S1-S14, 24 tables and 19 figures |
+| `manuscript_anonymized.pdf` | The main text for double-anonymized review, 45 pages: no author names, affiliations, funding, acknowledgements or repository name |
 | `title_page.pdf` | Title page: authors, affiliations, ORCID identifiers, corresponding author, funding, acknowledgements and competing interests |
 | `supplementary_anonymized.pdf` | The supplementary material without the author line |
 | `highlights.txt` | Highlights |

@@ -1,0 +1,34 @@
+\begin{center}\captionof{table}{Post hoc split-sample reading of the gate (coauthor review R2). Recorded passes use the same 100 compositions to select the order and to judge it; the expected passes are sums over 30 partitions of the pass fraction over 400 half-sample evaluations, with the order selected and judged on the same half (same half) or selected on one half and judged on the other (cross half). Order agreement: share of half-sample selections equal to the recorded order, median over partitions. Difference: same half minus cross half. Verdicts differing: partitions whose cross-half majority verdict differs from the recorded one. Source: \texttt{scripts/\allowbreak pco213\_gate\_split\_sample.py}.}\label{tab:s6split}\end{center}
+\begingroup\scriptsize\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llrrrrrr}
+\toprule
+dataset & response & recorded & same half & cross half & difference & verdicts differing & order agreement \\
+\midrule
+\endfirsthead
+\toprule
+dataset & response & recorded & same half & cross half & difference & verdicts differing & order agreement \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+santander & roc\_auc & 0 & 0.120000 & 0.010000 & 0.110000 & 0 & 0.733000 \\
+santander & log\_loss & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 0.965000 \\
+santander & brier & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 1.000000 \\
+santander & pr\_auc & 0 & 0.010000 & 0.000000 & 0.010000 & 0 & 0.802000 \\
+bnp & roc\_auc & 5 & 5.780000 & 4.230000 & 1.560000 & 1 & 0.751000 \\
+bnp & log\_loss & 3 & 3.550000 & 2.100000 & 1.450000 & 3 & 0.759000 \\
+bnp & brier & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 1.000000 \\
+bnp & pr\_auc & 13 & 15.140000 & 14.320000 & 0.820000 & 1 & 0.835000 \\
+porto & roc\_auc & 16 & 14.970000 & 11.700000 & 3.270000 & 6 & 0.688000 \\
+porto & log\_loss & 12 & 11.120000 & 7.200000 & 3.920000 & 3 & 0.711000 \\
+porto & brier & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 1.000000 \\
+porto & pr\_auc & 27 & 24.830000 & 23.980000 & 0.850000 & 3 & 0.934000 \\
+uci\_credit & roc\_auc & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 0.846000 \\
+uci\_credit & log\_loss & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 0.877000 \\
+uci\_credit & brier & 30 & 30.000000 & 30.000000 & 0.000000 & 0 & 1.000000 \\
+uci\_credit & pr\_auc & 30 & 29.940000 & 29.740000 & 0.200000 & 0 & 0.968000 \\
+\end{longtable}\endgroup\addtocounter{table}{-1}
