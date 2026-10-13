@@ -92,22 +92,23 @@ first run (centre-point criteria at 933422a). Patch identifiers below are those 
 `audits/scientific_revision_v6.json`; every R2 numeric movement there is an addition, none removes or alters an
 existing number.
 
-- Centre points (P2-R2-03, -07, -12, -16, -19, -21, -27). `scripts/center_point_sensitivity.py` reproduces the
-  stored 88-row surrogate stage exactly and refits it on the 79 distinct configurations; it also refits the
-  factor models on the 79 distinct pilot configurations. Premise verified: the ten centre rows are one cached
-  evaluation in every unit (79 computed, 9 served) and ten identical deterministic executions in the pilot. Factor
-  models: unchanged in every respect measured (min Tucker 0.999). Surfaces: predictions nearly unchanged, terms
-  often differ by one or two, gate decisions flip for MAGIC quality (8 -> 1 passes) and Bank Marketing cost
-  (27 -> 23). Surrogate anchors moved beyond the pre-declared tolerance in more than half of the replications
-  on every dataset, so the pre-declared class is HIGH, by the anchor rule alone. A descriptive control, added
-  after the first run and outside the classification, shows that restarting the frozen multistart moves the
-  quality anchor about as often and almost always to an equally good minimum (the flat-direction mechanism
-  already stated in Section 5.6); the cost-anchor movement is mainly a centre-row effect. Handling, as the HIGH
-  rule requires: the frozen protocol and results are untouched; the affected claim, the post hoc CHIM-contraction
-  association, is no longer carried into the Discussion summary or the Conclusion and is qualified in 6.4.1, 7.5
-  and the Figure 3 caption; Section 8.5 states that the surrogate payoff carries a component set by the
-  minimizer's starting points and that the contrasts' behaviour under the alternative specification was not
-  tested; the decision whether to run a new post hoc experiment is left to the authors.
+- Centre points (P2-R2-03, -04, -06, -07, -11, -12, -16, -19, -21, -27). `scripts/center_point_sensitivity.py`
+  reproduces the stored 88-row surrogate stage exactly and refits it on the 79 distinct configurations; it also
+  refits the factor models on the 79 distinct pilot configurations. Premise verified: the ten centre rows are one
+  cached evaluation in every unit (79 computed, 9 served) and ten identical deterministic executions in the pilot.
+  Factor models: unchanged in every respect measured (min Tucker 0.999). Surfaces: predictions meet the
+  pre-declared stability criterion except MAGIC quality (18/30) and Bank Marketing cost (14/30); terms often
+  differ; gate decisions flip most for MAGIC quality (8 -> 1 passes) and Bank Marketing cost (27 -> 23). Surrogate
+  anchors are flagged in more than half of the replications on every dataset, so the pre-declared class is HIGH,
+  by the anchor rule alone. Descriptive additions made after that classification (outside it): the flags split
+  into ties among equally good minima, distinct minima (MAGIC quality 13/30) and payoff-only changes at an unmoved
+  anchor (all of Adult's cost flags); a restart check on the unchanged surfaces moves the quality anchor in 9-28
+  of 30 replications, almost always to an equally good minimum (the flat-direction mechanism of Section 5.6), which
+  accounts for much of the movement on Adult and Bank Marketing only. Handling, as the HIGH rule requires: the
+  frozen protocol and results are untouched; the CHIM-contraction association is stopped at the Discussion
+  summary and the Conclusion and is no longer a listed contribution; the geometry and anchor-provenance claims are
+  qualified as conditional on the frozen pipeline's non-unique surrogate anchors (Abstract, Introduction, 6.4,
+  7.2, 7.4, 8.5, Conclusion); the decision whether to run a new post hoc experiment is left to the authors.
 - Signed-rank status (P2-R2-01, -02, -05, -06, -11, -19). The Wilcoxon signed-rank test is labelled secondary and
   post hoc wherever its significance is claimed, beside the pre-declared Nadeau-Bengio result (Adult only for the
   geometry contrast, MAGIC only for the anchor contrast). Abstract kept at 250 words.
@@ -119,6 +120,8 @@ existing number.
 - Instability and scope (P2-R2-10, -13, -14, -19, -24). 6.10 and the Conclusion distinguish changed candidate sets
   from contrast directions and keep the Adult reversal under measured time; the recommendation sentence of 7.7 is
   scoped; Spambase and the primary panel are stated as conditional on a one-partition screen.
-- Availability (P2-R2-18, -20, -22, -26). Public repository named; public, independently obtainable, commit-pinned
-  and unversioned material distinguished; the draft header no longer implies the frozen material is inaccessible;
+- Availability (P2-R2-18, -20, -22, -26, -28). Public repository named; tag-pinned, revision-branch, independently
+  obtainable and unversioned material distinguished; the AI-assistance disclosure names Claude Opus 5.5 and drops a
+  commit count ('66') that could not be reproduced; S16 notes that the manuscript wording supersedes the claims
+  ledger; the draft header no longer implies the frozen material is inaccessible;
   the ASOC statement no longer promises an existing Zenodo archive.
