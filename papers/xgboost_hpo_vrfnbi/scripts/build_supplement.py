@@ -823,7 +823,7 @@ def main() -> int:
     w("criteria and the classification rule were committed before the first run on the campaign")
     w("records and are stored in the artifact.\n")
     w("| dataset | objective | terms identical | within 2 terms | prediction-stable | residual df, 88 → 79 "
-      "| gate passes, 88 → 79 | anchor moved, refit | anchor moved, restart only |")
+      "| gate passes, 88 → 79 | anchor flagged, refit | anchor flagged, restart only |")
     w("|---|---|---:|---:|---:|---|---|---:|---:|")
     for ds in DATASETS:
         c, sm = cpd[ds]["counts"], cpd[ds]["summary"]
@@ -836,7 +836,7 @@ def main() -> int:
     w("\nPrediction-stable: root-mean-square difference between the two surfaces over the 78 audit")
     w("points, the 79 design points and 4,096 uniform points of the coded box at most a quarter of")
     w("the 88-row surface's external RMSE, with Spearman at least 0.99 between the two prediction")
-    w("sets. Anchor moved: the objective's surrogate minimizer moves by more than 10% of the coded")
+    w("sets. Anchor flagged: the objective's surrogate minimizer moves by more than 10% of the coded")
     w("box diagonal or a payoff entry changes by more than 0.10 objective units. Restart only: the")
     w("same anchor criterion between the stored anchors and the unchanged 88-row surfaces minimized")
     w("from a different set of multistart points.\n")
@@ -907,7 +907,8 @@ def main() -> int:
     w("equally good minima, and their candidates revalidated with new learner fits, which was not")
     w("done. The confirmatory results are those of the frozen 88-row specification and of its seeded")
     w("minimizer, and the claims that rest on the surrogate payoff geometry are qualified in the")
-    w("Abstract and in Sections 6.4, 6.4.1, 7.4, 7.5 and 8.5. The alternative fits replace nothing and rescore nothing.\n")
+    w("Abstract, the Introduction, Sections 6.4, 6.4.1, 7.2, 7.4, 7.5 and 8.5 and the Conclusion. The")
+    w("alternative fits replace nothing and rescore nothing.\n")
 
     OUT.write_text("\n".join(L) + "\n")
     print(f"wrote {OUT} ({len(' '.join(L).split()):,} words, "

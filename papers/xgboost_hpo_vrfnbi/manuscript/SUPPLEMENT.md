@@ -863,7 +863,7 @@ were minimized on the polynomial surfaces with the frozen multistart. The compar
 criteria and the classification rule were committed before the first run on the campaign
 records and are stored in the artifact.
 
-| dataset | objective | terms identical | within 2 terms | prediction-stable | residual df, 88 → 79 | gate passes, 88 → 79 | anchor moved, refit | anchor moved, restart only |
+| dataset | objective | terms identical | within 2 terms | prediction-stable | residual df, 88 → 79 | gate passes, 88 → 79 | anchor flagged, refit | anchor flagged, restart only |
 |---|---|---:|---:|---:|---|---|---:|---:|
 | MAGIC | quality | 10/30 | 25/30 | 18/30 | 70–77 → 62–69 | 8 → 1 | 19/30 | 17/30 |
 | MAGIC | cost | 6/30 | 26/30 | 30/30 | 70–75 → 62–66 | 30 → 30 | 15/30 | 5/30 |
@@ -877,7 +877,7 @@ records and are stored in the artifact.
 Prediction-stable: root-mean-square difference between the two surfaces over the 78 audit
 points, the 79 design points and 4,096 uniform points of the coded box at most a quarter of
 the 88-row surface's external RMSE, with Spearman at least 0.99 between the two prediction
-sets. Anchor moved: the objective's surrogate minimizer moves by more than 10% of the coded
+sets. Anchor flagged: the objective's surrogate minimizer moves by more than 10% of the coded
 box diagonal or a payoff entry changes by more than 0.10 objective units. Restart only: the
 same anchor criterion between the stored anchors and the unchanged 88-row surfaces minimized
 from a different set of multistart points.
@@ -939,5 +939,6 @@ the surrogate-based arms re-run on the alternative surfaces, or with a rule that
 equally good minima, and their candidates revalidated with new learner fits, which was not
 done. The confirmatory results are those of the frozen 88-row specification and of its seeded
 minimizer, and the claims that rest on the surrogate payoff geometry are qualified in the
-Abstract and in Sections 6.4, 6.4.1, 7.4, 7.5 and 8.5. The alternative fits replace nothing and rescore nothing.
+Abstract, the Introduction, Sections 6.4, 6.4.1, 7.2, 7.4, 7.5 and 8.5 and the Conclusion. The
+alternative fits replace nothing and rescore nothing.
 
