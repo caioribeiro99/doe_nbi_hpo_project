@@ -3,7 +3,7 @@
 Every table in this document is generated from a committed artifact by
 `scripts/build_supplement.py`. No figure is transcribed by hand.
 
-**Manuscript source commit** `8780c72828d8`: the state of the
+**Manuscript source commit** `f540f6c49e1f`: the state of the
 manuscript and analysis sources from which this supplement was generated.
 This is a coauthor-review draft in a public repository. The code, protocol, design,
 frozen factor models and confirmatory analysis are pinned by the existing tags of S1;
@@ -816,7 +816,7 @@ evaluations (S7.2) and the centre-point sensitivity (S18) are reported only here
 
 | item | value |
 |---|---|
-| manuscript source commit | `8780c72828d8780d0ceb3fc892547670c7b8a560` |
+| manuscript source commit | `f540f6c49e1fa005649163bfa14578e23b90feaf` |
 | package tag | not yet created; planned name `paper2-manuscript-v6`, to be created after the authors' approval |
 | relationship | planned: the commit to be tagged will differ from its manuscript source commit only by provenance metadata and compiled outputs |
 | protocol tag | `xgboost-hpo-protocol-v3` |
